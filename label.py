@@ -79,8 +79,8 @@ with gr.Blocks() as demo:
 
         with gr.Row():
             question_model_dropdown = gr.Dropdown(choices=models, value=models[0], label="Question Model", interactive=False)
-            answer_model_dropdown = gr.Dropdown(choices=models, value=models[0], label="Answer Model", interactive=False)
             number = gr.Number(value=1, label="Question Number", interactive=False)
+            answer_model_dropdown = gr.Dropdown(choices=models, value=models[0], label="Answer Model", interactive=False)
 
         with gr.Row():
             prev_question_model_button = gr.Button("Previous Question Model", interactive=False)
@@ -210,14 +210,14 @@ with gr.Blocks() as demo:
             "confidence": question_conf,
             "comment": question_comment
         }
-        # Save answer, or delete if "Don't know"
+        # Save answer, or delete if "Don't know" and no comment
         if "answers" not in evaluations:
             evaluations["answers"] = {}
         if question_model not in evaluations["answers"]:
             evaluations["answers"][question_model] = {}
         if str(idx) not in evaluations["answers"][question_model]:
             evaluations["answers"][question_model][str(idx)] = {}
-        if answer_choice == "Don't know":
+        if answer_choice == "Don't know" and not (answer_comment and answer_comment.strip()):
             # Remove entry if exists
             if answer_model in evaluations["answers"][question_model][str(idx)]:
                 del evaluations["answers"][question_model][str(idx)][answer_model]
