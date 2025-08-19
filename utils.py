@@ -1,7 +1,7 @@
 import os
 import requests
 
-def query_llm(model, messages, response_format=None):
+def query_llm(model, messages, response_format=None, temperature=1):
     json_kwargs = {}
     
     headers = {
@@ -11,6 +11,7 @@ def query_llm(model, messages, response_format=None):
 
     json_kwargs["model"] = model
     json_kwargs["messages"] = messages
+    json_kwargs["temperature"] = temperature
 
     if response_format:
         json_kwargs["response_format"] = response_format
@@ -29,9 +30,9 @@ def query_llm(model, messages, response_format=None):
         raise RuntimeError("No choices found in response")
     return data["choices"][0]["message"]["content"]
 
-def query_llm_single(model, message, prompt="You are a helpful assistant.", response_format=None):
+def query_llm_single(model, message, prompt="You are a helpful assistant.", response_format=None, temperature=1):
     messages = [
         {"role": "system", "content": prompt},
         {"role": "user", "content": message},
     ]
-    return query_llm(model, messages, response_format=response_format)
+    return query_llm(model, messages, response_format=response_format, temperature=temperature)
