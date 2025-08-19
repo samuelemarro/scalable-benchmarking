@@ -11,7 +11,7 @@ load_dotenv()
 from utils import query_llm_single
 
 PROMPT = """
-Provide an answer to the following question:
+Provide an answer to the following Math problem::
 
 {QUESTION}
 
@@ -19,52 +19,49 @@ Show the steps you took to arrive at the answer.
 """
 
 if __name__ == "__main__":
-    benchmark_model = "gpt-4o"
-    answer_model = "gpt-5-mini"
-    
-    benchmark_path = Path(f'./benchmarks/{benchmark_model}.json')
-    with open(benchmark_path, "r") as f:
-        question_data = json.load(f)
+    models = ["gpt-4o", "gpt-5-mini"]
 
-    answer_path = Path(f'./answers/{benchmark_model}/{answer_model}.json')
+    for benchmark_model in models:
+        benchmark_path = Path(f'./benchmarks/{benchmark_model}.json')
+        with open(benchmark_path, "r") as f:
+            question_data = json.load(f)
 
-    answer_path.parent.mkdir(parents=True, exist_ok=True)
+        for answer_model in models:
+            if benchmark_model == answer_model:
+                continue
 
-    if answer_path.exists() and answer_path.is_file():
-        with open(answer_path, "r") as f:
-            answer_data = json.load(f)
-    else:
-        answer_data = {}
+            answer_path = Path(f'./answers/{benchmark_model}/{answer_model}.json')
 
-    for i, data in enumerate(question_data):
-        if str(i) in answer_data:
-            print(f"Skipping question {i+1}/{len(question_data)}: {data['question']} (already answered)")
-            continue
+            answer_path.parent.mkdir(parents=True, exist_ok=True)
 
-        question = data['question']
-        try:
-            response = query_llm_single(answer_model, PROMPT.format(QUESTION=question))
+            if answer_path.exists() and answer_path.is_file():
+                with open(answer_path, "r") as f:
+                    answer_data = json.load(f)
+            else:
+                answer_data = {}
 
-            response = response.replace("\\( ", "$").replace("\\(", "$")
-            response = response.replace(" \\)", "$").replace("\\)", "$")
-            response = response.replace("\\[", "$$").replace("\\]", "$$")
+            for i, data in enumerate(question_data):
+                if str(i) in answer_data:
+                    print(f"Skipping question {i+1}/{len(question_data)}: {data['question']} (already answered)")
+                    continue
+                print(f"{answer_model} answering {question_model} question {i+1}/{len(question_data)}: {data['question']}")
 
-            print(response)
+                question = data['question']
+                try:
+                    response = query_llm_single(answer_model, PROMPT.format(QUESTION=question), temperature=0)
 
-            # Serialize the response as a MD file
-            # with open("response.md", "w") as f:
-            #     f.write(f"Problem:\n{response['problem']}\n\nanswer:\n{response['answer']}\n")
+                    response = response.replace("\\( ", "$").replace("\\(", "$")
+                    response = response.replace(" \\)", "$").replace("\\)", "$")
+                    response = response.replace("\\[", "$$").replace("\\]", "$$")
 
-            # Save everything in a JSON file
+                    answer_data[str(i)] = {
+                        "question": question,
+                        "answer": response
+                    }
 
-            answer_data[str(i)] = {
-                "question": question,
-                "answer": response
-            }
+                    with open(answer_path, "w") as f:
+                        json.dump(answer_data, f, indent=4)
 
-            with open(answer_path, "w") as f:
-                json.dump(answer_data, f, indent=4)
-
-        except Exception as e:
-            print(e.__class__.__name__, ":", e)
-            print("An error occurred:", e)
+                except Exception as e:
+                    print(e.__class__.__name__, ":", e)
+                    print("An error occurred:", e)
