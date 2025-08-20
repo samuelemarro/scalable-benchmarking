@@ -41,7 +41,7 @@ The previous questions you have generated are:
 Now generate the problem and answer using the required output format.
 """
 
-def generate_for_model(model, num_samples):
+def generate_for_model(model, num_samples, api_kwargs=None):
     internal_model_name = model.replace("/", "-").replace(":", "-")
 
     path = Path(f'./benchmarks/{internal_model_name}.json')
@@ -57,14 +57,18 @@ def generate_for_model(model, num_samples):
             print(f"Generating sample {i + 1} for model {model}...")
 
             question_list = ""
-            for j, item in enumerate(current_data):
-                if "question" in item:
-                    question = item["question"].replace("\n", " ")
-                    question_list += f"**{j + 1}.** {question} \n\n"
+
+            if len(current_data) > 0:
+                for j, item in enumerate(current_data):
+                    if "question" in item:
+                        question = item["question"].replace("\n", " ")
+                        question_list += f"**{j + 1}.** {question} \n\n"
+            else:
+                question_list = "No previous questions available."
 
             specific_prompt = PROMPT.format(PREVIOUS_QUESTIONS=question_list)
 
-            response = query_llm_single(model, specific_prompt)
+            response = query_llm_single(model, specific_prompt, temperature=1, api_kwargs=api_kwargs)
 
             # Split the response into question and answer
             if "[QUESTION]" in response and "[ANSWER]" in response:
@@ -91,9 +95,16 @@ def generate_for_model(model, num_samples):
             print("An error occurred:", e)
 
 if __name__ == "__main__":
-    models = ["openai/gpt-5-2025-08-07", "anthropic/claude-opus-4.1", "google/gemini-2.5-pro", "openai/gpt-4o-2024-08-06", "openai/gpt-3.5-turbo-0125"]
+    reasoning_default = { "effort": "high", "exclude": True }
+    models = [
+        ("openai/gpt-5-2025-08-07", { "reasoning": reasoning_default } ),
+        ("anthropic/claude-opus-4.1", { "reasoning": reasoning_default } ),
+        ("google/gemini-2.5-pro", { "reasoning": reasoning_default } ),
+        ("openai/gpt-4o-2024-08-06", None),
+        ("openai/gpt-3.5-turbo", None)
+    ]
     num_samples = 30
 
     # Use multiprocessing to parallelize by model
     with Pool(processes=len(models)) as pool:
-        pool.starmap(generate_for_model, [(model, num_samples) for model in models])
+        pool.starmap(generate_for_model, [(model, num_samples, api_kwargs) for (model, api_kwargs) in models])
