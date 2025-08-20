@@ -11,39 +11,68 @@ load_dotenv()
 from utils import query_llm_single
 
 PROMPT = """
-You are to generate ONE very challenging but fair mathematics problem and its answer.
+You are to generate ONE very challenging but solvable mathematics problem and its answer.
 
-**Goal.** Create a very hard problem that is difficult for advanced solvers and especially challenging for LLMs, while remaining self-contained and verifiable.
+**Goal.** Create a very hard problem that is difficult for advanced mathematicians, while remaining self-contained.
 
 **Content constraints**
 - Must measure genuine mathematical skill (multi-step reasoning, creative insight, careful case control). Avoid ill-posed, trick, or brute-force-only tasks.
 - No open problems, no “guess the number”, no huge-number factorization, no tasks requiring external data or long numeric search.
-- Proofs are allowed.
+- "Prove that..." problems are allowed.
 - Include all needed definitions, assumptions, domains, and bounds.
 - Solving the problem should not require tools (e.g., a code interpreter).
 - The problem should be as hard as possible while still being solvable.
+- Aim for diversity in problem types and topic. You will be provided with a list of questions you have previously written.
 
 **Style/formatting constraints**
 - Use GitHub Markdown for the statement and answer (headings, lists, inline math as plain text/LaTeX if useful).
 - Do **not** use code blocks in the output.
-- Your output should end with the content **exactly** in this order and with these tags:
+- Your output should end with the content **exactly** in this order and with these tags (though you are allowed to add more content before this):
 
 [QUESTION]
 <problem statement in GitHub Markdown, self-contained, with clearly stated goal and answer format>
 
 [ANSWER]
-<the final answer with the steps to reach the solution> 
+<the final answer with the steps to reach the solution>
+
+
+
+The previous questions you have generated are:
+{PREVIOUS_QUESTIONS}
 
 Now generate the problem and answer using the required output format.
 """
 
 if __name__ == "__main__":
-    models = ["gpt-4o", "gpt-5-mini"]
-    num_samples = 10
+    #models = ["gpt-5", "anthropic/claude-opus-4.1", "google/gemini-2.5-pro"]
+    #num_samples = 30
+    models = ["gpt-4o"]
+    num_samples = 3
+
     for model in models:
+        internal_model_name = model.replace("/", "-").replace(":", "-")
+        # Save everything in a JSON file
+        path = Path(f'./benchmarks/{internal_model_name}.json')
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        current_data = []
+        if path.exists() and path.is_file():
+            with open(path, "r") as f:
+                current_data = json.load(f)
+
         for i in range(num_samples):
             try:
-                response = query_llm_single(model, PROMPT)
+                print(f"Generating sample {i + 1} for model {model}...")
+
+                question_list = ""
+                for j, item in enumerate(current_data):
+                    if "question" in item:
+                        question = item["question"].replace("\n", " ")
+                        question_list += f"**{j + 1}.** {question} \n\n"
+
+                specific_prompt = PROMPT.format(PREVIOUS_QUESTIONS=question_list)
+
+                response = query_llm_single(model, specific_prompt)
 
                 # Split the response into question and answer
                 if "[QUESTION]" in response and "[ANSWER]" in response:
@@ -61,15 +90,6 @@ if __name__ == "__main__":
                     response[k] = response[k].replace("\\( ", "$").replace("\\(", "$")
                     response[k] = response[k].replace(" \\)", "$").replace("\\)", "$")
                     response[k] = response[k].replace("\\[", "$$").replace("\\]", "$$")
-
-                # Save everything in a JSON file
-                path = Path(f'./benchmarks/{model}.json')
-                path.parent.mkdir(parents=True, exist_ok=True)
-
-                current_data = []
-                if path.exists() and path.is_file():
-                    with open(path, "r") as f:
-                        current_data = json.load(f)
 
                 current_data.append(response)
 
