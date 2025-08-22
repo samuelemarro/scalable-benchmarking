@@ -94,9 +94,9 @@ def query_llm_single(model, message, prompt="You are a helpful assistant.", resp
     return query_llm(model, messages, response_format=response_format, temperature=temperature, api_kwargs=api_kwargs)
 
 
-def _build_batch_requests(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict, is_anthropic: bool = False):
+def _build_batch_requests(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict):
     """
-    Build batch requests for both OpenAI and Anthropic APIs.
+    Build batch requests for the Anthropic Claude API.
     Returns: (batch_requests, custom_ids)
     """
     batch_requests = []
@@ -113,80 +113,61 @@ def _build_batch_requests(model: str, messages_list: list, prompt: str, response
             ],
             "temperature": temperature
         }
-
-        if is_anthropic:
-            if prompt:
-                body["system"] = prompt
-            norm_model = ANTHROPIC_INTERNAL_NAMES.get(model, model)
-            max_tokens = ANTHROPIC_MAX_TOKENS.get(norm_model)
-            if max_tokens is None:
-                for k in ANTHROPIC_MAX_TOKENS:
-                    if norm_model.startswith(k):
-                        max_tokens = ANTHROPIC_MAX_TOKENS[k]
-                        break
-            if max_tokens:
-                body["max_tokens"] = max_tokens
-            else:
-                raise ValueError(f"Model '{model}' not found in ANTHROPIC_MAX_TOKENS")
-            # Enable thinking if requested (internal param is 'reasoning', API param is 'thinking')
-            if api_kwargs and api_kwargs.get("reasoning"):
-                effort = api_kwargs.get("effort", "high")
-                thinking_tokens = anthropic_effort_to_tokens(norm_model, effort)
-
-                # Ignore "exclude" param
-                body["thinking"] = {"type": "enabled", "budget_tokens": thinking_tokens}
+        if prompt:
+            body["system"] = prompt
+        norm_model = ANTHROPIC_INTERNAL_NAMES.get(model, model)
+        max_tokens = ANTHROPIC_MAX_TOKENS.get(norm_model)
+        if max_tokens is None:
+            for k in ANTHROPIC_MAX_TOKENS:
+                if norm_model.startswith(k):
+                    max_tokens = ANTHROPIC_MAX_TOKENS[k]
+                    break
+        if max_tokens:
+            body["max_tokens"] = max_tokens
         else:
-            body["messages"].insert(0, {"role": "system", "content": prompt})
-
+            raise ValueError(f"Model '{model}' not found in ANTHROPIC_MAX_TOKENS")
+        # Enable thinking if requested (internal param is 'reasoning', API param is 'thinking')
+        if api_kwargs and api_kwargs.get("reasoning"):
+            effort = api_kwargs.get("effort", "high")
+            thinking_tokens = anthropic_effort_to_tokens(norm_model, effort)
+            body["thinking"] = {"type": "enabled", "budget_tokens": thinking_tokens}
         if response_format:
             body["response_format"] = response_format
-
         if api_kwargs:
             for key, value in api_kwargs.items():
-                if not (is_anthropic and key in ["reasoning", "thinking"]):
+                if key not in ["reasoning", "thinking"]:
                     body[key] = value
+
+        print('\n' * 3)
+        print('body:', body)
 
         batch_requests.append((custom_id, body))
 
     return batch_requests, custom_ids
 
 
-def _map_batch_results(results_text: str, custom_ids: list, result_type: str):
+def _map_batch_results(results_text: str, custom_ids: list):
     """
     Map .jsonl results to input order using custom_id.
-    result_type: 'anthropic' or 'openai'
     """
     responses_map = {}
 
     for line in results_text.strip().splitlines():
         result_obj = json.loads(line)
         cid = result_obj["custom_id"]
-        if result_type == "anthropic":
-            result = result_obj["result"]
-            if result["type"] == "succeeded":
-                sub_result = result["message"]["content"]
-                
-                # Find the first result with type 'text'
-                for item in sub_result:
-                    if item["type"] == "text":
-                        responses_map[cid] = item["text"]
-                        break
-                else:
-                    raise RuntimeError(f"No text content found in Anthropic response: {result}")
+        result = result_obj["result"]
+        if result["type"] == "succeeded":
+            sub_result = result["message"]["content"]
+            
+            # Find the first result with type 'text'
+            for item in sub_result:
+                if item["type"] == "text":
+                    responses_map[cid] = item["text"]
+                    break
             else:
-                responses_map[cid] = f"[Error: {result['type']}]"
-        else:  # openai
-            response = result_obj.get("response")
-            error = result_obj.get("error")
-            if response and response.get("status_code") == 200:
-                body = response["body"]
-                choices = body.get("choices", [])
-                if choices:
-                    responses_map[cid] = choices[0]["message"]["content"]
-                else:
-                    responses_map[cid] = "[Error: No choices]"
-            else:
-                responses_map[cid] = f"[Error: {error}]"
+                raise RuntimeError(f"No text content found in Anthropic response: {result}")
+        else:
+            responses_map[cid] = f"[Error: {result['type']}]"
 
     return [responses_map[cid] for cid in custom_ids]
 
@@ -199,7 +180,7 @@ def _query_anthropic_batch(model: str, messages_list: list, prompt: str, respons
     if not api_key:
         raise RuntimeError("ANTHROPIC_API_KEY not set in environment")
 
-    batch_requests, custom_ids = _build_batch_requests(model, messages_list, prompt, response_format, temperature, api_kwargs, is_anthropic=True)
+    batch_requests, custom_ids = _build_batch_requests(model, messages_list, prompt, response_format, temperature, api_kwargs)
     batch_payload = {"requests": [
         {"custom_id": cid, "params": body} for cid, body in batch_requests
     ]}
@@ -234,88 +215,12 @@ def _query_anthropic_batch(model: str, messages_list: list, prompt: str, respons
     if results_resp.status_code != 200:
         raise RuntimeError(f"Claude batch results download failed: {results_resp.status_code} - {results_resp.text}")
 
-    return _map_batch_results(results_resp.text, custom_ids, "anthropic")
-
-
-def _query_openai_batch(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict):
-    """
-    Helper for OpenAI Batch API.
-    """
-    openai_api_key = os.getenv("OPENAI_API_KEY")
-    if not openai_api_key:
-        raise RuntimeError("OPENAI_API_KEY not set in environment")
-
-    batch_requests, custom_ids = _build_batch_requests(model, messages_list, prompt, response_format, temperature, api_kwargs)
-    batch_lines = []
-
-    for cid, body in batch_requests:
-        batch_line = {
-            "custom_id": cid,
-            "method": "POST",
-            "url": "/v1/chat/completions",
-            "body": body
-        }
-        batch_lines.append(json.dumps(batch_line))
-
-    with tempfile.NamedTemporaryFile(mode="w+", suffix=".jsonl", delete=False) as f:
-        for line in batch_lines:
-            f.write(line + "\n")
-        batch_file_path = f.name
-
-    files_headers = {
-        "Authorization": f"Bearer {openai_api_key}"
-    }
-    files_data = {
-        "purpose": "batch"
-    }
-    with open(batch_file_path, "rb") as file_data:
-        files_resp = requests.post(OPENAI_FILES_URL, headers=files_headers, data=files_data, files={"file": file_data})
-    if files_resp.status_code != 200:
-        raise RuntimeError(f"OpenAI batch file upload failed: {files_resp.status_code} - {files_resp.text}")
-    input_file_id = files_resp.json()["id"]
-    batch_headers = {
-        "Authorization": f"Bearer {openai_api_key}",
-        "Content-Type": "application/json"
-    }
-    batch_payload = {
-        "input_file_id": input_file_id,
-        "endpoint": "/v1/chat/completions",
-        "completion_window": "24h"
-    }
-    batch_resp = requests.post(OPENAI_BATCH_URL, headers=batch_headers, json=batch_payload)
-    if batch_resp.status_code != 200:
-        raise RuntimeError(f"OpenAI batch creation failed: {batch_resp.status_code} - {batch_resp.text}")
-    batch_id = batch_resp.json()["id"]
-    poll_url = f"{OPENAI_BATCH_URL}/{batch_id}"
-
-    # TQDM progress bar for polling
-    with tqdm(total=1, desc="Polling OpenAI batch", bar_format='{desc}: {elapsed} [{bar}]') as pbar:
-        while True:
-            poll_resp = requests.get(poll_url, headers=batch_headers)
-            if poll_resp.status_code != 200:
-                raise RuntimeError(f"OpenAI batch poll failed: {poll_resp.status_code} - {poll_resp.text}")
-            poll_data = poll_resp.json()
-            status = poll_data.get("status")
-            if status == "completed":
-                output_file_id = poll_data.get("output_file_id")
-                pbar.update(1)
-                break
-            elif status == "failed":
-                raise RuntimeError(f"OpenAI batch failed: {poll_data}")
-            pbar.set_postfix_str(f"Status: {status}")
-            time.sleep(5)
-
-    results_url = OPENAI_CONTENT_URL.format(output_file_id=output_file_id)
-    results_resp = requests.get(results_url, headers=files_headers)
-    if results_resp.status_code != 200:
-        raise RuntimeError(f"OpenAI batch results download failed: {results_resp.status_code} - {results_resp.text}")
-
-    return _map_batch_results(results_resp.text, custom_ids, "openai")
+    return _map_batch_results(results_resp.text, custom_ids)
 
 
 def query_llm_batch(model: str, messages_list: list, prompt: str = "You are a helpful assistant.", response_format: str = None, temperature: float = 1, api_kwargs: dict = None) -> list:
     """
-    Batch query for LLMs (Anthropic, OpenAI, or fallback).
+    Batch query for LLMs: only Anthropic Claude batch API is used. All other models use classic loop.
     """
     if 'anthropic' in model:
         if temperature != 1 and api_kwargs and api_kwargs.get("reasoning"):
@@ -323,8 +228,6 @@ def query_llm_batch(model: str, messages_list: list, prompt: str = "You are a he
 
         norm_model = ANTHROPIC_INTERNAL_NAMES.get(model.replace('anthropic/', ''), model.replace('anthropic/', ''))
         return _query_anthropic_batch(norm_model, messages_list, prompt, response_format, temperature, api_kwargs)
-    elif 'openai' in model:
-        return _query_openai_batch(model.replace('openai/', ''), messages_list, prompt, response_format, temperature, api_kwargs)
     else:
         results = []
         for message in messages_list:
