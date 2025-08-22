@@ -8,7 +8,7 @@ latex_delimiters=[{ "left": "$$", "right": "$$", "display": True },
                   { "left": "$", "right": "$", "display": False }]
 
 # Hard-coded list of models
-models = ["gpt-4o", "gpt-5-mini"]
+models = ["anthropic/claude-opus-4.1", "google/gemini-2.5-pro", "openai/gpt-3.5-turbo", "openai/gpt-4o-2024-08-06", "openai/gpt-5-2025-08-07"]
 
 # Load all model answers
 answers = {}
@@ -16,13 +16,15 @@ answers = {}
 questions = {}
 
 for model in models:
-    benchmark_file_path = f'benchmarks/{model}.json'
+    internal_model_name = model.replace("/", "-").replace(":", "-")
+    benchmark_file_path = f"benchmarks/{internal_model_name}.json"
     if not Path(benchmark_file_path).exists():
         print(f"Benchmark file for {model} does not exist: {benchmark_file_path}")
         continue
     
-    with open(f'benchmarks/{model}.json', 'r') as f:
+    with open(benchmark_file_path, 'r') as f:
         benchmark_data = json.load(f)
+    print(f"Loaded {len(benchmark_data)} questions for model {model}")
     questions[model] = [q['question'] for q in benchmark_data]
     answers[model] = {}
     answers[model][model] = {}
@@ -31,9 +33,10 @@ for model in models:
 
 
 for question_model in models:
-    answers[question_model] = {}
+    internal_question_model_name = question_model.replace("/", "-").replace(":", "-")
     for answer_model in models:
-        file_path = f'answers/{question_model}/{answer_model}.json'
+        internal_answer_model_name = answer_model.replace("/", "-").replace(":", "-")
+        file_path = f'answers/{internal_question_model_name}/{internal_answer_model_name}.json'
         if Path(file_path).exists():
             with open(file_path, 'r') as f:
                 answer_data = json.load(f)
