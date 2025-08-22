@@ -34,11 +34,27 @@ OPENAI_BATCH_URL = "https://api.openai.com/v1/batches"
 OPENAI_CONTENT_URL = "https://api.openai.com/v1/files/{output_file_id}/content"
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
+EFFORT_RATIOS = {
+    "high": 0.8,
+    "medium": 0.5,
+    "low": 0.2
+} # OpenRouter effort to token ratio
+
+# OpenRouter formula to compute max tokens from effort level
+def anthropic_effort_to_tokens(model: str, effort: str):
+    max_tokens = ANTHROPIC_MAX_TOKENS[model]
+
+    return int(max(1024, min(32000, EFFORT_RATIOS[effort] * max_tokens)))
+
 
 def query_llm(model: str, messages: list, response_format: str = None, temperature: float = 1, api_kwargs: dict = None) -> str:
     """
     Query a single LLM endpoint (OpenRouter).
     """
+
+    if 'anthropic' in model and api_kwargs and api_kwargs.get("thinking") and temperature != 1:
+        raise ValueError("Cannot set both temperature and thinking in Anthropic requests")
+
     json_kwargs = {}
 
     headers = {
@@ -112,6 +128,13 @@ def _build_batch_requests(model: str, messages_list: list, prompt: str, response
                 body["max_tokens"] = max_tokens
             else:
                 raise ValueError(f"Model '{model}' not found in ANTHROPIC_MAX_TOKENS")
+            # Enable thinking if requested (internal param is 'reasoning', API param is 'thinking')
+            if api_kwargs and api_kwargs.get("reasoning"):
+                effort = api_kwargs.get("effort", "high")
+                thinking_tokens = anthropic_effort_to_tokens(norm_model, effort)
+
+                # Ignore "exclude" param
+                body["thinking"] = {"type": "enabled", "budget_tokens": thinking_tokens}
         else:
             body["messages"].insert(0, {"role": "system", "content": prompt})
 
@@ -120,7 +143,8 @@ def _build_batch_requests(model: str, messages_list: list, prompt: str, response
 
         if api_kwargs:
             for key, value in api_kwargs.items():
-                body[key] = value
+                if not (is_anthropic and key in ["reasoning", "thinking"]):
+                    body[key] = value
 
         batch_requests.append((custom_id, body))
 
@@ -140,7 +164,15 @@ def _map_batch_results(results_text: str, custom_ids: list, result_type: str):
         if result_type == "anthropic":
             result = result_obj["result"]
             if result["type"] == "succeeded":
-                responses_map[cid] = result["message"]["content"][0]["text"]
+                sub_result = result["message"]["content"]
+                
+                # Find the first result with type 'text'
+                for item in sub_result:
+                    if item["type"] == "text":
+                        responses_map[cid] = item["text"]
+                        break
+                else:
+                    raise RuntimeError(f"No text content found in Anthropic response: {result}")
             else:
                 responses_map[cid] = f"[Error: {result['type']}]"
         else:  # openai
@@ -191,6 +223,7 @@ def _query_anthropic_batch(model: str, messages_list: list, prompt: str, respons
                 raise RuntimeError(f"Claude batch poll failed: {poll_resp.status_code} - {poll_resp.text}")
             poll_data = poll_resp.json()
             status = poll_data.get("processing_status")
+
             if status == "ended":
                 results_url = poll_data.get("results_url")
                 pbar.update(1)
@@ -285,6 +318,9 @@ def query_llm_batch(model: str, messages_list: list, prompt: str = "You are a he
     Batch query for LLMs (Anthropic, OpenAI, or fallback).
     """
     if 'anthropic' in model:
+        if temperature != 1 and api_kwargs and api_kwargs.get("reasoning"):
+            raise ValueError("Cannot set both temperature and reasoning in Anthropic requests")
+
         norm_model = ANTHROPIC_INTERNAL_NAMES.get(model.replace('anthropic/', ''), model.replace('anthropic/', ''))
         return _query_anthropic_batch(norm_model, messages_list, prompt, response_format, temperature, api_kwargs)
     elif 'openai' in model:

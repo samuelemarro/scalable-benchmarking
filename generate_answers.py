@@ -10,7 +10,7 @@ load_dotenv()
 from utils import query_llm_batch
 
 PROMPT = """
-Provide an answer to the following Math problem::
+Provide an answer to the following Math problem:
 
 {QUESTION}
 
@@ -18,7 +18,7 @@ Show the steps you took to arrive at the answer.
 """
 
 def answer_model_worker(args):
-    answer_model, all_questions = args
+    answer_model, all_questions, api_kwargs, temperature = args
     # all_questions: list of (benchmark_model, question_idx, question_text)
 
     # Group by benchmark_model for output
@@ -32,7 +32,7 @@ def answer_model_worker(args):
 
     # Batch query
     try:
-        responses = query_llm_batch(answer_model, [PROMPT.format(QUESTION=q) for q in questions_for_batch], temperature=0)
+        responses = query_llm_batch(answer_model, [PROMPT.format(QUESTION=q) for q in questions_for_batch], temperature=temperature, api_kwargs=api_kwargs)
         # responses should be a list of strings, one per question
     except Exception as e:
         print(e.__class__.__name__, ":", e)
@@ -63,17 +63,28 @@ def answer_model_worker(args):
             json.dump(answer_data, f, indent=4)
 
 if __name__ == "__main__":
-    models = ["openai/gpt-4o-2024-08-06", "openai/gpt-3.5-turbo", "anthropic/claude-opus-4.1"]
+    reasoning_default = { "effort": "high", "exclude": True }
+    models = [
+        ("openai/gpt-5-2025-08-07", { "reasoning": reasoning_default }, 0.0),
+        ("anthropic/claude-opus-4.1", { "reasoning": reasoning_default }, 1.0),
+        ("google/gemini-2.5-pro", { "reasoning": reasoning_default }, 0.0),
+        ("openai/gpt-4o-2024-08-06", None, 0.0),
+        ("openai/gpt-3.5-turbo", None, 0.0),
+        ("meta-llama/llama-4-maverick", None, 0.0),
+        ("microsoft/phi-4-reasoning-plus", None, 0.0)
+    ]
 
     # Collect all questions for each answer model (excluding self)
-    answer_model_jobs = {answer_model: [] for answer_model in models}
-    for benchmark_model in models:
+    answer_model_jobs = {answer_model: [] for answer_model, _, _ in models}
+    answer_model_kwargs = {answer_model: api_kwargs for answer_model, api_kwargs, _ in models}
+    answer_model_temps = {answer_model: temperature for answer_model, _, temperature in models}
+    for benchmark_model, _, _ in models:
         benchmark_path = Path(f"./benchmarks/{benchmark_model.replace('/','-')}.json")
 
         with open(benchmark_path, "r") as f:
             question_data = json.load(f)
 
-        for answer_model in models:
+        for answer_model, _, _ in models:
             if answer_model == benchmark_model:
                 continue
             for i, data in enumerate(question_data):
@@ -90,6 +101,9 @@ if __name__ == "__main__":
                 answer_model_jobs[answer_model].append((benchmark_model, i, data['question']))
 
     # Pool by answer model
-    jobs = [(answer_model, answer_model_jobs[answer_model]) for answer_model in models if answer_model_jobs[answer_model]]
+    jobs = [
+        (answer_model, answer_model_jobs[answer_model], answer_model_kwargs[answer_model], answer_model_temps[answer_model])
+        for answer_model in answer_model_jobs if answer_model_jobs[answer_model]
+    ]
     with Pool(processes=len(jobs)) as pool:
         pool.map(answer_model_worker, jobs)
