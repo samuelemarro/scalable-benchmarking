@@ -41,7 +41,7 @@ The previous questions you have generated are:
 Now generate the problem and answer using the required output format.
 """
 
-def generate_for_model(model, num_samples, api_kwargs=None):
+def generate_for_model(model, num_samples, reasoning=None):
     internal_model_name = model.replace("/", "-").replace(":", "-")
 
     path = Path(f'./benchmarks/{internal_model_name}.json')
@@ -52,7 +52,7 @@ def generate_for_model(model, num_samples, api_kwargs=None):
         with open(path, "r") as f:
             current_data = json.load(f)
 
-    for i in range(num_samples):
+    for i in range(len(current_data), num_samples):
         try:
             print(f"Generating sample {i + 1} for model {model}...")
 
@@ -68,7 +68,7 @@ def generate_for_model(model, num_samples, api_kwargs=None):
 
             specific_prompt = PROMPT.format(PREVIOUS_QUESTIONS=question_list)
 
-            response = query_llm_single(model, specific_prompt, temperature=1, api_kwargs=api_kwargs)
+            response = query_llm_single(model, specific_prompt, temperature=1, reasoning=reasoning)
 
             # Split the response into question and answer
             if "[QUESTION]" in response and "[ANSWER]" in response:
@@ -95,16 +95,17 @@ def generate_for_model(model, num_samples, api_kwargs=None):
             print("An error occurred:", e)
 
 if __name__ == "__main__":
-    reasoning_default = { "effort": "high", "exclude": True }
     models = [
-        ("openai/gpt-5-2025-08-07", { "reasoning": reasoning_default } ),
-        ("anthropic/claude-opus-4.1", { "reasoning": reasoning_default } ),
-        ("google/gemini-2.5-pro", { "reasoning": reasoning_default } ),
+        ("openai/gpt-5-2025-08-07", "high"),
+        ("anthropic/claude-opus-4.1", "high"),
+        ("google/gemini-2.5-pro", "high"),
         ("openai/gpt-4o-2024-08-06", None),
-        ("openai/gpt-3.5-turbo", None)
+        ("openai/gpt-3.5-turbo", None),
+        ("meta-llama/llama-4-maverick", None),
+        ("microsoft/phi-4-reasoning-plus", None)
     ]
     num_samples = 30
 
     # Use multiprocessing to parallelize by model
     with Pool(processes=len(models)) as pool:
-        pool.starmap(generate_for_model, [(model, num_samples, api_kwargs) for (model, api_kwargs) in models])
+        pool.starmap(generate_for_model, [(model, num_samples, reasoning) for (model, reasoning) in models])

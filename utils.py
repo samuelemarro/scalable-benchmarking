@@ -47,7 +47,7 @@ def anthropic_effort_to_tokens(model: str, effort: str):
     return int(max(1024, min(32000, EFFORT_RATIOS[effort] * max_tokens)))
 
 
-def query_llm(model: str, messages: list, response_format: str = None, temperature: float = 1, api_kwargs: dict = None) -> str:
+def query_llm(model: str, messages: list, response_format: str = None, temperature: float = 1, api_kwargs: dict = None, reasoning: str = None) -> str:
     """
     Query a single LLM endpoint (OpenRouter).
     """
@@ -69,6 +69,9 @@ def query_llm(model: str, messages: list, response_format: str = None, temperatu
     if response_format:
         json_kwargs["response_format"] = response_format
 
+    # Add reasoning to api_kwargs for OpenRouter
+    if reasoning in ["medium", "high"]:
+        json_kwargs["reasoning"] = {"effort": reasoning, "exclude": True}
     if api_kwargs:
         for key, value in api_kwargs.items():
             json_kwargs[key] = value
@@ -86,15 +89,15 @@ def query_llm(model: str, messages: list, response_format: str = None, temperatu
     return data["choices"][0]["message"]["content"]
 
 
-def query_llm_single(model, message, prompt="You are a helpful assistant.", response_format=None, temperature=1, api_kwargs=None):
+def query_llm_single(model, message, prompt="You are a helpful assistant.", response_format=None, temperature=1, api_kwargs=None, reasoning=None):
     messages = [
         {"role": "system", "content": prompt},
         {"role": "user", "content": message},
     ]
-    return query_llm(model, messages, response_format=response_format, temperature=temperature, api_kwargs=api_kwargs)
+    return query_llm(model, messages, response_format=response_format, temperature=temperature, api_kwargs=api_kwargs, reasoning=reasoning)
 
 
-def _build_batch_requests(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict):
+def _build_batch_requests(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict, reasoning: str = None):
     """
     Build batch requests for the Anthropic Claude API.
     Returns: (batch_requests, custom_ids)
@@ -126,9 +129,9 @@ def _build_batch_requests(model: str, messages_list: list, prompt: str, response
             body["max_tokens"] = max_tokens
         else:
             raise ValueError(f"Model '{model}' not found in ANTHROPIC_MAX_TOKENS")
-        # Enable thinking if requested (internal param is 'reasoning', API param is 'thinking')
-        if api_kwargs and api_kwargs.get("reasoning"):
-            effort = api_kwargs.get("effort", "high")
+        # Enable thinking if reasoning is set
+        if reasoning in ["medium", "high"]:
+            effort = reasoning
             thinking_tokens = anthropic_effort_to_tokens(norm_model, effort)
             body["thinking"] = {"type": "enabled", "budget_tokens": thinking_tokens}
         if response_format:
@@ -172,7 +175,7 @@ def _map_batch_results(results_text: str, custom_ids: list):
     return [responses_map[cid] for cid in custom_ids]
 
 
-def _query_anthropic_batch(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict):
+def _query_anthropic_batch(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict, reasoning: str = None):
     """
     Helper for Anthropic Claude batch API.
     """
@@ -180,7 +183,7 @@ def _query_anthropic_batch(model: str, messages_list: list, prompt: str, respons
     if not api_key:
         raise RuntimeError("ANTHROPIC_API_KEY not set in environment")
 
-    batch_requests, custom_ids = _build_batch_requests(model, messages_list, prompt, response_format, temperature, api_kwargs)
+    batch_requests, custom_ids = _build_batch_requests(model, messages_list, prompt, response_format, temperature, api_kwargs, reasoning=reasoning)
     batch_payload = {"requests": [
         {"custom_id": cid, "params": body} for cid, body in batch_requests
     ]}
@@ -218,19 +221,19 @@ def _query_anthropic_batch(model: str, messages_list: list, prompt: str, respons
     return _map_batch_results(results_resp.text, custom_ids)
 
 
-def query_llm_batch(model: str, messages_list: list, prompt: str = "You are a helpful assistant.", response_format: str = None, temperature: float = 1, api_kwargs: dict = None) -> list:
+def query_llm_batch(model: str, messages_list: list, prompt: str = "You are a helpful assistant.", response_format: str = None, temperature: float = 1, api_kwargs: dict = None, reasoning: str = None) -> list:
     """
     Batch query for LLMs: only Anthropic Claude batch API is used. All other models use classic loop.
+    reasoning: None, "medium", or "high". If set, enables Claude 'thinking' or OpenRouter 'reasoning'.
     """
     if 'anthropic' in model:
-        if temperature != 1 and api_kwargs and api_kwargs.get("reasoning"):
+        if temperature != 1 and (reasoning in ["medium", "high"]):
             raise ValueError("Cannot set both temperature and reasoning in Anthropic requests")
-
         norm_model = ANTHROPIC_INTERNAL_NAMES.get(model.replace('anthropic/', ''), model.replace('anthropic/', ''))
-        return _query_anthropic_batch(norm_model, messages_list, prompt, response_format, temperature, api_kwargs)
+        return _query_anthropic_batch(norm_model, messages_list, prompt, response_format, temperature, api_kwargs, reasoning=reasoning)
     else:
         results = []
         for message in messages_list:
-            result = query_llm_single(model, message, prompt=prompt, response_format=response_format, temperature=temperature, api_kwargs=api_kwargs)
+            result = query_llm_single(model, message, prompt=prompt, response_format=response_format, temperature=temperature, api_kwargs=api_kwargs, reasoning=reasoning)
             results.append(result)
         return results
