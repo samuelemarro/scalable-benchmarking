@@ -7,6 +7,7 @@ import uuid
 import requests
 from tqdm import tqdm
 
+OPENAI_API_URL = "https://api.openai.com/v1"
 ANTHROPIC_INTERNAL_NAMES = {
     "claude-opus-4.1": "claude-opus-4-1",
     "claude-opus-4": "claude-opus-4",
@@ -29,9 +30,9 @@ ANTHROPIC_MAX_TOKENS = {
 }
 
 ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages/batches"
-OPENAI_FILES_URL = "https://api.openai.com/v1/files"
-OPENAI_BATCH_URL = "https://api.openai.com/v1/batches"
-OPENAI_CONTENT_URL = "https://api.openai.com/v1/files/{output_file_id}/content"
+OPENAI_FILES_URL = f"{OPENAI_API_URL}/files"
+OPENAI_BATCH_URL = f"{OPENAI_API_URL}/batches"
+OPENAI_CONTENT_URL = f"{OPENAI_API_URL}/files/{{output_file_id}}/content"
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 EFFORT_RATIOS = {
@@ -141,9 +142,6 @@ def _build_batch_requests(model: str, messages_list: list, prompt: str, response
                 if key not in ["reasoning", "thinking"]:
                     body[key] = value
 
-        print('\n' * 3)
-        print('body:', body)
-
         batch_requests.append((custom_id, body))
 
     return batch_requests, custom_ids
@@ -151,7 +149,7 @@ def _build_batch_requests(model: str, messages_list: list, prompt: str, response
 
 def _map_batch_results(results_text: str, custom_ids: list):
     """
-    Map .jsonl results to input order using custom_id.
+    Map Anthropic .jsonl results to input order using custom_id.
     """
     responses_map = {}
 
@@ -221,19 +219,186 @@ def _query_anthropic_batch(model: str, messages_list: list, prompt: str, respons
     return _map_batch_results(results_resp.text, custom_ids)
 
 
-def query_llm_batch(model: str, messages_list: list, prompt: str = "You are a helpful assistant.", response_format: str = None, temperature: float = 1, api_kwargs: dict = None, reasoning: str = None) -> list:
+def _build_openai_batch_requests(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict, reasoning: str = None):
     """
-    Batch query for LLMs: only Anthropic Claude batch API is used. All other models use classic loop.
+    Build batch requests for the OpenAI chat completions endpoint.
+    Returns: (batch_requests, custom_ids)
+    """
+    batch_requests = []
+    custom_ids = []
+
+    for message in messages_list:
+        custom_id = f"msg-{uuid.uuid4()}"
+        custom_ids.append(custom_id)
+
+        body = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": prompt},
+                {"role": "user", "content": message},
+            ],
+            "temperature": temperature,
+        }
+
+        # OpenAI chat/completions batches do not accept the "reasoning" param; ignore if provided.
+        if response_format:
+            body["response_format"] = response_format
+        if api_kwargs:
+            for key, value in api_kwargs.items():
+                if key != "reasoning":
+                    body[key] = value
+
+        batch_requests.append((custom_id, body))
+
+    return batch_requests, custom_ids
+
+
+def _map_openai_batch_results(results_text: str, custom_ids: list):
+    """
+    Map OpenAI .jsonl results to input order using custom_id.
+    """
+    responses_map = {}
+
+    for line in results_text.strip().splitlines():
+        result_obj = json.loads(line)
+        cid = result_obj.get("custom_id")
+        if not cid:
+            continue
+
+        response = result_obj.get("response")
+        error = result_obj.get("error")
+
+        if response and response.get("status_code") == 200:
+            body = response.get("body", {})
+            choices = body.get("choices") or []
+
+            text_content = None
+            if choices:
+                message_obj = choices[0].get("message", {})
+                content = message_obj.get("content")
+
+                if isinstance(content, list):
+                    text_parts = [part.get("text", "") for part in content if part.get("type") == "text"]
+                    text_content = "".join(text_parts).strip() if text_parts else None
+                else:
+                    text_content = content
+
+            responses_map[cid] = text_content or "[Error: No text content]"
+        else:
+            responses_map[cid] = f"[Error: {error or 'Unknown error'}]"
+
+    return [responses_map.get(cid, "[Error: Missing response]") for cid in custom_ids]
+
+
+def _query_openai_batch(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict, reasoning: str = None):
+    """
+    Helper for OpenAI batch API using the chat completions endpoint.
+    """
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise RuntimeError("OPENAI_API_KEY not set in environment")
+
+    batch_requests, custom_ids = _build_openai_batch_requests(model, messages_list, prompt, response_format, temperature, api_kwargs, reasoning=reasoning)
+    batch_lines = []
+
+    for cid, body in batch_requests:
+        batch_line = {
+            "custom_id": cid,
+            "method": "POST",
+            "url": "/v1/chat/completions",
+            "body": {**body, "reasoning_effort": reasoning} if reasoning else body,
+            #"reasoning_effort": reasoning
+        }
+        batch_lines.append(json.dumps(batch_line))
+
+    with tempfile.NamedTemporaryFile(mode="w+", suffix=".jsonl", delete=False) as f:
+        for line in batch_lines:
+            f.write(line + "\n")
+        batch_file_path = f.name
+
+    headers_auth = {"Authorization": f"Bearer {api_key}"}
+    try:
+        with open(batch_file_path, "rb") as file_handle:
+            files = {"file": (os.path.basename(batch_file_path), file_handle)}
+            data = {"purpose": "batch"}
+            upload_resp = requests.post(OPENAI_FILES_URL, headers=headers_auth, files=files, data=data)
+
+        if upload_resp.status_code != 200:
+            raise RuntimeError(f"OpenAI batch file upload failed: {upload_resp.status_code} - {upload_resp.text}")
+
+        input_file_id = upload_resp.json()["id"]
+
+        create_headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        }
+        create_payload = {
+            "input_file_id": input_file_id,
+            "endpoint": "/v1/chat/completions",
+            "completion_window": "24h",
+        }
+        create_resp = requests.post(OPENAI_BATCH_URL, headers=create_headers, json=create_payload)
+
+        if create_resp.status_code != 200:
+            raise RuntimeError(f"OpenAI batch creation failed: {create_resp.status_code} - {create_resp.text}")
+
+        batch_id = create_resp.json()["id"]
+        poll_url = f"{OPENAI_BATCH_URL}/{batch_id}"
+
+        with tqdm(total=1, desc="Polling OpenAI batch", bar_format="{desc}: {elapsed} [{bar}]") as pbar:
+            while True:
+                poll_resp = requests.get(poll_url, headers=create_headers)
+                if poll_resp.status_code != 200:
+                    raise RuntimeError(f"OpenAI batch poll failed: {poll_resp.status_code} - {poll_resp.text}")
+
+                poll_data = poll_resp.json()
+                status = poll_data.get("status")
+
+                if status == "completed":
+                    output_file_id = poll_data.get("output_file_id")
+                    if not output_file_id:
+                        raise RuntimeError(f"OpenAI batch completed without output_file_id: {poll_data}")
+                    pbar.update(1)
+                    break
+                if status in {"failed", "cancelled", "expired"}:
+                    raise RuntimeError(f"OpenAI batch ended with status '{status}': {poll_data}")
+
+                pbar.set_postfix_str(f"Status: {status}")
+                time.sleep(5)
+
+        content_url = OPENAI_CONTENT_URL.format(output_file_id=output_file_id)
+        results_resp = requests.get(content_url, headers=headers_auth)
+        if results_resp.status_code != 200:
+            raise RuntimeError(f"OpenAI batch results download failed: {results_resp.status_code} - {results_resp.text}")
+
+        return _map_openai_batch_results(results_resp.text, custom_ids)
+
+    finally:
+        if os.path.exists(batch_file_path):
+            os.remove(batch_file_path)
+
+
+def _single_query_worker(args):
+    model, message, prompt, response_format, temperature, api_kwargs, reasoning = args
+    return query_llm_single(model, message, prompt=prompt, response_format=response_format, temperature=temperature, api_kwargs=api_kwargs, reasoning=reasoning)
+
+
+def query_llm_batch(model: str, messages_list: list, prompt: str = "You are a helpful assistant.", response_format: str = None, temperature: float = 1, api_kwargs: dict = None, reasoning: str = None, max_workers: int = 8) -> list:
+    """
+    Batch query for LLMs: only Anthropic Claude batch API is used. All other models use parallel processing (multiprocessing).
     reasoning: None, "medium", or "high". If set, enables Claude 'thinking' or OpenRouter 'reasoning'.
+    max_workers: number of parallel workers for non-Anthropic models.
     """
     if 'anthropic' in model:
-        if temperature != 1 and (reasoning in ["medium", "high"]):
+        if temperature != 1 and (reasoning is not None):
             raise ValueError("Cannot set both temperature and reasoning in Anthropic requests")
         norm_model = ANTHROPIC_INTERNAL_NAMES.get(model.replace('anthropic/', ''), model.replace('anthropic/', ''))
         return _query_anthropic_batch(norm_model, messages_list, prompt, response_format, temperature, api_kwargs, reasoning=reasoning)
+    if 'openai' in model:
+        return _query_openai_batch(model.replace('openai/', ''), messages_list, prompt, response_format, temperature, api_kwargs, reasoning=reasoning)
     else:
-        results = []
-        for message in messages_list:
-            result = query_llm_single(model, message, prompt=prompt, response_format=response_format, temperature=temperature, api_kwargs=api_kwargs, reasoning=reasoning)
-            results.append(result)
+        from multiprocessing import Pool
+        worker_args = [(model, message, prompt, response_format, temperature, api_kwargs, reasoning) for message in messages_list]
+        with Pool(processes=max_workers) as pool:
+            results = pool.map(_single_query_worker, worker_args)
         return results

@@ -17,9 +17,7 @@ Provide an answer to the following Math problem:
 Show the steps you took to arrive at the answer.
 """
 
-def answer_model_worker(args):
-    answer_model, all_questions, reasoning, temperature = args
-    # all_questions: list of (benchmark_model, question_idx, question_text)
+def answer_model_worker(answer_model, all_questions, reasoning, temperature):
 
     # Group by benchmark_model for output
     answers_by_benchmark = {}
@@ -61,10 +59,6 @@ def answer_model_worker(args):
 
         print('Response:', response)
 
-        DRY_RUN = True
-        if DRY_RUN:
-            print(f"DRY RUN: Would write to {answer_path}:")
-
         with open(answer_path, "w") as f:
             json.dump(answer_data, f, indent=4)
 
@@ -78,18 +72,19 @@ if __name__ == "__main__":
         ("meta-llama/llama-4-maverick", None, 0.0),
         ("microsoft/phi-4-reasoning-plus", None, 0.0)
     ]
-    answer_model_jobs = {answer_model: [] for answer_model, _, _ in models}
-    answer_model_reasoning = {answer_model: reasoning for answer_model, reasoning, _ in models}
-    answer_model_temps = {answer_model: temperature for answer_model, _, temperature in models}
+
     for benchmark_model, _, _ in models:
         benchmark_path = Path(f"./benchmarks/{benchmark_model.replace('/','-')}.json")
 
         with open(benchmark_path, "r") as f:
             question_data = json.load(f)
 
-        for answer_model, _, _ in models:
+        for answer_model, reasoning, temperature in models:
             if answer_model == benchmark_model:
                 continue
+
+            jobs = []
+
             for i, data in enumerate(question_data):
                 answer_path = Path(f"./answers/{benchmark_model.replace('/','-')}/{answer_model.replace('/','-')}.json")
                 if answer_path.exists() and answer_path.is_file():
@@ -101,12 +96,23 @@ if __name__ == "__main__":
                 if str(i) in answer_data:
                     continue
 
-                answer_model_jobs[answer_model].append((benchmark_model, i, data['question']))
+                jobs.append((benchmark_model, i, data['question']))
+
+            print('Running answer_model_worker for', answer_model, 'with', len(jobs), 'jobs')
+            answer_model_worker(answer_model, jobs, reasoning, temperature)
+
+    # For testing purposes, limit to first 2 jobs per model and only allow gpt-5
+
+    #for answer_model in answer_model_jobs:
+    #    if 'anthropic' not in answer_model:
+    #        answer_model_jobs[answer_model] = []
+    #    else:
+    #        answer_model_jobs[answer_model] = answer_model_jobs[answer_model][:2]
 
     # Pool by answer model
-    jobs = [
-        (answer_model, answer_model_jobs[answer_model], answer_model_reasoning[answer_model], answer_model_temps[answer_model])
-        for answer_model in answer_model_jobs if answer_model_jobs[answer_model]
-    ]
-    with Pool(processes=len(jobs)) as pool:
-        pool.map(answer_model_worker, jobs)
+    #jobs = [
+    #    (answer_model, answer_model_jobs[answer_model], answer_model_reasoning[answer_model], answer_model_temps[answer_model])
+    #    for answer_model in answer_model_jobs if answer_model_jobs[answer_model]
+    #]
+    #with Pool(processes=len(jobs)) as pool:
+    #    pool.map(answer_model_worker, jobs)

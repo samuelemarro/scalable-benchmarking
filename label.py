@@ -8,7 +8,14 @@ latex_delimiters=[{ "left": "$$", "right": "$$", "display": True },
                   { "left": "$", "right": "$", "display": False }]
 
 # Hard-coded list of models
-models = ["anthropic/claude-opus-4.1", "google/gemini-2.5-pro", "openai/gpt-3.5-turbo", "openai/gpt-4o-2024-08-06", "openai/gpt-5-2025-08-07"]
+models = [
+    "anthropic/claude-opus-4.1",
+    "google/gemini-2.5-pro",
+    "openai/gpt-3.5-turbo",
+    "openai/gpt-4o-2024-08-06",
+    "openai/gpt-5-2025-08-07",
+    "meta-llama/llama-4-maverick",
+    "microsoft/phi-4-reasoning-plus"]
 
 # Load all model answers
 answers = {}
