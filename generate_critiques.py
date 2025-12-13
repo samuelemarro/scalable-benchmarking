@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv
 
-from model_config import _slugify, load_registry
+from model_config import ModelSpec, _slugify, load_registry
 from prompt_library import (
     build_critique_prompt,
     build_critique_refine,
@@ -14,7 +14,7 @@ from prompt_library import (
     load_critique_guidance,
 )
 from self_improvement import _safe_load_json, self_improve_answers
-from utils import query_llm_single
+from utils import query_llm_batch, query_llm_single
 
 load_dotenv()
 
@@ -105,6 +105,12 @@ def extract_structured_critique(text: Optional[str]) -> Tuple[str, str]:
     return verdict, notes
 
 
+def _batched_query(model: str, prompts: List[str], disable_batch: bool, temperature: float, reasoning: Optional[str]) -> List[str]:
+    if len(prompts) == 1 or disable_batch:
+        return [query_llm_single(model, prompts[0], temperature=temperature, reasoning=reasoning)]
+    return query_llm_batch(model, prompts, temperature=temperature, reasoning=reasoning)
+
+
 def pick_answer_record(answer_store: List[Dict], idx: int) -> Optional[Dict]:
     if idx >= len(answer_store):
         return None
@@ -163,62 +169,81 @@ def prepare_pairs(
     return pairs
 
 
-def generate_single_critique(
+def generate_critiques_batch(
     critic_model: str,
-    question: str,
-    author: str,
-    answer: str,
+    jobs: List[Dict],
     guidance: str,
     max_rounds: int,
     self_improve: bool,
     disable_batch: bool,
     temperature: float,
     reasoning: Optional[str],
-):
-    prompt = build_critique_prompt(question, author, answer, guidance)
-    if not self_improve:
-        critique = query_llm_single(critic_model, prompt, temperature=temperature, reasoning=reasoning)
-        critique = clean_math(critique)
-        verdict, notes = extract_structured_critique(critique)
-        return [
-            {"round": 1, "raw_critique": critique, "verdict": verdict, "notes": notes, "evaluation": None},
-        ]
+) -> List[List[Dict]]:
+    prompts = [
+        build_critique_prompt(job["question"], job["answer_author"], job["answer_text"], guidance)
+        for job in jobs
+    ]
+    raw = _batched_query(critic_model, prompts, disable_batch, temperature, reasoning)
+    raw = [clean_math(r) for r in raw]
 
-    initial = query_llm_single(critic_model, prompt, temperature=temperature, reasoning=reasoning)
-    initial = clean_math(initial)
+    if not self_improve:
+        results = []
+        for text in raw:
+            verdict, notes = extract_structured_critique(text)
+            results.append(
+                [
+                    {
+                        "round": 1,
+                        "raw_critique": text,
+                        "verdict": verdict,
+                        "notes": notes,
+                        "evaluation": None,
+                    }
+                ]
+            )
+        return results
+
+    questions = [job["question"] for job in jobs]
+    answer_texts = [job["answer_text"] for job in jobs]
 
     def eval_prompt(q: str, crit: str, idx: int):
-        return build_critique_self_check(q, answer, crit, guidance)
+        return build_critique_self_check(q, answer_texts[idx], crit, guidance)
+
+    answer_lookup = {q: ans for q, ans in zip(questions, answer_texts)}
 
     def refine_prompt(q: str, crit: str, fb: str):
-        return build_critique_refine(q, answer, crit, fb)
+        base_answer = answer_lookup.get(q, "")
+        return build_critique_refine(q, base_answer, crit, fb)
 
     results = self_improve_answers(
         critic_model,
-        [question],
-        [initial],
+        questions,
+        raw,
         eval_prompt,
         refine_prompt,
         max_rounds=max_rounds,
         disable_batch=disable_batch,
         temperature=temperature,
         reasoning=reasoning,
-    )[0]
+    )
 
-    enriched_attempts = []
-    for att in results.attempts:
-        verdict, notes = extract_structured_critique(att.answer)
-        enriched_attempts.append(
-            {
-                "round": att.round,
-                "raw_critique": att.answer,
-                "verdict": verdict,
-                "notes": notes,
-                "evaluation": att.evaluation,
-            }
-        )
+    enriched_all: List[List[Dict]] = []
+    for res in results:
+        enriched_attempts = []
+        for att in res.attempts:
+            verdict, notes = extract_structured_critique(att.answer)
+            enriched_attempts.append(
+                {
+                    "round": att.round,
+                    "raw_critique": att.answer,
+                    "verdict": verdict,
+                    "notes": notes,
+                    "evaluation": att.evaluation,
+                }
+            )
+        enriched_all.append(enriched_attempts)
 
-    return enriched_attempts
+    return enriched_all
 
 
 def main():
@@ -249,109 +274,118 @@ def main():
         for item in payload:
             custom_pairs.append((item["question_owner"], item["answerer"], item["critic"]))
 
-    tasks = []
-    with ThreadPoolExecutor(max_workers=max(4, len(critic_specs))) as pool:
-        for bench_path in args.benchmark_dir.glob("*.json"):
-            q_slug = bench_path.stem
-            question_model = next((spec.name for spec in registry.models.values() if spec.slug == q_slug), None)
-            if not question_model:
+    for bench_path in args.benchmark_dir.glob("*.json"):
+        q_slug = bench_path.stem
+        question_model = next((spec.name for spec in registry.models.values() if spec.slug == q_slug), None)
+        if not question_model:
+            continue
+        benchmark_entries = load_json(bench_path, [])
+        answer_models = [spec.name for spec in registry.models.values() if "answer" in spec.roles]
+
+        pairs: List[Tuple[int, str, str]] = []
+        if args.mode == "custom":
+            for q_owner, answerer, critic in custom_pairs:
+                if q_owner != question_model:
+                    continue
+                a_slug = _slugify(answerer)
+                answer_path = args.answers_dir / q_slug / f"{a_slug}.json"
+                if not answer_path.exists():
+                    continue
+                answer_records = load_json(answer_path, [])
+                for idx, rec in enumerate(answer_records):
+                    if args.limit is not None and len(pairs) >= args.limit:
+                        break
+                    pairs.append((idx, critic, answerer))
+        else:
+            pairs = prepare_pairs(args.mode, question_model, answer_models, args.answers_dir, args.limit, benchmark_entries)
+
+        if not pairs:
+            continue
+
+        jobs_by_critic: Dict[str, Dict] = {}
+
+        for idx, critic_model, answer_author in pairs:
+            critic_spec = registry.models.get(critic_model)
+            if not critic_spec or "critique" not in critic_spec.roles:
                 continue
-            benchmark_entries = load_json(bench_path, [])
-            answer_models = [spec.name for spec in registry.models.values() if "answer" in spec.roles]
+            a_slug = _slugify(answer_author)
+            critic_slug = critic_spec.slug
+            answers_path = args.answers_dir / q_slug / f"{a_slug}.json"
+            answer_records = load_json(answers_path, [])
+            if not answer_records and answer_author == question_model:
+                answer_records = benchmark_answers(question_model, benchmark_entries)
+            if idx >= len(answer_records):
+                continue
+            answer_entry = answer_records[idx]
+            question_entry = benchmark_entries[idx]
+            question_text = final_question(question_entry)
+            if not question_text:
+                continue
+            output_path = args.output_dir / args.mode / q_slug / f"{critic_slug}__{a_slug}.json"
+            existing = load_json(output_path, [])
+            if len(existing) <= idx:
+                existing.extend([{} for _ in range(idx - len(existing) + 1)])
 
-            pairs: List[Tuple[int, str, str]] = []
-            if args.mode == "custom":
-                for q_owner, answerer, critic in custom_pairs:
-                    if q_owner != question_model:
-                        continue
-                    a_slug = _slugify(answerer)
-                    answer_path = args.answers_dir / q_slug / f"{a_slug}.json"
-                    if not answer_path.exists():
-                        continue
-                    answer_records = load_json(answer_path, [])
-                    for idx, rec in enumerate(answer_records):
-                        if args.limit is not None and len(pairs) >= args.limit:
-                            break
-                        pairs.append((idx, critic, answerer))
-            else:
-                pairs = prepare_pairs(args.mode, question_model, answer_models, args.answers_dir, args.limit, benchmark_entries)
-
-            if not pairs:
+            if existing[idx].get("status") == "succeeded":
                 continue
 
-            for idx, critic_model, answer_author in pairs:
-                critic_spec = registry.models.get(critic_model)
-                if not critic_spec or "critique" not in critic_spec.roles:
-                    continue
-                a_slug = _slugify(answer_author)
-                critic_slug = critic_spec.slug
-                answers_path = args.answers_dir / q_slug / f"{a_slug}.json"
-                answer_records = load_json(answers_path, [])
-                if not answer_records and answer_author == question_model:
-                    answer_records = benchmark_answers(question_model, benchmark_entries)
-                if idx >= len(answer_records):
-                    continue
-                answer_entry = answer_records[idx]
-                question_entry = benchmark_entries[idx]
-                question_text = final_question(question_entry)
-                if not question_text:
-                    continue
-                output_path = args.output_dir / args.mode / q_slug / f"{critic_slug}__{a_slug}.json"
-                existing = load_json(output_path, [])
-                if len(existing) <= idx:
-                    existing.extend([{} for _ in range(idx - len(existing) + 1)])
+            answer_text = final_answer(answer_entry) or ""
+            job = {
+                "question": question_text,
+                "answer_text": answer_text,
+                "answer_author": answer_author,
+                "question_author": question_model,
+                "run_id": question_entry.get("run_id"),
+                "topic_slug": question_entry.get("topic_slug"),
+                "output_path": output_path,
+                "record_idx": idx,
+            }
+            bucket = jobs_by_critic.setdefault(critic_spec.name, {"spec": critic_spec, "jobs": []})
+            bucket["jobs"].append(job)
 
-                if existing[idx].get("status") == "succeeded":
-                    continue
+        with ThreadPoolExecutor(max_workers=max(4, len(jobs_by_critic))) as pool:
+            futures = []
 
-                def task(
-                    qe=question_entry,
-                    ae=answer_entry,
-                    cs=critic_spec,
-                    ans_author=answer_author,
-                    out=output_path,
-                    record_idx=idx,
-                    q_text=question_text,
-                    q_author=question_model,
-                ):
-                    answer_text = final_answer(ae) or ""
-                    attempts = generate_single_critique(
-                        cs.name,
-                        q_text,
-                        ans_author,
-                        answer_text,
-                        guidance,
-                        args.max_rounds,
-                        args.self_improve,
-                        args.disable_batch,
-                        cs.temperature,
-                        cs.reasoning,
-                    )
-                    updated = {
-                        "question": q_text,
-                        "run_id": qe.get("run_id"),
-                        "topic_slug": qe.get("topic_slug"),
-                        "question_author": q_author,
-                        "critic": cs.name,
-                        "answer_author": ans_author,
+            def process_batch(spec: ModelSpec, jobs: List[Dict]):
+                attempts_list = generate_critiques_batch(
+                    spec.name,
+                    jobs,
+                    guidance,
+                    args.max_rounds,
+                    args.self_improve,
+                    args.disable_batch,
+                    spec.temperature,
+                    spec.reasoning,
+                )
+                for job, attempts in zip(jobs, attempts_list):
+                    records = load_json(job["output_path"], [])
+                    if len(records) <= job["record_idx"]:
+                        records.extend([{} for _ in range(job["record_idx"] - len(records) + 1)])
+                    records[job["record_idx"]] = {
+                        "question": job["question"],
+                        "run_id": job["run_id"],
+                        "topic_slug": job["topic_slug"],
+                        "question_author": job["question_author"],
+                        "critic": spec.name,
+                        "answer_author": job["answer_author"],
                         "status": "succeeded",
                         "attempts": attempts,
                     }
-                    records = load_json(out, [])
-                    if len(records) <= record_idx:
-                        records.extend([{} for _ in range(record_idx - len(records) + 1)])
-                    records[record_idx] = updated
-                    save_json(out, records)
-                    return cs.name, record_idx
+                    save_json(job["output_path"], records)
+                    print(f"Critique done by {spec.name} for question #{job['record_idx']}")
 
-                tasks.append(pool.submit(task))
+            for critic_name, payload in jobs_by_critic.items():
+                spec: ModelSpec = payload["spec"]
+                jobs = payload["jobs"]
+                if not jobs:
+                    continue
+                futures.append(pool.submit(process_batch, spec, jobs))
 
-        for fut in as_completed(tasks):
-            try:
-                name, idx = fut.result()
-                print(f"Critique done by {name} for question #{idx}")
-            except Exception as exc:
-                print(f"Critique task failed: {exc}")
+            for fut in as_completed(futures):
+                try:
+                    fut.result()
+                except Exception as exc:
+                    print(f"Critique batch failed: {exc}")
 
 
 if __name__ == "__main__":
