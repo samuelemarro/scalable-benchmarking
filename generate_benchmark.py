@@ -1,5 +1,6 @@
 import argparse
 import json
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -129,7 +130,7 @@ def main():
 
     models = registry.pick(args.models) if args.models else registry.by_role("benchmark")
 
-    for model_spec in models:
+    def process_model(model_spec):
         slug = _slugify(model_spec.name)
         output_path = args.output_dir / f"{slug}.json"
         current_entries = load_existing(output_path)
@@ -146,10 +147,8 @@ def main():
             pending_runs.append(run)
 
         if not pending_runs:
-            print(f"No pending topics for {model_spec.name}")
-            continue
+            return f"No pending topics for {model_spec.name}"
 
-        print(f"Generating {len(pending_runs)} topics for {model_spec.name}")
         raw_outputs = generate_questions(
             model_spec.name,
             pending_runs,
@@ -206,7 +205,16 @@ def main():
             entry["status"] = result.status
 
         save_existing(output_path, current_entries)
-        print(f"Wrote {output_path}")
+        return f"Wrote {output_path}"
+
+    with ThreadPoolExecutor(max_workers=max(4, len(models))) as pool:
+        futures = [pool.submit(process_model, spec) for spec in models]
+        for fut in as_completed(futures):
+            try:
+                msg = fut.result()
+                print(msg)
+            except Exception as exc:
+                print(f"Generation task failed: {exc}")
 
 
 if __name__ == "__main__":
