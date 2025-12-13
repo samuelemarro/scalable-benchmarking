@@ -1,402 +1,162 @@
-from pathlib import Path
-import gradio as gr
+import argparse
 import json
-
-latex_delimiters=[{ "left": "$$", "right": "$$", "display": True },
-                  { "left": "\\[", "right": "\\]", "display": True },
-                  { "left": "\\(", "right": "\\)", "display": False },
-                  { "left": "$", "right": "$", "display": False }]
-
-# Hard-coded list of models
-models = [
-    "anthropic/claude-opus-4.1",
-    "google/gemini-2.5-pro",
-    "openai/gpt-3.5-turbo",
-    "openai/gpt-4o-2024-08-06",
-    "openai/gpt-5-2025-08-07",
-    "meta-llama/llama-4-maverick",
-    "microsoft/phi-4-reasoning-plus"]
-
-# Load all model answers
-answers = {}
-
-questions = {}
-
-for model in models:
-    internal_model_name = model.replace("/", "-").replace(":", "-")
-    benchmark_file_path = f"benchmarks/{internal_model_name}.json"
-    if not Path(benchmark_file_path).exists():
-        print(f"Benchmark file for {model} does not exist: {benchmark_file_path}")
-        continue
-    
-    with open(benchmark_file_path, 'r') as f:
-        benchmark_data = json.load(f)
-    print(f"Loaded {len(benchmark_data)} questions for model {model}")
-    questions[model] = [q['question'] for q in benchmark_data]
-    answers[model] = {}
-    answers[model][model] = {}
-    for i, data in enumerate(benchmark_data):
-        answers[model][model][i] = data['answer']
+from pathlib import Path
+from typing import Dict, List
 
 
-for question_model in models:
-    internal_question_model_name = question_model.replace("/", "-").replace(":", "-")
-    for answer_model in models:
-        internal_answer_model_name = answer_model.replace("/", "-").replace(":", "-")
-        file_path = f'answers/{internal_question_model_name}/{internal_answer_model_name}.json'
-        if Path(file_path).exists():
-            with open(file_path, 'r') as f:
-                answer_data = json.load(f)
-            if answer_model not in answers[question_model]:
-                answers[question_model][answer_model] = {}
-            for key, value in answer_data.items():
-                answers[question_model][answer_model][int(key)] = value['answer']
-
-def get_question(idx, question_model):
-    idx = max(1, min(idx, len(questions.get(question_model, []))))
-    return f"**Question {idx} ({question_model}):**\n\n{questions.get(question_model, [''])[idx-1]}"
-
-def get_answer(idx, question_model, answer_model):
-    idx = max(1, min(idx, len(questions.get(question_model, []))))
-    a = answers.get(question_model, {}).get(answer_model, {}).get(idx-1, "")
-    return f"**Answer ({answer_model}):**\n\n{a}"
+def load_json(path: Path, default):
+    if not path.exists():
+        return default
+    with path.open("r") as f:
+        return json.load(f)
 
 
-# Store user choices: {(question_number, question_model, answer_model): choice}
-user_choices = {}
-evaluations = {}
+def save_json(path: Path, payload):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w") as f:
+        json.dump(payload, f, indent=2)
 
-def load_evaluations(username):
-    eval_path = Path(f"evaluations/{username}.json")
-    if eval_path.exists():
-        with open(eval_path, "r") as f:
-            return json.load(f)
-    return {"meaningfulness": {}, "answers": {}}
 
-def save_evaluations(username, evaluations):
-    eval_path = Path(f"evaluations/{username}.json")
-    eval_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(eval_path, "w") as f:
-        json.dump(evaluations, f, indent=2)
-
-with gr.Blocks() as demo:
-    with gr.Column():
-        gr.Markdown("## LLM Benchmark Evaluation")
-        with gr.Row():
-            username_box = gr.Textbox(label="Username", placeholder="Enter your username here")
-            confirm_username_btn = gr.Button("Confirm Username")
-        error_box = gr.Markdown("", visible=False)
-
-        with gr.Row():
-            question_model_dropdown = gr.Dropdown(choices=models, value=models[0], label="Question Model", interactive=False)
-            number = gr.Number(value=1, label="Question Number", interactive=False)
-            answer_model_dropdown = gr.Dropdown(choices=models, value=models[0], label="Answer Model", interactive=False)
-
-        with gr.Row():
-            prev_question_model_button = gr.Button("Previous Question Model", interactive=False)
-            next_question_model_button = gr.Button("Next Question Model", interactive=False)
-            prev_button = gr.Button("Previous Question", interactive=False)
-            next_button = gr.Button("Next Question", interactive=False)
-            prev_answer_model_button = gr.Button("Previous Answer Model", interactive=False)
-            next_answer_model_button = gr.Button("Next Answer Model", interactive=False)
-
-        with gr.Row():
-            with gr.Column(scale=1):
-                question_markdown = gr.Markdown(get_question(1, models[0]), label="Question", latex_delimiters=latex_delimiters)
-                question_well_posed_radio = gr.Radio(
-                    choices=["Don't know", "Well-posed", "Not well-posed"],
-                    value="Don't know",
-                    label="Is the question well-posed?",
-                    interactive=False
+def list_illposed(answers_dir: Path, debates_dir: Path) -> List[Dict]:
+    items = []
+    for q_dir in answers_dir.glob("*"):
+        q_slug = q_dir.name
+        for answer_file in q_dir.glob("*.json"):
+            a_slug = answer_file.stem
+            records = load_json(answer_file, [])
+            debate_file = debates_dir / "illposed" / q_slug / f"{a_slug}.json"
+            debates = load_json(debate_file, [])
+            for idx, rec in enumerate(records):
+                if rec.get("status") != "ill-posed":
+                    continue
+                debate_history = debates[idx] if idx < len(debates) else {}
+                items.append(
+                    {
+                        "key": f"{q_slug}/{a_slug}/{idx}",
+                        "question": rec.get("question"),
+                        "claim": rec.get("ill_posed_claim"),
+                        "debate": debate_history,
+                    }
                 )
-                question_confidence_slider = gr.Slider(
-                    minimum=1, maximum=5, value=3, step=1, label="Confidence in question judgment (1-5)", interactive=False
-                )
-                question_comment_box = gr.Textbox(label="Comment on question meaningfulness", interactive=False)
-            with gr.Column(scale=1):
-                answer_markdown = gr.Markdown(get_answer(1, models[0], models[0]), label="Answer", latex_delimiters=latex_delimiters)
-                correctness_radio = gr.Radio(
-                    choices=["Don't know", "Correct", "Incorrect"],
-                    value="Don't know",
-                    label="Is the answer correct?",
-                    interactive=False
-                )
-                answer_confidence_slider = gr.Slider(
-                    minimum=1, maximum=5, value=3, step=1, label="Confidence in answer judgment (1-5)", interactive=False
-                )
-                answer_comment_box = gr.Textbox(label="Comment on answer correctness", interactive=False)
+    return items
 
-        gr.Markdown("---")
 
-    # Helper to enable/disable UI
-    def set_ui_enabled(enabled):
-        return [
-            gr.update(interactive=enabled) for _ in [
-                question_model_dropdown, number, answer_model_dropdown,
-                prev_question_model_button, next_question_model_button,
-                prev_button, next_button,
-                question_well_posed_radio, question_confidence_slider, question_comment_box,
-                prev_answer_model_button, next_answer_model_button,
-                correctness_radio, answer_confidence_slider, answer_comment_box
-            ]
-        ]
+def list_critiques(critiques_dir: Path, debates_dir: Path) -> List[Dict]:
+    items = []
+    for mode_dir in critiques_dir.glob("*"):
+        mode = mode_dir.name
+        for q_dir in mode_dir.glob("*"):
+            q_slug = q_dir.name
+            for crit_file in q_dir.glob("*.json"):
+                parts = crit_file.stem.split("__")
+                if len(parts) != 2:
+                    continue
+                critic_slug, answer_slug = parts
+                critiques = load_json(crit_file, [])
+                debate_file = debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
+                debates = load_json(debate_file, [])
+                for idx, crit in enumerate(critiques):
+                    if not crit or crit.get("status") != "succeeded":
+                        continue
+                    attempts = crit.get("attempts") or []
+                    last_attempt = attempts[-1] if attempts else {}
+                    debate_history = debates[idx] if idx < len(debates) else {}
+                    items.append(
+                        {
+                            "key": f"{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}",
+                            "question": crit.get("question"),
+                            "critique": last_attempt.get("raw_critique"),
+                            "verdict": last_attempt.get("verdict"),
+                            "notes": last_attempt.get("notes"),
+                            "critic": critic_slug,
+                            "answer_author": answer_slug,
+                            "debate": debate_history,
+                        }
+                    )
+    return items
 
-    def update_error(username):
-        if not username or username.strip() == "":
-            return gr.update(visible=True, value="**Error:** Please enter your username above.")
-        return gr.update(visible=False, value="")
 
-    def confirm_username(username):
-        if not username or username.strip() == "":
-            return set_ui_enabled(False) + [gr.update(visible=True, value="**Error:** Please enter your username above.")]
-        # Load evaluations
-        global evaluations
-        evaluations = load_evaluations(username)
-        # Prefill UI for current selection
-        idx = number.value
-        question_model = question_model_dropdown.value
-        answer_model = answer_model_dropdown.value
-        question_choice, question_conf, question_comment, answer_choice, answer_conf, answer_comment = prefill_ui(idx, question_model, answer_model, username)
-        return (
-            *set_ui_enabled(True),
-            gr.update(visible=False, value=""),
-            # Prefill UI components
-            gr.update(value=question_choice),
-            gr.update(value=question_conf),
-            gr.update(value=question_comment),
-            gr.update(value=answer_choice),
-            gr.update(value=answer_conf),
-            gr.update(value=answer_comment)
-        )
+def record_evaluation(username: str, key: str, verdict: str, comment: str, section: str, store_dir: Path):
+    eval_path = store_dir / f"{username}.json"
+    payload = load_json(eval_path, {"ill_posed": {}, "critiques": {}})
+    payload.setdefault(section, {})
+    payload[section][key] = {"verdict": verdict, "comment": comment}
+    save_json(eval_path, payload)
 
-    confirm_username_btn.click(
-        confirm_username,
-        inputs=username_box,
-        outputs=[
-            question_model_dropdown, number, answer_model_dropdown,
-            prev_question_model_button, next_question_model_button,
-            prev_button, next_button,
-            question_well_posed_radio, question_confidence_slider, question_comment_box,
-            prev_answer_model_button, next_answer_model_button,
-            correctness_radio, answer_confidence_slider, answer_comment_box,
-            error_box,
-            question_well_posed_radio, question_confidence_slider, question_comment_box,
-            correctness_radio, answer_confidence_slider, answer_comment_box
-        ]
-    )
 
-    username_box.change(update_error, inputs=username_box, outputs=error_box)
+def show_item(item: Dict):
+    print(json.dumps(item, indent=2))
 
-    # Prefill UI from evaluations
-    def prefill_ui(idx, question_model, answer_model, username):
-        idx = int(idx)
-        # Prefill question meaningfulness
-        q_eval = evaluations.get("meaningfulness", {}).get(question_model, {}).get(str(idx), {})
-        question_choice = q_eval.get("meaningfulness", "Don't know")
-        question_conf = q_eval.get("confidence", 3)
-        question_comment = q_eval.get("comment", "")
-        # Prefill answer correctness
-        a_eval = evaluations.get("answers", {}).get(question_model, {}).get(str(idx), {}).get(answer_model, {})
-        answer_choice = a_eval.get("correctness", "Don't know")
-        answer_conf = a_eval.get("confidence", 3)
-        answer_comment = a_eval.get("comment", "")
-        return question_choice, question_conf, question_comment, answer_choice, answer_conf, answer_comment
 
-    def save_choice(
-        idx, question_model, answer_model,
-        answer_choice, answer_conf, question_choice, question_conf,
-        answer_comment, question_comment, username
-    ):
-        if not username or username.strip() == "":
-            return gr.update(visible=True, value="**Error:** Please enter your username above.")
-        idx = int(idx)
-        # Save meaningfulness
-        if "meaningfulness" not in evaluations:
-            evaluations["meaningfulness"] = {}
-        if question_model not in evaluations["meaningfulness"]:
-            evaluations["meaningfulness"][question_model] = {}
-        evaluations["meaningfulness"][question_model][str(idx)] = {
-            "meaningfulness": question_choice,
-            "confidence": question_conf,
-            "comment": question_comment
-        }
-        # Save answer, or delete if "Don't know" and no comment
-        if "answers" not in evaluations:
-            evaluations["answers"] = {}
-        if question_model not in evaluations["answers"]:
-            evaluations["answers"][question_model] = {}
-        if str(idx) not in evaluations["answers"][question_model]:
-            evaluations["answers"][question_model][str(idx)] = {}
-        if answer_choice == "Don't know" and not (answer_comment and answer_comment.strip()):
-            # Remove entry if exists
-            if answer_model in evaluations["answers"][question_model][str(idx)]:
-                del evaluations["answers"][question_model][str(idx)][answer_model]
-            # If no answers left for this question, remove the question entry
-            if not evaluations["answers"][question_model][str(idx)]:
-                del evaluations["answers"][question_model][str(idx)]
+def main():
+    parser = argparse.ArgumentParser(description="Human evaluation CLI for ill-posed claims and critiques.")
+    parser.add_argument("--username", required=True, help="Evaluator name.")
+    parser.add_argument("--answers-dir", type=Path, default=Path("answers"))
+    parser.add_argument("--critiques-dir", type=Path, default=Path("critiques"))
+    parser.add_argument("--debates-dir", type=Path, default=Path("debates"))
+    parser.add_argument("--evaluations-dir", type=Path, default=Path("evaluations"))
+    parser.add_argument("--list", choices=["ill-posed", "critiques"], help="List pending items.")
+    parser.add_argument("--show", help="Show a specific key.")
+    parser.add_argument("--verdict", help="Record verdict for a key.")
+    parser.add_argument("--comment", default="", help="Optional comment for verdict.")
+    args = parser.parse_args()
+
+    if args.list:
+        if args.list == "ill-posed":
+            items = list_illposed(args.answers_dir, args.debates_dir)
         else:
-            evaluations["answers"][question_model][str(idx)][answer_model] = {
-                "correctness": answer_choice,
-                "confidence": answer_conf,
-                "comment": answer_comment
+            items = list_critiques(args.critiques_dir, args.debates_dir)
+        for item in items:
+            print(item["key"])
+        return
+
+    if args.show:
+        key = args.show
+        if key.count("/") == 2:
+            # ill-posed
+            parts = key.split("/")
+            q_slug, a_slug, idx = parts[0], parts[1], int(parts[2])
+            answer_file = args.answers_dir / q_slug / f"{a_slug}.json"
+            debate_file = args.debates_dir / "illposed" / q_slug / f"{a_slug}.json"
+            answers = load_json(answer_file, [])
+            debates = load_json(debate_file, [])
+            item = {
+                "key": key,
+                "answer_record": answers[idx] if idx < len(answers) else {},
+                "debate": debates[idx] if idx < len(debates) else {},
             }
-        save_evaluations(username, evaluations)
-        return gr.update(visible=False, value="")
+            show_item(item)
+        else:
+            parts = key.split("/")
+            if len(parts) != 4:
+                raise ValueError("Critique key must look like mode/qslug/critic__answer/idx")
+            mode, q_slug, pair, idx_str = parts
+            critic_slug, answer_slug = pair.split("__")
+            idx = int(idx_str)
+            crit_file = args.critiques_dir / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
+            debate_file = args.debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
+            critiques = load_json(crit_file, [])
+            debates = load_json(debate_file, [])
+            item = {
+                "key": key,
+                "critique_record": critiques[idx] if idx < len(critiques) else {},
+                "debate": debates[idx] if idx < len(debates) else {},
+            }
+            show_item(item)
+        return
 
-    # Update UI when navigation changes
-    def update_question_ui(idx, question_model, answer_model, username):
-        question_choice, question_conf, question_comment, answer_choice, answer_conf, answer_comment = prefill_ui(idx, question_model, answer_model, username)
-        return (
-            get_question(idx, question_model),
-            question_choice, question_conf, question_comment,
-            get_answer(idx, question_model, answer_model),
-            answer_choice, answer_conf, answer_comment
-        )
+    if args.verdict:
+        key = args.verdict.split(":")[0] if ":" in args.verdict else None
+        if not key:
+            raise ValueError("Provide verdict as key:decision (e.g., ill-posed/openai-gpt-5-2025-08-07__...:correct)")
+        key_part, decision = args.verdict.split(":")
+        section = "ill_posed" if key_part.count("/") == 2 else "critiques"
+        record_evaluation(args.username, key_part, decision, args.comment, section, args.evaluations_dir)
+        print(f"Recorded {decision} for {key_part}")
+        return
 
-    number.change(
-        update_question_ui,
-        inputs=[number, question_model_dropdown, answer_model_dropdown, username_box],
-        outputs=[
-            question_markdown,
-            question_well_posed_radio, question_confidence_slider, question_comment_box,
-            answer_markdown,
-            correctness_radio, answer_confidence_slider, answer_comment_box
-        ]
-    )
-    question_model_dropdown.change(
-        update_question_ui,
-        inputs=[number, question_model_dropdown, answer_model_dropdown, username_box],
-        outputs=[
-            question_markdown,
-            question_well_posed_radio, question_confidence_slider, question_comment_box,
-            answer_markdown,
-            correctness_radio, answer_confidence_slider, answer_comment_box
-        ]
-    )
-    answer_model_dropdown.change(
-        update_question_ui,
-        inputs=[number, question_model_dropdown, answer_model_dropdown, username_box],
-        outputs=[
-            question_markdown,
-            question_well_posed_radio, question_confidence_slider, question_comment_box,
-            answer_markdown,
-            correctness_radio, answer_confidence_slider, answer_comment_box
-        ]
-    )
+    parser.print_help()
 
-    def next_fn(idx, question_model):
-        return min(int(idx) + 1, len(questions.get(question_model, [])))
 
-    def prev_fn(idx):
-        return max(int(idx) - 1, 1)
-
-    def next_model_fn(current_model):
-        idx = models.index(current_model)
-        return models[(idx + 1) % len(models)]
-
-    def prev_model_fn(current_model):
-        idx = models.index(current_model)
-        return models[(idx - 1) % len(models)]
-
-    # Navigation buttons
-    next_button.click(next_fn, inputs=[number, question_model_dropdown], outputs=number)
-    prev_button.click(prev_fn, inputs=number, outputs=number)
-    next_question_model_button.click(next_model_fn, inputs=question_model_dropdown, outputs=question_model_dropdown)
-    prev_question_model_button.click(prev_model_fn, inputs=question_model_dropdown, outputs=question_model_dropdown)
-    next_answer_model_button.click(next_model_fn, inputs=answer_model_dropdown, outputs=answer_model_dropdown)
-    prev_answer_model_button.click(prev_model_fn, inputs=answer_model_dropdown, outputs=answer_model_dropdown)
-
-    # Save on any change
-    correctness_radio.change(
-        save_choice,
-        inputs=[
-            number, question_model_dropdown, answer_model_dropdown,
-            correctness_radio, answer_confidence_slider,
-            question_well_posed_radio, question_confidence_slider,
-            answer_comment_box, question_comment_box,
-            username_box
-        ],
-        outputs=error_box
-    )
-    answer_confidence_slider.change(
-        save_choice,
-        inputs=[
-            number, question_model_dropdown, answer_model_dropdown,
-            correctness_radio, answer_confidence_slider,
-            question_well_posed_radio, question_confidence_slider,
-            answer_comment_box, question_comment_box,
-            username_box
-        ],
-        outputs=error_box
-    )
-    answer_comment_box.change(
-        save_choice,
-        inputs=[
-            number, question_model_dropdown, answer_model_dropdown,
-            correctness_radio, answer_confidence_slider,
-            question_well_posed_radio, question_confidence_slider,
-            answer_comment_box, question_comment_box,
-            username_box
-        ],
-        outputs=error_box
-    )
-    question_well_posed_radio.change(
-        save_choice,
-        inputs=[
-            number, question_model_dropdown, answer_model_dropdown,
-            correctness_radio, answer_confidence_slider,
-            question_well_posed_radio, question_confidence_slider,
-            answer_comment_box, question_comment_box,
-            username_box
-        ],
-        outputs=error_box
-    )
-    question_confidence_slider.change(
-        save_choice,
-        inputs=[
-            number, question_model_dropdown, answer_model_dropdown,
-            correctness_radio, answer_confidence_slider,
-            question_well_posed_radio, question_confidence_slider,
-            answer_comment_box, question_comment_box,
-            username_box
-        ],
-        outputs=error_box
-    )
-    question_comment_box.change(
-        save_choice,
-        inputs=[
-            number, question_model_dropdown, answer_model_dropdown,
-            correctness_radio, answer_confidence_slider,
-            question_well_posed_radio, question_confidence_slider,
-            answer_comment_box, question_comment_box,
-            username_box
-        ],
-        outputs=error_box
-    )
-
-    def get_question_text(idx, question_model):
-        idx = max(1, min(int(idx), len(questions.get(question_model, []))))
-        return questions.get(question_model, [""])[idx-1]
-
-    def get_answer_text(idx, question_model, answer_model):
-        return answers.get(question_model, {}).get(answer_model, {}).get(int(idx)-1, "")
-
-    # At the end: show original Markdown and copy button
-    original_markdown_area = gr.TextArea(label="Original Markdown", value="", interactive=False, lines=10, show_copy_button=True)
-    
-    def get_original_markdown(idx, question_model, answer_model):
-        # Compose the original Markdown for the current question and answer
-        idx = max(1, min(int(idx), len(questions.get(question_model, []))))
-        q = questions.get(question_model, [""])[idx-1]
-        a = answers.get(question_model, {}).get(answer_model, {}).get(idx-1, "")
-        return f"**Question:**\n\n{q}\n\n**Answer:**\n\n{a}"
-
-    # Update the textarea whenever navigation changes
-    def update_markdown_area(idx, question_model, answer_model):
-        return get_original_markdown(idx, question_model, answer_model)
-
-    number.change(update_markdown_area, inputs=[number, question_model_dropdown, answer_model_dropdown], outputs=original_markdown_area)
-    question_model_dropdown.change(update_markdown_area, inputs=[number, question_model_dropdown, answer_model_dropdown], outputs=original_markdown_area)
-    answer_model_dropdown.change(update_markdown_area, inputs=[number, question_model_dropdown, answer_model_dropdown], outputs=original_markdown_area)
-
-demo.launch()
+if __name__ == "__main__":
+    main()

@@ -13,7 +13,7 @@ from prompt_library import (
     build_critique_self_check,
     load_critique_guidance,
 )
-from self_improvement import self_improve_answers
+from self_improvement import _safe_load_json, self_improve_answers
 from utils import query_llm_single
 
 load_dotenv()
@@ -56,6 +56,55 @@ def final_answer(entry: Dict) -> Optional[str]:
     return attempts[-1].get("answer")
 
 
+def benchmark_answers(question_model: str, entries: List[Dict]) -> List[Dict]:
+    answers: List[Dict] = []
+    for entry in entries:
+        gen_rounds = entry.get("generation_rounds") or []
+        if not gen_rounds:
+            answers.append({})
+            continue
+        refinements = gen_rounds[-1].get("refinement_rounds") or []
+        if not refinements:
+            answers.append({})
+            continue
+        last_ref = refinements[-1]
+        answers.append(
+            {
+                "answer_model": question_model,
+                "answer": last_ref.get("answer"),
+                "status": entry.get("status"),
+                "attempts": refinements,
+            }
+        )
+    return answers
+
+
+def extract_structured_critique(text: Optional[str]) -> Tuple[str, str]:
+    """
+    Parse a critique JSON (if available) and return verdict and notes (single string).
+    Falls back to marking verdict unknown and capturing the raw text as notes.
+    """
+    verdict = "unknown"
+    notes: str = ""
+    if not text:
+        return verdict, notes
+
+    parsed = _safe_load_json(text)
+    if isinstance(parsed, dict):
+        if isinstance(parsed.get("verdict"), str):
+            verdict = parsed["verdict"]
+        raw_notes = parsed.get("notes")
+        if isinstance(raw_notes, list):
+            notes = "; ".join(str(n) for n in raw_notes)
+        elif raw_notes is not None:
+            notes = str(raw_notes)
+
+    if not notes and text.strip():
+        notes = text.strip()
+
+    return verdict, notes
+
+
 def pick_answer_record(answer_store: List[Dict], idx: int) -> Optional[Dict]:
     if idx >= len(answer_store):
         return None
@@ -68,36 +117,49 @@ def prepare_pairs(
     answer_models: List[str],
     answers_root: Path,
     limit: Optional[int],
+    benchmark_entries: List[Dict],
 ) -> List[Tuple[int, str, str]]:
     pairs = []
     q_slug = _slugify(question_model)
     owner_answer_path = answers_root / q_slug / f"{q_slug}.json"
     owner_answers = load_json(owner_answer_path, [])
+    if not owner_answers:
+        owner_answers = benchmark_answers(question_model, benchmark_entries)
 
     for answer_model in answer_models:
-        if mode == "contradictor" and answer_model == question_model:
-            continue
         a_slug = _slugify(answer_model)
         answer_path = answers_root / q_slug / f"{a_slug}.json"
         answer_records = load_json(answer_path, [])
+        if answer_model == question_model and not answer_records:
+            answer_records = owner_answers
+
+        if mode == "contradictor":
+            # Critics review the question owner's self-answers
+            if answer_model == question_model:
+                continue
+            for idx, owner_entry in enumerate(owner_answers):
+                if limit is not None and len(pairs) >= limit:
+                    break
+                if not owner_entry:
+                    continue
+                pairs.append((idx, answer_model, question_model))
+            continue
+
         for idx, _ in enumerate(answer_records):
             if limit is not None and len(pairs) >= limit:
                 break
-        owner_entry = pick_answer_record(owner_answers, idx)
-        target_entry = pick_answer_record(answer_records, idx)
-        if not owner_entry or not target_entry:
-            continue
-        if mode == "contradictor":
-            critic = answer_model
-            pairs.append((idx, critic, question_model))
-        elif mode == "evaluator":
-            if answer_model == question_model:
+            owner_entry = pick_answer_record(owner_answers, idx)
+            target_entry = pick_answer_record(answer_records, idx)
+            if not owner_entry or not target_entry:
                 continue
-            critic = question_model
-            pairs.append((idx, critic, answer_model))
-        elif mode in {"all", "custom"}:
-            critic = answer_model
-            pairs.append((idx, critic, target_entry.get("answer_model", answer_model)))
+            if mode == "evaluator":
+                if answer_model == question_model:
+                    continue
+                critic = question_model
+                pairs.append((idx, critic, answer_model))
+            elif mode in {"all", "custom"}:
+                critic = answer_model
+                pairs.append((idx, critic, target_entry.get("answer_model", answer_model)))
     return pairs
 
 
@@ -117,8 +179,9 @@ def generate_single_critique(
     if not self_improve:
         critique = query_llm_single(critic_model, prompt, temperature=temperature, reasoning=reasoning)
         critique = clean_math(critique)
-        return critique, [
-            {"round": 1, "critique": critique, "evaluation": None},
+        verdict, notes = extract_structured_critique(critique)
+        return [
+            {"round": 1, "raw_critique": critique, "verdict": verdict, "notes": notes, "evaluation": None},
         ]
 
     initial = query_llm_single(critic_model, prompt, temperature=temperature, reasoning=reasoning)
@@ -142,10 +205,20 @@ def generate_single_critique(
         reasoning=reasoning,
     )[0]
 
-    return results.final_answer, [
-        {"round": att.round, "critique": att.answer, "evaluation": att.evaluation}
-        for att in results.attempts
-    ]
+    enriched_attempts = []
+    for att in results.attempts:
+        verdict, notes = extract_structured_critique(att.answer)
+        enriched_attempts.append(
+            {
+                "round": att.round,
+                "raw_critique": att.answer,
+                "verdict": verdict,
+                "notes": notes,
+                "evaluation": att.evaluation,
+            }
+        )
+
+    return enriched_attempts
 
 
 def main():
@@ -201,7 +274,7 @@ def main():
                             break
                         pairs.append((idx, critic, answerer))
             else:
-                pairs = prepare_pairs(args.mode, question_model, answer_models, args.answers_dir, args.limit)
+                pairs = prepare_pairs(args.mode, question_model, answer_models, args.answers_dir, args.limit, benchmark_entries)
 
             if not pairs:
                 continue
@@ -214,6 +287,8 @@ def main():
                 critic_slug = critic_spec.slug
                 answers_path = args.answers_dir / q_slug / f"{a_slug}.json"
                 answer_records = load_json(answers_path, [])
+                if not answer_records and answer_author == question_model:
+                    answer_records = benchmark_answers(question_model, benchmark_entries)
                 if idx >= len(answer_records):
                     continue
                 answer_entry = answer_records[idx]
@@ -229,9 +304,18 @@ def main():
                 if existing[idx].get("status") == "succeeded":
                     continue
 
-                def task(qe=question_entry, ae=answer_entry, cs=critic_spec, ans_author=answer_author, out=output_path, record_idx=idx, q_text=question_text):
+                def task(
+                    qe=question_entry,
+                    ae=answer_entry,
+                    cs=critic_spec,
+                    ans_author=answer_author,
+                    out=output_path,
+                    record_idx=idx,
+                    q_text=question_text,
+                    q_author=question_model,
+                ):
                     answer_text = final_answer(ae) or ""
-                    critique_text, attempts = generate_single_critique(
+                    attempts = generate_single_critique(
                         cs.name,
                         q_text,
                         ans_author,
@@ -245,9 +329,11 @@ def main():
                     )
                     updated = {
                         "question": q_text,
+                        "run_id": qe.get("run_id"),
+                        "topic_slug": qe.get("topic_slug"),
+                        "question_author": q_author,
                         "critic": cs.name,
                         "answer_author": ans_author,
-                        "critique": critique_text,
                         "status": "succeeded",
                         "attempts": attempts,
                     }

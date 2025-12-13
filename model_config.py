@@ -1,0 +1,77 @@
+import json
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, Iterable, List, Optional
+
+
+def _slugify(model_name: str) -> str:
+    return model_name.replace("/", "-").replace(":", "-")
+
+
+@dataclass
+class ModelSpec:
+    name: str
+    roles: List[str]
+    temperature: float
+    reasoning: Optional[str] = None
+    display_name: Optional[str] = None
+
+    @property
+    def slug(self) -> str:
+        return _slugify(self.name)
+
+    @property
+    def pretty(self) -> str:
+        return self.display_name or self.name
+
+
+class ModelRegistry:
+    def __init__(self, config_path: Path):
+        with config_path.open("r") as f:
+            raw = json.load(f)
+        self.default_temperature = raw.get("default_temperature", 0.2)
+        self.default_reasoning = raw.get("default_reasoning")
+        self.models: Dict[str, ModelSpec] = {}
+        self.slug_index: Dict[str, ModelSpec] = {}
+        for entry in raw.get("models", []):
+            spec = ModelSpec(
+                name=entry["name"],
+                roles=entry.get("roles", []),
+                temperature=entry.get("temperature", self.default_temperature),
+                reasoning=entry.get("reasoning", self.default_reasoning),
+                display_name=entry.get("display_name"),
+            )
+            self.models[spec.name] = spec
+            self.slug_index[spec.slug] = spec
+
+    def by_role(self, role: str) -> List[ModelSpec]:
+        return [spec for spec in self.models.values() if role in spec.roles]
+
+    def pick(self, names: Optional[Iterable[str]]) -> List[ModelSpec]:
+        if not names:
+            return list(self.models.values())
+        selected = []
+        for name in names:
+            if name not in self.models:
+                raise ValueError(f"Model '{name}' not found in registry")
+            selected.append(self.models[name])
+        return selected
+
+    def display_name_for_slug(self, slug: str) -> str:
+        spec = self.slug_index.get(slug)
+        if spec:
+            return spec.pretty
+        return slug
+
+    def display_name_for_name(self, name: str) -> str:
+        spec = self.models.get(name)
+        if spec:
+            return spec.pretty
+        return name
+
+
+def load_registry(path: str = "configs/models.json") -> ModelRegistry:
+    return ModelRegistry(Path(path))
+
+
+__all__ = ["ModelRegistry", "ModelSpec", "load_registry", "_slugify"]

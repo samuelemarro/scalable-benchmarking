@@ -1,111 +1,213 @@
-import os
-import requests
+import argparse
 import json
 from pathlib import Path
+from typing import Dict, List, Tuple
+
 from dotenv import load_dotenv
-from utils import query_llm_single
-from multiprocessing import Pool
+
+from model_config import _slugify, load_registry
+from prompt_library import (
+    build_question_prompt,
+    build_refine_prompt,
+    build_self_check_prompt,
+    load_answer_guidance,
+    load_question_guidance,
+)
+from self_improvement import self_improve_answers
+from utils import query_llm_batch, query_llm_single
 
 load_dotenv()
 
-PROMPT = """
-You are to generate ONE very challenging but solvable mathematics problem and its answer.
 
-**Goal.** Create a very hard problem that is difficult for advanced mathematicians, while remaining self-contained.
-
-**Content constraints**
-- Must measure genuine mathematical skill (multi-step reasoning, creative insight, careful case control). Avoid ill-posed, trick, or brute-force-only tasks.
-- No open problems, no “guess the number”, no huge-number factorization, no tasks requiring external data or long numeric search.
-- "Prove that..." problems are allowed.
-- Include all needed definitions, assumptions, domains, and bounds.
-- Solving the problem should not require tools (e.g., a code interpreter).
-- The problem should be as hard as possible while still being solvable.
-- Aim for diversity in problem types and topic. You will be provided with a list of questions you have previously written.
-
-**Style/formatting constraints**
-- Use GitHub Markdown for the statement and answer (headings, lists, inline math as plain text/LaTeX if useful).
-- Do **not** use code blocks in the output.
-- Your output should end with the content **exactly** in this order and with these tags (though you are allowed to add more content before this):
-
-[QUESTION]
-<problem statement in GitHub Markdown, self-contained, with clearly stated goal and answer format>
-
-[ANSWER]
-<the final answer with the steps to reach the solution>
+def load_topic_info(path: Path) -> Dict[str, Dict]:
+    data = json.loads(path.read_text())
+    info = {}
+    for item in data:
+        slug = item.get("slug")
+        if slug:
+            info[slug] = item
+    return info
 
 
+def load_runs(path: Path, topic_info: Dict[str, Dict]) -> List[Dict]:
+    data = json.loads(path.read_text())
+    runs = []
+    for run_id, payload in data.items():
+        topic_slug = payload.get("topic")
+        topic_name = topic_info.get(topic_slug, {}).get("name", topic_slug)
+        runs.append({"run_id": str(run_id), "topic_slug": topic_slug, "topic_name": topic_name})
+    return runs
 
-The previous questions you have generated are:
-{PREVIOUS_QUESTIONS}
 
-Now generate the problem and answer using the required output format.
-"""
+def load_existing(path: Path) -> List[Dict]:
+    if not path.exists():
+        return []
+    with path.open("r") as f:
+        return json.load(f)
 
-def generate_for_model(model, num_samples, reasoning=None):
-    internal_model_name = model.replace("/", "-").replace(":", "-")
 
-    path = Path(f'./benchmarks/{internal_model_name}.json')
+def save_existing(path: Path, data: List[Dict]):
     path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w") as f:
+        json.dump(data, f, indent=2)
 
-    current_data = []
-    if path.exists() and path.is_file():
-        with open(path, "r") as f:
-            current_data = json.load(f)
 
-    for i in range(len(current_data), num_samples):
-        try:
-            print(f"Generating sample {i + 1} for model {model}...")
+def parse_question_answer(text: str) -> Tuple[str, str]:
+    if "[QUESTION]" in text and "[ANSWER]" in text:
+        question, answer = text.split("[ANSWER]", 1)
+        question = question.replace("[QUESTION]", "").strip()
+        return question, answer.strip()
+    return "", text.strip()
 
-            question_list = ""
 
-            if len(current_data) > 0:
-                for j, item in enumerate(current_data):
-                    if "question" in item:
-                        question = item["question"].replace("\n", " ")
-                        question_list += f"**{j + 1}.** {question} \n\n"
-            else:
-                question_list = "No previous questions available."
+def clean_math(text: str) -> str:
+    text = text.replace("\\( ", "$").replace("\\(", "$")
+    text = text.replace(" \\)", "$").replace("\\)", "$")
+    text = text.replace("\\[", "$$").replace("\\]", "$$")
+    return text
 
-            specific_prompt = PROMPT.format(PREVIOUS_QUESTIONS=question_list)
 
-            response = query_llm_single(model, specific_prompt, temperature=1, reasoning=reasoning)
+def upsert(entries: List[Dict], run_id: str, topic_slug: str, topic_name: str) -> Dict:
+    for entry in entries:
+        if entry.get("run_id") == run_id:
+            return entry
+    entry = {
+        "run_id": run_id,
+        "topic_slug": topic_slug,
+        "topic_name": topic_name,
+        "status": "pending",
+        "generation_rounds": [],
+    }
+    entries.append(entry)
+    return entry
 
-            # Split the response into question and answer
-            if "[QUESTION]" in response and "[ANSWER]" in response:
-                question, answer = response.split("[ANSWER]", 1)
-                question = question.replace("[QUESTION]", "").strip()
-                answer = answer.strip()
-                response = {
+
+def generate_questions(model: str, runs: List[Dict], prev_map: Dict[str, Dict], disable_batch: bool, guidance: str, temperature: float, reasoning: str):
+    prompts = []
+    for run in runs:
+        run_id = run["run_id"]
+        topic_name = run["topic_name"]
+        previous_attempts: List[str] = []
+        prev_entry = prev_map.get(run_id, {})
+        if prev_entry.get("status") == "failed":
+            for gen_round in prev_entry.get("generation_rounds", []):
+                refinements = gen_round.get("refinement_rounds", [])
+                if refinements:
+                    question = refinements[-1].get("question")
+                    if question:
+                        previous_attempts.append(question)
+        prompts.append(build_question_prompt(topic_name, guidance, previous_attempts if previous_attempts else None))
+
+    if len(prompts) == 1 or disable_batch:
+        return [
+            query_llm_single(model, prompt, temperature=temperature, reasoning=reasoning)
+            for prompt in prompts
+        ]
+    return query_llm_batch(model, prompts, temperature=temperature, reasoning=reasoning)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate benchmark questions with self-critique.")
+    parser.add_argument("--runs-file", type=Path, required=True, help="JSON mapping run IDs to topic slugs.")
+    parser.add_argument("--topic-info-file", type=Path, default=Path("configs/topic_info.json"), help="JSON with topic metadata.")
+    parser.add_argument("--models", nargs="*", help="Subset of model names to run.")
+    parser.add_argument("--config", type=Path, default=Path("configs/models.json"), help="Model registry JSON.")
+    parser.add_argument("--output-dir", type=Path, default=Path("benchmarks"), help="Where to store benchmark files.")
+    parser.add_argument("--max-rounds", type=int, default=3, help="Self-critique rounds.")
+    parser.add_argument("--limit", type=int, default=None, help="Limit number of topics (for testing).")
+    parser.add_argument("--disable-batch", action="store_true", help="Disable batching even when available.")
+    parser.add_argument("--force-rerun-failures", action="store_true", help="Retry topics marked as failed.")
+    args = parser.parse_args()
+
+    registry = load_registry(str(args.config))
+    question_guidance = load_question_guidance()
+    answer_guidance = load_answer_guidance()
+    topic_info = load_topic_info(args.topic_info_file)
+    runs = load_runs(args.runs_file, topic_info)
+    if args.limit is not None:
+        runs = runs[: args.limit]
+
+    models = registry.pick(args.models) if args.models else registry.by_role("benchmark")
+
+    for model_spec in models:
+        slug = _slugify(model_spec.name)
+        output_path = args.output_dir / f"{slug}.json"
+        current_entries = load_existing(output_path)
+
+        run_id_to_entry = {entry.get("run_id"): entry for entry in current_entries}
+        pending_runs = []
+
+        for run in runs:
+            entry = run_id_to_entry.get(run["run_id"])
+            if entry and entry.get("status") == "succeeded":
+                continue
+            if entry and entry.get("status") == "failed" and not args.force_rerun_failures:
+                continue
+            pending_runs.append(run)
+
+        if not pending_runs:
+            print(f"No pending topics for {model_spec.name}")
+            continue
+
+        print(f"Generating {len(pending_runs)} topics for {model_spec.name}")
+        raw_outputs = generate_questions(
+            model_spec.name,
+            pending_runs,
+            run_id_to_entry,
+            args.disable_batch,
+            question_guidance,
+            model_spec.temperature,
+            model_spec.reasoning,
+        )
+
+        questions = []
+        answers = []
+        for run, raw in zip(pending_runs, raw_outputs):
+            q, a = parse_question_answer(raw)
+            q = clean_math(q)
+            a = clean_math(a)
+            questions.append(q)
+            answers.append(a)
+
+        eval_prompts = lambda q, a, idx: build_self_check_prompt(q, a, answer_guidance)
+        refine_prompts = lambda q, a, fb: build_refine_prompt(q, a, fb, answer_guidance)
+
+        improvements = self_improve_answers(
+            model_spec.name,
+            questions,
+            answers,
+            eval_prompts,
+            refine_prompts,
+            max_rounds=args.max_rounds,
+            disable_batch=args.disable_batch,
+            temperature=model_spec.temperature,
+            reasoning=model_spec.reasoning,
+        )
+
+        for run, question, result in zip(pending_runs, questions, improvements):
+            entry = upsert(current_entries, run["run_id"], run["topic_slug"], run["topic_name"])
+            attempt_records = [
+                {
+                    "round": att.round,
                     "question": question,
-                    "answer": answer
+                    "answer": att.answer,
+                    "evaluation": att.evaluation,
                 }
-            else:
-                response = {"error": "Response format is incorrect. Expected [QUESTION] and [ANSWER] tags."}
+                for att in result.attempts
+            ]
 
-            for k in response.keys():
-                response[k] = response[k].replace("\\( ", "$").replace("\\(", "$")
-                response[k] = response[k].replace(" \\)", "$").replace("\\)", "$")
-                response[k] = response[k].replace("\\[", "$$").replace("\\]", "$$")
+            entry["generation_rounds"].append(
+                {
+                    "refinement_rounds": attempt_records,
+                    "status": result.status,
+                }
+            )
 
-            current_data.append(response)
+            entry["status"] = result.status
 
-            with open(path, "w") as f:
-                json.dump(current_data, f, indent=4)
-        except Exception as e:
-            print("An error occurred:", e)
+        save_existing(output_path, current_entries)
+        print(f"Wrote {output_path}")
+
 
 if __name__ == "__main__":
-    models = [
-        ("openai/gpt-5-2025-08-07", "high"),
-        ("anthropic/claude-opus-4.1", "high"),
-        ("google/gemini-2.5-pro", "high"),
-        ("openai/gpt-4o-2024-08-06", None),
-        ("openai/gpt-3.5-turbo", None),
-        ("meta-llama/llama-4-maverick", None),
-        ("microsoft/phi-4-reasoning-plus", None)
-    ]
-    num_samples = 30
-
-    # Use multiprocessing to parallelize by model
-    with Pool(processes=len(models)) as pool:
-        pool.starmap(generate_for_model, [(model, num_samples, reasoning) for (model, reasoning) in models])
+    main()
