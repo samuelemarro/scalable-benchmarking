@@ -1,5 +1,0 @@
-OPENROUTER_API_KEY=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
-OPENAI_API_KEY=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
-ANTHROPIC_API_KEY=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
-
-curl https://api.openai.com/v1/batches -H "Authorization: Bearer $OPENAI_API_KEY"
