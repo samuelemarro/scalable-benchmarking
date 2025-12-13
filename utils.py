@@ -114,9 +114,12 @@ def _build_batch_requests(model: str, messages_list: list, prompt: str, response
             "model": model,
             "messages": [
                 {"role": "user", "content": message},
-            ],
-            "temperature": temperature
+            ]
         }
+
+        if temperature is not None:
+            body["temperature"] = temperature
+
         if prompt:
             body["system"] = prompt
         norm_model = ANTHROPIC_INTERNAL_NAMES.get(model, model)
@@ -390,7 +393,7 @@ def query_llm_batch(model: str, messages_list: list, prompt: str = "You are a he
     max_workers: number of parallel workers for non-Anthropic models.
     """
     if 'anthropic' in model:
-        if temperature != 1 and (reasoning is not None):
+        if (temperature != 1 and temperature is not None) and (reasoning is not None):
             raise ValueError("Cannot set both temperature and reasoning in Anthropic requests")
         norm_model = ANTHROPIC_INTERNAL_NAMES.get(model.replace('anthropic/', ''), model.replace('anthropic/', ''))
         return _query_anthropic_batch(norm_model, messages_list, prompt, response_format, temperature, api_kwargs, reasoning=reasoning)
