@@ -89,7 +89,7 @@ def extract_structured_critique(text: Optional[str]) -> Tuple[str, str]:
     if not text:
         return verdict, notes
 
-    parsed = _safe_load_json(text)
+    parsed = _safe_load_json(text, schema_hint='{"verdict": "...", "notes": "..."}')
     if isinstance(parsed, dict):
         if isinstance(parsed.get("verdict"), str):
             verdict = parsed["verdict"]
