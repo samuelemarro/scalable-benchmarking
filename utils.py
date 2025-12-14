@@ -473,15 +473,18 @@ def _query_gemini_batch(model: str, messages_list: list, prompt: str, response_f
         src=requests_inline
     )
 
-    while True:
-        job = client.batches.get(name=batch.name)
-        state = getattr(job, "state", None)
-        print('Job state:', state)
-        if state and state.name in {"JOB_STATE_SUCCEEDED", "JOB_STATE_FAILED", "JOB_STATE_CANCELLED", "JOB_STATE_EXPIRED"}:
-            if state.name != "JOB_STATE_SUCCEEDED":
-                raise RuntimeError(f"Gemini batch ended with state {state.name}")
-            break
-        time.sleep(5)
+    with tqdm(total=1, desc="Polling Gemini batch", bar_format="{desc}: {elapsed} [{bar}]") as pbar:
+        while True:
+            job = client.batches.get(name=batch.name)
+            state = getattr(job, "state", None)
+            state_name = state.name if state else "UNKNOWN"
+            if state_name in {"JOB_STATE_SUCCEEDED", "JOB_STATE_FAILED", "JOB_STATE_CANCELLED", "JOB_STATE_EXPIRED"}:
+                if state_name != "JOB_STATE_SUCCEEDED":
+                    raise RuntimeError(f"Gemini batch ended with state {state_name}")
+                pbar.update(1)
+                break
+            pbar.set_postfix_str(f"State: {state_name}")
+            time.sleep(5)
 
     if job.error:
         raise RuntimeError(f"Gemini batch error: {job.error}")
