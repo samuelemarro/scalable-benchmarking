@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 from model_config import _slugify, load_registry
 from prompt_library import load_answer_guidance, load_question_guidance
-from utils import query_llm_single
+from model_api import query_llm_single
 
 load_dotenv()
 

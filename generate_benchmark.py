@@ -15,7 +15,7 @@ from prompt_library import (
     load_question_guidance,
 )
 from self_improvement import self_improve_answers
-from utils import query_llm_batch, query_llm_single
+from model_api import query_llm_batch, query_llm_single
 
 load_dotenv()
 

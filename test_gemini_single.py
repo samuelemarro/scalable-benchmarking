@@ -1,6 +1,6 @@
 import os
 
-from utils import query_llm_single
+from model_api import query_llm_single
 
 import dotenv
 dotenv.load_dotenv()

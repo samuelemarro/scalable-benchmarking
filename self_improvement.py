@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Sequence
 
-from utils import query_llm_batch, query_llm_single
+from model_api import query_llm_batch, query_llm_single
 
 
 def _load_parsing_config() -> Optional[Dict]:
@@ -47,7 +47,7 @@ def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[dict]:
     prompt_lines.append("If you cannot repair, respond with the string \"can't parse\".")
     prompt = "\n".join(prompt_lines)
     try:
-        from utils import query_llm_single
+        from model_api import query_llm_single
 
         repaired = query_llm_single(model, text, prompt=prompt, temperature=0)
         repaired = _clean_json_text(repaired)
