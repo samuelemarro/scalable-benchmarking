@@ -1,15 +1,20 @@
 import json
 import os
+import re
 import tempfile
 import time
 import uuid
 
+
 import requests
 from tqdm import tqdm
+from google import genai
+from google.genai import types as genai_types
 
 OPENAI_API_URL = "https://api.openai.com/v1"
 ANTHROPIC_INTERNAL_NAMES = {
     "claude-opus-4.1": "claude-opus-4-1",
+    "claude-opus-4.5": "claude-opus-4-5-20251101",
     "claude-opus-4": "claude-opus-4",
     "claude-sonnet-4": "claude-sonnet-4",
     "claude-3.7-sonnet": "claude-3-7-sonnet",
@@ -22,6 +27,7 @@ ANTHROPIC_INTERNAL_NAMES = {
 
 ANTHROPIC_MAX_TOKENS = {
     "claude-opus-4-1": 32000,
+    "claude-opus-4-5-20251101": 64000,
     "claude-opus-4": 32000,
     "claude-sonnet-4": 64000,
     "claude-3-7-sonnet": 64000,
@@ -52,6 +58,9 @@ def query_llm(model: str, messages: list, response_format: str = None, temperatu
     """
     Query a single LLM endpoint (OpenRouter).
     """
+
+    if "gemini" in model:
+        return _query_gemini_single(model, messages, response_format, temperature, api_kwargs, reasoning)
 
     if 'anthropic' in model and api_kwargs and api_kwargs.get("thinking") and temperature != 1:
         raise ValueError("Cannot set both temperature and thinking in Anthropic requests")
@@ -386,12 +395,145 @@ def _single_query_worker(args):
     return query_llm_single(model, message, prompt=prompt, response_format=response_format, temperature=temperature, api_kwargs=api_kwargs, reasoning=reasoning)
 
 
+def _get_gemini_client():
+    if not genai:
+        raise RuntimeError("google-genai is not installed")
+    api_key = os.getenv("GEMINI_API_KEY")
+    project = os.getenv("GOOGLE_CLOUD_PROJECT")
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY not set in environment")
+    return genai.Client(api_key=api_key, project=project)
+
+
+def _normalize_gemini_model(model: str) -> str:
+    return model.replace("google/", "")
+
+
+def _gemini_contents_from_messages(messages: list, prompt: str):
+    system_instruction = None
+    contents = []
+    for msg in messages:
+        role = msg.get("role", "user")
+        text = msg.get("content", "")
+        if role == "system":
+            system_instruction = text
+        else:
+            contents.append({"role": role, "parts": [{"text": text}]})
+    if prompt and not system_instruction:
+        system_instruction = prompt
+    return contents, system_instruction
+
+
+def _query_gemini_single(model: str, messages: list, response_format: str, temperature: float, api_kwargs: dict, reasoning: str):
+    client = _get_gemini_client()
+    model = _normalize_gemini_model(model)
+    contents, system_instruction = _gemini_contents_from_messages(messages, prompt=None)
+    thinking_config = None
+    if reasoning in ["medium", "high"]:
+        thinking_config = genai_types.ThinkingConfig(include_thoughts=False, thinking_level=reasoning)
+    config = genai_types.GenerateContentConfig(
+        temperature=temperature,
+        thinking_config=thinking_config,
+        system_instruction=system_instruction,
+    )
+    #help(client.models.generate_content)
+    resp = client.models.generate_content(
+        model=model,
+        contents=contents,
+        config=config,
+        #system_instruction=system_instruction,
+    )
+    parts = resp.candidates[0].content.parts if resp.candidates else []
+    text_parts = [p.text for p in parts if getattr(p, "text", None)]
+    return "".join(text_parts)
+
+
+def _query_gemini_batch(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict, reasoning: str):
+    client = _get_gemini_client()
+    model = _normalize_gemini_model(model)
+    requests_inline = []
+    for msg in messages_list:
+        contents, system_instruction = _gemini_contents_from_messages([{"role": "user", "content": msg}], prompt)
+        requests_inline.append(
+            genai_types.InlinedRequest(
+                contents=contents,
+                config=genai_types.GenerateContentConfig(
+                    temperature=temperature,
+                    thinking_config=genai_types.ThinkingConfig(
+                        include_thoughts=False,
+                        thinking_level=reasoning
+                    ),
+                    system_instruction=system_instruction
+                )
+            )
+        )
+
+    batch = client.batches.create(
+        model=model,
+        src=requests_inline
+    )
+
+    while True:
+        job = client.batches.get(name=batch.name)
+        state = getattr(job, "state", None)
+        print('Job state:', state)
+        if state and state.name in {"JOB_STATE_SUCCEEDED", "JOB_STATE_FAILED", "JOB_STATE_CANCELLED", "JOB_STATE_EXPIRED"}:
+            if state.name != "JOB_STATE_SUCCEEDED":
+                raise RuntimeError(f"Gemini batch ended with state {state.name}")
+            break
+        time.sleep(5)
+
+    if job.error:
+        raise RuntimeError(f"Gemini batch error: {job.error}")
+    responses = []
+
+    if job.dest and getattr(job.dest, "file_name", None):
+        file_name = job.dest.file_name
+        content_bytes = client.files.download(file=file_name)
+        text = content_bytes.decode("utf-8")
+        for line in text.strip().splitlines():
+            try:
+                obj = json.loads(line)
+                resp = obj.get("response") or obj.get("inlineResponse")
+                if not resp:
+                    responses.append("")
+                    continue
+                candidates = resp.get("candidates") or []
+                if not candidates:
+                    responses.append("")
+                    continue
+                parts = candidates[0].get("content", {}).get("parts", [])
+                text_parts = [p.get("text", "") for p in parts if p.get("text")]
+                responses.append("".join(text_parts))
+            except Exception:
+                responses.append("")
+    elif job.dest and getattr(job.dest, "inlined_responses", None):
+        for inline_response in job.dest.inlined_responses:
+            resp = getattr(inline_response, "response", None)
+            if resp and getattr(resp, "candidates", None):
+                parts = resp.candidates[0].content.parts
+                text_parts = [p.text for p in parts if getattr(p, "text", None)]
+                responses.append("".join(text_parts))
+            elif getattr(inline_response, "error", None):
+                responses.append(f"[Error: {inline_response.error}]")
+            else:
+                responses.append("")
+    else:
+        responses = []
+
+    if len(responses) != len(messages_list):
+        return [_query_gemini_single(model, [{"role": "user", "content": m}], response_format, temperature, api_kwargs, reasoning) for m in messages_list]
+    return responses
+
+
 def query_llm_batch(model: str, messages_list: list, prompt: str = "You are a helpful assistant.", response_format: str = None, temperature: float = 1, api_kwargs: dict = None, reasoning: str = None, max_workers: int = 8) -> list:
     """
     Batch query for LLMs: only Anthropic Claude batch API is used. All other models use parallel processing (multiprocessing).
     reasoning: None, "medium", or "high". If set, enables Claude 'thinking' or OpenRouter 'reasoning'.
     max_workers: number of parallel workers for non-Anthropic models.
     """
+    if "gemini" in model:
+        return _query_gemini_batch(model, messages_list, prompt, response_format, temperature, api_kwargs, reasoning)
     if 'anthropic' in model:
         if (temperature != 1 and temperature is not None) and (reasoning is not None):
             raise ValueError("Cannot set both temperature and reasoning in Anthropic requests")
