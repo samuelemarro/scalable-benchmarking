@@ -1,73 +1,9 @@
 import json
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Callable, Dict, List, Optional, Sequence
 
 from model_api import query_llm_batch, query_llm_single
-
-
-def _load_parsing_config() -> Optional[Dict]:
-    cfg_path = Path("configs/parsing.json")
-    if cfg_path.exists():
-        try:
-            return json.loads(cfg_path.read_text())
-        except Exception:
-            return None
-    return None
-
-
-def _clean_json_text(text: str) -> str:
-    text = text.replace("```json", "```")
-
-    if "```" in text:
-        parts = text.split("```")
-        if len(parts) >= 2:
-            # take first fenced block
-            return parts[1].strip()
-    start = text.find("{")
-    end = text.rfind("}")
-    if start != -1 and end != -1 and end > start:
-        return text[start : end + 1]
-    return text
-
-
-def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[dict]:
-    cfg = _load_parsing_config()
-    if not cfg:
-        return None
-    model = cfg.get("model")
-    if not model:
-        return None
-    prompt_lines = [
-        "You are a strict JSON repair assistant.",
-        "Given the malformed text below, output a valid JSON object only.",
-    ]
-    if schema_hint:
-        prompt_lines.append(f"Schema: {schema_hint}")
-    prompt_lines.append("If you cannot repair, respond with the string \"can't parse\".")
-    prompt = "\n".join(prompt_lines)
-    try:
-        from model_api import query_llm_single
-
-        repaired = query_llm_single(model, text, prompt=prompt, temperature=0)
-        repaired = _clean_json_text(repaired)
-        return json.loads(repaired)
-    except Exception:
-        return None
-
-
-def _safe_load_json(text: str, schema_hint: Optional[str] = None) -> Optional[dict]:
-    try:
-        return json.loads(text)
-    except json.JSONDecodeError:
-        pass
-    cleaned = _clean_json_text(text)
-    try:
-        return json.loads(cleaned)
-    except json.JSONDecodeError:
-        pass
-    repaired = _repair_with_model(text, schema_hint)
-    return repaired
+from utils import safe_load_json
 
 
 @dataclass
@@ -126,7 +62,7 @@ def self_improve_answers(
         refine_indices = []
 
         for idx, eval_text in zip(active_indices, eval_responses):
-            evaluation = _safe_load_json(
+            evaluation = safe_load_json(
                 eval_text,
                 schema_hint='{"verdict": "pass|fail", "ill_posed": bool, "issues": [string], "improvements": string}',
             ) or {

@@ -13,7 +13,8 @@ from prompt_library import (
     build_critique_self_check,
     load_critique_guidance,
 )
-from self_improvement import _safe_load_json, self_improve_answers
+from self_improvement import self_improve_answers
+from utils import safe_load_json
 from model_api import query_llm_batch, query_llm_single
 
 load_dotenv()
@@ -89,7 +90,7 @@ def extract_structured_critique(text: Optional[str]) -> Tuple[str, str]:
     if not text:
         return verdict, notes
 
-    parsed = _safe_load_json(text, schema_hint='{"verdict": "...", "notes": "..."}')
+    parsed = safe_load_json(text, schema_hint='{"verdict": "...", "notes": "..."}')
     if isinstance(parsed, dict):
         if isinstance(parsed.get("verdict"), str):
             verdict = parsed["verdict"]
