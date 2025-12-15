@@ -54,15 +54,55 @@ def anthropic_effort_to_tokens(model: str, effort: str):
     return int(max(1024, min(32000, EFFORT_RATIOS[effort] * max_tokens)))
 
 
+def _query_openai_single(model: str, messages: list, response_format: str, temperature: float, api_kwargs: dict, reasoning: str):
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise RuntimeError("OPENAI_API_KEY not set in environment")
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "model": model,
+        "messages": messages,
+        "temperature": temperature,
+    }
+    if response_format:
+        payload["response_format"] = response_format
+    if reasoning:
+        payload["reasoning_effort"] = reasoning
+    if api_kwargs:
+        for k, v in api_kwargs.items():
+            if k not in ["reasoning"]:
+                payload[k] = v
+
+    resp = requests.post(f"{OPENAI_API_URL}/chat/completions", headers=headers, json=payload)
+    if resp.status_code != 200:
+        raise RuntimeError(f"OpenAI error: {resp.status_code} - {resp.text}")
+    data = resp.json()
+    choices = data.get("choices") or []
+    if not choices:
+        raise RuntimeError(f"No choices in OpenAI response: {data}")
+    message_obj = choices[0].get("message", {})
+    content = message_obj.get("content")
+    if isinstance(content, list):
+        text_parts = [part.get("text", "") for part in content if part.get("type") == "text"]
+        return "".join(text_parts)
+    return content or ""
+
+
 def query_llm(model: str, messages: list, response_format: str = None, temperature: float = 1, api_kwargs: dict = None, reasoning: str = None) -> str:
     """
     Query a single LLM endpoint (OpenRouter).
     """
 
+    if model.startswith("openai/"):
+        return _query_openai_single(model.replace("openai/", ""), messages, response_format, temperature, api_kwargs, reasoning)
+
     if "gemini" in model:
         return _query_gemini_single(model, messages, response_format, temperature, api_kwargs, reasoning)
 
-    if 'anthropic' in model and api_kwargs and api_kwargs.get("thinking") and temperature != 1:
+    if 'anthropic' in model and api_kwargs and api_kwargs.get("thinking") and (temperature is not None and temperature != 1):
         raise ValueError("Cannot set both temperature and thinking in Anthropic requests")
 
     json_kwargs = {}
@@ -375,7 +415,7 @@ def _query_openai_batch(model: str, messages_list: list, prompt: str, response_f
                 if status in {"failed", "cancelled", "expired"}:
                     raise RuntimeError(f"OpenAI batch ended with status '{status}': {poll_data}")
 
-                pbar.set_postfix_str(f"Status: {status}")
+                pbar.set_description(f"Polling OpenAI batch (status: {status})")
                 time.sleep(5)
 
         content_url = OPENAI_CONTENT_URL.format(output_file_id=output_file_id)
