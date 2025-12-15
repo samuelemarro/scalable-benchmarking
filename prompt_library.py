@@ -27,10 +27,12 @@ def build_question_prompt(topic: str, guidance_text: str, previous_questions: Op
             f"\nEarlier attempts:\n{attempts}\n"
         )
     return (
-        "Create a single very challenging but solvable mathematics problem and provide a full solution."
+        "Create a single very challenging but solvable mathematics problem and provide a full solution.\n"
+        "This question should be at the level of an advanced mathematician, but still solvable with clear reasoning\n"
+        "Where necessary, use standard mathematical notation (LaTeX) to express formulas.\n"
         "\nFollow the question quality rules:\n"
         f"{guidance_text}\n"
-        f"\nTopic: {topic}\n"
+        f"\nThe topic of the question to generate is: {topic}\n"
         f"{extra}"
         "\nOutput using the tags:\n[QUESTION]\n<problem statement>\n\n[ANSWER]\n<complete answer>"
     )
@@ -40,6 +42,7 @@ def build_answer_prompt(question: str, guidance_text: str) -> str:
     return (
         "Solve the mathematics question below.\n"
         "Use a clear chain of reasoning and include the final answer.\n"
+        "Where necessary, use standard mathematical notation (LaTeX) to express formulas.\n"
         f"Follow the answer quality rules:\n{guidance_text}\n\n"
         f"[QUESTION]\n{question}\n"
     )
@@ -50,8 +53,19 @@ def build_self_check_prompt(question: str, answer: str, answer_guidance: str) ->
         "You will grade your own answer to the given question.\n"
         f"Question:\n{question}\n\nAnswer:\n{answer}\n\n"
         f"Use this rubric:\n{answer_guidance}\n\n"
-        "Return a JSON object with keys verdict (pass/fail), ill_posed (true/false),"
-        " issues (list of strings), and improvements (short text). The last two are optional."
+        "Where necessary, use standard mathematical notation (LaTeX) to express formulas.\n"
+        "Return ONLY a JSON object following this schema (no extra text):\n"
+        "```\n"
+        "{\n"
+        '  "verdict": "pass" | "fail",\n'
+        '  "ill_posed": true | false,\n'
+        '  "issues": [<string>, ...],\n'
+        '  "improvements": "<short text>"\n'
+        "}\n"
+        "```"
+        'Where "verdict" indicates if the answer is correct, "ill_posed" indicates if the question was unanswerable as posed,\n'
+        ' "issues" is a list of specific problems with the answer, and "improvements" is guidance on how to improve it.\n'
+        
     )
 
 
@@ -60,6 +74,7 @@ def build_refine_prompt(question: str, answer: str, feedback: str, guidance: str
         "Improve the answer to the question given the feedback.\n"
         f"Question:\n{question}\n\nCurrent answer:\n{answer}\n\nFeedback:\n{feedback}\n\n"
         f"Apply the rubric:\n{guidance}\n\n"
+        "Where necessary, use standard mathematical notation (LaTeX) to express formulas.\n"
         "Return only the revised answer."
     )
 
@@ -68,8 +83,16 @@ def build_critique_prompt(question: str, author: str, answer: str, guidance: str
     return (
         f"You are critiquing an answer.\nFollow the critique guidance:\n{guidance}\n\n"
         f"Question (by {author}):\n{question}\n\nAnswer:\n{answer}\n\n"
-        "Respond ONLY with a JSON object containing the keys verdict (correct/incorrect/insufficient/obscure),"
-        " notes (short text string, not a list), and suggestions (optional). Do not include any extra text."
+        "Respond ONLY with a JSON object following this schema (no extra text):\n"
+        "```\n"
+        "{\n"
+        '  "verdict": "correct" | "incorrect" | "insufficient" | "obscure",\n'
+        '  "notes": "<short text>",\n'
+        '  "suggestions": "<optional text>"\n'
+        "}\n"
+        "```\n"
+        'Where "verdict" indicates if the answer is correct, incorrect, insufficient (partially correct), or obscure (unclear),\n'
+        "Where necessary, use standard mathematical notation (LaTeX) to express formulas."
     )
 
 
@@ -78,7 +101,15 @@ def build_critique_self_check(question: str, answer: str, critique: str, guidanc
         "Review your critique for accuracy and clarity.\n"
         f"Question:\n{question}\n\nAnswer under review:\n{answer}\n\nYour critique:\n{critique}\n\n"
         f"Guidance:\n{guidance}\n\n"
-        "Return JSON with keys verdict (pass/fail), issues (list), and improvements (text)."
+        "Return ONLY a JSON object following this schema (no extra text):\n"
+        "```\n"
+        "{\n"
+        '  "verdict": "pass" | "fail",\n'
+        '  "issues": [<string>, ...],\n'
+        '  "improvements": "<short text>"\n'
+        "}\n"
+        "```\n"
+        "Where necessary, use standard mathematical notation (LaTeX) to express formulas.\n"
     )
 
 
