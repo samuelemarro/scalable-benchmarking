@@ -318,6 +318,9 @@ def main():
             if idx >= len(answer_records):
                 continue
             answer_entry = answer_records[idx]
+            if answer_entry.get("status") == "failed":
+                print(f"Skipping critique for failed answer {question_model}-{answer_author}-{idx}")
+                continue
             question_entry = benchmark_entries[idx]
             question_text = final_question(question_entry)
             if not question_text:
@@ -362,6 +365,8 @@ def main():
                     records = load_json(job["output_path"], [])
                     if len(records) <= job["record_idx"]:
                         records.extend([{} for _ in range(job["record_idx"] - len(records) + 1)])
+                    final_verdict = attempts[-1].get("verdict") if attempts else None
+                    status = "succeeded" if final_verdict and final_verdict != "unknown" else "failed"
                     records[job["record_idx"]] = {
                         "question": job["question"],
                         "run_id": job["run_id"],
@@ -369,7 +374,7 @@ def main():
                         "question_author": job["question_author"],
                         "critic": spec.name,
                         "answer_author": job["answer_author"],
-                        "status": "succeeded",
+                        "status": status,
                         "attempts": attempts,
                     }
                     save_json(job["output_path"], records)

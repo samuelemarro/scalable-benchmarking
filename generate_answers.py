@@ -73,6 +73,10 @@ def prepare_batch(
             break
         if entry.get("status") != "succeeded":
             continue
+        # skip failed questions entirely
+        if entry.get("status") == "failed":
+            print(f"Skipping failed question {question_model}-{idx}")
+            continue
         question_text = final_question(entry)
         if not question_text:
             continue
