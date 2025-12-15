@@ -3,6 +3,9 @@ from pathlib import Path
 from typing import Dict, Optional
 
 
+from model_api import query_llm_single
+
+
 def load_json(path: Path, default):
     if not path.exists():
         return default
@@ -43,6 +46,7 @@ def clean_json_text(text: str) -> str:
 
 def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[dict]:
     cfg = _load_parsing_config()
+
     if not cfg:
         return None
     model = cfg.get("model")
@@ -51,17 +55,22 @@ def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[dict]:
     prompt_lines = [
         "You are a strict JSON repair assistant.",
         "Given the malformed text below, output a valid JSON object only.",
+        "Be careful to fix stuff like incorrect escaping, missing commas, unbalanced braces, and incorrect quotes.",
     ]
     if schema_hint:
         prompt_lines.append(f"Schema: {schema_hint}")
-    prompt_lines.append('If you cannot repair, respond with the string "can\'t parse".')
+    prompt_lines.append('If you cannot repair, respond with the following JSON: { \"parsing_error\" : \"Cannot parse\" }.')
     prompt = "\n".join(prompt_lines)
-    try:
-        from model_api import query_llm_single
 
-        repaired = query_llm_single(model, text, prompt=prompt, temperature=0)
+    try:
+        repaired = query_llm_single(model, text, prompt=prompt, temperature=0, response_format="json")
         repaired = clean_json_text(repaired)
-        return json.loads(repaired)
+        parsed = json.loads(repaired)
+
+        if "parsing_error" in parsed:
+            return None
+        return parsed
+
     except Exception:
         return None
 
