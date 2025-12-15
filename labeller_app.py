@@ -46,7 +46,9 @@ def gather_illposed(debates_dir: Path, answers_dir: Path, benchmark_dir: Path, r
         answer_model = registry.display_name_for_slug(a_slug)
         debates = load_json(debate_file, [])
         answers = load_json(answers_dir / q_slug / f"{a_slug}.json", [])
-        for idx, debate in enumerate(debates):
+        max_len = max(len(debates), len(answers))
+        for idx in range(max_len):
+            debate = debates[idx] if idx < len(debates) else {}
             question = debate.get("question") or ""
             answer_record = answers[idx] if idx < len(answers) else {}
             answer_text = final_answer(answer_record) or answer_record.get("answer") or ""
@@ -72,47 +74,50 @@ def gather_illposed(debates_dir: Path, answers_dir: Path, benchmark_dir: Path, r
 
 def gather_critiques(debates_dir: Path, critiques_dir: Path, answers_dir: Path, benchmark_dir: Path, registry) -> List[Dict]:
     items = []
-    for debate_file in debates_dir.glob("critiques/*/*/*.json"):
-        mode = debate_file.parents[1].name
-        q_slug = debate_file.parent.name
-        critic_slug, answer_slug = debate_file.stem.split("__")
-        question_model = registry.display_name_for_slug(q_slug)
-        critic_model = registry.display_name_for_slug(critic_slug)
-        answer_model = registry.display_name_for_slug(answer_slug)
+    for crit_mode_dir in critiques_dir.glob("*"):
+        mode = crit_mode_dir.name
+        for q_dir in crit_mode_dir.glob("*"):
+            q_slug = q_dir.name
+            question_model = registry.display_name_for_slug(q_slug)
+            for crit_file in q_dir.glob("*.json"):
+                critic_slug, answer_slug = crit_file.stem.split("__")
+                critic_model = registry.display_name_for_slug(critic_slug)
+                answer_model = registry.display_name_for_slug(answer_slug)
 
-        debates = load_json(debate_file, [])
-        answers = load_json(answers_dir / q_slug / f"{answer_slug}.json", [])
-        critiques = load_json(critiques_dir / mode / q_slug / f"{critic_slug}__{answer_slug}.json", [])
+                critiques = load_json(crit_file, [])
+                answers = load_json(answers_dir / q_slug / f"{answer_slug}.json", [])
+                debates = load_json(debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json", [])
 
-        for idx, debate in enumerate(debates):
-            if idx >= len(critiques):
-                continue
-            question = debate.get("question") or critiques[idx].get("question", "")
-            answer_record = answers[idx] if idx < len(answers) else {}
-            answer_text = final_answer(answer_record) or answer_record.get("answer") or ""
-            if not answer_text:
-                answer_text = benchmark_answer_for_index(benchmark_dir, q_slug, idx) or ""
-            critique_attempts = critiques[idx].get("attempts") or []
-            if critique_attempts and critique_attempts[-1].get("verdict") == "correct":
-                continue
-            critique_text = critique_attempts[-1].get("raw_critique") if critique_attempts else ""
-            items.append(
-                {
-                    "id": f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}",
-                    "type": "critique",
-                    "mode": mode,
-                    "question_model": question_model,
-                    "answer_model": answer_model,
-                    "critic_model": critic_model,
-                    "topic": question[:80] + ("..." if len(question) > 80 else ""),
-                    "run_id": debate.get("run_id"),
-                    "topic_slug": debate.get("topic_slug"),
-                    "question": question,
-                    "answer": answer_text,
-                    "critique": critique_text,
-                    "debate": debate.get("history", []),
-                }
-            )
+                max_len = len(critiques)
+                for idx in range(max_len):
+                    critique_entry = critiques[idx]
+                    debate = debates[idx] if idx < len(debates) else {}
+                    question = debate.get("question") or critique_entry.get("question", "")
+                    answer_record = answers[idx] if idx < len(answers) else {}
+                    answer_text = final_answer(answer_record) or answer_record.get("answer") or ""
+                    if not answer_text:
+                        answer_text = benchmark_answer_for_index(benchmark_dir, q_slug, idx) or ""
+                    critique_attempts = critique_entry.get("attempts") or []
+                    if critique_attempts and critique_attempts[-1].get("verdict") == "correct":
+                        continue
+                    critique_text = critique_attempts[-1].get("raw_critique") if critique_attempts else ""
+                    items.append(
+                        {
+                            "id": f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}",
+                            "type": "critique",
+                            "mode": mode,
+                            "question_model": question_model,
+                            "answer_model": answer_model,
+                            "critic_model": critic_model,
+                            "topic": question[:80] + ("..." if len(question) > 80 else ""),
+                            "run_id": debate.get("run_id") or critique_entry.get("run_id"),
+                            "topic_slug": debate.get("topic_slug") or critique_entry.get("topic_slug"),
+                            "question": question,
+                            "answer": answer_text,
+                            "critique": critique_text,
+                            "debate": debate.get("history", []),
+                        }
+                    )
     return items
 
 
