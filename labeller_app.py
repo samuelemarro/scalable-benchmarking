@@ -211,7 +211,11 @@ def main():
 
     st.title(f"Labeller - {args.username}")
 
-    claim_filter = st.multiselect("Claim type", ["illposed", "critique"], default=["illposed", "critique"])
+    claim_filter = st.multiselect(
+        "Claim type",
+        ["illposed", "contradictor", "evaluator"],
+        default=["illposed", "contradictor", "evaluator"],
+    )
     questioners = sorted({t["question_model"] for t in tasks})
     answerers = sorted({t["answer_model"] for t in tasks})
     critics = sorted({t.get("critic_model") for t in tasks if t.get("critic_model")})
@@ -222,7 +226,8 @@ def main():
 
     filtered = []
     for task in tasks:
-        if task["type"] not in claim_filter:
+        task_kind = task["type"] if task["type"] == "illposed" else task.get("mode", "critique")
+        if task_kind not in claim_filter:
             continue
         if task["question_model"] not in selected_q:
             continue
