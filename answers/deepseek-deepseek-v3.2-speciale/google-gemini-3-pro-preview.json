@@ -1,0 +1,62 @@
+[
+  {
+    "question_model": "deepseek/deepseek-v3.2-speciale",
+    "answer_model": "google/gemini-3-pro-preview",
+    "question": "Prove that there exist two recursively enumerable subsets $A$ and $B$ of the natural numbers $\\mathbb{N}$ that are recursively inseparable. That is, $A \\cap B = \\emptyset$ and there is no recursive set $C \\subseteq \\mathbb{N}$ such that $A \\subseteq C$ and $B \\subseteq \\mathbb{N} \\setminus C$.\n\nYou may assume standard computability theory background:\n- An admissible numbering $\\varphi_e$ of partial computable functions (where $\\varphi_e(x)$ denotes the output, if any, of the $e$-th Turing machine on input $x$).\n- The s-m-n theorem: there is a total computable function $s$ such that $\\varphi_{s(e,x)}(y) = \\varphi_e(x,y)$.\n- The recursion theorem (Kleene's fixed point theorem): for any total computable function $f$, there exists an index $e$ such that $\\varphi_e = \\varphi_{f(e)}$.",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To prove the existence of two recursively enumerable (r.e.) subsets of $\\mathbb{N}$ that are recursively inseparable, we will explicitly construct two such sets and assume the existence of a recursive separator to derive a contradiction.\n\n### 1. Construction of the Sets $A$ and $B$\n\nLet $\\varphi_e$ denote the partial computable function computed by the Turing machine with index $e$. We define the sets $A$ and $B$ as follows:\n\n$$A = \\{ x \\in \\mathbb{N} \\mid \\varphi_x(x) = 0 \\}$$\n$$B = \\{ x \\in \\mathbb{N} \\mid \\varphi_x(x) = 1 \\}$$\n\n**Claim 1: $A$ and $B$ are recursively enumerable.**\nA set is r.e. if it is the domain of a partial computable function. The condition $x \\in A$ is equivalent to halting the computation of $\\varphi_x$ on input $x$ and checking if the output is $0$. This process is semi-decidable (we can enumerate the steps of the computation). Thus, $A$ is r.e. Similarly, $B$ is r.e.\n\n**Claim 2: $A$ and $B$ are disjoint.**\nFor any $x$, the function $\\varphi_x$ is a deterministic function. On input $x$, it cannot output both $0$ and $1$. Therefore, no $x$ can belong to both $A$ and $B$. Hence, $A \\cap B = \\emptyset$.\n\n### 2. Proof of Recursive Inseparability\n\nWe proceed by contradiction. Suppose there exists a recursive set $C$ that separates $A$ and $B$. That is:\n1.  $A \\subseteq C$\n2.  $B \\subseteq \\mathbb{N} \\setminus C$ (equivalently $B \\cap C = \\emptyset$)\n\nSince $C$ is a recursive set, its characteristic function is total computable. We can construct a specific total computable function $f$ based on $C$ to force a contradiction. Define $f: \\mathbb{N} \\to \\{0, 1\\}$ as follows:\n\n$$f(x) = \\begin{cases} 1 & \\text{if } x \\in C \\\\ 0 & \\text{if } x \\notin C \\end{cases}$$\n\nSince $C$ is recursive, $f$ is a total computable function. Since our enumeration $\\varphi_0, \\varphi_1, \\dots$ includes all partial computable functions (and thus all total computable functions), there exists an index $e \\in \\mathbb{N}$ such that:\n$$\\varphi_e = f$$\n\nWe now evaluate the function on its own index $e$ (i.e., we compute $\\varphi_e(e)$).\n\n**Case 1: Suppose $e \\in C$.**\nBy the definition of the function $f$, if $e \\in C$, then $f(e) = 1$.\nSince $\\varphi_e = f$, we have $\\varphi_e(e) = 1$.\nBy the definition of the set $B$, $x \\in B \\iff \\varphi_x(x) = 1$. Therefore, $e \\in B$.\nHowever, the separation condition requires that $B \\subseteq \\mathbb{N} \\setminus C$, which implies $B \\cap C = \\emptyset$.\nThus, if $e \\in B$, then $e \\notin C$.\nThis contradicts the assumption that $e \\in C$.\n\n**Case 2: Suppose $e \\notin C$.**\nBy the definition of $f$, if $e \\notin C$, then $f(e) = 0$.\nSince $\\varphi_e = f$, we have $\\varphi_e(e) = 0$.\nBy the definition of the set $A$, $x \\in A \\iff \\varphi_x(x) = 0$. Therefore, $e \\in A$.\nThe separation condition requires that $A \\subseteq C$.\nThus, if $e \\in A$, then $e \\in C$.\nThis contradicts the assumption that $e \\notin C$.\n\n### 3. Conclusion\n\nIn both cases, the existence of a recursive separator $C$ leads to a contradiction ($e \\in C \\iff e \\notin C$). Therefore, no such recursive set $C$ exists.\n\nThe sets $A = \\{ x \\mid \\varphi_x(x) = 0 \\}$ and $B = \\{ x \\mid \\varphi_x(x) = 1 \\}$ are recursively enumerable, disjoint, and recursively inseparable.",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "deepseek/deepseek-v3.2-speciale",
+    "answer_model": "google/gemini-3-pro-preview",
+    "question": "Let $n$ be a positive integer. Determine the number of permutations $\\sigma$ of the set $\\{1,2,\\dots,2n\\}$ such that every cycle in the disjoint cycle decomposition of $\\sigma$ has even length. Give a closed-form expression.",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To determine the number of permutations $\\sigma$ of the set $\\{1, 2, \\dots, 2n\\}$ such that every cycle in the disjoint cycle decomposition of $\\sigma$ has even length, we can use the method of Exponential Generating Functions (EGF).\n\n**Step 1: Determine the EGF for cycles of even length.**\n\nThe exponential generating function for a single cycle of length $k$ is given by $\\frac{x^k}{k}$. Since we require the cycles to have even length, we sum this term over all even integers $k \\in \\{2, 4, 6, \\dots\\}$. Let $C(x)$ be this generating function:\n$$ C(x) = \\sum_{j=1}^{\\infty} \\frac{x^{2j}}{2j} $$\nWe can factor out $\\frac{1}{2}$ and recognize the Maclaurin series for $-\\ln(1-y)$:\n$$ C(x) = \\frac{1}{2} \\sum_{j=1}^{\\infty} \\frac{(x^2)^j}{j} = \\frac{1}{2} \\left( -\\ln(1-x^2) \\right) = \\ln\\left( (1-x^2)^{-1/2} \\right) $$\n\n**Step 2: Determine the EGF for the set of valid permutations.**\n\nThe exponential generating function $P(x)$ for permutations composed of disjoint cycles specified by $C(x)$ is given by the exponential formula $P(x) = \\exp(C(x))$.\n$$ P(x) = \\exp\\left( \\ln\\left( (1-x^2)^{-1/2} \\right) \\right) = (1-x^2)^{-1/2} $$\nThis function generates the number of such permutations. Specifically, if $a_m$ is the number of such permutations of a set of size $m$, then:\n$$ P(x) = \\sum_{m=0}^{\\infty} a_m \\frac{x^m}{m!} $$\nSince $P(x)$ is a function of $x^2$, $a_m = 0$ when $m$ is odd, which is consistent with the fact that a permutation of an odd number of elements must have at least one odd cycle. We are interested in $a_{2n}$.\n\n**Step 3: Extract the coefficient of $x^{2n}$.**\n\nWe expand $(1-x^2)^{-1/2}$ using the generalized binomial theorem:\n$$ (1-z)^{-1/2} = \\sum_{n=0}^{\\infty} \\binom{-1/2}{n} (-z)^n $$\nSubstituting $z = x^2$:\n$$ (1-x^2)^{-1/2} = \\sum_{n=0}^{\\infty} \\binom{-1/2}{n} (-1)^n x^{2n} $$\nThe coefficient of $x^{2n}$ in $P(x)$ is:\n$$ [x^{2n}] P(x) = \\binom{-1/2}{n} (-1)^n $$\nWe evaluate the binomial coefficient:\n$$ \\binom{-1/2}{n} = \\frac{(-1/2)(-3/2)(-5/2)\\dots(-(2n-1)/2)}{n!} = (-1)^n \\frac{1 \\cdot 3 \\cdot 5 \\dots (2n-1)}{2^n n!} $$\nUsing the double factorial notation where $(2n-1)!! = 1 \\cdot 3 \\cdot \\dots \\cdot (2n-1)$, this becomes:\n$$ \\binom{-1/2}{n} = (-1)^n \\frac{(2n-1)!!}{2^n n!} $$\nThus, the coefficient of $x^{2n}$ is:\n$$ [x^{2n}] P(x) = (-1)^n \\cdot (-1)^n \\frac{(2n-1)!!}{2^n n!} = \\frac{(2n-1)!!}{2^n n!} $$\nWe also know that $(2n)!! = 2^n n!$, so we can write the coefficient as:\n$$ [x^{2n}] P(x) = \\frac{(2n-1)!!}{(2n)!!} $$\n\n**Step 4: Calculate the number of permutations $a_{2n}$.**\n\nBy the definition of the EGF, $a_{2n} = (2n)! \\cdot [x^{2n}] P(x)$.\n$$ a_{2n} = (2n)! \\frac{(2n-1)!!}{(2n)!!} $$\nWe can rewrite $(2n)!$ as the product of all integers up to $2n$, separated into even and odd factors:\n$$ (2n)! = [2 \\cdot 4 \\cdot \\dots \\cdot (2n)] \\cdot [1 \\cdot 3 \\cdot \\dots \\cdot (2n-1)] = (2n)!! (2n-1)!! $$\nSubstituting this into the expression for $a_{2n}$:\n$$ a_{2n} = [(2n)!! (2n-1)!!] \\frac{(2n-1)!!}{(2n)!!} $$\nThe $(2n)!!$ terms cancel out:\n$$ a_{2n} = [(2n-1)!!]^2 $$\nThis can also be expressed in terms of standard factorials as:\n$$ a_{2n} = \\left( \\frac{(2n)!}{2^n n!} \\right)^2 $$\n\nFinal Answer:\nThe number of permutations of the set $\\{1, 2, \\dots, 2n\\}$ such that every cycle has even length is\n$$ \\left( (2n-1)!! \\right)^2 $$\nor equivalently\n$$ \\left( \\frac{(2n)!}{2^n n!} \\right)^2 $$",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "deepseek/deepseek-v3.2-speciale",
+    "answer_model": "google/gemini-3-pro-preview",
+    "question": "Find all positive integers $n$ satisfying $n^2 \\mid 3^n + 1$.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "Let $P(n)$ be the assertion that $n^2 \\mid 3^n + 1$. We want to find all positive integers $n$ such that $P(n)$ is true.\n\n**Step 1: Check small values of $n$.**\nFor $n = 1$:\n$1^2 = 1$ and $3^1 + 1 = 4$. Since $1 \\mid 4$, $n=1$ is a solution.\n\n**Step 2: Analyze properties of potential solutions $n > 1$.**\nAssume $n > 1$ is a solution. Let $p$ be the smallest prime divisor of $n$.\nSince $n^2 \\mid 3^n + 1$, it follows that $n \\mid 3^n + 1$. Since $p \\mid n$, we must have $p \\mid 3^n + 1$.\nThis implies:\n$$3^n \\equiv -1 \\pmod{p}$$\nSquaring both sides, we get:\n$$3^{2n} \\equiv 1 \\pmod{p}$$\n\nLet $d$ be the order of $3$ modulo $p$ (denoted as $d = \\text{ord}_p(3)$).\nFrom the properties of the order, $d$ must divide the exponent $2n$:\n$$d \\mid 2n$$\nHowever, since $3^n \\equiv -1 \\not\\equiv 1 \\pmod{p}$ (assuming $p > 2$, which we will verify; if $p=2$, $3^n+1$ is even, see Step 3), $d$ does not divide $n$:\n$$d \\nmid n$$\n\nBy Fermat's Little Theorem, $3^{p-1} \\equiv 1 \\pmod{p}$, so the order $d$ must also divide $p-1$:\n$$d \\mid p-1$$\nThis implies $d \\le p-1 < p$. Consequently, all prime factors of $d$ must be strictly less than $p$.\n\n**Step 3: Determine the value of $p$.**\nWe consider $\\gcd(d, n)$.\nSince all prime factors of $d$ are less than $p$, and $p$ is the smallest prime factor of $n$, $n$ has no prime factors in common with $d$. Therefore:\n$$\\gcd(d, n) = 1$$\nWe established that $d \\mid 2n$. Since $\\gcd(d, n) = 1$, it must be that $d \\mid 2$.\nThus, $d \\in \\{1, 2\\}$.\n\n*   If $d = 1$, then $3^1 \\equiv 1 \\pmod{p}$, which implies $p \\mid 2$, so $p=2$.\n*   If $d = 2$, then $3^2 \\equiv 1 \\pmod{p}$, which implies $p \\mid 8$, so $p=2$.\n\nIn either case, the smallest prime factor of $n$ is $p = 2$. This implies that $n$ must be even.\n\n**Step 4: Analyze the case where $n$ is even.**\nLet $n$ be even. We can check the condition $n^2 \\mid 3^n + 1$ modulo 4.\nSince $n$ is even, $n^2$ is divisible by $4$ (i.e., $n^2 \\equiv 0 \\pmod{4}$).\nFor the divisibility $n^2 \\mid 3^n + 1$ to hold, we must have:\n$$3^n + 1 \\equiv 0 \\pmod{4}$$\nHowever, since $n$ is even, let $n = 2k$ for some integer $k \\ge 1$.\n$$3 \\equiv -1 \\pmod{4} \\implies 3^n = 3^{2k} = (3^2)^k = 9^k \\equiv 1^k \\equiv 1 \\pmod{4}$$\nTherefore:\n$$3^n + 1 \\equiv 1 + 1 \\equiv 2 \\pmod{4}$$\nSince $2 \\not\\equiv 0 \\pmod{4}$, $3^n + 1$ is not divisible by 4.\nThis contradicts the requirement that $n^2 \\mid 3^n + 1$ (since $4 \\mid n^2$).\n\n**Conclusion:**\nThe assumption $n > 1$ leads to a contradiction. Thus, there are no integers $n > 1$ satisfying the condition. The only solution is $n = 1$.\n\nFinal Answer:\nThe only positive integer satisfying $n^2 \\mid 3^n + 1$ is $n=1$.",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,56 @@
+[
+  {
+    "question": "Prove that there exist infinitely many prime numbers using a proof by contradiction.",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "question_author": "openai/gpt-3.5-turbo",
+    "critic": "google/gemini-3-pro-preview",
+    "answer_author": "openai/gpt-3.5-turbo",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly implements Euclid's proof of the infinitude of primes by contradiction. It constructs the number $N$, argues correctly that any prime factor of $N$ (including $N$ itself) cannot be in the finite list of assumed primes, and derives the necessary contradiction.\",\n  \"suggestions\": \"To make the proof more rigorous, the answer could explicitly state *why* the prime factor $p$ must be different from the known primes: specifically, that dividing $N$ by any $p_i$ leaves a remainder of 1, so no $p_i$ can divide $N$.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly implements Euclid's proof of the infinitude of primes by contradiction. It constructs the number $N$, argues correctly that any prime factor of $N$ (including $N$ itself) cannot be in the finite list of assumed primes, and derives the necessary contradiction.",
+        "evaluation": null
+      }
+    ]
+  },
+  {
+    "question": "Consider a 10x10 grid where each cell is either black or white. How many ways can you color the cells such that no two adjacent cells share the same color? Two cells are considered adjacent if they share a common side.",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "question_author": "openai/gpt-3.5-turbo",
+    "critic": "google/gemini-3-pro-preview",
+    "answer_author": "openai/gpt-3.5-turbo",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer fails to correctly apply the adjacency constraints. With only 2 colors available (black and white), a grid graph (which is bipartite and connected) allows exactly 2 valid colorings (the two checkerboard patterns). The answer incorrectly claims $f(2)=4$ and derives a formula yielding 1024, ignoring that fixing one cell determines the entire grid.\",\n  \"suggestions\": \"Re-evaluate the constraints for 2-coloring a connected bipartite graph. Once the color of the first cell is chosen (2 options), every adjacent neighbor must be the opposite color, propagating through the entire grid. Thus, the answer is 2.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer fails to correctly apply the adjacency constraints. With only 2 colors available (black and white), a grid graph (which is bipartite and connected) allows exactly 2 valid colorings (the two checkerboard patterns). The answer incorrectly claims $f(2)=4$ and derives a formula yielding 1024, ignoring that fixing one cell determines the entire grid.",
+        "evaluation": null
+      }
+    ]
+  },
+  {
+    "question": "Let $p$ be a prime number greater than 3. Prove that $p^2 - 1$ is always divisible by 24.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "question_author": "openai/gpt-3.5-turbo",
+    "critic": "google/gemini-3-pro-preview",
+    "answer_author": "openai/gpt-3.5-turbo",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof relies on false intermediate claims. Specifically, it states that $36k^2$ and $12k$ are individually divisible by 24 for any integer $k$. This is false; for example, if $k=1$, $36(1)^2 = 36$ and $12(1) = 12$, neither of which is divisible by 24. The correct approach involves factoring $36k^2 \\pm 12k$ into $12k(3k \\pm 1)$ and observing that $k(3k \\pm 1)$ is always even.\",\n  \"suggestions\": \"Instead of analyzing terms separately, factor the expression to $12k(3k \\pm 1)$. Then explain that since $k$ and $3k \\pm 1$ have different parities (or by checking cases for even/odd $k$), the product $k(3k \\pm 1)$ is always even, making the whole expression divisible by $12 \\times 2 = 24$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The proof relies on false intermediate claims. Specifically, it states that $36k^2$ and $12k$ are individually divisible by 24 for any integer $k$. This is false; for example, if $k=1$, $36(1)^2 = 36$ and $12(1) = 12$, neither of which is divisible by 24. The correct approach involves factoring $36k^2 \\pm 12k$ into $12k(3k \\pm 1)$ and observing that $k(3k \\pm 1)$ is always even.",
+        "evaluation": null
+      }
+    ]
+  }
+]

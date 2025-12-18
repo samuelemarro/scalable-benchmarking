@@ -1,0 +1,56 @@
+[
+  {
+    "question": "Prove that there exist infinitely many prime numbers using a proof by contradiction.",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "question_author": "openai/gpt-3.5-turbo",
+    "critic": "meta-llama/llama-4-maverick",
+    "answer_author": "openai/gpt-3.5-turbo",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\"\n}\n```",
+        "verdict": "correct",
+        "notes": "```json\n{\n  \"verdict\": \"correct\"\n}\n```",
+        "evaluation": null
+      }
+    ]
+  },
+  {
+    "question": "Consider a 10x10 grid where each cell is either black or white. How many ways can you color the cells such that no two adjacent cells share the same color? Two cells are considered adjacent if they share a common side.",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "question_author": "openai/gpt-3.5-turbo",
+    "critic": "meta-llama/llama-4-maverick",
+    "answer_author": "openai/gpt-3.5-turbo",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The recursive formula $f(n) = 2 \\\\times 2^{n-1}$ for $n \\\\geq 3$ is incorrect. It doesn't consider the constraint imposed by the row above. The correct approach should consider the coloring of the grid row by row, taking into account the constraints imposed by the previous row.\",\n  \"suggestions\": \"Re-evaluate the problem by considering the constraints imposed by the previous row on the current row's coloring. For a grid of size $n \\\\times n$, once the first row is colored (in $2^n$ ways), the coloring of subsequent rows is determined by the need to alternate colors. Hence, the total number of valid colorings should be $2^n$ for an $n \\\\times n$ grid, as the coloring of the entire grid is determined by the first row.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The recursive formula $f(n) = 2 \\times 2^{n-1}$ for $n \\geq 3$ is incorrect. It doesn't consider the constraint imposed by the row above. The correct approach should consider the coloring of the grid row by row, taking into account the constraints imposed by the previous row.",
+        "evaluation": null
+      }
+    ]
+  },
+  {
+    "question": "Let $p$ be a prime number greater than 3. Prove that $p^2 - 1$ is always divisible by 24.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "question_author": "openai/gpt-3.5-turbo",
+    "critic": "meta-llama/llama-4-maverick",
+    "answer_author": "openai/gpt-3.5-turbo",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly states that $12k$ is divisible by 24. This is not true for all $k$. For example, if $k = 1$, $12k = 12$, which is not divisible by 24. The correct approach should involve showing that $p^2 - 1$ is divisible by both 8 and 3 to prove it's divisible by 24.\",\n  \"suggestions\": \"To correctly prove that $p^2 - 1$ is divisible by 24, show that it is divisible by both 8 and 3. For divisibility by 8, examine $p^2 - 1 = (p-1)(p+1)$ and consider the consecutive even numbers $p-1$ and $p+1$. For divisibility by 3, note that since $p$ is not divisible by 3, either $p-1$ or $p+1$ must be divisible by 3.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly states that $12k$ is divisible by 24. This is not true for all $k$. For example, if $k = 1$, $12k = 12$, which is not divisible by 24. The correct approach should involve showing that $p^2 - 1$ is divisible by both 8 and 3 to prove it's divisible by 24.",
+        "evaluation": null
+      }
+    ]
+  }
+]

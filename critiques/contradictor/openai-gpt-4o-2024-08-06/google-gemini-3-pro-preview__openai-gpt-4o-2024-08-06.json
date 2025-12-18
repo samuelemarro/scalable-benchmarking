@@ -1,0 +1,56 @@
+[
+  {
+    "question": "Consider the following logical system with a set of axioms and rules of inference. Let $P(x)$ be a predicate over a domain $D$, and let $a$ and $b$ be specific elements of $D$. The axioms and rules are as follows:\n\n1. Axiom 1: $\\forall x \\in D, P(x) \\rightarrow Q(x)$\n2. Axiom 2: $P(a)$\n3. Axiom 3: $\\neg Q(b)$\n4. Rule of Inference: Modus Ponens - From $A \\rightarrow B$ and $A$, infer $B$.\n\nProve or disprove: $a \\neq b$.",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "question_author": "openai/gpt-4o-2024-08-06",
+    "critic": "google/gemini-3-pro-preview",
+    "answer_author": "openai/gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies Universal Instantiation and Modus Ponens to derive $Q(a)$. It then correctly uses the Law of Contradiction (via Leibniz's Law) to show that since $Q(a)$ is true and $Q(b)$ is false, $a$ cannot equal $b$.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies Universal Instantiation and Modus Ponens to derive $Q(a)$. It then correctly uses the Law of Contradiction (via Leibniz's Law) to show that since $Q(a)$ is true and $Q(b)$ is false, $a$ cannot equal $b$.",
+        "evaluation": null
+      }
+    ]
+  },
+  {
+    "question": "Consider a set $S = \\{1, 2, 3, \\ldots, 20\\}$. We want to form subsets $A \\subseteq S$ such that the sum of the elements in $A$ is divisible by 5. Determine the number of such subsets.",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "question_author": "openai/gpt-4o-2024-08-06",
+    "critic": "google/gemini-3-pro-preview",
+    "answer_author": "openai/gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer correctly identifies the roots of unity filter method but fails to evaluate $f(\\\\omega)$ correctly. The product $\\\\prod_{j=1}^5 (1+\\\\omega^j)$ evaluates to 2, not 0 (specifically, $\\\\prod_{j=1}^4 (1+\\\\omega^j) = 1$ and $1+\\\\omega^5 = 2$). Consequently, $f(\\\\omega) = 2^4 = 16$. The correct count is $\\\\frac{1}{5}(2^{20} + 4 \\\\cdot 16) = 209728$. The final answer provided (65536) is incorrect and unjustified.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer correctly identifies the roots of unity filter method but fails to evaluate $f(\\omega)$ correctly. The product $\\prod_{j=1}^5 (1+\\omega^j)$ evaluates to 2, not 0 (specifically, $\\prod_{j=1}^4 (1+\\omega^j) = 1$ and $1+\\omega^5 = 2$). Consequently, $f(\\omega) = 2^4 = 16$. The correct count is $\\frac{1}{5}(2^{20} + 4 \\cdot 16) = 209728$. The final answer provided (65536) is incorrect and unjustified.",
+        "evaluation": null
+      }
+    ]
+  },
+  {
+    "question": "Let $p$ be a prime number such that $p \\equiv 1 \\pmod{4}$. Prove that there exist integers $x$ and $y$ such that $p = x^2 + y^2$. Furthermore, find such integers $x$ and $y$ for $p = 13$.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "question_author": "openai/gpt-4o-2024-08-06",
+    "critic": "google/gemini-3-pro-preview",
+    "answer_author": "openai/gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer fails to prove the statement, merely citing the theorem (Fermat's theorem on sums of two squares) that the question asks to prove. Stating the name of the theorem is not a mathematical proof of its validity.\",\n  \"suggestions\": \"Provide a proof of the theorem. A standard approach involves two steps: 1) Use Wilson's Theorem to show that there exists an integer $s$ such that $s^2 \\\\equiv -1 \\\\pmod p$. 2) Use Thue's Lemma or the method of infinite descent to show that this implies $p = x^2 + y^2$ for some integers $x, y$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer fails to prove the statement, merely citing the theorem (Fermat's theorem on sums of two squares) that the question asks to prove. Stating the name of the theorem is not a mathematical proof of its validity.",
+        "evaluation": null
+      }
+    ]
+  }
+]

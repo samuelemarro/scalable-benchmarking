@@ -1,0 +1,74 @@
+[
+  {
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "topic_name": "Mathematical logic and foundations",
+    "status": "succeeded",
+    "generation_rounds": [
+      {
+        "refinement_rounds": [
+          {
+            "round": 1,
+            "question": "**Overspill in Nonstandard Models of Arithmetic**\n\nLet $\\mathcal{M} = (M, 0, S, +, \\cdot, <)$ be a **nonstandard model** of first-order Peano Arithmetic (PA), meaning $\\mathcal{M} \\models \\text{PA}$ and $M$ properly contains the standard natural numbers $\\mathbb{N}$. Elements of $M$ corresponding to the standard numerals $\\underline{n} = S^n(0)$ are called **standard**; all other elements are called **nonstandard**.\n\n**(a)** Prove the **Overspill Lemma**: Let $\\phi(x, \\vec{y})$ be a formula in the language of arithmetic, and let $\\vec{b} \\in M$ be parameters. If \n$$\\mathcal{M} \\models \\phi(\\underline{n}, \\vec{b})$$\nfor every standard natural number $n \\in \\mathbb{N}$, then there exists a **nonstandard** element $c \\in M \\setminus \\mathbb{N}$ such that $\\mathcal{M} \\models \\phi(c, \\vec{b})$.\n\n**(b)** Using part (a), prove that every nonstandard model $\\mathcal{M}$ of PA contains a nonstandard element $a$ such that $\\mathcal{M} \\models \\text{\"}2^a \\text{ exists\"}$ (exponentiation is defined at $a$), and $\\mathcal{M} \\models 2^a > \\underline{n}$ for every standard $n$.\n\n**(c)** Let $\\text{Pr}(x)$ denote the formula expressing \"$x$ is prime\" (formalizable in PA). Prove that every nonstandard model of PA contains infinitely many nonstandard primes\u2014that is, infinitely many elements $p \\in M \\setminus \\mathbb{N}$ satisfying $\\mathcal{M} \\models \\text{Pr}(p)$.\n\n---",
+            "answer": "## Solution\n\n### Part (a): The Overspill Lemma\n\n**Proof by contradiction.** Suppose $\\mathcal{M} \\models \\phi(\\underline{n}, \\vec{b})$ for all standard $n \\in \\mathbb{N}$, but $\\mathcal{M} \\models \\neg\\phi(c, \\vec{b})$ for every nonstandard $c \\in M \\setminus \\mathbb{N}$.\n\nThen the formula $\\phi(x, \\vec{b})$ defines exactly the standard cut $\\mathbb{N} \\subset M$:\n$$\\{x \\in M : \\mathcal{M} \\models \\phi(x, \\vec{b})\\} = \\mathbb{N}.$$\n\nWe verify that this set satisfies:\n1. $\\mathcal{M} \\models \\phi(0, \\vec{b})$ (since $0$ is standard).\n2. For all $y \\in M$: if $\\mathcal{M} \\models \\phi(y, \\vec{b})$, then $y$ is standard, so $S(y)$ is standard, hence $\\mathcal{M} \\models \\phi(S(y), \\vec{b})$.\n\nSince PA includes the **induction scheme** for $\\phi(x, \\vec{b})$:\n$$\\mathcal{M} \\models \\bigl[\\phi(0, \\vec{b}) \\land \\forall y\\,(\\phi(y, \\vec{b}) \\to \\phi(S(y), \\vec{b}))\\bigr] \\to \\forall x\\, \\phi(x, \\vec{b}).$$\n\nThe antecedent holds in $\\mathcal{M}$, so $\\mathcal{M} \\models \\forall x\\, \\phi(x, \\vec{b})$. This means **every** element of $M$\u2014including nonstandard ones\u2014satisfies $\\phi$, contradicting our assumption.\n\nTherefore, some nonstandard $c$ satisfies $\\phi(c, \\vec{b})$. $\\blacksquare$\n\n---\n\n### Part (b): Nonstandard Exponentiation\n\nPA proves that exponentiation is total: $\\forall x\\, \\exists y\\, (2^x = y)$. In particular, for each standard $n$:\n$$\\mathcal{M} \\models \\exists y\\, (2^{\\underline{n}} = y).$$\n\nDefine $\\phi(x) := \\exists y\\, (2^x = y)$. By Part (a) (Overspill), there exists a **nonstandard** $a \\in M \\setminus \\mathbb{N}$ such that $\\mathcal{M} \\models \\exists y\\, (2^a = y)$.\n\nLet $b \\in M$ satisfy $\\mathcal{M} \\models 2^a = b$. To show $\\mathcal{M} \\models b > \\underline{n}$ for all standard $n$:\n\n- Since $a$ is nonstandard, $\\mathcal{M} \\models a > \\underline{n}$ for every standard $n$.\n- PA proves: $\\forall x, y\\, (x > y \\to 2^x > 2^y)$ and $\\forall x\\, (2^x \\geq x)$.\n- Hence $\\mathcal{M} \\models 2^a > 2^{\\underline{n}} \\geq \\underline{n}$ for each standard $n$.\n\nThus $\\mathcal{M} \\models 2^a > \\underline{n}$ for every standard $n$. $\\blacksquare$\n\n---\n\n### Part (c): Infinitely Many Nonstandard Primes\n\nPA formalizes **Euclid's theorem**: $\\forall x\\, \\exists p\\, (p > x \\land \\text{Pr}(p))$.\n\nLet $a_0 \\in M \\setminus \\mathbb{N}$ be any nonstandard element. Applying Euclid's theorem in $\\mathcal{M}$:\n$$\\mathcal{M} \\models \\exists p\\, (p > a_0 \\land \\text{Pr}(p)).$$\n\nLet $p_1$ be such a prime. Since $p_1 > a_0$ and $a_0$ is nonstandard, $p_1$ is **nonstandard**.\n\nNow set $a_1 = p_1$ and repeat: there exists a prime $p_2 > p_1$ in $\\mathcal{M}$, which is also nonstandard.\n\nBy induction, we construct a strictly increasing sequence of nonstandard primes:\n$$p_1 < p_2 < p_3 < \\cdots$$\n\nThis sequence is infinite (externally), demonstrating that $\\mathcal{M}$ contains **infinitely many nonstandard primes**. $\\blacksquare$",
+            "evaluation": {
+              "verdict": "pass",
+              "ill_posed": false,
+              "issues": [],
+              "improvements": "In part (b), could explicitly note that exponentiation is represented by a definable formula rather than a primitive function symbol. In part (a), could briefly mention the broader principle that the standard cut is not definable in any nonstandard model."
+            }
+          }
+        ],
+        "status": "succeeded"
+      }
+    ]
+  },
+  {
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "topic_name": "Combinatorics",
+    "status": "succeeded",
+    "generation_rounds": [
+      {
+        "refinement_rounds": [
+          {
+            "round": 1,
+            "question": "Let $n \\geq 1$ be a positive integer. Consider lattice paths from $(0,0)$ to $(n,n)$ in the plane, where each step is either a **right step** $(+1, 0)$ or an **up step** $(0, +1)$. A path is called **admissible** if it never passes strictly below the line $y = x - 1$; that is, at every point $(a, b)$ on the path, we have $b \\geq a - 1$.\n\nDetermine, with proof, the number of admissible paths as a closed-form expression in $n$.",
+            "answer": "The number of admissible paths from $(0,0)$ to $(n,n)$ that never go strictly below $y = x - 1$ is the $(n+1)$-th **Catalan number**:\n$$\\boxed{C_{n+1} = \\frac{1}{n+2}\\binom{2n+2}{n+1}}$$\n\n---\n\n**Solution:**\n\n**Step 1: Reformulate the constraint.**\n\nAt any point $(a, b)$ on the path, the admissibility condition requires $b \\geq a - 1$, or equivalently $b - a \\geq -1$. A path is **inadmissible** if at some point it reaches $b - a \\leq -2$, i.e., it visits a point where $b \\leq a - 2$.\n\n**Step 2: Count all paths.**\n\nThe total number of lattice paths from $(0,0)$ to $(n,n)$ using $n$ right steps and $n$ up steps is:\n$$\\binom{2n}{n}$$\n\n**Step 3: Count inadmissible paths via the Reflection Principle.**\n\nAn inadmissible path must at some point first reach a state where $b - a = -2$ (coming from a point with $b - a = -1$ via a right step).\n\nApply the **reflection principle**: For any inadmissible path, identify the first point $(k, k-2)$ where $b - a = -2$. Reflect all subsequent steps about this point by swapping right and up steps from that point onward.\n\nOriginally, the remaining path from $(k, k-2)$ to $(n, n)$ consists of $(n - k)$ right steps and $(n - k + 2)$ up steps.\n\nAfter reflection, these become $(n - k + 2)$ right steps and $(n - k)$ up steps, so the reflected path ends at:\n$$(k + (n - k + 2),\\; (k - 2) + (n - k)) = (n + 2,\\; n - 2)$$\n\nThis reflection is a bijection between:\n- Inadmissible paths from $(0,0)$ to $(n,n)$, and  \n- All paths from $(0,0)$ to $(n+2, n-2)$.\n\nThe number of paths from $(0,0)$ to $(n+2, n-2)$ is:\n$$\\binom{2n}{n+2}$$\n\n**Step 4: Compute the number of admissible paths.**\n\n$$\\text{Admissible paths} = \\binom{2n}{n} - \\binom{2n}{n+2}$$\n\n**Step 5: Simplify the expression.**\n\nUsing $\\binom{2n}{n+2} = \\binom{2n}{n} \\cdot \\frac{n(n-1)}{(n+1)(n+2)}$:\n\n$$\\binom{2n}{n} - \\binom{2n}{n+2} = \\binom{2n}{n}\\left(1 - \\frac{n(n-1)}{(n+1)(n+2)}\\right)$$\n\n$$= \\binom{2n}{n} \\cdot \\frac{(n+1)(n+2) - n(n-1)}{(n+1)(n+2)}$$\n\n$$= \\binom{2n}{n} \\cdot \\frac{n^2 + 3n + 2 - n^2 + n}{(n+1)(n+2)} = \\binom{2n}{n} \\cdot \\frac{4n + 2}{(n+1)(n+2)}$$\n\n$$= \\frac{2(2n+1)}{(n+1)(n+2)} \\cdot \\binom{2n}{n}$$\n\nNow verify this equals the Catalan number $C_{n+1}$:\n\n$$C_{n+1} = \\frac{1}{n+2}\\binom{2n+2}{n+1} = \\frac{(2n+2)!}{(n+2) \\cdot (n+1)! \\cdot (n+1)!} = \\frac{2(2n+1)(2n)!}{(n+2)! \\cdot n!}$$\n\nAnd our expression:\n$$\\frac{2(2n+1)}{(n+1)(n+2)} \\cdot \\frac{(2n)!}{n! \\cdot n!} = \\frac{2(2n+1)(2n)!}{(n+2)! \\cdot n!}$$\n\nThese are identical, confirming:\n\n$$\\binom{2n}{n} - \\binom{2n}{n+2} = C_{n+1} = \\frac{1}{n+2}\\binom{2n+2}{n+1}$$\n\n**Verification for small cases:**\n- $n = 1$: Paths RU, UR both satisfy $b \\geq a - 1$. Count $= 2 = C_2$. \u2713\n- $n = 2$: Total $6$ paths; only RRUU violates (reaches $(2,0)$). Count $= 5 = C_3$. \u2713\n- $n = 3$: $\\binom{6}{3} - \\binom{6}{5} = 20 - 6 = 14 = C_4$. \u2713",
+            "evaluation": {
+              "verdict": "pass",
+              "ill_posed": false,
+              "issues": [],
+              "improvements": "The reflection principle argument could be slightly more explicit about why the mapping is bijective (e.g., why every path to (n+2, n-2) must pass through y = x - 2, and why the first such point uniquely determines the correspondence). Otherwise, the proof is complete and correct."
+            }
+          }
+        ],
+        "status": "succeeded"
+      }
+    ]
+  },
+  {
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "topic_name": "Number theory",
+    "status": "succeeded",
+    "generation_rounds": [
+      {
+        "refinement_rounds": [
+          {
+            "round": 1,
+            "question": "Let $p > 3$ be a prime. Prove that \n$$\\sum_{k=1}^{p-1} \\frac{1}{k} \\equiv 0 \\pmod{p^2},$$\nwhere $\\frac{1}{k}$ denotes the unique integer $m$ with $1 \\leq m < p^2$ satisfying $km \\equiv 1 \\pmod{p^2}$ (the multiplicative inverse of $k$ modulo $p^2$).",
+            "answer": "**Proof of Wolstenholme's Theorem:**\n\n**Step 1: Pairing terms**\n\nWe pair $\\frac{1}{k}$ with $\\frac{1}{p-k}$ for $k = 1, 2, \\ldots, \\frac{p-1}{2}$:\n$$\\frac{1}{k} + \\frac{1}{p-k} = \\frac{p}{k(p-k)}$$\n\nThus:\n$$\\sum_{k=1}^{p-1} \\frac{1}{k} = \\sum_{k=1}^{(p-1)/2} \\frac{p}{k(p-k)}$$\n\n**Step 2: Computing $(p-k)^{-1} \\pmod{p^2}$**\n\nFor integers with $\\gcd(a,p) = 1$, we have the inverse formula:\n$$(a + bp)^{-1} \\equiv a^{-1} - b \\cdot a^{-2} \\cdot p \\pmod{p^2}$$\n\nApplying this to $p - k = (-k) + 1 \\cdot p$ (where $a = -k$, $b = 1$):\n$$(p-k)^{-1} \\equiv -k^{-1} - k^{-2}p \\pmod{p^2}$$\n\n**Step 3: Simplifying the paired sum**\n\n$$\\frac{1}{k(p-k)} = k^{-1}(p-k)^{-1} \\equiv k^{-1}\\left(-k^{-1} - k^{-2}p\\right) = -k^{-2} - k^{-3}p \\pmod{p^2}$$\n\nMultiplying by $p$:\n$$\\frac{p}{k(p-k)} \\equiv -pk^{-2} \\pmod{p^2}$$\n\nTherefore:\n$$\\sum_{k=1}^{p-1} \\frac{1}{k} \\equiv -p \\sum_{k=1}^{(p-1)/2} k^{-2} \\pmod{p^2}$$\n\n**Step 4: Proving $\\sum_{k=1}^{p-1} k^{-2} \\equiv 0 \\pmod{p}$**\n\nBy Fermat's Little Theorem, $k^{-1} \\equiv k^{p-2} \\pmod{p}$, so $k^{-2} \\equiv k^{p-3} \\pmod{p}$.\n\nLet $g$ be a primitive root modulo $p$. Then:\n$$\\sum_{k=1}^{p-1} k^{p-3} = \\sum_{j=0}^{p-2} g^{j(p-3)}$$\n\nSince $p > 3$, we have $0 < p-3 < p-1$, so $g^{p-3} \\not\\equiv 1 \\pmod{p}$. The geometric series evaluates to:\n$$\\frac{g^{(p-1)(p-3)} - 1}{g^{p-3} - 1} = \\frac{(g^{p-1})^{p-3} - 1}{g^{p-3} - 1} = \\frac{1-1}{g^{p-3}-1} = 0 \\pmod{p}$$\n\n**Step 5: Relating the half-sum to the full sum**\n\nSince $(p-k)^{-2} \\equiv k^{-2} \\pmod{p}$, and as $k$ runs through $\\{1, \\ldots, \\frac{p-1}{2}\\}$, the values $p-k$ run through $\\{\\frac{p+1}{2}, \\ldots, p-1\\}$:\n$$\\sum_{k=1}^{p-1} k^{-2} = 2\\sum_{k=1}^{(p-1)/2} k^{-2} \\pmod{p}$$\n\nSince $2$ is invertible modulo $p$ and $\\sum_{k=1}^{p-1} k^{-2} \\equiv 0 \\pmod{p}$:\n$$\\sum_{k=1}^{(p-1)/2} k^{-2} \\equiv 0 \\pmod{p}$$\n\n**Step 6: Final conclusion**\n\nSubstituting back:\n$$\\sum_{k=1}^{p-1} \\frac{1}{k} \\equiv -p \\cdot 0 = 0 \\pmod{p^2}$$\n\n$$\\boxed{\\sum_{k=1}^{p-1} \\frac{1}{k} \\equiv 0 \\pmod{p^2}}$$",
+            "evaluation": {
+              "verdict": "pass",
+              "ill_posed": false,
+              "issues": [],
+              "improvements": "Minor: In Step 2, explicitly note that gcd(-k, p) = 1 follows from 1 \u2264 k \u2264 p-1. In Step 6, briefly state that since the half-sum is \u2261 0 (mod p), it equals pm for some integer m, so -p\u00b7(pm) = -p\u00b2m \u2261 0 (mod p\u00b2)."
+            }
+          }
+        ],
+        "status": "succeeded"
+      }
+    ]
+  }
+]

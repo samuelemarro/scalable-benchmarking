@@ -1,0 +1,56 @@
+[
+  {
+    "question": "Prove that there exist infinitely many prime numbers using a proof by contradiction.",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "question_author": "openai/gpt-3.5-turbo",
+    "critic": "openai/gpt-5.2-2025-12-11",
+    "answer_author": "openai/gpt-3.5-turbo",
+    "status": "failed",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"This is essentially Euclid\u2019s classic proof by contradiction. Assuming finitely many primes \\$p_1,\\\\dots,p_n\\$ and forming \\$N=\\\\prod_{i=1}^n p_i+1\\$, one concludes that \\$N\\$ is either prime (giving a new prime) or composite with a prime divisor not among \\$p_1,\\\\dots,p_n\\$, contradicting finiteness.\",\n  \"suggestions\": \"Make the key divisibility step explicit: for each \\$i\\$, \\$p_i\\\\mid \\\\prod_{j=1}^n p_j\\$ implies \\$p_i\\\\nmid N\\$ since \\$N\\\\equiv 1\\\\pmod{p_i}\\$. Hence no listed prime divides \\$N\\$, so any prime factor of \\$N\\$ is new.\"\n}",
+        "verdict": "unknown",
+        "notes": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"This is essentially Euclid\u2019s classic proof by contradiction. Assuming finitely many primes \\$p_1,\\\\dots,p_n\\$ and forming \\$N=\\\\prod_{i=1}^n p_i+1\\$, one concludes that \\$N\\$ is either prime (giving a new prime) or composite with a prime divisor not among \\$p_1,\\\\dots,p_n\\$, contradicting finiteness.\",\n  \"suggestions\": \"Make the key divisibility step explicit: for each \\$i\\$, \\$p_i\\\\mid \\\\prod_{j=1}^n p_j\\$ implies \\$p_i\\\\nmid N\\$ since \\$N\\\\equiv 1\\\\pmod{p_i}\\$. Hence no listed prime divides \\$N\\$, so any prime factor of \\$N\\$ is new.\"\n}",
+        "evaluation": null
+      }
+    ]
+  },
+  {
+    "question": "Consider a 10x10 grid where each cell is either black or white. How many ways can you color the cells such that no two adjacent cells share the same color? Two cells are considered adjacent if they share a common side.",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "question_author": "openai/gpt-3.5-turbo",
+    "critic": "openai/gpt-5.2-2025-12-11",
+    "answer_author": "openai/gpt-3.5-turbo",
+    "status": "failed",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"A 10\\\\times10 grid graph is connected and bipartite, so any proper 2-coloring is forced once one cell is chosen: there are exactly 2 valid colorings (the two checkerboards). The answer\u2019s recurrence is invalid: it treats each row as independently colorable after enforcing only horizontal constraints, but ignores vertical constraints between rows. For example, it claims \\$f(2)=4\\$, yet the correct number for a 2\\\\times2 grid is 2.\",\n  \"suggestions\": \"Use the bipartite-graph argument: choose a color for one cell (2 choices), then all other cells are forced by adjacency constraints, giving \\$2\\$ total colorings for any \\$m\\\\times n\\$ grid with \\$m,n\\\\ge1\\$.\"\n}",
+        "verdict": "unknown",
+        "notes": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"A 10\\\\times10 grid graph is connected and bipartite, so any proper 2-coloring is forced once one cell is chosen: there are exactly 2 valid colorings (the two checkerboards). The answer\u2019s recurrence is invalid: it treats each row as independently colorable after enforcing only horizontal constraints, but ignores vertical constraints between rows. For example, it claims \\$f(2)=4\\$, yet the correct number for a 2\\\\times2 grid is 2.\",\n  \"suggestions\": \"Use the bipartite-graph argument: choose a color for one cell (2 choices), then all other cells are forced by adjacency constraints, giving \\$2\\$ total colorings for any \\$m\\\\times n\\$ grid with \\$m,n\\\\ge1\\$.\"\n}",
+        "evaluation": null
+      }
+    ]
+  },
+  {
+    "question": "Let $p$ be a prime number greater than 3. Prove that $p^2 - 1$ is always divisible by 24.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "question_author": "openai/gpt-3.5-turbo",
+    "critic": "openai/gpt-5.2-2025-12-11",
+    "answer_author": "openai/gpt-3.5-turbo",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The approach $p=6k\\\\pm1$ is fine, but the divisibility claims are wrong. The answer states: \u201cSince $36k^2$ is divisible by 24 for any integer $k$\u201d\u2014false, since $36k^2\\\\equiv 12k^2\\\\pmod{24}$ and e.g. $k=1$ gives $36\\\\not\\\\equiv 0\\\\pmod{24}$. It also claims \u201c$12k$ is divisible by 24\u201d (and similarly $-12k$), which is only true when $k$ is even. Thus the proof does not establish divisibility by 24 in general.\",\n  \"suggestions\": \"Fix by proving divisibility by $3$ and $8$ separately: for prime $p>3$, $p\\\\not\\\\equiv 0\\\\pmod 3\\\\Rightarrow p\\\\equiv \\\\pm1\\\\pmod3\\\\Rightarrow p^2-1\\\\equiv0\\\\pmod3$. Also $p$ is odd, so $p-1$ and $p+1$ are consecutive even numbers; one is divisible by $4$, so $(p-1)(p+1)$ is divisible by $8$. Hence divisible by $\\\\mathrm{lcm}(3,8)=24$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The approach $p=6k\\pm1$ is fine, but the divisibility claims are wrong. The answer states: \u201cSince $36k^2$ is divisible by 24 for any integer $k$\u201d\u2014false, since $36k^2\\equiv 12k^2\\pmod{24}$ and e.g. $k=1$ gives $36\\not\\equiv 0\\pmod{24}$. It also claims \u201c$12k$ is divisible by 24\u201d (and similarly $-12k$), which is only true when $k$ is even. Thus the proof does not establish divisibility by 24 in general.",
+        "evaluation": null
+      }
+    ]
+  }
+]

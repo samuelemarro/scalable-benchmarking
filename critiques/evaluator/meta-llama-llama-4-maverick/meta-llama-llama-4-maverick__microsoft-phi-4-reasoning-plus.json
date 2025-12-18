@@ -1,0 +1,38 @@
+[
+  {
+    "question": "Consider a first-order theory $T$ that extends the theory of dense linear orders without endpoints. Let $\\phi(x, y)$ be a formula in the language of $T$ with free variables $x$ and $y$. Suppose that $T$ proves $\\forall x \\exists y \\phi(x, y)$ and $\\forall x \\forall y (\\phi(x, y) \\rightarrow \\neg \\phi(y, x))$. Show that $T$ proves $\\forall x \\exists y \\exists z (y \\neq z \\land \\phi(x, y) \\land \\phi(x, z))$.",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "question_author": "meta-llama/llama-4-maverick",
+    "critic": "meta-llama/llama-4-maverick",
+    "answer_author": "microsoft/phi-4-reasoning-plus",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The argument assumes that $S = \\\\{ y \\\\mid \\\\phi(x, y) \\\\}$ is dense in the order without sufficient justification. The density of the order does not directly imply the density of $S$.\",\n  \"suggestions\": \"To fix this, one needs to more rigorously establish the density of $S$ or directly construct $y$ and $z$ using the given assumptions and the properties of dense linear orders without relying on the unjustified density of $S$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The argument assumes that $S = \\{ y \\mid \\phi(x, y) \\}$ is dense in the order without sufficient justification. The density of the order does not directly imply the density of $S$.",
+        "evaluation": null
+      }
+    ]
+  },
+  {
+    "question": "Let's consider a combinatorial problem involving a specific type of lattice path. We are given a grid where we can move either right (R) or up (U). The task is to count the number of paths from the origin (0,0) to the point (n,n) that stay within the region bounded by the lines $y = x - k$ and $y = x + k$ for a given $k$, where $n$ and $k$ are positive integers and $n \\geq k$. The paths must consist of $n$ steps to the right and $n$ steps up, and they must not cross the given boundaries.\n\n## Step 1: Understand the constraints\nThe problem asks us to count the number of lattice paths from (0,0) to (n,n) that stay within the boundaries defined by $y = x - k$ and $y = x + k$. This means that at any point (x, y) on the path, the condition $x - k \\leq y \\leq x + k$ must be satisfied.\n\n## Step 2: Recognize the problem as a combinatorial paths problem with restrictions\nThe total number of paths from (0,0) to (n,n) without any restrictions is given by the binomial coefficient $\\binom{2n}{n}$, as each path consists of $n$ right moves and $n$ up moves.\n\n## Step 3: Apply the reflection principle for the boundaries\nTo count paths that stay within the given boundaries, we can use the reflection principle. This principle states that the number of paths that cross a certain boundary can be counted by reflecting the paths at the boundary and counting the paths from the reflected starting point to the original endpoint.\n\n## Step 4: Calculate the number of paths that violate the boundaries\nFor a path to be valid, it must not cross $y = x + k$ or $y = x - k$. Let's first consider the boundary $y = x + k$. A path crosses this boundary if it reaches a point $(x, x+k+1)$ for some $x$. Using the reflection principle, we reflect such paths at $y = x + k$ to count them. The number of paths from (0,0) to (n,n) that cross $y = x + k$ can be related to paths from $(-k-1, k+1)$ to $(n,n)$, which is $\\binom{2n}{n-k-1}$.\n\n## Step 5: Similarly, calculate the number of paths that cross the lower boundary $y = x - k$\nFor the boundary $y = x - k$, a path crosses it if it reaches $(x, x-k-1)$. Reflecting at $y = x - k$, we count paths from $(k+1, -k-1)$ to $(n,n)$, giving $\\binom{2n}{n-k-1}$ paths.\n\n## Step 6: Consider paths that cross both boundaries\nPaths that cross both $y = x + k$ and $y = x - k$ need to be considered to avoid double-counting when applying the principle of inclusion-exclusion. A path that crosses both boundaries can be reflected twice. For instance, reflecting first at $y = x + k$ and then at $y = x - k$ (or vice versa), we can count such paths. The first reflection takes a path from (0,0) to a point that crosses $y = x + k$, say to $(x, x+k+1)$, and reflects it to $(-k-1, k+1)$. A subsequent crossing of $y = x - k$ and reflection would relate to paths from $(-k-1 + (k+1), k+1 - (k+1) -1)$ = $(0, -1)$ to $(n,n)$ after the first reflection, but we actually need to consider the effective reflection for paths crossing both boundaries. For a path crossing both, after the first reflection (say at $y = x + k$), it goes from $(-k-1, k+1)$ to a point where it crosses $y = x - k$, which after reflection gives a path from $(-k-1 + (2k+1), k+1 - (2k+1)) = (k, -k)$ to $(n,n)$, resulting in $\\binom{2n}{n-k}$.\n\n## Step 7: Apply the principle of inclusion-exclusion\nThe total number of paths that stay within the boundaries is the total number of paths minus the paths that cross the upper boundary minus the paths that cross the lower boundary, plus the paths that cross both (to correct for double subtraction). So, the formula becomes: $\\binom{2n}{n} - 2\\binom{2n}{n-k-1} + \\binom{2n}{n-k}$.\n\nThe final answer is:",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "question_author": "meta-llama/llama-4-maverick",
+    "critic": "meta-llama/llama-4-maverick",
+    "answer_author": "microsoft/phi-4-reasoning-plus",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the reflection principle and the principle of inclusion-exclusion to count the lattice paths within the given boundaries. The step-by-step breakdown is clear and mathematically sound.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly applies the reflection principle and the principle of inclusion-exclusion to count the lattice paths within the given boundaries. The step-by-step breakdown is clear and mathematically sound.",
+        "evaluation": null
+      }
+    ]
+  }
+]

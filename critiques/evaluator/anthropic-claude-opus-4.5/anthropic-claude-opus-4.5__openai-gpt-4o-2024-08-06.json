@@ -1,0 +1,56 @@
+[
+  {
+    "question": "**Overspill in Nonstandard Models of Arithmetic**\n\nLet $\\mathcal{M} = (M, 0, S, +, \\cdot, <)$ be a **nonstandard model** of first-order Peano Arithmetic (PA), meaning $\\mathcal{M} \\models \\text{PA}$ and $M$ properly contains the standard natural numbers $\\mathbb{N}$. Elements of $M$ corresponding to the standard numerals $\\underline{n} = S^n(0)$ are called **standard**; all other elements are called **nonstandard**.\n\n**(a)** Prove the **Overspill Lemma**: Let $\\phi(x, \\vec{y})$ be a formula in the language of arithmetic, and let $\\vec{b} \\in M$ be parameters. If \n$$\\mathcal{M} \\models \\phi(\\underline{n}, \\vec{b})$$\nfor every standard natural number $n \\in \\mathbb{N}$, then there exists a **nonstandard** element $c \\in M \\setminus \\mathbb{N}$ such that $\\mathcal{M} \\models \\phi(c, \\vec{b})$.\n\n**(b)** Using part (a), prove that every nonstandard model $\\mathcal{M}$ of PA contains a nonstandard element $a$ such that $\\mathcal{M} \\models \\text{\"}2^a \\text{ exists\"}$ (exponentiation is defined at $a$), and $\\mathcal{M} \\models 2^a > \\underline{n}$ for every standard $n$.\n\n**(c)** Let $\\text{Pr}(x)$ denote the formula expressing \"$x$ is prime\" (formalizable in PA). Prove that every nonstandard model of PA contains infinitely many nonstandard primes\u2014that is, infinitely many elements $p \\in M \\setminus \\mathbb{N}$ satisfying $\\mathcal{M} \\models \\text{Pr}(p)$.\n\n---",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "question_author": "anthropic/claude-opus-4.5",
+    "critic": "anthropic/claude-opus-4.5",
+    "answer_author": "openai/gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (a) is vague\u2014the claim that '$S = \\\\mathbb{N}$ contradicts the fact that $S$ should be a definable subset closed under the properties of $\\\\phi$' is not a proper justification. The correct argument is that $\\\\mathbb{N}$ cannot be definable in a nonstandard model (e.g., via the least element principle on the complement). Part (b) is fundamentally flawed: the formula '$2^x$ exists and $2^x > \\\\underline{n}$ for all standard $n$' is **not formalizable** in PA since 'standard' is not definable. A correct approach uses $\\\\phi(x) = \\\\text{\\\"$2^x$ exists and $2^x > x$\\\"}$, verifiable for all standard $n$, then applies Overspill. Part (c) similarly misapplies Overspill\u2014stating '$\\\\mathcal{M} \\\\models \\\\phi(\\\\underline{p})$ for some standard prime $p$' does not establish the hypothesis that $\\\\phi$ holds for **all** standard $n$. A correct formula would be $\\\\phi(x) = \\\\text{\\\"there exists a prime } p > x\\\\text{\\\"}$.\",\n  \"suggestions\": \"For (a), explicitly invoke that $\\\\mathbb{N}$ is not definable in nonstandard models. For (b), use $\\\\phi(x) := \\\\text{\\\"$2^x$ exists and $2^x > x$\\\"}$. For (c), use $\\\\phi(x) := \\\\text{\\\"there exists a prime $p > x$\\\"}$ and apply Overspill to get a prime exceeding a nonstandard element.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "Part (a) is vague\u2014the claim that '$S = \\mathbb{N}$ contradicts the fact that $S$ should be a definable subset closed under the properties of $\\phi$' is not a proper justification. The correct argument is that $\\mathbb{N}$ cannot be definable in a nonstandard model (e.g., via the least element principle on the complement). Part (b) is fundamentally flawed: the formula '$2^x$ exists and $2^x > \\underline{n}$ for all standard $n$' is **not formalizable** in PA since 'standard' is not definable. A correct approach uses $\\phi(x) = \\text{\"$2^x$ exists and $2^x > x$\"}$, verifiable for all standard $n$, then applies Overspill. Part (c) similarly misapplies Overspill\u2014stating '$\\mathcal{M} \\models \\phi(\\underline{p})$ for some standard prime $p$' does not establish the hypothesis that $\\phi$ holds for **all** standard $n$. A correct formula would be $\\phi(x) = \\text{\"there exists a prime } p > x\\text{\"}$.",
+        "evaluation": null
+      }
+    ]
+  },
+  {
+    "question": "Let $n \\geq 1$ be a positive integer. Consider lattice paths from $(0,0)$ to $(n,n)$ in the plane, where each step is either a **right step** $(+1, 0)$ or an **up step** $(0, +1)$. A path is called **admissible** if it never passes strictly below the line $y = x - 1$; that is, at every point $(a, b)$ on the path, we have $b \\geq a - 1$.\n\nDetermine, with proof, the number of admissible paths as a closed-form expression in $n$.",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "question_author": "anthropic/claude-opus-4.5",
+    "critic": "anthropic/claude-opus-4.5",
+    "answer_author": "openai/gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly identifies the problem as counting standard Dyck paths ($y \\\\geq x$), but the condition $y \\\\geq x - 1$ is weaker. For $n=1$: both paths RU and UR are admissible (at point $(1,0)$, we have $0 \\\\geq 0$ \u2713), giving 2 paths, not $C_1 = 1$. The correct answer is $C_{n+1} = \\\\frac{1}{n+2}\\\\binom{2n+2}{n+1}$, obtained via the reflection principle: bad paths (touching $y = x-2$) biject with paths to $(n+2, n-2)$, giving $\\\\binom{2n}{n} - \\\\binom{2n}{n+2} = C_{n+1}$.\",\n  \"suggestions\": \"Use the reflection principle correctly: paths violating $y \\\\geq x-1$ first touch a point with $y \\\\leq x-2$, reflecting across $y = x-2$ maps $(n,n) \\\\to (n+2, n-2)$. Alternatively, establish a bijection with paths from $(0,0)$ to $(n, n+1)$ staying weakly above $y=x$ by prepending a U-step.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly identifies the problem as counting standard Dyck paths ($y \\geq x$), but the condition $y \\geq x - 1$ is weaker. For $n=1$: both paths RU and UR are admissible (at point $(1,0)$, we have $0 \\geq 0$ \u2713), giving 2 paths, not $C_1 = 1$. The correct answer is $C_{n+1} = \\frac{1}{n+2}\\binom{2n+2}{n+1}$, obtained via the reflection principle: bad paths (touching $y = x-2$) biject with paths to $(n+2, n-2)$, giving $\\binom{2n}{n} - \\binom{2n}{n+2} = C_{n+1}$.",
+        "evaluation": null
+      }
+    ]
+  },
+  {
+    "question": "Let $p > 3$ be a prime. Prove that \n$$\\sum_{k=1}^{p-1} \\frac{1}{k} \\equiv 0 \\pmod{p^2},$$\nwhere $\\frac{1}{k}$ denotes the unique integer $m$ with $1 \\leq m < p^2$ satisfying $km \\equiv 1 \\pmod{p^2}$ (the multiplicative inverse of $k$ modulo $p^2$).",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "question_author": "anthropic/claude-opus-4.5",
+    "critic": "anthropic/claude-opus-4.5",
+    "answer_author": "openai/gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof contains several critical errors. (1) Step 4 claims $\\\\frac{1}{k} \\\\equiv k^{p-2} \\\\pmod{p^2}$, but Fermat's Little Theorem only gives $k^{p-2} \\\\equiv k^{-1} \\\\pmod{p}$, not modulo $p^2$. (2) Step 5 states $\\\\sum_{k=1}^{p-1} k^{p-1} \\\\equiv 0 \\\\pmod{p}$, which is false\u2014by FLT each $k^{p-1} \\\\equiv 1 \\\\pmod{p}$, so the sum equals $p-1 \\\\equiv -1 \\\\pmod{p}$. (3) The jump from a sum being $0 \\\\pmod{p}$ to $0 \\\\pmod{p^2}$ is unjustified.\",\n  \"suggestions\": \"A correct approach: pair $k$ with $p-k$ and show $\\\\frac{1}{k} + \\\\frac{1}{p-k} \\\\equiv -pk^{-2} \\\\pmod{p^2}$. Then the full sum becomes $-p\\\\sum_{k=1}^{(p-1)/2} k^{-2}$. Since $\\\\sum_{k=1}^{p-1} k^{-2} \\\\equiv \\\\sum_{k=1}^{p-1} k^2 \\\\equiv 0 \\\\pmod{p}$ and this sum equals $2\\\\sum_{k=1}^{(p-1)/2} k^{-2}$, we get the result.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The proof contains several critical errors. (1) Step 4 claims $\\frac{1}{k} \\equiv k^{p-2} \\pmod{p^2}$, but Fermat's Little Theorem only gives $k^{p-2} \\equiv k^{-1} \\pmod{p}$, not modulo $p^2$. (2) Step 5 states $\\sum_{k=1}^{p-1} k^{p-1} \\equiv 0 \\pmod{p}$, which is false\u2014by FLT each $k^{p-1} \\equiv 1 \\pmod{p}$, so the sum equals $p-1 \\equiv -1 \\pmod{p}$. (3) The jump from a sum being $0 \\pmod{p}$ to $0 \\pmod{p^2}$ is unjustified.",
+        "evaluation": null
+      }
+    ]
+  }
+]

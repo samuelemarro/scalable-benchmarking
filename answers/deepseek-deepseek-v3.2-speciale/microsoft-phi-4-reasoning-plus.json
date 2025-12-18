@@ -1,0 +1,62 @@
+[
+  {
+    "question_model": "deepseek/deepseek-v3.2-speciale",
+    "answer_model": "microsoft/phi-4-reasoning-plus",
+    "question": "Prove that there exist two recursively enumerable subsets $A$ and $B$ of the natural numbers $\\mathbb{N}$ that are recursively inseparable. That is, $A \\cap B = \\emptyset$ and there is no recursive set $C \\subseteq \\mathbb{N}$ such that $A \\subseteq C$ and $B \\subseteq \\mathbb{N} \\setminus C$.\n\nYou may assume standard computability theory background:\n- An admissible numbering $\\varphi_e$ of partial computable functions (where $\\varphi_e(x)$ denotes the output, if any, of the $e$-th Turing machine on input $x$).\n- The s-m-n theorem: there is a total computable function $s$ such that $\\varphi_{s(e,x)}(y) = \\varphi_e(x,y)$.\n- The recursion theorem (Kleene's fixed point theorem): for any total computable function $f$, there exists an index $e$ such that $\\varphi_e = \\varphi_{f(e)}$.",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To prove the existence of two recursively enumerable (r.e.) subsets $A$ and $B$ of the natural numbers $\\mathbb{N}$ that are recursively inseparable, we need to show that $A \\cap B = \\emptyset$ and there is no recursive set $C \\subseteq \\mathbb{N}$ such that $A \\subseteq C$ and $B \\subseteq \\mathbb{N} \\setminus C$.\n\n### Construction of $A$ and $B$\n\n1. **Diagonalization Argument**: We will construct $A$ and $B$ using a diagonalization argument, which is a common technique in computability theory to demonstrate the existence of certain sets with desired properties.\n\n2. **Define $A$ and $B$**:\n   - Let $A = \\{ e \\mid \\varphi_e(e) \\text{ is defined and } \\varphi_e(e) \\neq e \\}$.\n   - Let $B = \\{ e \\mid \\varphi_e(e) \\text{ is defined and } \\varphi_e(e) = e \\}$.\n\n3. **Properties of $A$ and $B$**:\n   - **Disjointness**: By construction, $A \\cap B = \\emptyset$. If $e \\in A$, then $\\varphi_e(e) \\neq e$, and if $e \\in B$, then $\\varphi_e(e) = e$. Thus, no $e$ can be in both $A$ and $B$.\n\n4. **Recursive Enumerability**:\n   - Both $A$ and $B$ are recursively enumerable. To see this, consider:\n     - $A$ is r.e. because we can enumerate all $e$ and check if $\\varphi_e(e)$ is defined and $\\varphi_e(e) \\neq e$.\n     - $B$ is r.e. because we can enumerate all $e$ and check if $\\varphi_e(e)$ is defined and $\\varphi_e(e) = e$.\n\n5. **Recursive Inseparability**:\n   - Assume for contradiction that there exists a recursive set $C$ such that $A \\subseteq C$ and $B \\subseteq \\mathbb{N} \\setminus C$.\n   - Consider the Turing machine with index $e$ that enumerates $C$. By the recursion theorem, there exists an index $e$ such that $\\varphi_e = \\varphi_{f(e)}$ for some total computable function $f$.\n   - If $e \\in C$, then by the definition of $A$, $\\varphi_e(e)$ is defined and $\\varphi_e(e) \\neq e$, so $e \\in A$.\n   - If $e \\notin C$, then by the definition of $B$, $\\varphi_e(e)$ is defined and $\\varphi_e(e) = e$, so $e \\in B$.\n   - This leads to a contradiction because $e$ cannot be in both $A$ and $B$ due to their disjointness.\n\n### Conclusion\n\nThus, no such recursive set $C$ can exist, proving that $A$ and $B$ are recursively inseparable. Therefore, we have constructed two recursively enumerable sets $A$ and $B$ such that $A \\cap B = \\emptyset$ and there is no recursive set $C$ with $A \\subseteq C$ and $B \\subseteq \\mathbb{N} \\setminus C$.\n\n**Final Answer**: There exist two recursively enumerable subsets $A$ and $B$ of $\\mathbb{N}$ that are recursively inseparable.",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": "The answer is correct and complete. It effectively uses a diagonalization argument to construct the sets A and B, demonstrating their recursive enumerability and inseparability. The reasoning is clear, and the use of the recursion theorem is appropriate. No improvements are necessary."
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "deepseek/deepseek-v3.2-speciale",
+    "answer_model": "microsoft/phi-4-reasoning-plus",
+    "question": "Let $n$ be a positive integer. Determine the number of permutations $\\sigma$ of the set $\\{1,2,\\dots,2n\\}$ such that every cycle in the disjoint cycle decomposition of $\\sigma$ has even length. Give a closed-form expression.",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To solve this problem, we need to determine the number of permutations $\\sigma$ of the set $\\{1, 2, \\ldots, 2n\\}$ such that every cycle in the disjoint cycle decomposition of $\\sigma$ has even length.\n\n### Step-by-step Solution:\n\n1. **Understanding the Problem:**\n   - We are given a set $\\{1, 2, \\ldots, 2n\\}$.\n   - We need to count permutations where each cycle in the cycle decomposition has even length.\n\n2. **Cycle Decomposition:**\n   - A permutation can be decomposed into disjoint cycles.\n   - We want each cycle to have an even length.\n\n3. **Counting Permutations with Even Cycles:**\n   - Consider the set $\\{1, 2, \\ldots, 2n\\}$.\n   - We can pair up the elements into $n$ pairs, each of which will form a 2-cycle.\n   - Alternatively, we can have cycles of length 4, 6, etc., but the sum of the lengths of all cycles must be $2n$.\n\n4. **Generating Function Approach:**\n   - The exponential generating function for permutations with cycles of even length is given by:\n     $$\n     \\exp\\left(\\sum_{k=1}^{\\infty} \\frac{x^{2k}}{2k}\\right)\n     $$\n   - This simplifies to:\n     $$\n     \\exp\\left(\\frac{1}{2} \\log(1-x^2)\\right) = (1-x^2)^{-1/2}\n     $$\n\n5. **Coefficient Extraction:**\n   - We need the coefficient of $\\frac{x^{2n}}{(2n)!}$ in the expansion of $(1-x^2)^{-1/2}$.\n   - The series expansion of $(1-x^2)^{-1/2}$ is:\n     $$\n     \\sum_{m=0}^{\\infty} \\binom{2m}{m} \\frac{x^{2m}}{4^m}\n     $$\n   - The coefficient of $x^{2n}$ is $\\binom{2n}{n} \\frac{1}{4^n}$.\n\n6. **Final Calculation:**\n   - The number of such permutations is:\n     $$\n     \\frac{(2n)!}{(2^n n!)} \\cdot \\binom{2n}{n} \\frac{1}{4^n}\n     $$\n   - Simplifying, we have:\n     $$\n     \\frac{(2n)!}{2^n n!} \\cdot \\frac{1}{2^n} = \\frac{(2n)!}{2^{2n} n!}\n     $$\n\n7. **Conclusion:**\n   - The number of permutations of $\\{1, 2, \\ldots, 2n\\}$ such that every cycle has even length is:\n     $$\n     \\frac{(2n)!}{2^{2n} n!}\n     $$\n\nThus, the closed-form expression for the number of such permutations is:\n\n$$\n\\boxed{\\frac{(2n)!}{2^{2n} n!}}\n$$",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": "The solution is thorough and correct. It could be improved by explicitly stating that the generating function approach is a standard technique for such problems, which might help readers unfamiliar with this method. Additionally, a brief explanation of why the exponential generating function is used could be beneficial."
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "deepseek/deepseek-v3.2-speciale",
+    "answer_model": "microsoft/phi-4-reasoning-plus",
+    "question": "Find all positive integers $n$ satisfying $n^2 \\mid 3^n + 1$.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To solve the problem, we need to find all positive integers $n$ such that $n^2 \\mid 3^n + 1$. This means that $3^n + 1 \\equiv 0 \\pmod{n^2}$, or equivalently, $3^n \\equiv -1 \\pmod{n^2}$.\n\n### Step 1: Check small values of $n$\n\nLet's start by checking small values of $n$:\n\n- **$n = 1$:**  \n  $$\n  3^1 + 1 = 4 \\quad \\text{and} \\quad 1^2 = 1.\n  $$\n  Clearly, $1^2 \\mid 4$.\n\n- **$n = 2$:**  \n  $$\n  3^2 + 1 = 10 \\quad \\text{and} \\quad 2^2 = 4.\n  $$\n  $4 \\nmid 10$.\n\n- **$n = 3$:**  \n  $$\n  3^3 + 1 = 28 \\quad \\text{and} \\quad 3^2 = 9.\n  $$\n  $9 \\nmid 28$.\n\n- **$n = 4$:**  \n  $$\n  3^4 + 1 = 82 \\quad \\text{and} \\quad 4^2 = 16.\n  $$\n  $16 \\nmid 82$.\n\n- **$n = 5$:**  \n  $$\n  3^5 + 1 = 244 \\quad \\text{and} \\quad 5^2 = 25.\n  $$\n  $25 \\nmid 244$.\n\n- **$n = 6$:**  \n  $$\n  3^6 + 1 = 730 \\quad \\text{and} \\quad 6^2 = 36.\n  $$\n  $36 \\nmid 730$.\n\n- **$n = 7$:**  \n  $$\n  3^7 + 1 = 2188 \\quad \\text{and} \\quad 7^2 = 49.\n  $$\n  $49 \\nmid 2188$.\n\n- **$n = 8$:**  \n  $$\n  3^8 + 1 = 6562 \\quad \\text{and} \\quad 8^2 = 64.\n  $$\n  $64 \\nmid 6562$.\n\n- **$n = 9$:**  \n  $$\n  3^9 + 1 = 19684 \\quad \\text{and} \\quad 9^2 = 81.\n  $$\n  $81 \\nmid 19684$.\n\n- **$n = 10$:**  \n  $$\n  3^{10} + 1 = 59050 \\quad \\text{and} \\quad 10^2 = 100.\n  $$\n  $100 \\nmid 59050$.\n\n### Step 2: General Analysis\n\nFor $n^2 \\mid 3^n + 1$, we have $3^n \\equiv -1 \\pmod{n^2}$. This implies:\n\n$$\n3^{2n} \\equiv 1 \\pmod{n^2}.\n$$\n\nThe order of 3 modulo $n^2$, denoted $d$, must divide $2n$. Also, since $3^n \\equiv -1 \\pmod{n^2}$, $d$ must be even, and $3^d \\equiv 1 \\pmod{n^2}$.\n\n### Step 3: Consider $n = 1$\n\nWe have already verified that $n = 1$ works. Let's consider if there could be any other $n$.\n\n### Step 4: Use Lifting The Exponent Lemma\n\nFor $n > 1$, consider the Lifting The Exponent Lemma (LTE) for $v_3(3^n + 1)$:\n\n- If $n$ is odd, $v_3(3^n + 1) = v_3(4) = 1$.\n- If $n$ is even, $v_3(3^n + 1) = v_3(3 + 1) + v_3(n) = 1 + v_3(n)$.\n\nFor $n^2 \\mid 3^n + 1$, we need $v_3(3^n + 1) \\geq 2v_3(n)$.\n\n- **If $n$ is odd:**  \n  $v_3(3^n + 1) = 1$ and $v_3(n) = 0$, so $1 \\geq 0$ is satisfied, but $n^2 \\mid 3^n + 1$ is not possible for $n > 1$.\n\n- **If $n$ is even:**  \n  $v_3(3^n + 1) = 1 + v_3(n)$ and $1 + v_3(n) \\geq 2v_3(n)$ implies $1 \\geq v_3(n)$. Thus, $v_3(n) = 0$ or $v_3(n) = 1$.\n\n  - If $v_3(n) = 0$, $n$ is not divisible by 3.\n  - If $v_3(n) = 1$, $n = 3k$ for some $k$.\n\n### Step 5: Check $n = 3k$\n\nFor $n = 3k$, $n^2 = 9k^2$ and $3^n + 1 = 3^{3k} + 1$.\n\n- $3^{3k} \\equiv -1 \\pmod{9k^2}$ implies $3^{6k} \\equiv 1 \\pmod{9k^2}$.\n\nFor $k = 1$, $n = 3$, we already checked $9 \\nmid 28$.\n\nFor $k > 1$, $n = 3k$ implies $3^{3k} \\equiv -1 \\pmod{9k^2}$ is unlikely to hold due to the rapid growth of $3^{3k}$.\n\n### Conclusion\n\nAfter checking small values and analyzing the divisibility conditions, the only solution is $n = 1$.\n\nThus, the only positive integer $n$ satisfying $n^2 \\mid 3^n + 1$ is:\n\n$$\n\\boxed{1}\n$$",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": "The solution is thorough and correctly identifies that the only positive integer n satisfying the condition is n = 1. The use of small values, general analysis, and the Lifting The Exponent Lemma are appropriate and well-justified. The solution could be slightly improved by explicitly stating that the rapid growth of 3^n makes it unlikely for larger n to satisfy the condition without further detailed proof, but this is a minor point."
+        }
+      }
+    ]
+  }
+]

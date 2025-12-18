@@ -1,0 +1,56 @@
+[
+  {
+    "question": "**Overspill in Nonstandard Models of Arithmetic**\n\nLet $\\mathcal{M} = (M, 0, S, +, \\cdot, <)$ be a **nonstandard model** of first-order Peano Arithmetic (PA), meaning $\\mathcal{M} \\models \\text{PA}$ and $M$ properly contains the standard natural numbers $\\mathbb{N}$. Elements of $M$ corresponding to the standard numerals $\\underline{n} = S^n(0)$ are called **standard**; all other elements are called **nonstandard**.\n\n**(a)** Prove the **Overspill Lemma**: Let $\\phi(x, \\vec{y})$ be a formula in the language of arithmetic, and let $\\vec{b} \\in M$ be parameters. If \n$$\\mathcal{M} \\models \\phi(\\underline{n}, \\vec{b})$$\nfor every standard natural number $n \\in \\mathbb{N}$, then there exists a **nonstandard** element $c \\in M \\setminus \\mathbb{N}$ such that $\\mathcal{M} \\models \\phi(c, \\vec{b})$.\n\n**(b)** Using part (a), prove that every nonstandard model $\\mathcal{M}$ of PA contains a nonstandard element $a$ such that $\\mathcal{M} \\models \\text{\"}2^a \\text{ exists\"}$ (exponentiation is defined at $a$), and $\\mathcal{M} \\models 2^a > \\underline{n}$ for every standard $n$.\n\n**(c)** Let $\\text{Pr}(x)$ denote the formula expressing \"$x$ is prime\" (formalizable in PA). Prove that every nonstandard model of PA contains infinitely many nonstandard primes\u2014that is, infinitely many elements $p \\in M \\setminus \\mathbb{N}$ satisfying $\\mathcal{M} \\models \\text{Pr}(p)$.\n\n---",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "question_author": "anthropic/claude-opus-4.5",
+    "critic": "anthropic/claude-opus-4.5",
+    "answer_author": "meta-llama/llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Multiple errors across all parts. (a) The proof misapplies induction\u2014stating '$\\\\mathcal{M} \\\\models \\\\forall x \\\\psi(x, \\\\vec{b})$' does not follow from $\\\\psi$ holding for all standard $n$. The correct proof uses contradiction via the least number principle. (b) The formula '$\\\\psi(x) = 2^x > \\\\underline{n}$' is problematic since $n$ varies; the argument is unclear. (c) The Euclid-style argument fails because the answer claims '$N$ is not divisible by any standard prime' without justification\u2014standard primes could divide $N = p_1 \\\\cdots p_k + 1$. Also, the boxed answer '$0$' is meaningless for proof-based questions.\",\n  \"suggestions\": \"(a) Use proof by contradiction: if no nonstandard $c$ satisfies $\\\\phi$, apply the least number principle to $\\\\neg\\\\phi(x, \\\\vec{b})$ to get a least nonstandard element, then derive a contradiction since its predecessor is also nonstandard. (b) Apply overspill to $\\\\phi(x) = \\\\exists y(y=2^x)$; since the resulting nonstandard $a$ satisfies $a > \\\\underline{n}$ for all standard $n$, and PA proves $2^x > x$, conclude $2^a > a > \\\\underline{n}$. (c) Use overspill on 'there exists a prime $> x$' to get one nonstandard prime, then iterate by finding primes $> p_i$ for each nonstandard prime found.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "Multiple errors across all parts. (a) The proof misapplies induction\u2014stating '$\\mathcal{M} \\models \\forall x \\psi(x, \\vec{b})$' does not follow from $\\psi$ holding for all standard $n$. The correct proof uses contradiction via the least number principle. (b) The formula '$\\psi(x) = 2^x > \\underline{n}$' is problematic since $n$ varies; the argument is unclear. (c) The Euclid-style argument fails because the answer claims '$N$ is not divisible by any standard prime' without justification\u2014standard primes could divide $N = p_1 \\cdots p_k + 1$. Also, the boxed answer '$0$' is meaningless for proof-based questions.",
+        "evaluation": null
+      }
+    ]
+  },
+  {
+    "question": "Let $n \\geq 1$ be a positive integer. Consider lattice paths from $(0,0)$ to $(n,n)$ in the plane, where each step is either a **right step** $(+1, 0)$ or an **up step** $(0, +1)$. A path is called **admissible** if it never passes strictly below the line $y = x - 1$; that is, at every point $(a, b)$ on the path, we have $b \\geq a - 1$.\n\nDetermine, with proof, the number of admissible paths as a closed-form expression in $n$.",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "question_author": "anthropic/claude-opus-4.5",
+    "critic": "anthropic/claude-opus-4.5",
+    "answer_author": "meta-llama/llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "{\"verdict\": \"incorrect\", \"notes\": \"The reflection principle is applied incorrectly in Step 6. The answer claims bad paths correspond to $\\\\binom{2n}{n-1}$, but paths violating $b \\\\geq a-1$ (i.e., touching $y = x - 2$) should reflect $(0,0)$ to $(2,-2)$, giving $\\\\binom{2n}{n-2}$. For $n=1$: both paths RU and UR are admissible (2 total), but the claimed formula gives $C_1 = 1$. For $n=2$: 5 paths are admissible (only RRUU fails), but $C_2 = 2$. The correct answer is $C_{n+1} = \\\\frac{1}{n+2}\\\\binom{2n+2}{n+1}$.\", \"suggestions\": \"Use reflection across $y = x - 2$ correctly: admissible paths = $\\\\binom{2n}{n} - \\\\binom{2n}{n-2} = \\\\frac{2(2n+1)}{(n+1)(n+2)}\\\\binom{2n}{n} = C_{n+1}$.\"}",
+        "verdict": "incorrect",
+        "notes": "The reflection principle is applied incorrectly in Step 6. The answer claims bad paths correspond to $\\binom{2n}{n-1}$, but paths violating $b \\geq a-1$ (i.e., touching $y = x - 2$) should reflect $(0,0)$ to $(2,-2)$, giving $\\binom{2n}{n-2}$. For $n=1$: both paths RU and UR are admissible (2 total), but the claimed formula gives $C_1 = 1$. For $n=2$: 5 paths are admissible (only RRUU fails), but $C_2 = 2$. The correct answer is $C_{n+1} = \\frac{1}{n+2}\\binom{2n+2}{n+1}$.",
+        "evaluation": null
+      }
+    ]
+  },
+  {
+    "question": "Let $p > 3$ be a prime. Prove that \n$$\\sum_{k=1}^{p-1} \\frac{1}{k} \\equiv 0 \\pmod{p^2},$$\nwhere $\\frac{1}{k}$ denotes the unique integer $m$ with $1 \\leq m < p^2$ satisfying $km \\equiv 1 \\pmod{p^2}$ (the multiplicative inverse of $k$ modulo $p^2$).",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "question_author": "anthropic/claude-opus-4.5",
+    "critic": "anthropic/claude-opus-4.5",
+    "answer_author": "meta-llama/llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer fails to provide an actual proof. Steps 4-13 attempt a pairing argument showing $\\\\sum_{k=1}^{p-1} \\\\frac{1}{k} = p \\\\sum_{k=1}^{(p-1)/2} \\\\frac{1}{k(p-k)}$, but the critical step\u2014proving that $\\\\sum_{k=1}^{(p-1)/2} \\\\frac{1}{k(p-k)} \\\\equiv 0 \\\\pmod{p}$\u2014is never completed. Step 14 then appeals directly to Wolstenholme's Theorem ('Wolstenholme's Theorem states that...'), which is exactly the statement we are asked to prove. This constitutes circular reasoning.\",\n  \"suggestions\": \"Complete the proof by showing $\\\\sum_{k=1}^{(p-1)/2} \\\\frac{1}{k(p-k)} \\\\equiv 0 \\\\pmod{p}$. Since $k(p-k) \\\\equiv -k^2 \\\\pmod{p}$, this reduces to showing $\\\\sum_{k=1}^{(p-1)/2} k^{-2} \\\\equiv 0 \\\\pmod{p}$. Use the fact that as $k$ runs through $1$ to $p-1$, so does $k^{-1}$, hence $\\\\sum_{k=1}^{p-1} k^{-2} = \\\\sum_{k=1}^{p-1} k^2 \\\\equiv 0 \\\\pmod{p}$ (since $\\\\sum_{k=1}^{p-1} k^2 = \\\\frac{(p-1)p(2p-1)}{6}$, divisible by $p$ for $p > 3$), and relate this to the half-sum.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer fails to provide an actual proof. Steps 4-13 attempt a pairing argument showing $\\sum_{k=1}^{p-1} \\frac{1}{k} = p \\sum_{k=1}^{(p-1)/2} \\frac{1}{k(p-k)}$, but the critical step\u2014proving that $\\sum_{k=1}^{(p-1)/2} \\frac{1}{k(p-k)} \\equiv 0 \\pmod{p}$\u2014is never completed. Step 14 then appeals directly to Wolstenholme's Theorem ('Wolstenholme's Theorem states that...'), which is exactly the statement we are asked to prove. This constitutes circular reasoning.",
+        "evaluation": null
+      }
+    ]
+  }
+]

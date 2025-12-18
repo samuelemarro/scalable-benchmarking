@@ -1,0 +1,62 @@
+[
+  {
+    "question_model": "google/gemini-3-pro-preview",
+    "answer_model": "openai/gpt-3.5-turbo",
+    "question": "The following problem addresses the intersection of Model Theory and Computability Theory, specifically concerning the properties of models of Peano Arithmetic.\n\n\n**Problem Statement**\n\nLet $\\mathcal{L} = \\{+, \\times, <, 0, 1\\}$ be the language of arithmetic. Let $PA$ denote the first-order theory of Peano Arithmetic.\n\nA structure $\\mathcal{M} = (D, +^\\mathcal{M}, \\times^\\mathcal{M}, <^\\mathcal{M}, 0^\\mathcal{M}, 1^\\mathcal{M})$ is defined to be a **computable model** if:\n1. The domain $D$ is the set of natural numbers $\\mathbb{N}$.\n2. The operations $+^\\mathcal{M}: \\mathbb{N} \\times \\mathbb{N} \\to \\mathbb{N}$ and $\\times^\\mathcal{M}: \\mathbb{N} \\times \\mathbb{N} \\to \\mathbb{N}$ are computable (recursive) functions.\n3. The relation $<^\\mathcal{M} \\subseteq \\mathbb{N} \\times \\mathbb{N}$ is a computable (recursive) relation.\n\nProve that there are no computable non-standard models of $PA$. In other words, show that if $\\mathcal{M}$ is a computable model of $PA$, then $\\mathcal{M}$ is isomorphic to the standard model $\\mathcal{N} = (\\mathbb{N}, +, \\times, <, 0, 1)$.\n\n*Note: You may assume standard results from computability theory, such as the existence of recursively enumerable sets that are recursively inseparable, provided they are clearly stated.*",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To prove that there are no computable non-standard models of $PA$, we will use the fact that the standard model of arithmetic is recursively inseparable from any non-standard model. This means that there is no computable way to distinguish between the standard model and any non-standard model.\n\nLet $\\mathcal{M}$ be a computable model of $PA$. We want to show that $\\mathcal{M}$ is isomorphic to the standard model $\\mathcal{N} = (\\mathbb{N}, +, \\times, <, 0, 1)$.\n\nSince $\\mathcal{M}$ is a computable model, the operations $+^\\mathcal{M}$ and $\\times^\\mathcal{M}$ are computable functions, and the relation $<^\\mathcal{M}$ is a computable relation. This means that all the arithmetic operations and relations in $\\mathcal{M}$ are computable.\n\nNow, let's consider the standard model $\\mathcal{N}$. Since $\\mathcal{N}$ is the standard model, all the arithmetic operations and relations in $\\mathcal{N}$ are also computable.\n\nBy the recursively inseparable property, there is no computable way to distinguish between $\\mathcal{M}$ and $\\mathcal{N}$. This implies that $\\mathcal{M}$ and $\\mathcal{N}$ are isomorphic, as any difference between them would be computable, which contradicts the inseparability.\n\nTherefore, we have shown that any computable model of $PA$ is isomorphic to the standard model $\\mathcal{N}$. This proves that there are no computable non-standard models of $PA$.",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": "The answer is well-structured and provides a clear and logical proof of the given statement."
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "google/gemini-3-pro-preview",
+    "answer_model": "openai/gpt-3.5-turbo",
+    "question": "Here is a challenging problem in Combinatorics, specifically involving Graph Theory and Enumerative Combinatorics.\n\n\nLet $n \\ge 3$ be an integer. Consider the complete graph $K_{2n}$ on the vertex set $V = \\{1, 2, \\dots, 2n\\}$. Let $C_{2n}$ be the Hamiltonian cycle subgraph with edges $E(C_{2n}) = \\{(1,2), (2,3), \\dots, (2n-1, 2n), (2n, 1)\\}$.\n\nDetermine the number of perfect matchings of $K_{2n}$ that do not contain any edge belonging to $C_{2n}$. Provide the answer as a summation in closed form.",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To find the number of perfect matchings of $K_{2n}$ that do not contain any edge belonging to $C_{2n}$, we can approach this problem using the concept of inclusion-exclusion principle.\n\nLet $M$ be the set of all perfect matchings of $K_{2n}$, and let $A_i$ be the set of perfect matchings that contain the edge $(i, i+1)$ for $1 \\le i \\le 2n-1$ (with $(2n, 1)$ considered as $(2n, 1)$). We want to find the cardinality of the set $M \\setminus (A_1 \\cup A_2 \\cup \\dots \\cup A_{2n-1})$.\n\nBy the inclusion-exclusion principle, the cardinality of this set can be expressed as:\n\n$$\n\\left| M \\setminus \\bigcup_{i=1}^{2n-1} A_i \\right| = \\sum_{k=0}^{2n-1} (-1)^k \\binom{2n-1}{k} \\left| \\bigcap_{i \\in S} A_i \\right|\n$$\n\nwhere the sum is taken over all non-empty subsets $S$ of $\\{1, 2, \\dots, 2n-1\\}$.\n\nNow, let's consider the intersection $\\bigcap_{i \\in S} A_i$ for a subset $S$ of $\\{1, 2, \\dots, 2n-1\\}$. If $|S| = k$, then the edges $(i, i+1)$ for $i \\in S$ must be present in the matching. This means that the remaining $2n-1-k$ edges must form a perfect matching of the remaining vertices, which is essentially a perfect matching of $K_{2n-k}$.\n\nTherefore, $\\left| \\bigcap_{i \\in S} A_i \\right| = \\text{number of perfect matchings of } K_{2n-k}$.\n\nSubstitute this back into the formula, we get:\n\n$$\n\\left| M \\setminus \\bigcup_{i=1}^{2n-1} A_i \\right| = \\sum_{k=0}^{2n-1} (-1)^k \\binom{2n-1}{k} \\text{number of perfect matchings of } K_{2n-k}\n$$\n\nNow, we need to find a closed form for the number of perfect matchings of $K_m$ for any $m$. This is a well-known result in combinatorics, and it is given by $m!! = 1 \\cdot 3 \\cdot 5 \\cdots m$ where $m!!$ denotes the double factorial.\n\nTherefore, the final answer for the number of perfect matchings of $K_{2n}$ that do not contain any edge belonging to $C_{2n}$ is:\n\n$$\n\\sum_{k=0}^{2n-1} (-1)^k \\binom{2n-1}{k} (2n-k)!!\n$$",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": "N/A"
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "google/gemini-3-pro-preview",
+    "answer_model": "openai/gpt-3.5-turbo",
+    "question": "Find all integer solutions $(x, y)$ to the equation:\n$$ x^2 + 7 = y^3 $$",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To find all integer solutions $(x, y)$ to the equation $x^2 + 7 = y^3$, we can rearrange the equation as:\n$$ x^2 = y^3 - 7 $$\n\nThis suggests that $y^3 - 7$ must be a perfect square for $x$ to be an integer. Let's analyze this further:\n\n1. **Checking for Perfect Squares:**\n   - For $y^3 - 7$ to be a perfect square, $y^3$ must be congruent to $7$ modulo $4$.\n   - Checking the possible residues of cubes modulo $4$, we find that $y$ must be congruent to $3$ modulo $4$ for $y^3$ to be congruent to $3$ modulo $4$.\n   \n2. **Finding Suitable $y$ values:**\n   - Let $y = 4k + 3$ for some integer $k$.\n   - Substituting this into the equation $x^2 = y^3 - 7$, we get:\n     $$ x^2 = (4k + 3)^3 - 7 $$\n     $$ x^2 = 64k^3 + 144k^2 + 108k + 26 $$\n   \n3. **Solving for $x$:**\n   - Since $x^2$ is a perfect square, we need to find integer solutions for $x$.\n   - By inspection, we can see that $k = 1$ gives $x = 5$ as a solution.\n\nTherefore, the only integer solution to the equation $x^2 + 7 = y^3$ is $(x, y) = (5, 3)$.",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": "N/A"
+        }
+      }
+    ]
+  }
+]

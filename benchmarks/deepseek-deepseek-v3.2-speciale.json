@@ -1,0 +1,74 @@
+[
+  {
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "topic_name": "Mathematical logic and foundations",
+    "status": "succeeded",
+    "generation_rounds": [
+      {
+        "refinement_rounds": [
+          {
+            "round": 1,
+            "question": "Prove that there exist two recursively enumerable subsets $A$ and $B$ of the natural numbers $\\mathbb{N}$ that are recursively inseparable. That is, $A \\cap B = \\emptyset$ and there is no recursive set $C \\subseteq \\mathbb{N}$ such that $A \\subseteq C$ and $B \\subseteq \\mathbb{N} \\setminus C$.\n\nYou may assume standard computability theory background:\n- An admissible numbering $\\varphi_e$ of partial computable functions (where $\\varphi_e(x)$ denotes the output, if any, of the $e$-th Turing machine on input $x$).\n- The s-m-n theorem: there is a total computable function $s$ such that $\\varphi_{s(e,x)}(y) = \\varphi_e(x,y)$.\n- The recursion theorem (Kleene's fixed point theorem): for any total computable function $f$, there exists an index $e$ such that $\\varphi_e = \\varphi_{f(e)}$.",
+            "answer": "We define\n$$\nA = \\{ e \\in \\mathbb{N} \\mid \\varphi_e(e){\\downarrow} = 0 \\},\\qquad \nB = \\{ e \\in \\mathbb{N} \\mid \\varphi_e(e){\\downarrow} = 1 \\}.\n$$\n(Here \u201c$\\downarrow$\u201d means the computation halts.)\n\n**1. $A$ and $B$ are recursively enumerable and disjoint.**  \nThe function $\\Phi(e,x) = \\varphi_e(x)$ is partial computable (by the existence of a universal Turing machine). The set $A$ is the set of $e$ for which $\\Phi(e,e)$ halts and outputs $0$. This is clearly r.e.: run the universal machine on input $(e,e)$ and accept if it halts with output $0$. Similarly, $B$ is r.e. by waiting for output $1$. Since a computation cannot give two different outputs, $A \\cap B = \\emptyset$.\n\n**2. Assume for contradiction that a recursive separator exists.**  \nSuppose there were a recursive set $C$ with $A \\subseteq C$ and $B \\subseteq \\mathbb{N}\\setminus C$. Because $C$ is recursive, its characteristic function $\\chi_C$ is computable.\n\n**3. Construct a total computable function $f$.**  \nWe define a partial computable function $\\psi$ of two variables:\n$$\n\\psi(x,y) = \\begin{cases}\n1 & \\text{if } x \\in C,\\\\\n0 & \\text{if } x \\notin C.\n\\end{cases}\n$$\nSince $\\chi_C$ is computable, $\\psi$ is total computable. By the s-m-n theorem, there exists a total computable function $f$ such that for all $x,y$,\n$$\n\\varphi_{f(x)}(y) = \\psi(x,y).\n$$\nThus $\\varphi_{f(x)}$ is the constant function that outputs $1$ when $x \\in C$ and outputs $0$ when $x \\notin C$.\n\n**4. Apply the recursion theorem.**  \nThe recursion theorem guarantees the existence of an index $e$ such that\n$$\n\\varphi_e = \\varphi_{f(e)}.\n$$\n\n**5. Derive a contradiction.**  \nConsider the two possible cases.\n\n- **Case $e \\in C$.** Then by definition of $f$, $\\varphi_{f(e)}$ is the constant $1$ function, so $\\varphi_e(e) = 1$. Hence $e \\in B$. Because $B \\subseteq \\mathbb{N}\\setminus C$, we must have $e \\notin C$, contradicting $e \\in C$.\n\n- **Case $e \\notin C$.** Then $\\varphi_{f(e)}$ is the constant $0$ function, so $\\varphi_e(e) = 0$. Hence $e \\in A$. Since $A \\subseteq C$, we obtain $e \\in C$, contradicting $e \\notin C$.\n\nBoth cases lead to a contradiction. Therefore no such recursive set $C$ can exist.\n\n**6. Conclusion.**  \nThe sets $A$ and $B$ are recursively enumerable, disjoint, and have no recursive separator; i.e., they are recursively inseparable. \u220e",
+            "evaluation": {
+              "verdict": "pass",
+              "ill_posed": false,
+              "issues": [],
+              "improvements": "No improvements needed."
+            }
+          }
+        ],
+        "status": "succeeded"
+      }
+    ]
+  },
+  {
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "topic_name": "Combinatorics",
+    "status": "succeeded",
+    "generation_rounds": [
+      {
+        "refinement_rounds": [
+          {
+            "round": 1,
+            "question": "Let $n$ be a positive integer. Determine the number of permutations $\\sigma$ of the set $\\{1,2,\\dots,2n\\}$ such that every cycle in the disjoint cycle decomposition of $\\sigma$ has even length. Give a closed-form expression.",
+            "answer": "Let $a_m$ denote the number of permutations of $[m]=\\{1,\\dots,m\\}$ in which all cycles have even length. For odd $m$, $a_m=0$ because the sum of even numbers cannot be odd. We use exponential generating functions (EGF). The EGF for a cycle of length $k$ is $\\frac{x^k}{k}$. Hence the EGF for cycles of even length is\n$$\nC_{\\text{even}}(x)=\\sum_{j\\ge 1}\\frac{x^{2j}}{2j}.\n$$\nA permutation is a set of cycles, so by the exponential formula the EGF for permutations with all cycles even is\n$$\nA(x)=\\exp\\bigl(C_{\\text{even}}(x)\\bigr).\n$$\nWe compute the sum:\n$$\n\\sum_{j\\ge 1}\\frac{x^{2j}}{2j}=\\frac12\\sum_{j\\ge 1}\\frac{(x^2)^j}{j}=-\\frac12\\ln(1-x^2).\n$$\nThus\n$$\nA(x)=\\exp\\Bigl(-\\frac12\\ln(1-x^2)\\Bigr)=(1-x^2)^{-1/2}.\n$$\n\nNow expand $A(x)$ as a power series using the binomial theorem:\n$$\n(1-x^2)^{-1/2}=\\sum_{m\\ge 0}\\binom{-1/2}{m}(-x^2)^m.\n$$\nThe binomial coefficient can be simplified:\n$$\n\\binom{-1/2}{m}=(-1)^m\\,\\frac{(2m)!}{4^m\\,(m!)^2}.\n$$\nIndeed, $\\binom{-1/2}{m}=\\frac{(-1/2)(-1/2-1)\\cdots(-1/2-m+1)}{m!}=(-1)^m\\frac{(1/2)(1/2+1)\\cdots(1/2+m-1)}{m!}$ and the product equals $(2m)!/(4^m m!^2)$. Consequently,\n$$\n\\binom{-1/2}{m}(-x^2)^m = \\left((-1)^m\\frac{(2m)!}{4^m\\,(m!)^2}\\right)(-1)^m x^{2m}= \\frac{(2m)!}{4^m\\,(m!)^2}\\,x^{2m}.\n$$\nHence\n$$\nA(x)=\\sum_{m\\ge 0}\\frac{(2m)!}{4^m\\,(m!)^2}\\,x^{2m}.\n$$\n\nRecall that $A(x)=\\sum_{k\\ge 0}a_k\\frac{x^k}{k!}$. Comparing coefficients for $k=2m$ gives\n$$\n\\frac{a_{2m}}{(2m)!}=[x^{2m}]A(x)=\\frac{(2m)!}{4^m\\,(m!)^2},\n$$\nso\n$$\na_{2m}= (2m)!\\cdot\\frac{(2m)!}{4^m\\,(m!)^2}= \\frac{((2m)!)^2}{4^m\\,(m!)^2}.\n$$\n\nTo obtain a compact closed form, use the identity $(2m)! = 2^m\\,m!\\,(2m-1)!!$, where $(2m-1)!!=(2m-1)(2m-3)\\cdots3\\cdot1$. Substituting,\n$$\na_{2m}= \\frac{\\bigl(2^m\\,m!\\,(2m-1)!!\\bigr)^2}{4^m\\,(m!)^2}= \\frac{4^m\\,(m!)^2\\,((2m-1)!!)^2}{4^m\\,(m!)^2}= ((2m-1)!!)^2.\n$$\n\nTherefore, for $2n$ elements the required number is\n$$\n\\boxed{((2n-1)!!)^2}.\n$$\nEquivalently, it can be written as $\\left(\\frac{(2n)!}{2^n\\,n!}\\right)^2$ or $\\left(\\prod_{k=1}^{n}(2k-1)\\right)^2$.",
+            "evaluation": {
+              "verdict": "pass",
+              "ill_posed": false,
+              "issues": [],
+              "improvements": ""
+            }
+          }
+        ],
+        "status": "succeeded"
+      }
+    ]
+  },
+  {
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "topic_name": "Number theory",
+    "status": "succeeded",
+    "generation_rounds": [
+      {
+        "refinement_rounds": [
+          {
+            "round": 1,
+            "question": "Find all positive integers $n$ satisfying $n^2 \\mid 3^n + 1$.",
+            "answer": "**Solution.** We claim that the only solution is $n = 1$.\n\nFirst, note that $n = 1$ works because $1^2 = 1$ divides $3^1 + 1 = 4$.\n\nNow suppose $n \\ge 2$.\n\n**Step 1: $n$ is odd.**  \nIf $n$ is even, write $n = 2k$ with $k \\ge 1$. Then $3^{2k} = 9^k \\equiv 1^k = 1 \\pmod{4}$, so $3^n + 1 \\equiv 2 \\pmod{4}$. Hence $4 \\nmid (3^n + 1)$. But $n^2$ is divisible by $4$ because $n$ is even and $n \\ge 2$. Therefore $n^2 \\nmid (3^n + 1)$, a contradiction. Thus $n$ must be odd.\n\n**Step 2: Let $p$ be the smallest prime divisor of $n$.** Since $n$ is odd, $p$ is odd. Moreover, $p \\neq 3$: if $p = 3$, then $3 \\mid n$, but $3^n + 1 \\equiv 1 \\pmod{3}$ (because $3^n \\equiv 0 \\pmod{3}$), so $3 \\nmid (3^n + 1)$. However, $p \\mid n^2$ and $n^2 \\mid (3^n + 1)$ would imply $p \\mid (3^n + 1)$, contradiction. Hence $p \\ge 5$.\n\n**Step 3: Order of $3$ modulo $p$.**  \nFrom $n^2 \\mid (3^n + 1)$ we have $3^n \\equiv -1 \\pmod{p}$. Let $t$ be the multiplicative order of $3$ modulo $p$ (i.e., the smallest positive integer with $3^t \\equiv 1 \\pmod{p}$). Then $3^{2n} \\equiv 1 \\pmod{p}$, so $t \\mid 2n$. But $t \\nmid n$, because otherwise $3^n \\equiv 1 \\pmod{p}$, contradicting $3^n \\equiv -1 \\pmod{p}$ (since $p > 2$). Consequently $t$ is even; write $t = 2d$. Because $2d \\mid 2n$, we obtain $d \\mid n$.\n\n**Step 4: Properties of $d$.**  \nFrom $t = 2d$ we have $3^{2d} \\equiv 1 \\pmod{p}$ and $3^d \\not\\equiv 1 \\pmod{p}$ (otherwise the order would divide $d$). Hence $3^d \\equiv -1 \\pmod{p}$. Now $3^n = (3^d)^{n/d} \\equiv (-1)^{n/d} \\pmod{p}$. Since $3^n \\equiv -1$, it follows that $n/d$ is odd.\n\nWe also note that $d > 1$. Indeed, if $d = 1$, then $3 \\equiv -1 \\pmod{p}$, i.e., $p \\mid 4$, which forces $p = 2$, contradicting $p \\ge 5$.\n\n**Step 5: Lower bound for $d$.**  \nSince $d \\mid n$ and $d > 1$, $d$ has at least one prime divisor $q$. Because $q \\mid d \\mid n$, $q$ is a prime divisor of $n$. By the choice of $p$ as the smallest prime divisor of $n$, we have $q \\ge p$. Therefore $d \\ge q \\ge p$.\n\n**Step 6: Upper bound for $d$.**  \nBy Fermat's little theorem, $t \\mid p-1$, i.e., $2d \\mid p-1$. Hence $2d \\le p-1$, which gives $d \\le \\frac{p-1}{2}$.\n\n**Step 7: Contradiction for $p \\ge 5$.**  \nFor any prime $p \\ge 5$, we have $\\frac{p-1}{2} < p$. Combining the inequalities from Steps 5 and 6:\n$$\np \\le d \\le \\frac{p-1}{2} < p,\n$$\nwhich is impossible. Thus our assumption that $n \\ge 2$ leads to a contradiction.\n\nTherefore the only positive integer satisfying the condition is $n = 1$.\n\n\u220e",
+            "evaluation": {
+              "verdict": "pass",
+              "ill_posed": false,
+              "issues": [],
+              "improvements": ""
+            }
+          }
+        ],
+        "status": "succeeded"
+      }
+    ]
+  }
+]

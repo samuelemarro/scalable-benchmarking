@@ -1,0 +1,24 @@
+[
+  {
+    "question_model": "openai/gpt-5.2-2025-12-11",
+    "answer_model": "openai/gpt-3.5-turbo",
+    "question": "Assume the **Compactness Theorem for first-order logic**: if a set $T$ of first-order sentences has the property that every finite subset of $T$ has a model, then $T$ has a model.\n\nProve that there exists a **nonprincipal ultrafilter** $\\mathcal U$ on $\\omega=\\{0,1,2,\\dots\\}$. Concretely, show that there is a family $\\mathcal U\\subseteq\\mathcal P(\\omega)$ such that:\n\n1. (Filter) $\\omega\\in\\mathcal U$; if $A\\in\\mathcal U$ and $A\\subseteq B\\subseteq\\omega$ then $B\\in\\mathcal U$; and if $A,B\\in\\mathcal U$ then $A\\cap B\\in\\mathcal U$.\n2. (Ultra) For every $A\\subseteq\\omega$, exactly one of $A$ or $\\omega\\setminus A$ lies in $\\mathcal U$.\n3. (Nonprincipal) For every $n\\in\\omega$, $\\{n\\}\\notin\\mathcal U$.\n\nYou must construct $\\mathcal U$ from a model whose existence is obtained by compactness, and then verify (1)\u2013(3).\n\n---",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To prove the existence of a nonprincipal ultrafilter $\\mathcal U$ on $\\omega$, we will use the Compactness Theorem for first-order logic. We will construct a model that satisfies the properties of a nonprincipal ultrafilter and then show that this model indeed forms a nonprincipal ultrafilter.\n\nLet's define a language $\\mathcal L$ with a single unary predicate symbol $P$. Consider the set of first-order sentences $T$ defined as follows:\n\n1. For each $n\\in\\omega$, let $\\varphi_n$ be the sentence $P(n)$.\n2. For each finite subset $F\\subseteq\\omega$, let $\\psi_F$ be the sentence $\\bigvee_{n\\in F} P(n)$.\n\nNow, let $T' = T \\cup \\{\\lnot \\psi_F : F \\text{ is a finite subset of } \\omega\\}$. We claim that $T'$ is finitely satisfiable.\n\nSuppose not, then there exists a finite subset $F_0\\subseteq\\omega$ such that $T' \\cup \\{\\lnot \\psi_{F_0}\\}$ is unsatisfiable. This means that for any interpretation of $P$ over $\\omega$, there exists $n_0\\in F_0$ such that $P(n_0)$ is false, contradicting the assumption that every finite subset of $T$ has a model.\n\nBy the Compactness Theorem, $T'$ has a model, which corresponds to a nonprincipal ultrafilter $\\mathcal U$ on $\\omega$. We will now verify the properties of $\\mathcal U$:\n\n1. **Filter Properties**:\n   - Since $\\omega$ satisfies $\\bigvee_{n\\in\\omega} P(n)$, we have $\\omega\\in\\mathcal U$.\n   - If $A\\in\\mathcal U$ and $A\\subseteq B\\subseteq\\omega$, then $B\\in\\mathcal U$ because the conjunction of predicates in $B$ implies the conjunction of predicates in $A$.\n   - If $A,B\\in\\mathcal U$, then $A\\cap B\\in\\mathcal U$ because the intersection of predicates in $A$ and $B$ implies the conjunction of predicates in $A\\cap B$.\n\n2. **Ultra Property**:\n   For any $A\\subseteq\\omega$, either $A$ or $\\omega\\setminus A$ must be in $\\mathcal U$ due to the construction of the model.\n\n3. **Nonprincipal Property**:\n   For every $n\\in\\omega$, $\\{n\\}\\notin\\mathcal U$ because $\\lnot P(n)$ holds in the model.\n\nTherefore, we have constructed a nonprincipal ultrafilter $\\mathcal U$ on $\\omega$ as required.",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {},
+  {}
+]

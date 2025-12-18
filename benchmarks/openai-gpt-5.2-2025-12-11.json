@@ -1,0 +1,53 @@
+[
+  {
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "topic_name": "Mathematical logic and foundations",
+    "status": "succeeded",
+    "generation_rounds": [
+      {
+        "refinement_rounds": [
+          {
+            "round": 1,
+            "question": "Assume the **Compactness Theorem for first-order logic**: if a set $T$ of first-order sentences has the property that every finite subset of $T$ has a model, then $T$ has a model.\n\nProve that there exists a **nonprincipal ultrafilter** $\\mathcal U$ on $\\omega=\\{0,1,2,\\dots\\}$. Concretely, show that there is a family $\\mathcal U\\subseteq\\mathcal P(\\omega)$ such that:\n\n1. (Filter) $\\omega\\in\\mathcal U$; if $A\\in\\mathcal U$ and $A\\subseteq B\\subseteq\\omega$ then $B\\in\\mathcal U$; and if $A,B\\in\\mathcal U$ then $A\\cap B\\in\\mathcal U$.\n2. (Ultra) For every $A\\subseteq\\omega$, exactly one of $A$ or $\\omega\\setminus A$ lies in $\\mathcal U$.\n3. (Nonprincipal) For every $n\\in\\omega$, $\\{n\\}\\notin\\mathcal U$.\n\nYou must construct $\\mathcal U$ from a model whose existence is obtained by compactness, and then verify (1)\u2013(3).\n\n---",
+            "answer": "### 1) Build a first-order theory encoding \u201cmembership in the ultrafilter\u201d\nLet $L$ be a first-order language consisting of:\n- one constant symbol $c$;\n- for **each** subset $A\\subseteq\\omega$, one unary predicate symbol $P_A(\\cdot)$.\n\n(So $L=\\{c\\}\\cup\\{P_A: A\\subseteq\\omega\\}$. This is a legitimate set-sized language because $\\mathcal P(\\omega)$ is a set.)\n\nDefine a set $T$ of $L$-sentences as follows:\n\n- **Contains $\\omega$:**\n  $$\n  P_\\omega(c).\n  $$\n\n- **Upward closure:** for all $A,B\\subseteq\\omega$ with $A\\subseteq B$, include\n  $$\n  P_A(c)\\ \\to\\ P_B(c).\n  $$\n\n- **Closed under finite intersections:** for all $A,B\\subseteq\\omega$, include\n  $$\n  (P_A(c)\\wedge P_B(c))\\ \\to\\ P_{A\\cap B}(c).\n  $$\n\n- **Ultrafilter dichotomy (decides complements):** for all $A\\subseteq\\omega$, include\n  $$\n  P_A(c)\\ \\leftrightarrow\\ \\neg P_{\\omega\\setminus A}(c).\n  $$\n  (This enforces \u201cexactly one of $A$ and $\\omega\\setminus A$\u201d at $c$.)\n\n- **Nonprincipal requirement:** for each $n\\in\\omega$, include\n  $$\n  \\neg P_{\\{n\\}}(c).\n  $$\n\nSo $T$ is a set of sentences (possibly uncountable, but that is allowed).\n\n---\n\n### 2) Show every finite $T_0\\subseteq T$ has a model\nLet $T_0\\subseteq T$ be finite. Then $T_0$ contains only finitely many of the nonprincipality axioms $\\neg P_{\\{n\\}}(c)$. Let those excluded singletons be $\\{n_1\\},\\dots,\\{n_k\\}$.\n\nChoose $m\\in\\omega$ with $m\\notin\\{n_1,\\dots,n_k\\}$.\n\nNow define an $L$-structure $\\mathbf M_0$ by:\n- Universe: $|\\mathbf M_0|=\\omega$.\n- Interpret the constant: $c^{\\mathbf M_0}=m$.\n- Interpret each predicate symbol by the corresponding set:\n  $$\n  P_A^{\\mathbf M_0} := A \\subseteq \\omega.\n  $$\n  (So $\\mathbf M_0\\models P_A(c)$ iff $m\\in A$.)\n\nWe check that $\\mathbf M_0\\models T_0$:\n\n- $P_\\omega(c)$ holds because $m\\in\\omega$.\n- If $A\\subseteq B$ and $\\mathbf M_0\\models P_A(c)$, then $m\\in A\\subseteq B$, so $\\mathbf M_0\\models P_B(c)$.\n- If $\\mathbf M_0\\models P_A(c)\\wedge P_B(c)$, then $m\\in A\\cap B$, so $\\mathbf M_0\\models P_{A\\cap B}(c)$.\n- For any $A$, exactly one of $m\\in A$ or $m\\in\\omega\\setminus A$ holds, so $\\mathbf M_0\\models P_A(c)\\leftrightarrow\\neg P_{\\omega\\setminus A}(c)$.\n- For each $\\neg P_{\\{n_i\\}}(c)$ appearing in $T_0$, we have $m\\neq n_i$, hence $m\\notin\\{n_i\\}$, so $\\mathbf M_0\\models\\neg P_{\\{n_i\\}}(c)$.\n\nThus every finite $T_0\\subseteq T$ is satisfiable.\n\n---\n\n### 3) Apply compactness to get a global model\nBy the Compactness Theorem, $T$ has a model $\\mathbf M\\models T$.\n\nFix such a model $\\mathbf M$. Let $c^{\\mathbf M}$ denote the interpretation of $c$ in $\\mathbf M$.\n\nNow define a family $\\mathcal U\\subseteq\\mathcal P(\\omega)$ externally by\n$$\n\\mathcal U \\ :=\\ \\{A\\subseteq\\omega : \\mathbf M\\models P_A(c)\\}.\n$$\nThis is well-defined: we use the *indexing* of predicate symbols $P_A$ by actual subsets $A\\subseteq\\omega$.\n\nWe will prove that $\\mathcal U$ satisfies (1)\u2013(3).\n\n---\n\n### 4) Verify $\\mathcal U$ is a (proper) filter\n**(i) $\\omega\\in\\mathcal U$.**  \nSince $P_\\omega(c)\\in T$ and $\\mathbf M\\models T$, we have $\\mathbf M\\models P_\\omega(c)$, hence $\\omega\\in\\mathcal U$.\n\n**(ii) Upward closed.**  \nAssume $A\\in\\mathcal U$ and $A\\subseteq B\\subseteq\\omega$. Then $\\mathbf M\\models P_A(c)$. Also $T$ contains the sentence $P_A(c)\\to P_B(c)$. Therefore $\\mathbf M\\models P_B(c)$, i.e. $B\\in\\mathcal U$.\n\n**(iii) Closed under intersections.**  \nAssume $A,B\\in\\mathcal U$. Then $\\mathbf M\\models P_A(c)\\wedge P_B(c)$. Since $T$ contains $(P_A(c)\\wedge P_B(c))\\to P_{A\\cap B}(c)$, we get $\\mathbf M\\models P_{A\\cap B}(c)$, hence $A\\cap B\\in\\mathcal U$.\n\n**(iv) Properness (optional but implicit in \u201cultrafilter\u201d).**  \nTake $A=\\emptyset$. Then $\\omega\\setminus\\emptyset=\\omega$, and $T$ contains\n$$\nP_\\emptyset(c)\\leftrightarrow \\neg P_\\omega(c).\n$$\nBut $\\mathbf M\\models P_\\omega(c)$, so $\\mathbf M\\models \\neg P_\\emptyset(c)$. Thus $\\emptyset\\notin\\mathcal U$, so $\\mathcal U$ is a proper filter.\n\nSo (1) holds.\n\n---\n\n### 5) Verify the ultrafilter (\u201cdecides every set\u201d)\nLet $A\\subseteq\\omega$ be arbitrary. Since $T$ contains\n$$\nP_A(c)\\leftrightarrow \\neg P_{\\omega\\setminus A}(c),\n$$\nin the model $\\mathbf M$ we have\n$$\n\\mathbf M\\models P_A(c)\\quad\\text{iff}\\quad \\mathbf M\\not\\models P_{\\omega\\setminus A}(c).\n$$\nTherefore:\n- at least one of $P_A(c)$, $P_{\\omega\\setminus A}(c)$ holds (because $P_A(c)\\leftrightarrow\\neg P_{\\omega\\setminus A}(c)$ implies $P_A(c)\\vee P_{\\omega\\setminus A}(c)$),\n- and they cannot both hold.\n\nTranslating to $\\mathcal U$: exactly one of $A$ or $\\omega\\setminus A$ lies in $\\mathcal U$. This is (2).\n\n---\n\n### 6) Verify nonprincipality\nFor each $n\\in\\omega$, the sentence $\\neg P_{\\{n\\}}(c)$ lies in $T$, hence $\\mathbf M\\models \\neg P_{\\{n\\}}(c)$. Thus $\\{n\\}\\notin\\mathcal U$ for all $n$, proving (3).\n\nFinally, $\\mathcal U$ cannot be principal: if $\\mathcal U$ were principal, there would exist $n\\in\\omega$ such that\n$$\n\\mathcal U=\\{A\\subseteq\\omega: n\\in A\\},\n$$\nwhich would imply $\\{n\\}\\in\\mathcal U$, contradicting $\\{n\\}\\notin\\mathcal U$.\n\n---\n\n### Conclusion\nUsing compactness, we constructed a family\n$$\n\\mathcal U=\\{A\\subseteq\\omega:\\mathbf M\\models P_A(c)\\}\n$$\nwhich is a proper filter, decides every subset of $\\omega$ against its complement, and contains no singleton. Hence $\\mathcal U$ is a **nonprincipal ultrafilter on $\\omega$**.",
+            "evaluation": {
+              "verdict": "pass",
+              "ill_posed": false,
+              "issues": [
+                "The proof uses a language with one predicate symbol P_A for each A\u2286\u03c9; this is fine for the usual (set-sized) Compactness Theorem, but if the intended compactness assumption were only for countable languages, an additional encoding argument would be needed.",
+                "The step \u201cP_A(c)\u2194\u00acP_{\u03c9\\A}(c) implies at least one of P_A(c), P_{\u03c9\\A}(c)\u201d is correct but could be justified more explicitly (it uses classical logic: otherwise both false would contradict the \u2194)."
+              ],
+              "improvements": "State explicitly that compactness is being applied to a set-sized language (|L|=2^{\\aleph_0}). Add a brief derivation that from \u03c6\u2194\u00ac\u03c8 one gets \u03c6\u2228\u03c8 (or include the disjunction axiom separately). Optionally note that properness (\u2205\u2209U) follows automatically from the ultrafilter axiom plus \u03c9\u2208U."
+            }
+          }
+        ],
+        "status": "succeeded"
+      }
+    ]
+  },
+  {
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "topic_name": "Combinatorics",
+    "status": "failed",
+    "generation_rounds": [
+      {
+        "refinement_rounds": [],
+        "status": "failed"
+      }
+    ]
+  },
+  {
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "topic_name": "Number theory",
+    "status": "failed",
+    "generation_rounds": [
+      {
+        "refinement_rounds": [],
+        "status": "failed"
+      }
+    ]
+  }
+]
