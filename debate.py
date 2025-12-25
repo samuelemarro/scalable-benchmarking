@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from model_config import _slugify, load_registry
 from prompt_library import load_answer_guidance, load_question_guidance
 from model_api import query_llm_single
+from utils import safe_load_json
 
 load_dotenv()
 
@@ -86,30 +87,31 @@ def run_round(
     user_message: str,
     temperature: float,
     reasoning: Optional[str],
-) -> str:
+) -> Dict:
+    """
+    Returns a dict with 'message' and 'concede' fields.
+    """
     reply = query_llm_single(
         speaker_model,
         user_message,
-        prompt=system_prompt,
+        prompt=system_prompt + "\n\nIMPORTANT: Respond with JSON containing 'message' (your response text) and 'concede' (boolean, true if you concede/agree, false otherwise).",
         temperature=temperature,
         reasoning=reasoning,
+        response_format={"type": "json_object"},
     )
-    return clean_math(reply)
+    parsed = safe_load_json(reply)
+    if isinstance(parsed, dict) and "message" in parsed:
+        return {
+            "message": clean_math(parsed["message"]),
+            "concede": parsed.get("concede", False)
+        }
+    # Fallback if JSON parsing fails
+    return {"message": clean_math(reply), "concede": False}
 
 
-def check_concession(text: str) -> bool:
-    t = text.lower()
-    return any(
-        phrase in t
-        for phrase in [
-            "i concede",
-            "i withdraw my claim",
-            "i retract my claim",
-            "you are correct",
-            "i agree with your answer",
-            "i agree with your defense",
-        ]
-    )
+def check_concession(response: Dict) -> bool:
+    """Check if the response contains a concession via the 'concede' field."""
+    return response.get("concede", False)
 
 
 def illposed_debate(
@@ -141,19 +143,19 @@ def illposed_debate(
     )
     for r in range(1, rounds + 1):
         owner_reply = run_round(defender_model, system_prompt_owner, last_message, defender_temp, defender_reason)
-        history.append({"round": r, "speaker": "Bob", "message": owner_reply})
+        history.append({"round": r, "speaker": "Bob", "message": owner_reply["message"], "concede": owner_reply["concede"]})
         if allow_concede and check_concession(owner_reply):
             break
         claimant_prompt = (
-            f"Bob responded:\n{owner_reply}\n\nQuestion:\n{question}\n\n"
+            f"Bob responded:\n{owner_reply['message']}\n\nQuestion:\n{question}\n\n"
             "Restate your ill-posedness reasoning or acknowledge if the defense resolves your concerns as Alice."
         )
         claimant_reply = run_round(claimant_model, system_prompt_claimant, claimant_prompt, claimant_temp, claimant_reason)
-        history.append({"round": r, "speaker": "Alice", "message": claimant_reply})
+        history.append({"round": r, "speaker": "Alice", "message": claimant_reply["message"], "concede": claimant_reply["concede"]})
         if allow_concede and check_concession(claimant_reply):
             break
         last_message = (
-            f"Alice replied:\n{claimant_reply}\n\nQuestion:\n{question}\n"
+            f"Alice replied:\n{claimant_reply['message']}\n\nQuestion:\n{question}\n"
             "Respond briefly to move the discussion forward as Bob."
         )
     return history
@@ -188,19 +190,19 @@ def critique_debate(
     )
     for r in range(1, rounds + 1):
         author_reply = run_round(defender_model, system_prompt_author, last_message, author_temp, author_reason)
-        history.append({"round": r, "speaker": "Bob", "message": author_reply})
+        history.append({"round": r, "speaker": "Bob", "message": author_reply["message"], "concede": author_reply["concede"]})
         if allow_concede and check_concession(author_reply):
             break
         critic_prompt = (
-            f"Bob replied:\n{author_reply}\n\nOriginal critique:\n{critique}\n\nQuestion:\n{question}\n"
+            f"Bob replied:\n{author_reply['message']}\n\nOriginal critique:\n{critique}\n\nQuestion:\n{question}\n"
             "Follow up concisely as Alice."
         )
         critic_reply = run_round(claimant_model, system_prompt_critic, critic_prompt, critic_temp, critic_reason)
-        history.append({"round": r, "speaker": "Alice", "message": critic_reply})
+        history.append({"round": r, "speaker": "Alice", "message": critic_reply["message"], "concede": critic_reply["concede"]})
         if allow_concede and check_concession(critic_reply):
             break
         last_message = (
-            f"Alice replied:\n{critic_reply}\n\nQuestion:\n{question}\nAnswer:\n{answer}\n"
+            f"Alice replied:\n{critic_reply['message']}\n\nQuestion:\n{question}\nAnswer:\n{answer}\n"
             "Respond briefly as Bob."
         )
     return history
@@ -218,6 +220,9 @@ def main():
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--no-allow-concede", action="store_true", help="Disable early stop on concession.")
     args = parser.parse_args()
+
+    if args.rounds < 1:
+        parser.error("--rounds must be >= 1")
 
     registry = load_registry(str(args.config))
     guidance_q = load_question_guidance()
