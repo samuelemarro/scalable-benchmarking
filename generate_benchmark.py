@@ -35,7 +35,9 @@ def load_runs(path: Path, topic_info: Dict[str, Dict]) -> List[Dict]:
     runs = []
     for run_id, payload in data.items():
         topic_slug = payload.get("topic")
-        topic_name = topic_info.get(topic_slug, {}).get("name", topic_slug)
+        if topic_slug not in topic_info:
+            raise ValueError(f"Invalid topic slug '{topic_slug}' in run {run_id}. Valid topics: {list(topic_info.keys())}")
+        topic_name = topic_info[topic_slug]["name"]
         runs.append({"run_id": str(run_id), "topic_slug": topic_slug, "topic_name": topic_name})
     return runs
 
@@ -57,8 +59,11 @@ def parse_question_answer(text: str) -> Tuple[str, str]:
     if "[QUESTION]" in text and "[ANSWER]" in text:
         question, answer = text.split("[ANSWER]", 1)
         question = question.replace("[QUESTION]", "").strip()
-        return question, answer.strip()
-    return "", text.strip()
+        answer = answer.strip()
+        if not question:
+            raise ValueError("Parsed question is empty")
+        return question, answer
+    raise ValueError("Response missing required [QUESTION] and [ANSWER] tags")
 
 
 def clean_math(text: str) -> str:

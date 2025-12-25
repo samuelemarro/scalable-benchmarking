@@ -33,6 +33,7 @@ class ModelRegistry:
         self.default_reasoning = raw.get("default_reasoning")
         self.models: Dict[str, ModelSpec] = {}
         self.slug_index: Dict[str, ModelSpec] = {}
+        seen_slugs: Dict[str, str] = {}
         for entry in raw.get("models", []):
             spec = ModelSpec(
                 name=entry["name"],
@@ -41,11 +42,18 @@ class ModelRegistry:
                 reasoning=entry.get("reasoning", self.default_reasoning),
                 display_name=entry.get("display_name"),
             )
+            # Check for slug uniqueness
+            if spec.slug in seen_slugs:
+                raise ValueError(f"Duplicate slug '{spec.slug}' for models '{spec.name}' and '{seen_slugs[spec.slug]}'")
+            seen_slugs[spec.slug] = spec.name
             self.models[spec.name] = spec
             self.slug_index[spec.slug] = spec
 
     def by_role(self, role: str) -> List[ModelSpec]:
-        return [spec for spec in self.models.values() if role in spec.roles]
+        results = [spec for spec in self.models.values() if role in spec.roles]
+        if not results:
+            print(f"Warning: No models found with role '{role}'")
+        return results
 
     def pick(self, names: Optional[Iterable[str]]) -> List[ModelSpec]:
         if not names:

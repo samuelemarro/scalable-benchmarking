@@ -42,6 +42,9 @@ def self_improve_answers(
     """
     Perform self-critique/improvement loops on a batch of answers.
     """
+    if max_rounds < 1:
+        raise ValueError("max_rounds must be >= 1")
+
     results = [ImprovementResult(final_answer=ans) for ans in initial_answers]
     active_indices = list(range(len(questions)))
 

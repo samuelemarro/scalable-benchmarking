@@ -182,6 +182,9 @@ def main():
             if not question_model:
                 continue
             benchmark_entries = load_json(bench_path, [])
+            if not benchmark_entries:
+                print(f"Skipping empty benchmark: {bench_path}")
+                continue
             for answer_spec in answer_models:
                 if answer_spec.name == question_model:
                     continue
