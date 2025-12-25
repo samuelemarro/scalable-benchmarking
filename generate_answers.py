@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -15,7 +16,9 @@ from prompt_library import (
 )
 from self_improvement import self_improve_answers
 from model_api import query_llm_batch, query_llm_single
-from utils import clean_math
+from utils import clean_math, setup_logging
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -66,7 +69,7 @@ def prepare_batch(
         if limit is not None and len(batch) >= limit:
             break
         if entry.get("status") != "succeeded":
-            print(f"Skipping question {question_model}-{idx} (status: {entry.get('status')})")
+            logger.info(f"Skipping question {question_model}-{idx} (status: {entry.get('status')})")
             continue
         question_text = final_question(entry)
         if not question_text:
@@ -159,7 +162,10 @@ def main():
     parser.add_argument("--limit", type=int, default=None, help="Limit number of questions per pair.")
     parser.add_argument("--rerun-failures", action="store_true", help="Retry failed entries.")
     parser.add_argument("--illposed-overrides", type=Path, default=Path("configs/illposed_overrides.json"), help="Overrides JSON.")
+    parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL).")
     args = parser.parse_args()
+
+    setup_logging(args.log_level)
 
     registry = load_registry(str(args.config))
     answer_guidance = load_answer_guidance()
@@ -177,7 +183,7 @@ def main():
                 continue
             benchmark_entries = load_json(bench_path, [])
             if not benchmark_entries:
-                print(f"Skipping empty benchmark: {bench_path}")
+                logger.info(f"Skipping empty benchmark: {bench_path}")
                 continue
             for answer_spec in answer_models:
                 if answer_spec.name == question_model:
@@ -221,9 +227,9 @@ def main():
         for fut in as_completed(tasks):
             try:
                 qm, am, count = fut.result()
-                print(f"Finished {count} answers for {am} on {qm}")
+                logger.info(f"Finished {count} answers for {am} on {qm}")
             except Exception as exc:
-                print(f"Task failed: {exc}")
+                logger.error(f"Task failed: {exc}")
 
 
 if __name__ == "__main__":

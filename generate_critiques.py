@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -14,8 +15,10 @@ from prompt_library import (
     load_critique_guidance,
 )
 from self_improvement import self_improve_answers
-from utils import safe_load_json, clean_math
+from utils import safe_load_json, clean_math, setup_logging
 from model_api import query_llm_batch, query_llm_single
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -253,7 +256,10 @@ def main():
     parser.add_argument("--limit", type=int, default=None, help="Limit number of critiques per pair.")
     parser.add_argument("--custom-map", type=Path, help="JSON for custom mode: list of {question_owner, answerer, critic}.")
     parser.add_argument("--models", nargs="*", help="Subset of models to involve (default: all critique-capable).")
+    parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL).")
     args = parser.parse_args()
+
+    setup_logging(args.log_level)
 
     registry = load_registry(str(args.config))
     guidance = load_critique_guidance()
@@ -312,7 +318,7 @@ def main():
                 continue
             answer_entry = answer_records[idx]
             if answer_entry.get("status") == "failed":
-                print(f"Skipping critique for failed answer {question_model}-{answer_author}-{idx}")
+                logger.info(f"Skipping critique for failed answer {question_model}-{answer_author}-{idx}")
                 continue
             question_entry = benchmark_entries[idx]
             question_text = final_question(question_entry)
@@ -371,7 +377,7 @@ def main():
                         "attempts": attempts,
                     }
                     save_json(job["output_path"], records)
-                    print(f"Critique done by {spec.name} for question #{job['record_idx']}")
+                    logger.info(f"Critique done by {spec.name} for question #{job['record_idx']}")
 
             for critic_name, payload in jobs_by_critic.items():
                 spec: ModelSpec = payload["spec"]
@@ -384,7 +390,7 @@ def main():
                 try:
                     fut.result()
                 except Exception as exc:
-                    print(f"Critique batch failed: {exc}")
+                    logger.error(f"Critique batch failed: {exc}")
 
 
 if __name__ == "__main__":

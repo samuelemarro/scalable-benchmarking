@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -16,7 +17,9 @@ from prompt_library import (
 )
 from self_improvement import self_improve_answers
 from model_api import query_llm_batch, query_llm_single
-from utils import clean_math
+from utils import clean_math, setup_logging
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -119,7 +122,10 @@ def main():
     parser.add_argument("--limit", type=int, default=None, help="Limit number of topics (for testing).")
     parser.add_argument("--disable-batch", action="store_true", help="Disable batching even when available.")
     parser.add_argument("--force-rerun-failures", action="store_true", help="Retry topics marked as failed.")
+    parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL).")
     args = parser.parse_args()
+
+    setup_logging(args.log_level)
 
     registry = load_registry(str(args.config))
     question_guidance = load_question_guidance()
@@ -213,9 +219,9 @@ def main():
         for fut in as_completed(futures):
             try:
                 msg = fut.result()
-                print(msg)
+                logger.info(msg)
             except Exception as exc:
-                print(f"Generation task failed: {exc}")
+                logger.error(f"Generation task failed: {exc}")
 
 
 if __name__ == "__main__":

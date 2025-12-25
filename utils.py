@@ -1,9 +1,27 @@
 import json
+import logging
+import sys
 from pathlib import Path
 from typing import Dict, Optional
 
 
 from model_api import query_llm_single
+
+
+def setup_logging(level: str = "INFO") -> None:
+    """
+    Configure logging for the application.
+
+    Args:
+        level: Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    """
+    numeric_level = getattr(logging, level.upper(), logging.INFO)
+    logging.basicConfig(
+        level=numeric_level,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        stream=sys.stdout,
+    )
 
 
 def load_json(path: Path, default):

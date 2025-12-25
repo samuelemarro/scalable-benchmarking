@@ -1,7 +1,10 @@
 import json
+import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
+
+logger = logging.getLogger(__name__)
 
 
 def _slugify(model_name: str) -> str:
@@ -52,7 +55,7 @@ class ModelRegistry:
     def by_role(self, role: str) -> List[ModelSpec]:
         results = [spec for spec in self.models.values() if role in spec.roles]
         if not results:
-            print(f"Warning: No models found with role '{role}'")
+            logger.warning(f"No models found with role '{role}'")
         return results
 
     def pick(self, names: Optional[Iterable[str]]) -> List[ModelSpec]:

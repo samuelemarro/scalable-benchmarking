@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -8,7 +9,9 @@ from dotenv import load_dotenv
 from model_config import _slugify, load_registry
 from prompt_library import load_answer_guidance, load_question_guidance
 from model_api import query_llm_single
-from utils import safe_load_json, clean_math
+from utils import safe_load_json, clean_math, setup_logging
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -212,7 +215,10 @@ def main():
     parser.add_argument("--rounds", type=int, default=2)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--no-allow-concede", action="store_true", help="Disable early stop on concession.")
+    parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL).")
     args = parser.parse_args()
+
+    setup_logging(args.log_level)
 
     if args.rounds < 1:
         parser.error("--rounds must be >= 1")
@@ -341,7 +347,7 @@ def main():
                         save_json(debate_path, existing)
                         debates += 1
 
-    print(f"Generated {debates} debate transcripts.")
+    logger.info(f"Generated {debates} debate transcripts.")
 
 
 if __name__ == "__main__":

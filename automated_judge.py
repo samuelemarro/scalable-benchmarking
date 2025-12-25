@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -10,7 +11,9 @@ from dotenv import load_dotenv
 from model_api import query_llm_batch, query_llm_single
 from model_config import ModelSpec, _slugify, load_registry
 from prompt_library import load_answer_guidance, load_critique_guidance, load_question_guidance
-from utils import safe_load_json
+from utils import safe_load_json, setup_logging
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -395,7 +398,10 @@ def main():
     parser.add_argument("--limit", type=int, default=None, help="Limit tasks per judge.")
     parser.add_argument("--models", nargs="*", help="Subset of judge models to use (default: all).")
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL).")
     args = parser.parse_args()
+
+    setup_logging(args.log_level)
 
     registry = load_registry(str(args.config))
     guidance_q = load_question_guidance()
@@ -456,14 +462,14 @@ def main():
                     spec.reasoning,
                 )
             except Exception as exc:
-                print(f"Judge batch failed for {spec.name}: {exc}")
+                logger.error(f"Judge batch failed for {spec.name}: {exc}")
                 continue
             for task, response in zip(batch, responses):
                 decision = parse_judgment(response, task)
                 decision["judge_model"] = spec.pretty
                 decisions[task["id"]] = decision
             save_decisions(out_path, decisions)
-            print(f"{spec.pretty}: saved {len(batch)} evaluations")
+            logger.info(f"{spec.pretty}: saved {len(batch)} evaluations")
         return len(pending)
 
     with ThreadPoolExecutor(max_workers=max(4, len(jobs_by_judge))) as pool:
@@ -478,7 +484,7 @@ def main():
             try:
                 fut.result()
             except Exception as exc:
-                print(f"Judge worker failed: {exc}")
+                logger.error(f"Judge worker failed: {exc}")
 
 
 if __name__ == "__main__":
