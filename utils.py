@@ -56,6 +56,7 @@ def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[dict]:
         "You are a strict JSON repair assistant.",
         "Given the malformed text below, output a valid JSON object only.",
         "Be careful to fix stuff like incorrect escaping, missing commas, unbalanced braces, and incorrect quotes.",
+        "Do not add, remove or change the content of any fields.",
     ]
     if schema_hint:
         prompt_lines.append(f"Schema: {schema_hint}")
