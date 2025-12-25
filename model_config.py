@@ -77,6 +77,36 @@ class ModelRegistry:
             return spec.pretty
         return name
 
+    def resolve_model_name(self, name_or_slug: str) -> str:
+        """
+        Resolve a model name or slug to the canonical model name.
+        Returns the input if not found in registry.
+        """
+        if not name_or_slug:
+            return name_or_slug
+        if name_or_slug in self.models:
+            return name_or_slug
+        spec = self.slug_index.get(name_or_slug)
+        if spec:
+            return spec.name
+        return name_or_slug
+
+    def candidate_model_names(self, name_or_slug: str) -> List[str]:
+        """
+        Get all possible name variations for a model (name, slug, display_name).
+        Used for matching models in different contexts.
+        """
+        if not name_or_slug:
+            return []
+        names = {name_or_slug}
+        if name_or_slug in self.models:
+            spec = self.models[name_or_slug]
+            names.update({spec.slug, spec.pretty})
+        if name_or_slug in self.slug_index:
+            spec = self.slug_index[name_or_slug]
+            names.update({spec.name, spec.pretty})
+        return [n for n in names if n]
+
 
 def load_registry(path: str = "configs/models.json") -> ModelRegistry:
     return ModelRegistry(Path(path))

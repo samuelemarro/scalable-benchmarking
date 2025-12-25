@@ -64,37 +64,15 @@ def benchmark_answer_for_index(benchmark_dir: Path, q_slug: str, idx: int) -> Op
     return refinements[-1].get("answer")
 
 
-def resolve_model_name(registry, name_or_slug: str) -> str:
-    if not name_or_slug:
-        return name_or_slug
-    if name_or_slug in registry.models:
-        return name_or_slug
-    spec = registry.slug_index.get(name_or_slug)
-    if spec:
-        return spec.name
-    return name_or_slug
-
-
-def candidate_model_names(registry, name_or_slug: str) -> List[str]:
-    if not name_or_slug:
-        return []
-    names = {name_or_slug}
-    if name_or_slug in registry.models:
-        spec = registry.models[name_or_slug]
-        names.update({spec.slug, spec.pretty})
-    if name_or_slug in registry.slug_index:
-        spec = registry.slug_index[name_or_slug]
-        names.update({spec.name, spec.pretty})
-    return [n for n in names if n]
 
 
 def build_redactions(registry, alice_model: str, bob_model: str) -> Tuple[List[Tuple[str, str]], Dict[str, str]]:
     redactions = []
     speaker_map = {"Alice": "Alice", "Bob": "Bob"}
-    for name in candidate_model_names(registry, alice_model):
+    for name in registry.candidate_model_names(alice_model):
         redactions.append((name, "Alice"))
         speaker_map[name] = "Alice"
-    for name in candidate_model_names(registry, bob_model):
+    for name in registry.candidate_model_names(bob_model):
         redactions.append((name, "Bob"))
         speaker_map[name] = "Bob"
     return redactions, speaker_map
@@ -153,8 +131,8 @@ def gather_illposed_tasks(
             history = debate.get("history", [])
             if not question and not answer_text and not history:
                 continue
-            alice_model = resolve_model_name(registry, debate.get("alice_model") or a_slug)
-            bob_model = resolve_model_name(registry, debate.get("bob_model") or q_slug)
+            alice_model = registry.resolve_model_name(debate.get("alice_model") or a_slug)
+            bob_model = registry.resolve_model_name(debate.get("bob_model") or q_slug)
             tasks.append(
                 {
                     "id": f"illposed/{q_slug}/{a_slug}/{idx}",
@@ -221,8 +199,8 @@ def gather_critique_tasks(
                     history = debate.get("history", [])
                     if not question and not critique_text and not history:
                         continue
-                    alice_model = resolve_model_name(registry, debate.get("alice_model") or critic_slug)
-                    bob_model = resolve_model_name(registry, debate.get("bob_model") or answer_slug)
+                    alice_model = registry.resolve_model_name(debate.get("alice_model") or critic_slug)
+                    bob_model = registry.resolve_model_name(debate.get("bob_model") or answer_slug)
                     tasks.append(
                         {
                             "id": f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}",
