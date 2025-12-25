@@ -96,14 +96,21 @@ def query_llm(model: str, messages: list, response_format: str = None, temperatu
     Query a single LLM endpoint (OpenRouter).
     """
 
+    if api_kwargs:
+        if api_kwargs.get("reasoning") is not None:
+            raise ValueError("Do not set 'reasoning' in api_kwargs; use the reasoning parameter instead.")
+
+        if api_kwargs.get("temperature") is not None:
+            raise ValueError("Do not set 'temperature' in api_kwargs; use the temperature parameter instead.")
+
     if model.startswith("openai/"):
         return _query_openai_single(model.replace("openai/", ""), messages, response_format, temperature, api_kwargs, reasoning)
 
     if "gemini" in model:
         return _query_gemini_single(model, messages, response_format, temperature, api_kwargs, reasoning)
 
-    if 'anthropic' in model and api_kwargs and api_kwargs.get("thinking") and (temperature is not None and temperature != 1):
-        raise ValueError("Cannot set both temperature and thinking in Anthropic requests")
+    if 'anthropic' in model and (temperature is not None and temperature != 1) and reasoning is not None:
+        raise ValueError("Cannot set both temperature and reasoning in Anthropic requests")
 
     json_kwargs = {}
 
@@ -211,7 +218,7 @@ def _map_batch_results(results_text: str, custom_ids: list):
         result = result_obj["result"]
         if result["type"] == "succeeded":
             sub_result = result["message"]["content"]
-            
+
             # Find the first result with type 'text'
             for item in sub_result:
                 if item["type"] == "text":
@@ -220,7 +227,7 @@ def _map_batch_results(results_text: str, custom_ids: list):
             else:
                 raise RuntimeError(f"No text content found in Anthropic response: {result}")
         else:
-            responses_map[cid] = f"[Error: {result['type']}]"
+            raise RuntimeError(f"Anthropic batch request failed: {result['type']}")
 
     return [responses_map[cid] for cid in custom_ids]
 
@@ -335,11 +342,17 @@ def _map_openai_batch_results(results_text: str, custom_ids: list):
                 else:
                     text_content = content
 
-            responses_map[cid] = text_content or "[Error: No text content]"
+            if not text_content:
+                raise RuntimeError(f"OpenAI batch request returned no text content for custom_id {cid}")
+            responses_map[cid] = text_content
         else:
-            responses_map[cid] = f"[Error: {error or 'Unknown error'}]"
+            raise RuntimeError(f"OpenAI batch request failed for custom_id {cid}: {error or 'Unknown error'}")
 
-    return [responses_map.get(cid, "[Error: Missing response]") for cid in custom_ids]
+    if len(responses_map) != len(custom_ids):
+        missing = [cid for cid in custom_ids if cid not in responses_map]
+        raise RuntimeError(f"OpenAI batch missing responses for custom_ids: {missing}")
+
+    return [responses_map[cid] for cid in custom_ids]
 
 
 def _query_openai_batch(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict, reasoning: str = None):
@@ -359,7 +372,6 @@ def _query_openai_batch(model: str, messages_list: list, prompt: str, response_f
             "method": "POST",
             "url": "/v1/chat/completions",
             "body": {**body, "reasoning_effort": reasoning} if reasoning else body,
-            #"reasoning_effort": reasoning
         }
         batch_lines.append(json.dumps(batch_line))
 
@@ -539,17 +551,17 @@ def _query_gemini_batch(model: str, messages_list: list, prompt: str, response_f
                 obj = json.loads(line)
                 resp = obj.get("response") or obj.get("inlineResponse")
                 if not resp:
-                    responses.append("")
-                    continue
+                    raise RuntimeError("Gemini batch response missing response field")
                 candidates = resp.get("candidates") or []
                 if not candidates:
-                    responses.append("")
-                    continue
+                    raise RuntimeError("Gemini batch response missing candidates")
                 parts = candidates[0].get("content", {}).get("parts", [])
                 text_parts = [p.get("text", "") for p in parts if p.get("text")]
+                if not text_parts:
+                    raise RuntimeError("Gemini batch response missing text content")
                 responses.append("".join(text_parts))
-            except Exception:
-                responses.append("")
+            except json.JSONDecodeError as e:
+                raise RuntimeError(f"Failed to parse Gemini batch response: {e}")
     elif job.dest and getattr(job.dest, "inlined_responses", None):
         for inline_response in job.dest.inlined_responses:
             resp = getattr(inline_response, "response", None)
@@ -558,14 +570,14 @@ def _query_gemini_batch(model: str, messages_list: list, prompt: str, response_f
                 text_parts = [p.text for p in parts if getattr(p, "text", None)]
                 responses.append("".join(text_parts))
             elif getattr(inline_response, "error", None):
-                responses.append(f"[Error: {inline_response.error}]")
+                raise RuntimeError(f"Gemini batch request failed: {inline_response.error}")
             else:
-                responses.append("")
+                raise RuntimeError("Gemini batch request returned no response")
     else:
-        responses = []
+        raise RuntimeError("Gemini batch job has no recognized destination format")
 
     if len(responses) != len(messages_list):
-        return [_query_gemini_single(model, [{"role": "user", "content": m}], response_format, temperature, api_kwargs, reasoning) for m in messages_list]
+        raise RuntimeError(f"Gemini batch returned {len(responses)} responses but expected {len(messages_list)}")
     return responses
 
 
@@ -575,10 +587,20 @@ def query_llm_batch(model: str, messages_list: list, prompt: str = "You are a he
     reasoning: None, "medium", or "high". If set, enables Claude 'thinking' or OpenRouter 'reasoning'.
     max_workers: number of parallel workers for non-Anthropic models.
     """
+    if not messages_list:
+        return []
+    
+    if api_kwargs:
+        if api_kwargs.get("reasoning") is not None:
+            raise ValueError("Do not set 'reasoning' in api_kwargs; use the reasoning parameter instead.")
+
+        if api_kwargs.get("temperature") is not None:
+            raise ValueError("Do not set 'temperature' in api_kwargs; use the temperature parameter instead.")
+
     if "gemini" in model:
         return _query_gemini_batch(model, messages_list, prompt, response_format, temperature, api_kwargs, reasoning)
     if 'anthropic' in model:
-        if (temperature != 1 and temperature is not None) and (reasoning is not None):
+        if (temperature is not None and temperature != 1) and reasoning is not None:
             raise ValueError("Cannot set both temperature and reasoning in Anthropic requests")
         norm_model = ANTHROPIC_INTERNAL_NAMES.get(model.replace('anthropic/', ''), model.replace('anthropic/', ''))
         return _query_anthropic_batch(norm_model, messages_list, prompt, response_format, temperature, api_kwargs, reasoning=reasoning)
