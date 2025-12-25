@@ -47,6 +47,19 @@ EFFORT_RATIOS = {
     "low": 0.2
 } # OpenRouter effort to token ratio
 
+def _validate_response_format(response_format):
+    """Validate response_format parameter is in the correct format."""
+    if response_format is None:
+        return
+    if not isinstance(response_format, dict):
+        raise ValueError(f"response_format must be a dict, got {type(response_format).__name__}")
+    if "type" not in response_format:
+        raise ValueError("response_format dict must contain 'type' key")
+    valid_types = {"json_object", "json_schema", "text"}
+    if response_format["type"] not in valid_types:
+        raise ValueError(f"response_format type must be one of {valid_types}, got '{response_format['type']}'")
+
+
 # OpenRouter formula to compute max tokens from effort level
 def anthropic_effort_to_tokens(model: str, effort: str):
     max_tokens = ANTHROPIC_MAX_TOKENS[model]
@@ -590,7 +603,9 @@ def query_llm_batch(model: str, messages_list: list, prompt: str = "You are a he
     """
     if not messages_list:
         return []
-    
+
+    _validate_response_format(response_format)
+
     if api_kwargs:
         if api_kwargs.get("reasoning") is not None:
             raise ValueError("Do not set 'reasoning' in api_kwargs; use the reasoning parameter instead.")
