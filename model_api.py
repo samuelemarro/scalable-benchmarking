@@ -82,7 +82,7 @@ def _query_openai_single(model: str, messages: list, response_format: str, tempe
     data = resp.json()
     choices = data.get("choices") or []
     if not choices:
-        raise RuntimeError(f"No choices in OpenAI response: {data}")
+        raise RuntimeError(f"OpenAI error: No choices in response: {data}")
     message_obj = choices[0].get("message", {})
     content = message_obj.get("content")
     if isinstance(content, list):
@@ -95,6 +95,7 @@ def query_llm(model: str, messages: list, response_format: str = None, temperatu
     """
     Query a single LLM endpoint (OpenRouter).
     """
+    _validate_response_format(response_format)
 
     if api_kwargs:
         if api_kwargs.get("reasoning") is not None:
@@ -141,7 +142,7 @@ def query_llm(model: str, messages: list, response_format: str = None, temperatu
     data = response.json()
 
     if "choices" not in data or not data["choices"]:
-        raise RuntimeError(f"No choices found in response: {data}")
+        raise RuntimeError(f"OpenRouter error: No choices found in response: {data}")
 
     return data["choices"][0]["message"]["content"]
 
@@ -251,7 +252,7 @@ def _query_anthropic_batch(model: str, messages_list: list, prompt: str, respons
     }
     resp = requests.post(ANTHROPIC_API_URL, headers=headers, json=batch_payload)
     if resp.status_code != 200:
-        raise RuntimeError(f"Claude batch creation failed: {resp.status_code} - {resp.text}")
+        raise RuntimeError(f"Anthropic error: Batch creation failed: {resp.status_code} - {resp.text}")
     batch_id = resp.json()["id"]
     poll_url = f"{ANTHROPIC_API_URL}/{batch_id}"
 
@@ -261,7 +262,7 @@ def _query_anthropic_batch(model: str, messages_list: list, prompt: str, respons
             time.sleep(5)
             poll_resp = requests.get(poll_url, headers=headers)
             if poll_resp.status_code != 200:
-                raise RuntimeError(f"Claude batch poll failed: {poll_resp.status_code} - {poll_resp.text}")
+                raise RuntimeError(f"Anthropic error: Batch poll failed: {poll_resp.status_code} - {poll_resp.text}")
             poll_data = poll_resp.json()
             status = poll_data.get("processing_status")
 
@@ -273,7 +274,7 @@ def _query_anthropic_batch(model: str, messages_list: list, prompt: str, respons
 
     results_resp = requests.get(results_url, headers=headers)
     if results_resp.status_code != 200:
-        raise RuntimeError(f"Claude batch results download failed: {results_resp.status_code} - {results_resp.text}")
+        raise RuntimeError(f"Anthropic error: Batch results download failed: {results_resp.status_code} - {results_resp.text}")
 
     return _map_batch_results(results_resp.text, custom_ids)
 
