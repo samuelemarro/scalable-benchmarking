@@ -5,10 +5,9 @@ Check for issues in output files across the pipeline.
 Reports files with failed statuses, unknown verdicts, parsing errors, etc.
 """
 
-import json
 from pathlib import Path
 from collections import defaultdict
-from typing import Dict, List, Tuple
+from typing import Dict
 
 from utils import load_json
 
