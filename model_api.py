@@ -4,7 +4,7 @@ import re
 import tempfile
 import time
 import uuid
-
+from typing import Dict, List, Optional, Tuple
 
 import requests
 from tqdm import tqdm
@@ -67,7 +67,7 @@ def anthropic_effort_to_tokens(model: str, effort: str):
     return int(max(1024, min(32000, EFFORT_RATIOS[effort] * max_tokens)))
 
 
-def _query_openai_single(model: str, messages: list, response_format: str, temperature: float, api_kwargs: dict, reasoning: str):
+def _query_openai_single(model: str, messages: List[Dict], response_format: Optional[Dict], temperature: Optional[float], api_kwargs: Optional[Dict], reasoning: Optional[str]) -> str:
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise RuntimeError("OPENAI_API_KEY not set in environment")
@@ -104,7 +104,7 @@ def _query_openai_single(model: str, messages: list, response_format: str, tempe
     return content or ""
 
 
-def query_llm(model: str, messages: list, response_format: str = None, temperature: float = 1, api_kwargs: dict = None, reasoning: str = None) -> str:
+def query_llm(model: str, messages: List[Dict], response_format: Optional[Dict] = None, temperature: float = 1, api_kwargs: Optional[Dict] = None, reasoning: Optional[str] = None) -> str:
     """
     Query a single LLM endpoint (OpenRouter).
     """
@@ -160,7 +160,7 @@ def query_llm(model: str, messages: list, response_format: str = None, temperatu
     return data["choices"][0]["message"]["content"]
 
 
-def query_llm_single(model, message, prompt="You are a helpful assistant.", response_format=None, temperature=1, api_kwargs=None, reasoning=None):
+def query_llm_single(model: str, message: str, prompt: str = "You are a helpful assistant.", response_format: Optional[Dict] = None, temperature: float = 1, api_kwargs: Optional[Dict] = None, reasoning: Optional[str] = None) -> str:
     messages = [
         {"role": "system", "content": prompt},
         {"role": "user", "content": message},
@@ -168,7 +168,7 @@ def query_llm_single(model, message, prompt="You are a helpful assistant.", resp
     return query_llm(model, messages, response_format=response_format, temperature=temperature, api_kwargs=api_kwargs, reasoning=reasoning)
 
 
-def _build_batch_requests(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict, reasoning: str = None):
+def _build_batch_requests(model: str, messages_list: List[str], prompt: str, response_format: Optional[Dict], temperature: float, api_kwargs: Optional[Dict], reasoning: Optional[str] = None) -> Tuple[List[Tuple[str, Dict]], List[str]]:
     """
     Build batch requests for the Anthropic Claude API.
     Returns: (batch_requests, custom_ids)
@@ -220,7 +220,7 @@ def _build_batch_requests(model: str, messages_list: list, prompt: str, response
     return batch_requests, custom_ids
 
 
-def _map_batch_results(results_text: str, custom_ids: list):
+def _map_batch_results(results_text: str, custom_ids: List[str]) -> List[str]:
     """
     Map Anthropic .jsonl results to input order using custom_id.
     """
@@ -246,7 +246,7 @@ def _map_batch_results(results_text: str, custom_ids: list):
     return [responses_map[cid] for cid in custom_ids]
 
 
-def _query_anthropic_batch(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict, reasoning: str = None):
+def _query_anthropic_batch(model: str, messages_list: List[str], prompt: str, response_format: Optional[Dict], temperature: float, api_kwargs: Optional[Dict], reasoning: Optional[str] = None) -> List[str]:
     """
     Helper for Anthropic Claude batch API.
     """
@@ -292,7 +292,7 @@ def _query_anthropic_batch(model: str, messages_list: list, prompt: str, respons
     return _map_batch_results(results_resp.text, custom_ids)
 
 
-def _build_openai_batch_requests(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict, reasoning: str = None):
+def _build_openai_batch_requests(model: str, messages_list: List[str], prompt: str, response_format: Optional[Dict], temperature: float, api_kwargs: Optional[Dict], reasoning: Optional[str] = None) -> Tuple[List[Tuple[str, Dict]], List[str]]:
     """
     Build batch requests for the OpenAI chat completions endpoint.
     Returns: (batch_requests, custom_ids)
@@ -326,7 +326,7 @@ def _build_openai_batch_requests(model: str, messages_list: list, prompt: str, r
     return batch_requests, custom_ids
 
 
-def _map_openai_batch_results(results_text: str, custom_ids: list):
+def _map_openai_batch_results(results_text: str, custom_ids: List[str]) -> List[str]:
     """
     Map OpenAI .jsonl results to input order using custom_id.
     """
@@ -369,7 +369,7 @@ def _map_openai_batch_results(results_text: str, custom_ids: list):
     return [responses_map[cid] for cid in custom_ids]
 
 
-def _query_openai_batch(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict, reasoning: str = None):
+def _query_openai_batch(model: str, messages_list: List[str], prompt: str, response_format: Optional[Dict], temperature: float, api_kwargs: Optional[Dict], reasoning: Optional[str] = None) -> List[str]:
     """
     Helper for OpenAI batch API using the chat completions endpoint.
     """
@@ -490,7 +490,7 @@ def _gemini_contents_from_messages(messages: list, prompt: str):
     return contents, system_instruction
 
 
-def _query_gemini_single(model: str, messages: list, response_format: str, temperature: float, api_kwargs: dict, reasoning: str):
+def _query_gemini_single(model: str, messages: List[Dict], response_format: Optional[Dict], temperature: Optional[float], api_kwargs: Optional[Dict], reasoning: Optional[str]) -> str:
     client = _get_gemini_client()
     model = _normalize_gemini_model(model)
     contents, system_instruction = _gemini_contents_from_messages(messages, prompt=None)
@@ -514,7 +514,7 @@ def _query_gemini_single(model: str, messages: list, response_format: str, tempe
     return "".join(text_parts)
 
 
-def _query_gemini_batch(model: str, messages_list: list, prompt: str, response_format: str, temperature: float, api_kwargs: dict, reasoning: str):
+def _query_gemini_batch(model: str, messages_list: List[str], prompt: str, response_format: Optional[Dict], temperature: float, api_kwargs: Optional[Dict], reasoning: Optional[str]) -> List[str]:
     client = _get_gemini_client()
     model = _normalize_gemini_model(model)
     requests_inline = []
@@ -595,7 +595,7 @@ def _query_gemini_batch(model: str, messages_list: list, prompt: str, response_f
     return responses
 
 
-def query_llm_batch(model: str, messages_list: list, prompt: str = "You are a helpful assistant.", response_format: str = None, temperature: float = 1, api_kwargs: dict = None, reasoning: str = None, max_workers: int = 8) -> list:
+def query_llm_batch(model: str, messages_list: List[str], prompt: str = "You are a helpful assistant.", response_format: Optional[Dict] = None, temperature: float = 1, api_kwargs: Optional[Dict] = None, reasoning: Optional[str] = None, max_workers: int = 8) -> List[str]:
     """
     Batch query for LLMs: only Anthropic Claude batch API is used. All other models use parallel processing (multiprocessing).
     reasoning: None, "medium", or "high". If set, enables Claude 'thinking' or OpenRouter 'reasoning'.

@@ -52,7 +52,7 @@ def clean_json_text(text: str) -> str:
     return text
 
 
-def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[dict]:
+def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[Dict]:
     cfg = _load_parsing_config()
 
     if not cfg:
@@ -72,7 +72,7 @@ def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[dict]:
     prompt = "\n".join(prompt_lines)
 
     try:
-        repaired = query_llm_single(model, text, prompt=prompt, temperature=0, response_format="json")
+        repaired = query_llm_single(model, text, prompt=prompt, temperature=0, response_format={"type": "json_object"})
         repaired = clean_json_text(repaired)
         parsed = json.loads(repaired)
 
@@ -84,7 +84,7 @@ def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[dict]:
         return None
 
 
-def safe_load_json(text: str, schema_hint: Optional[str] = None) -> Optional[dict]:
+def safe_load_json(text: str, schema_hint: Optional[str] = None) -> Optional[Dict]:
     try:
         return json.loads(text)
     except json.JSONDecodeError:
