@@ -11,6 +11,16 @@ from tqdm import tqdm
 from google import genai
 from google.genai import types as genai_types
 
+# Global session for connection pooling
+_http_session = None
+
+def get_http_session() -> requests.Session:
+    """Get or create a shared HTTP session for connection pooling."""
+    global _http_session
+    if _http_session is None:
+        _http_session = requests.Session()
+    return _http_session
+
 OPENAI_API_URL = "https://api.openai.com/v1"
 ANTHROPIC_INTERNAL_NAMES = {
     "claude-opus-4.1": "claude-opus-4-1",
@@ -89,7 +99,8 @@ def _query_openai_single(model: str, messages: List[Dict], response_format: Opti
             if k not in ["reasoning"]:
                 payload[k] = v
 
-    resp = requests.post(f"{OPENAI_API_URL}/chat/completions", headers=headers, json=payload)
+    session = get_http_session()
+    resp = session.post(f"{OPENAI_API_URL}/chat/completions", headers=headers, json=payload)
     if resp.status_code != 200:
         raise RuntimeError(f"OpenAI error: {resp.status_code} - {resp.text}")
     data = resp.json()
@@ -147,7 +158,8 @@ def query_llm(model: str, messages: List[Dict], response_format: Optional[Dict] 
         for key, value in api_kwargs.items():
             json_kwargs[key] = value
 
-    response = requests.post(OPENROUTER_API_URL, headers=headers, json=json_kwargs)
+    session = get_http_session()
+    response = session.post(OPENROUTER_API_URL, headers=headers, json=json_kwargs)
 
     if response.status_code != 200:
         raise RuntimeError(f"OpenRouter error: {response.status_code} - {response.text}")
@@ -263,7 +275,8 @@ def _query_anthropic_batch(model: str, messages_list: List[str], prompt: str, re
         "anthropic-version": "2023-06-01",
         "Content-Type": "application/json"
     }
-    resp = requests.post(ANTHROPIC_API_URL, headers=headers, json=batch_payload)
+    session = get_http_session()
+    resp = session.post(ANTHROPIC_API_URL, headers=headers, json=batch_payload)
     if resp.status_code != 200:
         raise RuntimeError(f"Anthropic error: Batch creation failed: {resp.status_code} - {resp.text}")
     batch_id = resp.json()["id"]
@@ -273,7 +286,7 @@ def _query_anthropic_batch(model: str, messages_list: List[str], prompt: str, re
     with tqdm(total=1, desc="Polling Claude batch", bar_format='{desc}: {elapsed} [{bar}]') as pbar:
         while True:
             time.sleep(5)
-            poll_resp = requests.get(poll_url, headers=headers)
+            poll_resp = session.get(poll_url, headers=headers)
             if poll_resp.status_code != 200:
                 raise RuntimeError(f"Anthropic error: Batch poll failed: {poll_resp.status_code} - {poll_resp.text}")
             poll_data = poll_resp.json()
@@ -285,7 +298,7 @@ def _query_anthropic_batch(model: str, messages_list: List[str], prompt: str, re
                 break
             pbar.set_postfix_str(f"Status: {status}")
 
-    results_resp = requests.get(results_url, headers=headers)
+    results_resp = session.get(results_url, headers=headers)
     if results_resp.status_code != 200:
         raise RuntimeError(f"Anthropic error: Batch results download failed: {results_resp.status_code} - {results_resp.text}")
 
@@ -395,11 +408,12 @@ def _query_openai_batch(model: str, messages_list: List[str], prompt: str, respo
         batch_file_path = f.name
 
     headers_auth = {"Authorization": f"Bearer {api_key}"}
+    session = get_http_session()
     try:
         with open(batch_file_path, "rb") as file_handle:
             files = {"file": (os.path.basename(batch_file_path), file_handle)}
             data = {"purpose": "batch"}
-            upload_resp = requests.post(OPENAI_FILES_URL, headers=headers_auth, files=files, data=data)
+            upload_resp = session.post(OPENAI_FILES_URL, headers=headers_auth, files=files, data=data)
 
         if upload_resp.status_code != 200:
             raise RuntimeError(f"OpenAI batch file upload failed: {upload_resp.status_code} - {upload_resp.text}")
@@ -415,7 +429,7 @@ def _query_openai_batch(model: str, messages_list: List[str], prompt: str, respo
             "endpoint": "/v1/chat/completions",
             "completion_window": "24h",
         }
-        create_resp = requests.post(OPENAI_BATCH_URL, headers=create_headers, json=create_payload)
+        create_resp = session.post(OPENAI_BATCH_URL, headers=create_headers, json=create_payload)
 
         if create_resp.status_code != 200:
             raise RuntimeError(f"OpenAI batch creation failed: {create_resp.status_code} - {create_resp.text}")
@@ -425,7 +439,7 @@ def _query_openai_batch(model: str, messages_list: List[str], prompt: str, respo
 
         with tqdm(total=1, desc="Polling OpenAI batch", bar_format="{desc}: {elapsed} [{bar}]") as pbar:
             while True:
-                poll_resp = requests.get(poll_url, headers=create_headers)
+                poll_resp = session.get(poll_url, headers=create_headers)
                 if poll_resp.status_code != 200:
                     raise RuntimeError(f"OpenAI batch poll failed: {poll_resp.status_code} - {poll_resp.text}")
 
@@ -445,7 +459,7 @@ def _query_openai_batch(model: str, messages_list: List[str], prompt: str, respo
                 time.sleep(5)
 
         content_url = OPENAI_CONTENT_URL.format(output_file_id=output_file_id)
-        results_resp = requests.get(content_url, headers=headers_auth)
+        results_resp = session.get(content_url, headers=headers_auth)
         if results_resp.status_code != 200:
             raise RuntimeError(f"OpenAI batch results download failed: {results_resp.status_code} - {results_resp.text}")
 
