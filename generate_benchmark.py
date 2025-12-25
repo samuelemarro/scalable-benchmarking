@@ -16,6 +16,7 @@ from prompt_library import (
 )
 from self_improvement import self_improve_answers
 from model_api import query_llm_batch, query_llm_single
+from utils import clean_math
 
 load_dotenv()
 
@@ -66,11 +67,6 @@ def parse_question_answer(text: str) -> Tuple[str, str]:
     raise ValueError("Response missing required [QUESTION] and [ANSWER] tags")
 
 
-def clean_math(text: str) -> str:
-    text = text.replace("\\( ", "$").replace("\\(", "$")
-    text = text.replace(" \\)", "$").replace("\\)", "$")
-    text = text.replace("\\[", "$$").replace("\\]", "$$")
-    return text
 
 
 def upsert(entries: List[Dict], run_id: str, topic_slug: str, topic_name: str) -> Dict:

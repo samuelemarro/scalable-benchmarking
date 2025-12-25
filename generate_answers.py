@@ -15,6 +15,7 @@ from prompt_library import (
 )
 from self_improvement import self_improve_answers
 from model_api import query_llm_batch, query_llm_single
+from utils import clean_math
 
 load_dotenv()
 
@@ -38,13 +39,6 @@ def build_override_note(overrides: Dict, q_slug: str, a_slug: str, idx: int) -> 
     if reason:
         return f"Override present: do not mark this question as ill-posed. Reason: {reason}."
     return None
-
-
-def clean_math(text: str) -> str:
-    text = text.replace("\\( ", "$").replace("\\(", "$")
-    text = text.replace(" \\)", "$").replace("\\)", "$")
-    text = text.replace("\\[", "$$").replace("\\]", "$$")
-    return text
 
 
 def final_question(entry: Dict) -> Optional[str]:

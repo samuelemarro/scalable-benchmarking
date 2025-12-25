@@ -19,6 +19,14 @@ def save_json(path: Path, payload):
         json.dump(payload, f, indent=2)
 
 
+def clean_math(text: str) -> str:
+    """Clean LaTeX math delimiters by converting to $ and $$ formats."""
+    text = text.replace("\\( ", "$").replace("\\(", "$")
+    text = text.replace(" \\)", "$").replace("\\)", "$")
+    text = text.replace("\\[", "$$").replace("\\]", "$$")
+    return text
+
+
 def _load_parsing_config() -> Optional[Dict]:
     cfg_path = Path("configs/parsing.json")
     if cfg_path.exists():

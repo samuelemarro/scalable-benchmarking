@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from model_config import _slugify, load_registry
 from prompt_library import load_answer_guidance, load_question_guidance
 from model_api import query_llm_single
-from utils import safe_load_json
+from utils import safe_load_json, clean_math
 
 load_dotenv()
 
@@ -72,13 +72,6 @@ def save_json(path: Path, payload):
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w") as f:
         json.dump(payload, f, indent=2)
-
-
-def clean_math(text: str) -> str:
-    text = text.replace("\\( ", "$").replace("\\(", "$")
-    text = text.replace(" \\)", "$").replace("\\)", "$")
-    text = text.replace("\\[", "$$").replace("\\]", "$$")
-    return text
 
 
 def run_round(
