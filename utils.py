@@ -1,11 +1,17 @@
 import json
 import logging
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Optional
 
 
 from model_api import query_llm_single
+
+
+def get_timestamp() -> str:
+    """Get current timestamp in YYYYMMDD_HHMMSS format for versioning."""
+    return datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
 
 
 def setup_logging(level: str = "INFO") -> None:
@@ -35,6 +41,43 @@ def save_json(path: Path, payload):
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w") as f:
         json.dump(payload, f, indent=2)
+
+
+def save_json_with_metadata(path: Path, payload, add_timestamp: bool = True):
+    """
+    Save JSON with metadata including timestamp and version info.
+
+    Args:
+        path: Path to save the JSON file
+        payload: Data to save (dict or list)
+        add_timestamp: Whether to add generation timestamp to metadata
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    # If payload is a list, wrap it with metadata
+    if isinstance(payload, list):
+        wrapped = {
+            "data": payload,
+            "metadata": {}
+        }
+    elif isinstance(payload, dict):
+        # If already has metadata, use it; otherwise create new
+        if "metadata" not in payload:
+            wrapped = {
+                **payload,
+                "metadata": {}
+            }
+        else:
+            wrapped = payload
+    else:
+        wrapped = {"data": payload, "metadata": {}}
+
+    # Add timestamp if requested
+    if add_timestamp and "generated_at" not in wrapped.get("metadata", {}):
+        wrapped["metadata"]["generated_at"] = get_timestamp()
+
+    with path.open("w") as f:
+        json.dump(wrapped, f, indent=2)
 
 
 def clean_math(text: str) -> str:

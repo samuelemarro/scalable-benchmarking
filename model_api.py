@@ -21,6 +21,34 @@ def get_http_session() -> requests.Session:
         _http_session = requests.Session()
     return _http_session
 
+
+def get_model_metadata(model: str, response_data: Optional[Dict] = None) -> Dict:
+    """
+    Extract model version metadata from API response.
+
+    Args:
+        model: Model name/identifier
+        response_data: Raw API response data (optional)
+
+    Returns:
+        Dictionary with model metadata including version info
+    """
+    metadata = {
+        "model_name": model,
+        "api_call_timestamp": None,  # Will be set by caller if needed
+    }
+
+    if response_data:
+        # Extract version info from different providers
+        if "model" in response_data:
+            metadata["model_version"] = response_data["model"]
+        if "id" in response_data:
+            metadata["response_id"] = response_data["id"]
+        if "created" in response_data:
+            metadata["created_timestamp"] = response_data["created"]
+
+    return metadata
+
 OPENAI_API_URL = "https://api.openai.com/v1"
 ANTHROPIC_INTERNAL_NAMES = {
     "claude-opus-4.1": "claude-opus-4-1",
