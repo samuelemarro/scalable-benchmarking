@@ -77,23 +77,33 @@ def build_answer_prompt(question: str, guidance_text: str) -> str:
 
 
 def build_self_check_prompt(question: str, answer: str, answer_guidance: str) -> str:
+    """
+    Prompt for self-critique of an answer during the self-improvement loop.
+    """
     return (
-        "You will grade your own answer to the given question.\n"
-        f"Question:\n{question}\n\nAnswer:\n{answer}\n\n"
-        f"Use this rubric:\n{answer_guidance}\n\n"
-        "Where necessary, use standard mathematical notation (LaTeX) to express formulas.\n"
-        "Return ONLY a JSON object following this schema (no extra text):\n"
-        "```\n"
+        "# Task: Evaluate Your Own Answer\n\n"
+        "Review the answer you provided to the question below and assess whether it meets the quality standards.\n\n"
+        "## Question\n\n"
+        f"{question}\n\n"
+        "## Your Answer\n\n"
+        f"{answer}\n\n"
+        "## Evaluation Rubric\n\n"
+        f"{answer_guidance}\n\n"
+        "## Required Output Format\n\n"
+        "Return ONLY a JSON object with this exact schema (no additional text):\n\n"
+        "```json\n"
         "{\n"
         '  "verdict": "pass" | "fail",\n'
         '  "ill_posed": true | false,\n'
-        '  "issues": [<string>, ...],\n'
-        '  "improvements": "<short text>"\n'
+        '  "issues": ["<specific issue 1>", "<specific issue 2>", ...],\n'
+        '  "improvements": "<actionable guidance for improvement>"\n'
         "}\n"
-        "```"
-        'Where "verdict" indicates if the answer is correct, "ill_posed" indicates if the question was unanswerable as posed,\n'
-        ' "issues" is a list of specific problems with the answer, and "improvements" is guidance on how to improve it.\n'
-        
+        "```\n\n"
+        "**Field Descriptions:**\n"
+        '- `verdict`: "pass" if the answer is correct and complete, "fail" otherwise\n'
+        '- `ill_posed`: true if the question itself is unanswerable as stated, false otherwise\n'
+        '- `issues`: List of specific problems with the answer (empty list if none)\n'
+        '- `improvements`: Short, concrete guidance on how to fix the answer (empty string if verdict is "pass")'
     )
 
 
