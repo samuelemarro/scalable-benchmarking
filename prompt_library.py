@@ -133,19 +133,34 @@ def build_refine_prompt(question: str, answer: str, feedback: str, guidance: str
 
 
 def build_critique_prompt(question: str, author: str, answer: str, guidance: str) -> str:
+    """
+    Prompt for critiquing another model's answer.
+    This implements the verification/critique role in the benchmarking framework.
+    """
     return (
-        f"You are critiquing an answer.\nFollow the critique guidance:\n{guidance}\n\n"
-        f"Question (by {author}):\n{question}\n\nAnswer:\n{answer}\n\n"
-        "Respond ONLY with a JSON object following this schema (no extra text):\n"
-        "```\n"
+        "# Task: Verify Answer Correctness\n\n"
+        "You are evaluating an answer provided by a model. Your role is **verification**, "
+        "not independent solution generation.\n\n"
+        "## Critique Guidelines\n\n"
+        f"{guidance}\n\n"
+        f"## Question\n\n"
+        f"{question}\n\n"
+        "## Answer to Evaluate\n\n"
+        f"{answer}\n\n"
+        "## Required Output Format\n\n"
+        "Return ONLY a JSON object with this exact schema (no additional text):\n\n"
+        "```json\n"
         "{\n"
         '  "verdict": "correct" | "incorrect" | "insufficient" | "obscure",\n'
-        '  "notes": "<short text>",\n'
-        '  "suggestions": "<optional text>"\n'
+        '  "notes": "<evidence-based explanation with specific quotes or examples>",\n'
+        '  "suggestions": "<optional: what needs to be fixed for non-correct verdicts>"\n'
         "}\n"
-        "```\n"
-        'Where "verdict" indicates if the answer is correct, incorrect, insufficient (partially correct), or obscure (unclear),\n'
-        "Where necessary, use standard mathematical notation (LaTeX) to express formulas."
+        "```\n\n"
+        "**Verdict Definitions:**\n"
+        '- `"correct"`: Mathematically sound, complete, and adequately rigorous\n'
+        '- `"incorrect"`: Contains errors, invalid reasoning, or fundamental flaws\n'
+        '- `"insufficient"`: Partially correct but meaningfully incomplete\n'
+        '- `"obscure"`: Too unclear to verify\n\n'
     )
 
 
