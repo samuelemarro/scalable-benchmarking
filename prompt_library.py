@@ -58,12 +58,21 @@ def build_question_prompt(topic: str, guidance_text: str, previous_questions: Op
 
 
 def build_answer_prompt(question: str, guidance_text: str) -> str:
+    """
+    Prompt for answering a mathematics question.
+    This implements the testee/answerer role in the benchmarking framework.
+    """
     return (
-        "Solve the mathematics question below.\n"
-        "Use a clear chain of reasoning and include the final answer.\n"
-        "Where necessary, use standard mathematical notation (LaTeX) to express formulas.\n"
-        f"Follow the answer quality rules:\n{guidance_text}\n\n"
-        f"[QUESTION]\n{question}\n"
+        "# Task: Solve the Mathematics Question\n\n"
+        "You are acting as a **testee** in a benchmarking framework. Provide a complete, rigorous answer "
+        "to the question below.\n\n"
+        "## Answer Quality Requirements\n\n"
+        f"{guidance_text}\n\n"
+        "## The Question\n\n"
+        f"{question}\n\n"
+        "## Your Response\n\n"
+        "Provide your complete answer below. Use LaTeX notation for mathematical expressions where appropriate, delineated with $ or $$.\n"
+        "If the question is ill-posed, explicitly state this and explain why rather than attempting to answer."
     )
 
 
