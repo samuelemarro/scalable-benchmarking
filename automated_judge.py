@@ -285,63 +285,59 @@ def build_critique_prompt(task: Dict, guidance_a: str, guidance_c: str, registry
 
 
 def normalize_illposed_verdict(verdict: Optional[str]) -> str:
+    """
+    Normalize judge verdicts for ill-posedness debates.
+    Only accepts canonical forms: claimant_wins, defender_wins, wrong_problem, unknown
+    """
     if not verdict:
         return "unknown"
     v = verdict.strip().lower()
-    if v in {"ill-posed", "not ill-posed", "ill-posed but wrong reason", "unknown", "invalid"}:
+    if v in {"claimant_wins", "defender_wins", "wrong_problem", "unknown"}:
         return v
-    if v in {"ill posed", "ill posed."}:
-        return "ill-posed"
-    if v in {"well-posed", "well posed", "not ill posed"}:
-        return "not ill-posed"
-    if "wrong reason" in v and "ill" in v:
-        return "ill-posed but wrong reason"
-    if v in {"uncertain", "unsure", "cannot determine"}:
-        return "unknown"
-    if v in {"n/a", "na"}:
-        return "invalid"
     return "unknown"
 
 
 def normalize_critique_verdict(verdict: Optional[str]) -> str:
+    """
+    Normalize judge verdicts for critique debates.
+    Only accepts canonical forms: defender_wins, claimant_wins, wrong_problem, unknown
+    """
     if not verdict:
         return "unknown"
     v = verdict.strip().lower()
-    if v in {"correct answer", "incorrect answer", "incorrect answer but wrong reason", "unknown", "invalid"}:
+    if v in {"defender_wins", "claimant_wins", "wrong_problem", "unknown"}:
         return v
-    if v in {"right", "true"}:
-        return "correct answer"
-    if v in {"wrong", "false"}:
-        return "incorrect answer"
-    if "wrong reason" in v or "partially" in v:
-        return "incorrect answer but wrong reason"
-    if v in {"uncertain", "unsure", "cannot determine"}:
-        return "unknown"
-    if v in {"n/a", "na"}:
-        return "invalid"
     return "unknown"
 
 
 def parse_confidence(raw) -> int:
+    """
+    Parse confidence. Only accepts integers 1-5.
+    Raises ValueError if the value is invalid or missing.
+    """
+    if raw is None:
+        raise ValueError("Confidence field is required")
     try:
         conf = int(raw)
-    except Exception:
-        return 3
-    return max(1, min(5, conf))
+        if 1 <= conf <= 5:
+            return conf
+        raise ValueError(f"Confidence must be 1-5, got: {conf}")
+    except (TypeError, ValueError) as e:
+        raise ValueError(f"Invalid confidence value: {raw}") from e
 
 
 def parse_judgment(text: str, task: Dict) -> Dict:
     schema_hint = (
-        '{"verdict": "...", "confidence": 1, "comment": "..."}'
+        '{"verdict": "...", "confidence": "...", "reasoning": "..."}'
     )
     parsed = safe_load_json(text or "", schema_hint=schema_hint)
     verdict = None
     confidence = None
-    comment = ""
+    reasoning = None
     if isinstance(parsed, dict):
         verdict = parsed.get("verdict")
-        confidence = parse_confidence(parsed.get("confidence", confidence))
-        comment = parsed.get("comment") or parsed.get("notes") or parsed.get("rationale") or ""
+        confidence = parse_confidence(parsed.get("confidence"))
+        reasoning = parsed.get("reasoning", None)
     if task["type"] == "illposed":
         verdict = normalize_illposed_verdict(verdict)
     else:
@@ -356,11 +352,12 @@ def parse_judgment(text: str, task: Dict) -> Dict:
         "critic_model": task.get("critic_model"),
         "verdict": verdict,
         "confidence": confidence,
-        "comment": comment,
+        "reasoning": reasoning,
         "status": status,
         "raw_response": text,
         "run_id": task.get("run_id"),
         "topic_slug": task.get("topic_slug"),
+        "judge_model": task.get("judge_model"),  # Track which model made the judgment
     }
 
 
