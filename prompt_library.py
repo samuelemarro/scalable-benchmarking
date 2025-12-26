@@ -18,6 +18,10 @@ def load_critique_guidance(base: str = "guidance") -> str:
     return read_guidance(str(Path(base) / "critique_quality.md"))
 
 
+def load_self_critique_guidance(base: str = "guidance") -> str:
+    return read_guidance(str(Path(base) / "self_critique_quality.md"))
+
+
 def build_question_prompt(topic: str, guidance_text: str, previous_questions: Optional[List[str]]) -> str:
     """
     Prompt for generating a challenging mathematics question with solution.
@@ -76,7 +80,7 @@ def build_answer_prompt(question: str, guidance_text: str) -> str:
     )
 
 
-def build_self_check_prompt(question: str, answer: str, answer_guidance: str) -> str:
+def build_self_check_prompt(question: str, answer: str, self_critique_guidance: str) -> str:
     """
     Prompt for self-critique of an answer during the self-improvement loop.
     """
@@ -88,7 +92,7 @@ def build_self_check_prompt(question: str, answer: str, answer_guidance: str) ->
         "## Your Answer\n\n"
         f"{answer}\n\n"
         "## Evaluation Rubric\n\n"
-        f"{answer_guidance}\n\n"
+        f"{self_critique_guidance}\n\n"
         "## Required Output Format\n\n"
         "Return ONLY a JSON object with this exact schema (no additional text):\n\n"
         "```json\n"
