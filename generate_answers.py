@@ -109,7 +109,7 @@ def run_generation(
     else:
         raw_answers = query_llm_batch(answer_model, prompts, temperature=temperature, reasoning=reasoning)
 
-    raw_answers = [clean_math(r) for r in raw_answers]
+    cleaned_answers = [clean_math(r) for r in raw_answers]
 
     def eval_prompt(question: str, answer: str, local_idx: int):
         note = build_override_note(override_payload, q_slug, a_slug, batch_items[local_idx][0])
@@ -120,13 +120,14 @@ def run_generation(
     results = self_improve_answers(
         answer_model,
         questions,
-        raw_answers,
+        cleaned_answers,
         eval_prompt,
         refine_prompts,
         max_rounds=max_rounds,
         disable_batch=disable_batch,
         temperature=temperature,
         reasoning=reasoning,
+        raw_initial_answers=raw_answers,
     )
 
     outputs = []
@@ -142,6 +143,7 @@ def run_generation(
                 {
                     "round": att.round,
                     "answer": att.answer,
+                    "raw_answer": att.raw_answer,
                     "evaluation": att.evaluation,
                 }
                 for att in improved.attempts

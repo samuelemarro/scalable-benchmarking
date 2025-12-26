@@ -168,12 +168,14 @@ def main():
 
         questions = []
         answers = []
+        raw_answers_list = []
         for run, raw in zip(pending_runs, raw_outputs):
             q, a = parse_question_answer(raw)
             q = clean_math(q)
             a = clean_math(a)
             questions.append(q)
             answers.append(a)
+            raw_answers_list.append(raw)  # Store raw output
 
         eval_prompts = lambda q, a, idx: build_self_check_prompt(q, a, answer_guidance)
         refine_prompts = lambda q, a, fb: build_refine_prompt(q, a, fb, answer_guidance)
@@ -188,6 +190,7 @@ def main():
             disable_batch=args.disable_batch,
             temperature=model_spec.temperature,
             reasoning=model_spec.reasoning,
+            raw_initial_answers=raw_answers_list,
         )
 
         for run, question, result in zip(pending_runs, questions, improvements):
@@ -197,6 +200,7 @@ def main():
                     "round": att.round,
                     "question": question,
                     "answer": att.answer,
+                    "raw_answer": att.raw_answer,
                     "evaluation": att.evaluation,
                 }
                 for att in result.attempts

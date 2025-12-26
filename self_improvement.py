@@ -9,6 +9,7 @@ from utils import safe_load_json
 class Attempt:
     round: int
     answer: str
+    raw_answer: Optional[str] = None
     evaluation: Optional[Dict] = None
     improved_from: Optional[int] = None
 
@@ -37,15 +38,28 @@ def self_improve_answers(
     disable_batch: bool = False,
     temperature: float = 0.7,
     reasoning: Optional[str] = None,
+    raw_initial_answers: Optional[Sequence[str]] = None,
 ) -> List[ImprovementResult]:
     """
     Perform self-critique/improvement loops on a batch of answers.
+
+    Args:
+        raw_initial_answers: Optional raw (unparsed) versions of initial_answers
     """
     if max_rounds < 1:
         raise ValueError("max_rounds must be >= 1")
 
     results = [ImprovementResult(final_answer=ans) for ans in initial_answers]
     active_indices = list(range(len(questions)))
+
+    # Store raw versions for tracking
+    raw_answers_map = {}
+    if raw_initial_answers:
+        for i, raw in enumerate(raw_initial_answers):
+            raw_answers_map[i] = {0: raw}  # round 0 -> raw initial answer
+    else:
+        for i in range(len(initial_answers)):
+            raw_answers_map[i] = {0: initial_answers[i]}
 
     for round_idx in range(max_rounds):
         eval_prompts = [
@@ -73,9 +87,12 @@ def self_improve_answers(
                 "ill_posed": False,
                 "improvements": "Rewrite the answer carefully.",
             }
+            # Get raw answer for this round
+            raw_answer = raw_answers_map.get(idx, {}).get(round_idx, results[idx].final_answer)
             attempt = Attempt(
                 round=round_idx + 1,
                 answer=results[idx].final_answer,
+                raw_answer=raw_answer,
                 evaluation=evaluation,
                 improved_from=round_idx,
             )
@@ -115,6 +132,10 @@ def self_improve_answers(
             reasoning=reasoning,
         )
         for idx, new_answer in zip(refine_indices, refined_answers):
+            # Store raw refined answer for next round
+            if idx not in raw_answers_map:
+                raw_answers_map[idx] = {}
+            raw_answers_map[idx][round_idx + 1] = new_answer
             results[idx].final_answer = new_answer
 
         active_indices = next_active
