@@ -18,6 +18,10 @@ def load_critique_guidance(base: str = "guidance") -> str:
     return read_guidance(str(Path(base) / "critique_quality.md"))
 
 
+def load_judgment_guidance(base: str = "guidance") -> str:
+    return read_guidance(str(Path(base) / "judgment_quality.md"))
+
+
 def load_self_critique_guidance(base: str = "guidance") -> str:
     return read_guidance(str(Path(base) / "self_critique_quality.md"))
 

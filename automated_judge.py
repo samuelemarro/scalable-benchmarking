@@ -9,8 +9,8 @@ from typing import Dict, Iterable, List, Optional, Tuple
 from dotenv import load_dotenv
 
 from model_api import query_llm_batch, query_llm_single
-from model_config import ModelSpec, _slugify, load_registry
-from prompt_library import load_answer_guidance, load_critique_guidance, load_question_guidance
+from model_config import ModelSpec, load_registry
+from prompt_library import load_answer_guidance, load_critique_guidance, load_judgment_guidance, load_question_guidance
 from utils import safe_load_json, setup_logging
 
 logger = logging.getLogger(__name__)
@@ -225,7 +225,7 @@ def gather_critique_tasks(
     return tasks
 
 
-def build_illposed_prompt(task: Dict, guidance_q: str, registry) -> str:
+def build_illposed_prompt(task: Dict, guidance_q: str, guidance_j: str, registry) -> str:
     redactions, speaker_map = build_redactions(registry, task["alice_model"], task["bob_model"])
     question = redact_text(task.get("question", ""), redactions)
     answer = redact_text(task.get("answer", ""), redactions)
@@ -233,8 +233,9 @@ def build_illposed_prompt(task: Dict, guidance_q: str, registry) -> str:
     return (
         "You are a neutral judge. Decide whether the math question is ill-posed based on the debate.\n"
         "Alice claims the question is ill-posed. Bob defends that it is well-posed.\n"
-        "Use the guidance below and ignore any party identity cues.\n"
-        "Note: you are judging whether the claim of ill-posedness is valid. If the question is indeed ill-posed, but Bob gives a wrong reason, you should use \"ill-posed but wrong reason\".\n\n"
+        "Use the guidance below and ignore any party identity cues.\n\n"
+        "Judgment guidance:\n"
+        f"{guidance_j}\n\n"
         "Question quality guidance:\n"
         f"{guidance_q}\n\n"
         "Question:\n"
@@ -245,14 +246,20 @@ def build_illposed_prompt(task: Dict, guidance_q: str, registry) -> str:
         f"{debate}\n\n"
         "Return ONLY a JSON object with this schema:\n"
         "{\n"
-        '  "verdict": "ill-posed" | "not ill-posed" | "ill-posed but wrong reason" | "unknown" | "invalid",\n'
+        '  "verdict": "claimant_wins" | "defender_wins" | "wrong_problem" | "unknown",\n'
         '  "confidence": 1-5,\n'
-        '  "comment": "<short justification>"\n'
-        "}\n"
+        '  "reasoning": "<concise justification>"\n'
+        "}\n\n"
+        "Verdict meanings:\n"
+        '- "claimant_wins": Alice correctly identifies a valid problem (even if she doesn\'t identify all problems)\n'
+        '- "defender_wins": Bob is right; the question is well-posed\n'
+        '- "wrong_problem": The question has issues, but Alice\'s specific diagnosis is incorrect\n'
+        '- "unknown": Cannot determine with confidence\n\n'
+        "Confidence scale: 1=very uncertain, 2=uncertain, 3=moderate, 4=confident, 5=very confident\n"
     )
 
 
-def build_critique_prompt(task: Dict, guidance_a: str, guidance_c: str, registry) -> str:
+def build_critique_prompt(task: Dict, guidance_a: str, guidance_c: str, guidance_j: str, registry) -> str:
     redactions, speaker_map = build_redactions(registry, task["alice_model"], task["bob_model"])
     question = redact_text(task.get("question", ""), redactions)
     answer = redact_text(task.get("answer", ""), redactions)
@@ -261,8 +268,9 @@ def build_critique_prompt(task: Dict, guidance_a: str, guidance_c: str, registry
     return (
         "You are a neutral judge. Decide whether Alice's critique is correct.\n"
         "Alice claims Bob's answer is wrong. Bob defends the answer.\n"
-        "Use the guidance below and ignore any party identity cues.\n"
-        "Note: you are judging whether the critique is valid. If the answer is indeed wrong, but Alice gives a wrong reason, you should use \"incorrect answer but wrong reason\".\n\n"
+        "Use the guidance below and ignore any party identity cues.\n\n"
+        "Judgment guidance:\n"
+        f"{guidance_j}\n\n"
         "Answer quality guidance:\n"
         f"{guidance_a}\n\n"
         "Critique guidance:\n"
@@ -277,10 +285,16 @@ def build_critique_prompt(task: Dict, guidance_a: str, guidance_c: str, registry
         f"{debate}\n\n"
         "Return ONLY a JSON object with this schema:\n"
         "{\n"
-        '  "verdict": "correct answer" | "incorrect answer" | "incorrect answer but wrong reason" | "unknown" | "invalid",\n'
+        '  "verdict": "defender_wins" | "claimant_wins" | "wrong_problem" | "unknown",\n'
         '  "confidence": 1-5,\n'
-        '  "comment": "<short justification>"\n'
-        "}\n"
+        '  "reasoning": "<concise justification>"\n'
+        "}\n\n"
+        "Verdict meanings:\n"
+        '- "defender_wins": The answer is correct; the critique is wrong or unfounded\n'
+        '- "claimant_wins": The critique correctly identifies a valid flaw (even if she doesn\'t identify all flaws)\n'
+        '- "wrong_problem": There are issues with the answer, but Alice\'s specific diagnosis is incorrect\n'
+        '- "unknown": Cannot determine with confidence\n\n'
+        "Confidence scale: 1=very uncertain, 2=uncertain, 3=moderate, 4=confident, 5=very confident\n"
     )
 
 
@@ -404,6 +418,7 @@ def main():
     guidance_q = load_question_guidance()
     guidance_a = load_answer_guidance()
     guidance_c = load_critique_guidance()
+    guidance_j = load_judgment_guidance()
 
     tasks: List[Dict] = []
     if args.mode in {"illposed", "all"}:
@@ -446,9 +461,9 @@ def main():
             prompts = []
             for task in batch:
                 if task["type"] == "illposed":
-                    prompt = build_illposed_prompt(task, guidance_q, registry)
+                    prompt = build_illposed_prompt(task, guidance_q, guidance_j, registry)
                 else:
-                    prompt = build_critique_prompt(task, guidance_a, guidance_c, registry)
+                    prompt = build_critique_prompt(task, guidance_a, guidance_c, guidance_j, registry)
                 prompts.append(prompt)
             try:
                 responses = _batched_query(
