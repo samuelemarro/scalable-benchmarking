@@ -1,11 +1,57 @@
-## Question Quality and Well-Posedness
+## Question Quality and Meaningfulness
 
-Use this rubric for both LLM and human judges.
+This rubric implements the meaningfulness predicate. A question passes only if it satisfies ALL criteria below.
 
-- The question must be solvable with provided information; include domains, bounds, and assumptions.
-- Avoid ambiguity: terms must be defined or standard; the goal and expected answer format are explicit.
-- Exclude open problems, brute-force numeric search, or questions requiring external data/tools, including code interpreters.
-- Ill-posed features include: missing constraints, contradictory premises, multiple incompatible interpretations, or reliance on undefined objects.
-- When rejecting a question as ill-posed, explain the specific defect and which condition above it violates.
+### Core Requirements
 
-When revising a bad question, produce a materially different, well-posed replacement.
+**1. Well-Posedness and Completeness**
+- The question must be fully self-contained with all necessary information to reach a unique, verifiable solution
+- Include explicit domains, bounds, constraints, and assumptions
+- Define all non-standard notation; standard mathematical objects (e.g., $\mathbb{R}$, $\mathbb{Z}$, common functions) need not be redefined
+- The expected answer format must be clear (e.g., "find the exact value," "prove or disprove," "determine all solutions")
+
+**2. Clarity**
+- Every term must have a single, unambiguous interpretation in the given context
+- Reject questions where reasonable mathematicians might disagree on what is being asked
+
+**3. Non-Triviality**
+- The question must require substantive mathematical reasoning beyond direct lookup or trivial computation
+- Avoid questions solvable by immediate substitution, memorized formulas, or single-step calculations
+- The difficulty should challenge advanced mathematical capability while remaining solvable with clear reasoning
+- Questions may involve sophisticated techniques (e.g., complex analysis, differential geometry, abstract algebra)
+
+**4. Solvability and Verification**
+- The question must be solvable with established mathematical methods (no open conjectures)
+- The solution must be verifiable through clear mathematical argument
+- Avoid questions requiring extensive numerical search, simulation, or external computational tools beyond symbolic manipulation
+
+### Rejection Criteria (Ill-Posed Features)
+
+A question fails if it exhibits any of these defects:
+
+- **Missing constraints**: Underdetermined systems, free parameters without specified domains
+- **Contradictory premises**: Mutually incompatible conditions that make the question unanswerable
+- **Multiple incompatible interpretations**: Ambiguous phrasing that admits fundamentally different readings
+- **Undefined or underspecified objects**: References to concepts without sufficient definition
+- **External dependencies**: Requires access to databases, physical measurements, or runtime environments
+
+### Policy Compliance
+
+- Questions must be appropriate for academic mathematical evaluation
+- No questions designed to leak information, test memorization of specific papers, or probe for training data
+- Avoid culturally dependent, time-sensitive, or subjective elements
+
+### When Rejecting as Ill-Posed
+
+When a question is identified as ill-posed, you must:
+1. Specify which requirement(s) above are violated
+2. Explain the specific defect (e.g., "missing domain specification for variable x," "contradictory assumptions about convergence")
+3. Provide one concrete example of the ambiguity or incompleteness if applicable
+
+### When Revising a Rejected Question
+
+If asked to revise an ill-posed question:
+- Produce a **materially different** question on the same general topic
+- Do not merely patch the original; redesign from scratch to avoid anchoring on the flawed structure
+- Ensure the new question satisfies all criteria above and passes the self-solve gate
+- The revised question should be of comparable difficulty but with clear, unambiguous specifications

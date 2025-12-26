@@ -19,22 +19,41 @@ def load_critique_guidance(base: str = "guidance") -> str:
 
 
 def build_question_prompt(topic: str, guidance_text: str, previous_questions: Optional[List[str]]) -> str:
+    """
+    Prompt for generating a challenging mathematics question with solution.
+    This implements the tester/questioner role in the benchmarking framework.
+    """
     extra = ""
     if previous_questions:
         attempts = "\n".join(f"- {q}" for q in previous_questions)
         extra = (
-            "\nPrevious questions on this topic failed self-answering; generate a materially different, well-posed replacement."
-            f"\nEarlier attempts:\n{attempts}\n"
+            "\n\n**Previous Attempts:**\n"
+            "The following questions on this topic failed the self-solve gate or meaningfulness check.\n"
+            "Generate a materially different, well-posed replacement that avoids these issues:\n"
+            f"{attempts}\n"
         )
     return (
-        "Create a single very challenging but solvable mathematics problem and provide a full solution.\n"
-        "This question should be at the level of an advanced mathematician, but still solvable with clear reasoning\n"
-        "Where necessary, use standard mathematical notation (LaTeX) to express formulas.\n"
-        "\nFollow the question quality rules:\n"
-        f"{guidance_text}\n"
-        f"\nThe topic of the question to generate is: {topic}\n"
-        f"{extra}"
-        "\nOutput using the tags:\n[QUESTION]\n<problem statement>\n\n[ANSWER]\n<complete answer>"
+        "# Task: Generate a Challenging Mathematics Problem\n\n"
+        "You are acting as a **tester** in a benchmarking framework. Your goal is to create a single, "
+        "challenging but solvable mathematics problem along with a complete, verifiable solution.\n\n"
+        "## Requirements\n\n"
+        "- The question should be at an advanced mathematical level, suitable for testing strong reasoning capabilities\n"
+        "- It must be fully self-contained, well-posed, and solvable with the information provided\n"
+        "- Your answer must be complete, rigorous, and demonstrate that the question is actually solvable\n"
+        "- Use standard LaTeX notation for mathematical expressions where appropriate, delineated with $ or $$\n\n"
+        "## Quality Rubric (CRITICAL)\n\n"
+        f"{guidance_text}\n\n"
+        "## Topic\n\n"
+        f"Generate a problem in the following domain: **{topic}**\n"
+        f"{extra}\n"
+        "## Output Format\n\n"
+        "Use exactly this structure:\n\n"
+        "[QUESTION]\n"
+        "<Your problem statement here>\n\n"
+        "[ANSWER]\n"
+        "<Your complete solution here>\n\n"
+        "**Important**: Your solution will be verified first (self-solve gate). If it fails verification, "
+        "the question will be rejected without being used to test other models."
     )
 
 
