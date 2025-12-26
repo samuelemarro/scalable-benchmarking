@@ -165,25 +165,63 @@ def build_critique_prompt(question: str, author: str, answer: str, guidance: str
 
 
 def build_critique_self_check(question: str, answer: str, critique: str, guidance: str) -> str:
+    """
+    Prompt for self-critique of a critique during refinement.
+    """
     return (
-        "Review your critique for accuracy and clarity.\n"
-        f"Question:\n{question}\n\nAnswer under review:\n{answer}\n\nYour critique:\n{critique}\n\n"
-        f"Guidance:\n{guidance}\n\n"
-        "Return ONLY a JSON object following this schema (no extra text):\n"
-        "```\n"
+        "# Task: Review Your Critique for Accuracy\n\n"
+        "Assess whether your critique correctly identifies issues (if any) and provides accurate, evidence-based reasoning.\n\n"
+        "## Question\n\n"
+        f"{question}\n\n"
+        "## Answer Being Critiqued\n\n"
+        f"{answer}\n\n"
+        "## Your Critique\n\n"
+        f"{critique}\n\n"
+        "## Evaluation Standards\n\n"
+        f"{guidance}\n\n"
+        "## Required Output Format\n\n"
+        "Return ONLY a JSON object with this exact schema (no additional text):\n\n"
+        "```json\n"
         "{\n"
         '  "verdict": "pass" | "fail",\n'
-        '  "issues": [<string>, ...],\n'
-        '  "improvements": "<short text>"\n'
+        '  "issues": ["<specific issue with the critique>", ...],\n'
+        '  "improvements": "<how to improve the critique>"\n'
         "}\n"
-        "```\n"
-        "Where necessary, use standard mathematical notation (LaTeX) to express formulas.\n"
+        "```\n\n"
+        '- `verdict`: "pass" if your critique is accurate and well-justified, "fail" if it needs revision\n'
+        '- `issues`: Specific problems with your critique (e.g., incorrect claims, missing evidence)\n'
+        "- `improvements`: Guidance on how to make the critique more accurate"
     )
 
 
 def build_critique_refine(question: str, answer: str, critique: str, feedback: str) -> str:
+    """
+    Prompt for refining a critique based on self-check feedback.
+    """
     return (
-        "Rewrite the critique to address the feedback.\n"
-        f"Question:\n{question}\n\nAnswer under review:\n{answer}\n\nCurrent critique:\n{critique}\n\n"
-        f"Feedback:\n{feedback}\n\nReturn only the improved critique."
+        "# Task: Improve Your Critique\n\n"
+        "Revise your critique to address the issues identified below.\n\n"
+        "## Question\n\n"
+        f"{question}\n\n"
+        "## Answer Being Critiqued\n\n"
+        f"{answer}\n\n"
+        "## Your Current Critique\n\n"
+        f"{critique}\n\n"
+        "## Feedback on Your Critique\n\n"
+        f"{feedback}\n\n"
+        "## Required Output Format\n\n"
+        "Return ONLY a JSON object with this exact schema (no additional text):\n\n"
+        "```json\n"
+        "{\n"
+        '  "verdict": "correct" | "incorrect" | "insufficient" | "obscure",\n'
+        '  "notes": "<evidence-based explanation with specific quotes or examples>",\n'
+        '  "suggestions": "<optional: what needs to be fixed for non-correct verdicts>"\n'
+        "}\n"
+        "```\n\n"
+        "**Verdict Definitions:**\n"
+        '- `"correct"`: Mathematically sound, complete, and adequately rigorous\n'
+        '- `"incorrect"`: Contains errors, invalid reasoning, or fundamental flaws\n'
+        '- `"insufficient"`: Partially correct but meaningfully incomplete\n'
+        '- `"obscure"`: Too unclear to verify\n\n'
+        "Provide your improved critique using the JSON format above."
     )
