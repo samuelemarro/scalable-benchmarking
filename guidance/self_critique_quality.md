@@ -126,9 +126,47 @@ Return JSON with this exact schema:
 
 ### Borderline Cases
 
-When you're uncertain whether to pass:
-- Ask: "Would a human evaluator, given this answer, be able to verify its correctness?"
-- Ask: "Are the issues I see substantive or merely stylistic?"
-- Ask: "Would fixing this meaningfully improve the answer's correctness or clarity?"
+What counts as a very minor flaw? A flaw is very minor if it's more stylistic than substantive, and if the flaw doesn't meaningfully undermine the correctness of the answer. When in doubt, consider what a mathematician would do.
 
-If the answer to these questions suggests the issues are minor, **pass the answer**.
+**Examples of very minor flaws:**
+- Notational inconsistency (e.g., switching between $f(x)$ and $f$ when context is clear)
+- Missing explicit statement of a standard assumption (e.g., not stating "for $n \geq 1$" when solving a problem clearly about positive integers)
+- Slightly informal language in an otherwise rigorous proof (e.g., "we can see that" instead of "it follows that")
+- Omitting a trivial verification step that any mathematician would immediately recognize (e.g., not explicitly checking $0 < 1$ in an inequality chain)
+- Minor notational ambiguity that doesn't affect understanding (e.g., using $\sin^2 x$ without clarifying it means $(\sin x)^2$, not $\sin(\sin x)$, when context makes it obvious)
+
+**Examples of substantive (NOT minor) flaws:**
+- Using a theorem without verifying its hypotheses are satisfied
+- Missing a case in a case analysis (e.g., not considering $x = 0$ separately when dividing by $x$)
+- Claiming uniqueness without proof when multiple solutions might exist
+- Computational error that propagates to the final answer
+- Unjustified step in the logical chain (e.g., "clearly $f$ is continuous" when this requires proof)
+- Incomplete proof that establishes only partial results
+
+### Examples
+
+**Good Self-Evaluation (JSON format):**
+```json
+{
+  "verdict": "fail",
+  "ill_posed": false,
+  "issues": ["Applied L'Hôpital's rule without verifying indeterminate form", "Incorrect final answer"],
+  "improvements": "Check that the limit has form $0/0$ or $\\infty/\\infty$ before applying L'Hôpital's rule. In this case, direct substitution gives 1/2."
+}
+```
+*Context:* Your answer claimed to solve $\lim_{x \to 0} \frac{\sin x}{2x}$ by L'Hôpital's rule and got 2, but you didn't verify that the limit is indeterminate (it's not - the numerator is 0 but the denominator is also approaching 0, so it IS indeterminate, but your answer of 2 is wrong; the correct answer is 1/2).
+
+*Why this is good:* Correctly identifies a substantive mathematical error (wrong application of theorem and incorrect final answer), provides specific issues, and gives actionable guidance for fixing it.
+
+**Poor Self-Evaluation (JSON format):**
+```json
+{
+  "verdict": "fail",
+  "ill_posed": false,
+  "issues": ["Could be more detailed", "Notation could be cleaner"],
+  "improvements": "Add more explanation and use better notation"
+}
+```
+*Context:* The same correct answer as above.
+
+*Why this is poor:* Fails a mathematically correct answer for minor stylistic reasons, creating busywork instead of recognizing good work. The "issues" are vague and don't identify actual mathematical problems.

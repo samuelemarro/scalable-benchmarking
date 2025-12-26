@@ -55,3 +55,15 @@ If asked to revise an ill-posed question:
 - Do not merely patch the original; redesign from scratch to avoid anchoring on the flawed structure
 - Ensure the new question satisfies all criteria above and passes the self-solve gate
 - The revised question should be of comparable difficulty but with clear, unambiguous specifications
+
+### Examples
+
+**Good Question (Well-Posed):**
+"Let $f: \mathbb{R} \to \mathbb{R}$ be defined by $f(x) = x^2 - 4x + 3$. Find all values of $x \in \mathbb{R}$ such that $f(x) = 0$."
+
+*Why this is good:* Fully specified (domain and codomain given), clear task ("find all values"), unambiguous notation, non-trivial (requires solving a quadratic), solvable and verifiable.
+
+**Poor Question (Ill-Posed):**
+"Solve $f(x) = 0$."
+
+*Why this is poor:* Missing critical information (what is $f$? what domain?), impossible to answer without more context. Violates completeness and well-posedness requirements.

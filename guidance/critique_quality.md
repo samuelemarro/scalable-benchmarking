@@ -83,7 +83,6 @@ Provide:
 
 **Verification vs. Generation**
 - You are checking an existing solution, not solving from scratch
-- Verification should be easier and faster than independent solution
 - If you cannot verify the answer's correctness within reasonable effort, mark it as "obscure" rather than guess
 
 **Borderline Cases**
@@ -109,3 +108,27 @@ Note: what counts as a very minor flaw? A flaw is very minor if it's more stylis
 - Computational error that propagates to the final answer
 - Unjustified step in the logical chain (e.g., "clearly $f$ is continuous" when this requires proof)
 - Incomplete proof that establishes only partial results
+
+### Examples
+
+**Good Critique (JSON format):**
+```json
+{
+  "verdict": "incorrect",
+  "notes": "The answer claims 'by L'Hôpital's rule, the limit equals 2' but fails to verify that the limit has indeterminate form $0/0$ or $\\infty/\\infty$. At $x=0$, the numerator equals 1 (not 0), so L'Hôpital's rule does not apply.",
+  "suggestions": "Verify the conditions for L'Hôpital's rule before applying it. In this case, direct substitution works."
+}
+```
+
+*Why this is good:* Identifies a specific error (misapplication of theorem), quotes the problematic claim, explains why it's wrong (hypotheses not satisfied). Note that providing the correct answer is NOT required (though appreciated, if possible).
+
+**Poor Critique (JSON format):**
+```json
+{
+  "verdict": "incorrect",
+  "notes": "The solution doesn't look right and seems to have mistakes.",
+  "suggestions": "Redo the problem more carefully."
+}
+```
+
+*Why this is poor:* Vague ("doesn't look right"), no specific errors identified, no evidence or quotes, unhelpful suggestions.

@@ -42,6 +42,25 @@ This rubric implements the correctness verification predicate. An answer passes 
 
 **Example**: "This question is ill-posed because the domain of variable $x$ is not specified, making the integral undefined. The question violates the completeness requirement (missing constraints). To make this answerable, specify whether $x \in \mathbb{R}$, $x \in \mathbb{R}^+$, or some other domain."
 
+### Minor vs. Substantive Issues
+
+Focus on mathematical correctness, not stylistic perfection. An answer with minor imperfections can still satisfy the requirements if the mathematics is sound.
+
+**Minor stylistic issues that do NOT invalidate an answer:**
+- Notational inconsistency (e.g., switching between $f(x)$ and $f$ when context is clear)
+- Missing explicit statement of a standard assumption (e.g., not stating "for $n \geq 1$" when solving a problem clearly about positive integers)
+- Slightly informal language in an otherwise rigorous proof (e.g., "we can see that" instead of "it follows that")
+- Omitting a trivial verification step that any mathematician would immediately recognize (e.g., not explicitly checking $0 < 1$ in an inequality chain)
+- Minor notational ambiguity that doesn't affect understanding (e.g., using $\sin^2 x$ without clarifying it means $(\sin x)^2$, not $\sin(\sin x)$, when context makes it obvious)
+
+**Substantive issues that DO invalidate an answer:**
+- Using a theorem without verifying its hypotheses are satisfied
+- Missing a case in a case analysis (e.g., not considering $x = 0$ separately when dividing by $x$)
+- Claiming uniqueness without proof when multiple solutions might exist
+- Computational error that propagates to the final answer
+- Unjustified step in the logical chain (e.g., "clearly $f$ is continuous" when this requires proof)
+- Incomplete proof that establishes only partial results
+
 ### Verification Guidance
 
 Your answer should be structured to facilitate verification:
@@ -66,3 +85,15 @@ Your answer should be structured to facilitate verification:
 
 **Borderline Cases**
 There might be some borderline cases. In such cases, the litmus test should always be: "Would a mathematician, given the information at hand, reasonably conclude the answer to satisfy the above points?"
+
+### Examples
+
+**Good Answer:**
+"To find all real solutions to $x^2 - 5x + 6 = 0$, we factor: $x^2 - 5x + 6 = (x-2)(x-3) = 0$. By the zero product property, either $x-2=0$ or $x-3=0$, giving $x=2$ or $x=3$. We verify: $(2)^2 - 5(2) + 6 = 4 - 10 + 6 = 0$ ✓ and $(3)^2 - 5(3) + 6 = 9 - 15 + 6 = 0$ ✓. Therefore, the complete solution set is $\{2, 3\}$."
+
+*Why this is good:* Shows all steps, applies theorems correctly (zero product property), verifies the answer, and explicitly states completeness ("all real solutions", "complete solution set").
+
+**Poor Answer:**
+"The answer is $x = 2$ and $x = 3$ by factoring. Obviously this works."
+
+*Why this is poor:* Doesn't show the factoring, doesn't verify, uses "obviously" to handwave justification, doesn't prove these are the only solutions.
