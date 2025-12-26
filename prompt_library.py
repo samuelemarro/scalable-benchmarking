@@ -108,12 +108,23 @@ def build_self_check_prompt(question: str, answer: str, answer_guidance: str) ->
 
 
 def build_refine_prompt(question: str, answer: str, feedback: str, guidance: str) -> str:
+    """
+    Prompt for refining an answer based on self-critique feedback.
+    """
     return (
-        "Improve the answer to the question given the feedback.\n"
-        f"Question:\n{question}\n\nCurrent answer:\n{answer}\n\nFeedback:\n{feedback}\n\n"
-        f"Apply the rubric:\n{guidance}\n\n"
-        "Where necessary, use standard mathematical notation (LaTeX) to express formulas.\n"
-        "Return only the revised answer."
+        "# Task: Improve Your Answer\n\n"
+        "Revise your answer to address the issues identified in the feedback below.\n\n"
+        "## Question\n\n"
+        f"{question}\n\n"
+        "## Current Answer\n\n"
+        f"{answer}\n\n"
+        "## Feedback\n\n"
+        f"{feedback}\n\n"
+        "## Quality Standards\n\n"
+        f"{guidance}\n\n"
+        "## Your Revised Answer\n\n"
+        "Provide only the improved answer below (no meta-commentary). "
+        "Use LaTeX notation for mathematical expressions where appropriate, delineated with $ or $$."
     )
 
 
