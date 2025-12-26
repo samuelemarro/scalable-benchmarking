@@ -13,6 +13,7 @@ from prompt_library import (
     build_refine_prompt,
     build_self_check_prompt,
     load_answer_guidance,
+    load_self_critique_guidance,
 )
 from self_improvement import self_improve_answers
 from model_api import query_llm_batch, query_llm_single
@@ -78,7 +79,7 @@ def prepare_batch(
             prior = existing[idx]
             if prior.get("status") == "succeeded":
                 continue
-            if prior.get("status") == "failed" and not rerun_failures:
+            if prior.get("status") in {"failed", "ill-posed"} and not rerun_failures:
                 continue
         batch.append((idx, entry, question_text))
     return batch
@@ -88,7 +89,8 @@ def run_generation(
     question_model: str,
     answer_model: str,
     batch_items: List[Tuple[int, Dict, str]],
-    guidance: str,
+    answer_guidance: str,
+    self_critique_guidance: str,
     max_rounds: int,
     disable_batch: bool,
     temperature: float,
@@ -96,7 +98,7 @@ def run_generation(
     override_payload: Dict,
 ):
     questions = [item[2] for item in batch_items]
-    prompts = [build_answer_prompt(q, guidance) for q in questions]
+    prompts = [build_answer_prompt(q, answer_guidance) for q in questions]
 
     q_slug = _slugify(question_model)
     a_slug = _slugify(answer_model)
@@ -113,9 +115,9 @@ def run_generation(
 
     def eval_prompt(question: str, answer: str, local_idx: int):
         note = build_override_note(override_payload, q_slug, a_slug, batch_items[local_idx][0])
-        base = build_self_check_prompt(question, answer, guidance)
+        base = build_self_check_prompt(question, answer, self_critique_guidance)
         return base + f"\n\n{note}" if note else base
-    refine_prompts = lambda q, a, fb: build_refine_prompt(q, a, fb, guidance)
+    refine_prompts = lambda q, a, fb: build_refine_prompt(q, a, fb, answer_guidance)
 
     results = self_improve_answers(
         answer_model,
@@ -171,6 +173,7 @@ def main():
 
     registry = load_registry(str(args.config))
     answer_guidance = load_answer_guidance()
+    self_critique_guidance = load_self_critique_guidance()
     overrides = load_json(args.illposed_overrides, {"overrides": {}})
 
     answer_models = registry.pick(args.models) if args.models else registry.by_role("answer")
@@ -209,6 +212,7 @@ def main():
                         am.name,
                         b,
                         answer_guidance,
+                        self_critique_guidance,
                         args.max_rounds,
                         args.disable_batch,
                         am.temperature,

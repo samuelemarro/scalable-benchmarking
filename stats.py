@@ -70,6 +70,18 @@ def critique_verdicts(critiques_dir: Path):
     return verdict_counts
 
 
+def count_illposed_answers(answers_dir: Path):
+    """Count answers with status='ill-posed'"""
+    count = 0
+    for q_dir in answers_dir.glob("*"):
+        for ans_file in q_dir.glob("*.json"):
+            entries = load_json(ans_file, [])
+            for entry in entries:
+                if entry.get("status") == "ill-posed":
+                    count += 1
+    return count
+
+
 def main():
     benchmarks_dir = Path("benchmarks")
     answers_dir = Path("answers")
@@ -80,7 +92,8 @@ def main():
     questions = count_items(benchmarks_dir, "questions")
     answers = count_items(answers_dir, "answers")
     critiques_count = count_items(critiques_dir, "critiques")
-    illposed_count = count_items(Path(debates_dir), "illposed")
+    illposed_debate_count = count_items(Path(debates_dir), "illposed")
+    illposed_answer_count = count_illposed_answers(answers_dir)
 
     labels = count_human_labels(evaluations_dir)
     claim_ids = collect_claim_ids(critiques_dir, debates_dir)
@@ -113,10 +126,11 @@ def main():
     print("Counts:")
     print(f"- Questions: {questions}")
     print(f"- Answers: {answers}")
+    print(f"- Answers claiming ill-posed: {illposed_answer_count}")
     print(f"- Critiques: {critiques_count}")
-    print(f"- Ill-posed claims: {illposed_count}")
+    print(f"- Ill-posed debates: {illposed_debate_count}")
     v_counts = critique_verdicts(critiques_dir)
-    print("Critiques by final verdict (including missing/unknown):")
+    print("\nCritiques by final verdict (including missing/unknown):")
     for verdict, count in v_counts.items():
         print(f"  {verdict}: {count}")
     print("\nLabel histogram (number of labels -> count of claims):")

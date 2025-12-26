@@ -14,6 +14,7 @@ from prompt_library import (
     build_self_check_prompt,
     load_answer_guidance,
     load_question_guidance,
+    load_self_critique_guidance,
 )
 from self_improvement import self_improve_answers
 from model_api import query_llm_batch, query_llm_single
@@ -94,7 +95,7 @@ def generate_questions(model: str, runs: List[Dict], prev_map: Dict[str, Dict], 
         topic_name = run["topic_name"]
         previous_attempts: List[str] = []
         prev_entry = prev_map.get(run_id, {})
-        if prev_entry.get("status") == "failed":
+        if prev_entry.get("status") in {"failed", "ill-posed"}:
             for gen_round in prev_entry.get("generation_rounds", []):
                 refinements = gen_round.get("refinement_rounds", [])
                 if refinements:
@@ -130,6 +131,7 @@ def main():
     registry = load_registry(str(args.config))
     question_guidance = load_question_guidance()
     answer_guidance = load_answer_guidance()
+    self_critique_guidance = load_self_critique_guidance()
     topic_info = load_topic_info(args.topic_info_file)
     runs = load_runs(args.runs_file, topic_info)
     if args.limit is not None:
@@ -149,7 +151,7 @@ def main():
             entry = run_id_to_entry.get(run["run_id"])
             if entry and entry.get("status") == "succeeded":
                 continue
-            if entry and entry.get("status") == "failed" and not args.force_rerun_failures:
+            if entry and entry.get("status") in ["failed", "ill-posed"] and not args.force_rerun_failures:
                 continue
             pending_runs.append(run)
 
@@ -177,7 +179,7 @@ def main():
             answers.append(a)
             raw_answers_list.append(raw)  # Store raw output
 
-        eval_prompts = lambda q, a, idx: build_self_check_prompt(q, a, answer_guidance)
+        eval_prompts = lambda q, a, idx: build_self_check_prompt(q, a, self_critique_guidance)
         refine_prompts = lambda q, a, fb: build_refine_prompt(q, a, fb, answer_guidance)
 
         improvements = self_improve_answers(

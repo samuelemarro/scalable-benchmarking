@@ -104,7 +104,7 @@ def self_improve_answers(
                 continue
 
             if evaluation.get("ill_posed"):
-                results[idx].status = "failed"
+                results[idx].status = "ill-posed"
                 continue
 
             if round_idx == max_rounds - 1:

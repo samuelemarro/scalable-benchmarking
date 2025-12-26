@@ -176,10 +176,13 @@ def check_evaluation_issues(file_path: Path) -> Dict[str, int]:
 
             # Check confidence
             confidence = evaluation.get("confidence")
-            if confidence == "low":
-                issues["low_confidence"] += 1
-            elif confidence not in ["high", "medium", "low"]:
-                issues["invalid_confidence"] += 1
+            if confidence is not None:
+                if not isinstance(confidence, int) or not (1 <= confidence <= 5):
+                    issues["invalid_confidence"] += 1
+                elif confidence <= 2:
+                    issues["low_confidence"] += 1
+            else:
+                issues["missing_confidence"] += 1
 
     except Exception as e:
         issues["parse_error"] += 1
