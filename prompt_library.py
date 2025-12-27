@@ -26,6 +26,10 @@ def load_self_critique_guidance(base: str = "guidance") -> str:
     return read_guidance(str(Path(base) / "self_critique_quality.md"))
 
 
+def load_debate_guidance(base: str = "guidance") -> str:
+    return read_guidance(str(Path(base) / "debate_quality.md"))
+
+
 def build_question_prompt(topic: str, guidance_text: str, previous_questions: Optional[List[str]]) -> str:
     """
     Prompt for generating a challenging mathematics question with solution.

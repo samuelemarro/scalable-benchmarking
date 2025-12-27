@@ -7,7 +7,12 @@ from typing import Dict, List, Optional, Tuple
 from dotenv import load_dotenv
 
 from model_config import _slugify, load_registry
-from prompt_library import load_answer_guidance, load_question_guidance
+from prompt_library import (
+    load_answer_guidance,
+    load_critique_guidance,
+    load_debate_guidance,
+    load_question_guidance,
+)
 from model_api import query_llm_single
 from utils import safe_load_json, clean_math, setup_logging
 
@@ -118,6 +123,7 @@ def illposed_debate(
     rounds: int,
     guidance_q: str,
     guidance_a: str,
+    guidance_d: str,
     defender_temp: float,
     defender_reason: Optional[str],
     claimant_temp: float,
@@ -127,11 +133,13 @@ def illposed_debate(
     history = []
     system_prompt_owner = (
         "You are Bob, defending the well-posedness of your question. Use the guidance to rebut the ill-posedness claim."
-        f"\nGuidance:\n{guidance_q}\n"
+        f"\nQuestion quality guidance:\n{guidance_q}\n\n"
+        f"Debate guidance:\n{guidance_d}\n"
     )
     system_prompt_claimant = (
         "You are Alice, justifying why the question is ill-posed. Stay concise and evidence-based."
-        f"\nGuidance:\n{guidance_q}\n"
+        f"\nQuestion quality guidance:\n{guidance_q}\n\n"
+        f"Debate guidance:\n{guidance_d}\n"
     )
     last_message = (
         f"Alice argues your question is ill-posed.\nQuestion:\n{question}\n\nClaim:\n{json.dumps(claim_details, indent=2)}\n"
@@ -165,6 +173,8 @@ def critique_debate(
     critique: str,
     rounds: int,
     guidance_a: str,
+    guidance_c: str,
+    guidance_d: str,
     author_temp: float,
     author_reason: Optional[str],
     critic_temp: float,
@@ -174,11 +184,13 @@ def critique_debate(
     history = []
     system_prompt_author = (
         "You are Bob, responding to Alice's critique of your answer. Be concise and correct errors when valid."
-        f"\nGuidance:\n{guidance_a}\n"
+        f"\nAnswer quality guidance:\n{guidance_a}\n\n"
+        f"Debate guidance:\n{guidance_d}\n"
     )
     system_prompt_critic = (
         "You are Alice, continuing your critique. Acknowledge fixes if they address the issue. Stay factual."
-        f"\nGuidance:\n{guidance_a}\n"
+        f"\nCritique quality guidance:\n{guidance_c}\n\n"
+        f"Debate guidance:\n{guidance_d}\n"
     )
     last_message = (
         f"Alice raised a critique about your answer.\nQuestion:\n{question}\n\nAnswer:\n{answer}\n\nCritique:\n{critique}\n"
@@ -226,6 +238,8 @@ def main():
     registry = load_registry(str(args.config))
     guidance_q = load_question_guidance()
     guidance_a = load_answer_guidance()
+    guidance_c = load_critique_guidance()
+    guidance_d = load_debate_guidance()
 
     debates = 0
 
@@ -260,6 +274,7 @@ def main():
                         args.rounds,
                         guidance_q,
                         guidance_a,
+                        guidance_d,
                         question_model.temperature,
                         question_model.reasoning,
                         answer_model.temperature,
@@ -326,6 +341,8 @@ def main():
                             critique_text,
                             args.rounds,
                             guidance_a,
+                            guidance_c,
+                            guidance_d,
                             answer_model.temperature,
                             answer_model.reasoning,
                             critic_model.temperature,
