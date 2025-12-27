@@ -82,12 +82,185 @@ def count_illposed_answers(answers_dir: Path):
     return count
 
 
+def collect_automated_evaluations(auto_eval_dir: Path):
+    """Collect all automated evaluation decisions from all judge files."""
+    all_decisions = []
+    if not auto_eval_dir.exists():
+        return all_decisions
+
+    for eval_file in auto_eval_dir.glob("*.json"):
+        data = load_json(eval_file, {"decisions": []})
+        all_decisions.extend(data.get("decisions", []))
+
+    return all_decisions
+
+
+def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
+    """Compute agreement statistics for various model roles."""
+    decisions = collect_automated_evaluations(auto_eval_dir)
+
+    # Group decisions by claim ID
+    decisions_by_claim = defaultdict(list)
+    for decision in decisions:
+        claim_id = decision.get("id")
+        if claim_id:
+            decisions_by_claim[claim_id].append(decision)
+
+    # For each model, track self-answer correctness percentages
+    # Verdicts that mean "answer is correct": defender_wins_incorrect, defender_wins_minor
+    # (Alice claimed error, but Bob defended successfully)
+    model_self_answers = defaultdict(list)
+
+    # For each defender model, track critique defense percentages
+    # Verdicts that side with defender: defender_wins_incorrect, defender_wins_minor
+    model_defender = defaultdict(list)
+
+    # For each claimant model, track critique claim percentages
+    # Verdicts that side with claimant: claimant_wins, mixed (partial win)
+    model_claimant = defaultdict(list)
+
+    # For cross-model answers, track three categories per (answer_model, question_model) pair
+    cross_model_answers = defaultdict(lambda: defaultdict(lambda: {
+        "declared_correct": 0,  # Critic said "correct" (no debate)
+        "critiqued_correct": 0,  # Critic said wrong, but majority of judges sided with defender
+        "critiqued_wrong": 0,    # Critic said wrong, and majority of judges sided with critic
+        "total": 0
+    }))
+
+    # Build critique verdict map to identify "correct" verdicts (no debate)
+    critique_verdict_map = {}
+    for mode_dir in critiques_dir.glob("*"):
+        for q_dir in mode_dir.glob("*"):
+            for crit_file in q_dir.glob("*.json"):
+                q_slug = q_dir.name
+                entries = load_json(crit_file, [])
+                for idx, entry in enumerate(entries):
+                    attempts = entry.get("attempts") or []
+                    verdict = attempts[-1].get("verdict") if attempts else None
+                    # Extract answer author and question author from entry
+                    answer_author = entry.get("answer_author")
+                    question_author = entry.get("question_author")
+                    critic_model_name = entry.get("critic")
+
+                    cid = f"critique/{mode_dir.name}/{q_slug}/{crit_file.stem}/{idx}"
+                    critique_verdict_map[cid] = {
+                        "verdict": verdict,
+                        "answer_author": answer_author,
+                        "question_author": question_author,
+                        "critic": critic_model_name
+                    }
+
+    for claim_id, claim_decisions in decisions_by_claim.items():
+        if not claim_decisions:
+            continue
+
+        # Extract metadata from first decision (all should have same metadata)
+        first = claim_decisions[0]
+        claim_type = first.get("type")
+        question_model = first.get("question_model")
+        answer_model = first.get("answer_model")
+        critic_model = first.get("critic_model")
+        mode = first.get("mode")
+
+        if claim_type == "critique":
+            # Count verdicts for this claim
+            verdicts = [d.get("verdict") for d in claim_decisions if d.get("verdict")]
+
+            if not verdicts:
+                continue
+
+            # Determine if this is a self-answer (question_model == answer_model)
+            is_self_answer = (question_model == answer_model)
+
+            if is_self_answer:
+                # Calculate percentage of judges saying answer is correct
+                # Correct = defender wins (defender_wins_incorrect or defender_wins_minor)
+                correct_count = sum(1 for v in verdicts if v in {"defender_wins_incorrect", "defender_wins_minor"})
+                percentage = 100 * correct_count / len(verdicts)
+                model_self_answers[answer_model].append(percentage)
+            else:
+                # Cross-model answer - count judges siding with defender
+                correct_count = sum(1 for v in verdicts if v in {"defender_wins_incorrect", "defender_wins_minor"})
+                majority_correct = correct_count > len(verdicts) / 2
+
+                # This answer was critiqued (not declared "correct"), so categorize based on judge majority
+                if majority_correct:
+                    cross_model_answers[answer_model][question_model]["critiqued_correct"] += 1
+                else:
+                    cross_model_answers[answer_model][question_model]["critiqued_wrong"] += 1
+                cross_model_answers[answer_model][question_model]["total"] += 1
+
+            # Defender stats (Bob is the answer_model defending)
+            defender_wins_count = sum(1 for v in verdicts if v in {"defender_wins_incorrect", "defender_wins_minor"})
+            percentage = 100 * defender_wins_count / len(verdicts)
+            model_defender[answer_model].append(percentage)
+
+            # Claimant stats (Alice is the critic_model claiming error)
+            claimant_wins_count = sum(1 for v in verdicts if v in {"claimant_wins", "mixed"})
+            percentage = 100 * claimant_wins_count / len(verdicts)
+            model_claimant[critic_model].append(percentage)
+
+    # Now add answers declared "correct" by critics (these don't appear in automated evaluations)
+    for cid, crit_info in critique_verdict_map.items():
+        if crit_info["verdict"] == "correct":
+            answer_author = crit_info["answer_author"]
+            question_author = crit_info["question_author"]
+
+            # Only count cross-model answers (skip self-answers)
+            if answer_author and question_author and answer_author != question_author:
+                cross_model_answers[answer_author][question_author]["declared_correct"] += 1
+                cross_model_answers[answer_author][question_author]["total"] += 1
+
+    return model_self_answers, model_defender, model_claimant, cross_model_answers
+
+
+def print_agreement_stats(model_stats, title, total_judges=None):
+    """Print average percentage of judges agreeing."""
+    if not model_stats:
+        print(f"\n{title}: No data available")
+        return
+
+    print(f"\n{title}:")
+    for model in sorted(model_stats.keys()):
+        percentages = model_stats[model]
+        if not percentages:
+            continue
+
+        avg_percentage = sum(percentages) / len(percentages)
+        print(f"  {model}: {avg_percentage:.1f}% average (across {len(percentages)} critiques)")
+
+
+def print_cross_model_stats(cross_model_stats):
+    """Print statistics for models answering other models' questions."""
+    if not cross_model_stats:
+        print("\nCross-model answer correctness: No data available")
+        return
+
+    print("\nCross-model answer correctness (by question maker):")
+    for answer_model in sorted(cross_model_stats.keys()):
+        print(f"\n  {answer_model} answering:")
+        by_q_model = cross_model_stats[answer_model]
+        for q_model in sorted(by_q_model.keys()):
+            stats = by_q_model[q_model]
+            total = stats["total"]
+            if total > 0:
+                declared_pct = 100 * stats["declared_correct"] / total
+                critiqued_correct_pct = 100 * stats["critiqued_correct"] / total
+                critiqued_wrong_pct = 100 * stats["critiqued_wrong"] / total
+
+                print(f"    {q_model}'s questions ({total} total):")
+                print(f"      {declared_pct:.1f}% declared correct by critic (no debate)")
+                print(f"      {critiqued_correct_pct:.1f}% critiqued but judge majority says correct")
+                print(f"      {critiqued_wrong_pct:.1f}% critiqued and judge majority says wrong")
+
+
 def main():
     benchmarks_dir = Path("benchmarks")
     answers_dir = Path("answers")
     critiques_dir = Path("critiques")
     debates_dir = Path("debates")
     evaluations_dir = Path("evaluations")
+    auto_eval_dir = Path("automated_evaluations")
 
     questions = count_items(benchmarks_dir, "questions")
     answers = count_items(answers_dir, "answers")
@@ -136,6 +309,26 @@ def main():
     print("\nLabel histogram (number of labels -> count of claims):")
     for n_labels in sorted(label_hist):
         print(f"  {n_labels}: {label_hist[n_labels]}")
+
+    # Compute and print automated evaluation statistics
+    model_self_answers, model_defender, model_claimant, cross_model_stats = compute_model_stats(auto_eval_dir, critiques_dir)
+
+    print_agreement_stats(
+        model_self_answers,
+        "Self-answer correctness (number of judges agreeing answer is correct)"
+    )
+
+    print_agreement_stats(
+        model_defender,
+        "Defender success (number of judges siding with defender/answer)"
+    )
+
+    print_agreement_stats(
+        model_claimant,
+        "Claimant success (number of judges siding with claimant/critic)"
+    )
+
+    print_cross_model_stats(cross_model_stats)
 
 
 if __name__ == "__main__":
