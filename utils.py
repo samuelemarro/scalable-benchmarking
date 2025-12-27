@@ -8,6 +8,8 @@ from typing import Dict, Optional
 
 from model_api import query_llm_single
 
+logger = logging.getLogger(__name__)
+
 
 def get_timestamp() -> str:
     """Get current timestamp in YYYYMMDD_HHMMSS format for versioning."""
@@ -120,11 +122,15 @@ def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[Dict]:
         return None
     model = cfg.get("model")
     if not model:
+        logger.warning("No model specified in parsing config")
         return None
+    temperature = cfg.get("temperature", None)
     prompt_lines = [
         "You are a strict JSON repair assistant.",
         "Given the malformed text below, output a valid JSON object only.",
         "Be careful to fix stuff like incorrect escaping, missing commas, unbalanced braces, and incorrect quotes.",
+        "Some escapings might be done correctly, so be cautious not to over-escape. Use contextual judgment.",
+        "You will handle what is mostly math, so use your knowledge of LaTeX syntax to avoid breaking math expressions.",
         "Do not add, remove or change the content of any fields.",
     ]
     if schema_hint:
@@ -133,8 +139,8 @@ def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[Dict]:
     prompt = "\n".join(prompt_lines)
 
     try:
-        repaired = query_llm_single(model, text, prompt=prompt, temperature=0, response_format={"type": "json_object"})
-        repaired = clean_json_text(repaired)
+        repaired = query_llm_single(model, text, prompt=prompt, temperature=temperature, response_format={"type": "json_object"})
+        #repaired = clean_json_text(repaired)
         parsed = json.loads(repaired)
 
         if "parsing_error" in parsed:
@@ -142,6 +148,7 @@ def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[Dict]:
         return parsed
 
     except Exception:
+        logger.exception("Error repairing JSON with model")
         return None
 
 
@@ -155,5 +162,5 @@ def safe_load_json(text: str, schema_hint: Optional[str] = None) -> Optional[Dic
         return json.loads(cleaned)
     except json.JSONDecodeError:
         pass
-    repaired = _repair_with_model(cleaned, schema_hint)
+    repaired = _repair_with_model(text, schema_hint)
     return repaired
