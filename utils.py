@@ -31,6 +31,10 @@ def setup_logging(level: str = "INFO") -> None:
         stream=sys.stdout,
     )
 
+    # Disable httpx logging at INFO level to reduce noise
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
+
 
 def load_json(path: Path, default):
     if not path.exists():
