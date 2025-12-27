@@ -231,8 +231,9 @@ def build_illposed_prompt(task: Dict, guidance_q: str, guidance_j: str, registry
     answer = redact_text(task.get("answer", ""), redactions)
     debate = format_debate(task.get("debate", []), redactions, speaker_map)
     return (
-        "You are a neutral judge. Decide whether the math question is ill-posed based on the debate.\n"
+        "You are a neutral judge. Your task: Determine if ALICE'S CLAIM is valid.\n"
         "Alice claims the question is ill-posed. Bob defends that it is well-posed.\n"
+        "The debate helps you assess the claim. If Bob concedes or acknowledges the issue, this CONFIRMS Alice was right.\n"
         "Use the guidance below and ignore any party identity cues.\n\n"
         "Judgment guidance:\n"
         f"{guidance_j}\n\n"
@@ -246,15 +247,16 @@ def build_illposed_prompt(task: Dict, guidance_q: str, guidance_j: str, registry
         f"{debate}\n\n"
         "Return ONLY a JSON object with this schema:\n"
         "{\n"
-        '  "verdict": "claimant_wins" | "defender_wins" | "wrong_problem" | "unknown",\n'
+        '  "verdict": "claimant_wins" | "defender_wins_incorrect" | "wrong_problem" | "mixed" | "unknown",\n'
         '  "confidence": 1-5,\n'
         '  "reasoning": "<concise justification>"\n'
         "}\n\n"
         "Verdict meanings:\n"
-        '- "claimant_wins": Alice correctly identifies a valid problem (even if she doesn\'t identify all problems)\n'
-        '- "defender_wins": Bob is right; the question is well-posed\n'
+        '- "claimant_wins": Alice\'s claim is correct - the question is ill-posed (use this even if Bob concedes)\n'
+        '- "defender_wins_incorrect": Alice\'s claim is incorrect - Bob shows the question is well-posed and Alice misidentified the issue\n'
         '- "wrong_problem": The question has issues, but Alice\'s specific diagnosis is incorrect\n'
-        '- "unknown": Cannot determine with confidence\n\n'
+        '- "mixed": Alice makes multiple claims, some correct and some incorrect\n'
+        '- "unknown": Cannot determine if Alice\'s claim is valid with confidence\n\n'
         "Confidence scale: 1=very uncertain, 2=uncertain, 3=moderate, 4=confident, 5=very confident\n"
     )
 
@@ -266,8 +268,9 @@ def build_critique_prompt(task: Dict, guidance_a: str, guidance_c: str, guidance
     critique = redact_text(task.get("critique", ""), redactions)
     debate = format_debate(task.get("debate", []), redactions, speaker_map)
     return (
-        "You are a neutral judge. Decide whether Alice's critique is correct.\n"
-        "Alice claims Bob's answer is wrong. Bob defends the answer.\n"
+        "You are a neutral judge. Your task: Determine if ALICE'S CRITIQUE is correct.\n"
+        "Alice claims Bob's answer has errors/issues. Bob defends the answer.\n"
+        "The debate helps you assess the critique. If Bob concedes, fixes the issue, or provides missing justification, this CONFIRMS Alice was right.\n"
         "Use the guidance below and ignore any party identity cues.\n\n"
         "Judgment guidance:\n"
         f"{guidance_j}\n\n"
@@ -285,15 +288,17 @@ def build_critique_prompt(task: Dict, guidance_a: str, guidance_c: str, guidance
         f"{debate}\n\n"
         "Return ONLY a JSON object with this schema:\n"
         "{\n"
-        '  "verdict": "defender_wins" | "claimant_wins" | "wrong_problem" | "unknown",\n'
+        '  "verdict": "claimant_wins" | "defender_wins_incorrect" | "defender_wins_minor" | "wrong_problem" | "mixed" | "unknown",\n'
         '  "confidence": 1-5,\n'
         '  "reasoning": "<concise justification>"\n'
         "}\n\n"
         "Verdict meanings:\n"
-        '- "defender_wins": The answer is correct; the critique is wrong or unfounded\n'
-        '- "claimant_wins": The critique correctly identifies a valid flaw (even if she doesn\'t identify all flaws)\n'
+        '- "claimant_wins": Alice\'s critique is correct - the answer has substantive flaws (use this even if Bob concedes/fixes)\n'
+        '- "defender_wins_incorrect": Alice\'s critique is incorrect - Bob shows the answer is correct and Alice misidentified a problem\n'
+        '- "defender_wins_minor": Alice\'s critique is technically correct but about very minor (stylistic only) issues\n'
         '- "wrong_problem": There are issues with the answer, but Alice\'s specific diagnosis is incorrect\n'
-        '- "unknown": Cannot determine with confidence\n\n'
+        '- "mixed": Alice makes multiple claims, some correct and some incorrect\n'
+        '- "unknown": Cannot determine if Alice\'s critique is valid with confidence\n\n'
         "Confidence scale: 1=very uncertain, 2=uncertain, 3=moderate, 4=confident, 5=very confident\n"
     )
 
@@ -301,12 +306,12 @@ def build_critique_prompt(task: Dict, guidance_a: str, guidance_c: str, guidance
 def normalize_illposed_verdict(verdict: Optional[str]) -> str:
     """
     Normalize judge verdicts for ill-posedness debates.
-    Only accepts canonical forms: claimant_wins, defender_wins, wrong_problem, unknown
+    Only accepts canonical forms: claimant_wins, defender_wins_incorrect, wrong_problem, mixed, unknown
     """
     if not verdict:
         return "unknown"
     v = verdict.strip().lower()
-    if v in {"claimant_wins", "defender_wins", "wrong_problem", "unknown"}:
+    if v in {"claimant_wins", "defender_wins_incorrect", "wrong_problem", "mixed", "unknown"}:
         return v
     return "unknown"
 
@@ -314,12 +319,12 @@ def normalize_illposed_verdict(verdict: Optional[str]) -> str:
 def normalize_critique_verdict(verdict: Optional[str]) -> str:
     """
     Normalize judge verdicts for critique debates.
-    Only accepts canonical forms: defender_wins, claimant_wins, wrong_problem, unknown
+    Only accepts canonical forms: claimant_wins, defender_wins_incorrect, defender_wins_minor, wrong_problem, mixed, unknown
     """
     if not verdict:
         return "unknown"
     v = verdict.strip().lower()
-    if v in {"defender_wins", "claimant_wins", "wrong_problem", "unknown"}:
+    if v in {"claimant_wins", "defender_wins_incorrect", "defender_wins_minor", "wrong_problem", "mixed", "unknown"}:
         return v
     return "unknown"
 
