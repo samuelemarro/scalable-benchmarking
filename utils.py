@@ -156,15 +156,39 @@ def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[Dict]:
         return None
 
 
-def safe_load_json(text: str, schema_hint: Optional[str] = None) -> Optional[Dict]:
+def safe_load_json(text: str, schema_hint: Optional[str] = None, strict: bool = False) -> Optional[Dict]:
+    """
+    Attempt to parse JSON with progressive fallback strategies.
+
+    Args:
+        text: The text to parse as JSON
+        schema_hint: Optional hint about expected schema for repair
+        strict: If True, only allow direct JSON parsing (no cleaning or repair)
+
+    Returns:
+        Parsed JSON dict, or None if parsing failed
+    """
     try:
         return json.loads(text)
     except json.JSONDecodeError:
-        pass
+        if strict:
+            logger.warning("Strict mode: Failed to parse JSON directly, not attempting fallback")
+            return None
+
+    # Fallback 1: Try cleaning common issues
     cleaned = clean_json_text(text)
     try:
-        return json.loads(cleaned)
+        parsed = json.loads(cleaned)
+        logger.debug("JSON parsed successfully after cleaning")
+        return parsed
     except json.JSONDecodeError:
         pass
+
+    # Fallback 2: Use LLM to repair
+    logger.info("Attempting LLM-based JSON repair")
     repaired = _repair_with_model(text, schema_hint)
+    if repaired:
+        logger.info("JSON repaired successfully with LLM")
+    else:
+        logger.warning("Failed to repair JSON even with LLM assistance")
     return repaired
