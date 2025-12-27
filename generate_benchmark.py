@@ -119,7 +119,7 @@ def main():
     parser.add_argument("--models", nargs="*", help="Subset of model names to run.")
     parser.add_argument("--config", type=Path, default=Path("configs/models.json"), help="Model registry JSON.")
     parser.add_argument("--output-dir", type=Path, default=Path("benchmarks"), help="Where to store benchmark files.")
-    parser.add_argument("--max-rounds", type=int, default=3, help="Self-critique rounds.")
+    parser.add_argument("--max-rounds", type=int, default=5, help="Self-critique rounds.")
     parser.add_argument("--limit", type=int, default=None, help="Limit number of topics (for testing).")
     parser.add_argument("--disable-batch", action="store_true", help="Disable batching even when available.")
     parser.add_argument("--force-rerun-failures", action="store_true", help="Retry topics marked as failed.")

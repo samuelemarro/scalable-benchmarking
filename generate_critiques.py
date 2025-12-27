@@ -250,7 +250,7 @@ def main():
     parser.add_argument("--benchmark-dir", type=Path, default=Path("benchmarks"))
     parser.add_argument("--answers-dir", type=Path, default=Path("answers"))
     parser.add_argument("--output-dir", type=Path, default=Path("critiques"))
-    parser.add_argument("--max-rounds", type=int, default=2)
+    parser.add_argument("--max-rounds", type=int, default=5)
     parser.add_argument("--self-improve", action="store_true", help="Enable critique self-improvement.")
     parser.add_argument("--disable-batch", action="store_true")
     parser.add_argument("--limit", type=int, default=None, help="Limit number of critiques per pair.")

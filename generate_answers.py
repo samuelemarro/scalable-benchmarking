@@ -161,7 +161,7 @@ def main():
     parser.add_argument("--benchmark-dir", type=Path, default=Path("benchmarks"), help="Directory with benchmark JSON files.")
     parser.add_argument("--output-dir", type=Path, default=Path("answers"), help="Directory to store answers.")
     parser.add_argument("--models", nargs="*", help="Subset of models to use as answerers.")
-    parser.add_argument("--max-rounds", type=int, default=3, help="Self-improvement rounds.")
+    parser.add_argument("--max-rounds", type=int, default=5, help="Self-improvement rounds.")
     parser.add_argument("--disable-batch", action="store_true", help="Disable batching.")
     parser.add_argument("--limit", type=int, default=None, help="Limit number of questions per pair.")
     parser.add_argument("--rerun-failures", action="store_true", help="Retry failed entries.")

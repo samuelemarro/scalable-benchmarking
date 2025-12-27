@@ -34,7 +34,7 @@ def self_improve_answers(
     initial_answers: Sequence[str],
     build_eval_prompt: Callable[[str, str, int], str],
     build_refine_prompt: Callable[[str, str, str], str],
-    max_rounds: int = 3,
+    max_rounds: int = 5,
     disable_batch: bool = False,
     temperature: float = 0.7,
     reasoning: Optional[str] = None,

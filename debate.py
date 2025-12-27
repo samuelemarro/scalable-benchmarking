@@ -225,7 +225,7 @@ def main():
     parser.add_argument("--answers-dir", type=Path, default=Path("answers"))
     parser.add_argument("--critiques-dir", type=Path, default=Path("critiques"))
     parser.add_argument("--output-dir", type=Path, default=Path("debates"))
-    parser.add_argument("--rounds", type=int, default=2)
+    parser.add_argument("--rounds", type=int, default=5)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--no-allow-concede", action="store_true", help="Disable early stop on concession.")
     parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL).")
