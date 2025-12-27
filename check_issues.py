@@ -43,7 +43,7 @@ def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
             if not final_a and status == "succeeded":
                 issues["empty_answer"] += 1
 
-    except Exception as e:
+    except Exception:
         issues["parse_error"] += 1
 
     return issues
@@ -67,15 +67,15 @@ def check_answer_issues(file_path: Path) -> Dict[str, int]:
             status = entry.get("status")
             if status == "failed":
                 issues["failed_answer"] += 1
-            elif status not in ["succeeded", "failed"]:
+            elif status not in ["succeeded", "failed", "ill-posed"]:
                 issues["unknown_status"] += 1
 
-            # Check for empty final answers
+            # Check for empty final answers (unless ill-posed)
             final_a = entry.get("final_answer", "").strip()
             if not final_a and status == "succeeded":
                 issues["empty_answer"] += 1
 
-    except Exception as e:
+    except Exception:
         issues["parse_error"] += 1
 
     return issues
@@ -102,12 +102,20 @@ def check_critique_issues(file_path: Path) -> Dict[str, int]:
             elif status not in ["succeeded", "failed"]:
                 issues["unknown_status"] += 1
 
-            # Check for empty critiques
+            # Check verdict if present
+            attempts = entry.get("attempts", [])
+            if attempts:
+                verdict = attempts[-1].get("verdict")
+                if verdict and verdict not in ["pass", "fail", "correct", "incorrect"]:
+                    issues["invalid_verdict"] += 1
+
+            # Check for empty critiques (unless verdict is "correct")
             final_c = entry.get("final_critique", "").strip()
-            if not final_c and status == "succeeded":
+            verdict = attempts[-1].get("verdict") if attempts else None
+            if not final_c and status == "succeeded" and verdict != "correct":
                 issues["empty_critique"] += 1
 
-    except Exception as e:
+    except Exception:
         issues["parse_error"] += 1
 
     return issues
@@ -141,7 +149,7 @@ def check_debate_issues(file_path: Path) -> Dict[str, int]:
                 if "message" not in round_entry or "speaker" not in round_entry:
                     issues["incomplete_round"] += 1
 
-    except Exception as e:
+    except Exception:
         issues["parse_error"] += 1
 
     return issues
@@ -157,15 +165,39 @@ def check_evaluation_issues(file_path: Path) -> Dict[str, int]:
             issues["invalid_format"] += 1
             return issues
 
-        for task_id, evaluation in data.items():
+        # New format: {"decisions": [...]}
+        decisions = data.get("decisions", [])
+        if not isinstance(decisions, list):
+            issues["invalid_format"] += 1
+            return issues
+
+        for evaluation in decisions:
             if not isinstance(evaluation, dict):
                 issues["invalid_entry"] += 1
                 continue
 
             verdict = evaluation.get("verdict")
+            # Valid verdicts for critique debates
+            valid_critique_verdicts = [
+                "claimant_wins",
+                "defender_wins_incorrect",
+                "defender_wins_minor",
+                "wrong_problem",
+                "mixed",
+                "unknown"
+            ]
+            # Valid verdicts for ill-posed debates
+            valid_illposed_verdicts = [
+                "claimant_wins",
+                "defender_wins_incorrect",
+                "wrong_problem",
+                "mixed",
+                "unknown"
+            ]
+
             if verdict == "unknown":
                 issues["unknown_verdict"] += 1
-            elif verdict not in ["defender_wins", "claimant_wins", "tie", "unknown"]:
+            elif verdict not in valid_critique_verdicts and verdict not in valid_illposed_verdicts:
                 issues["invalid_verdict"] += 1
 
             # Check for missing fields
@@ -184,7 +216,14 @@ def check_evaluation_issues(file_path: Path) -> Dict[str, int]:
             else:
                 issues["missing_confidence"] += 1
 
-    except Exception as e:
+            # Check status
+            status = evaluation.get("status")
+            if status == "failed":
+                issues["failed_evaluation"] += 1
+            elif status not in ["succeeded", "failed", None]:
+                issues["unknown_status"] += 1
+
+    except Exception:
         issues["parse_error"] += 1
 
     return issues
