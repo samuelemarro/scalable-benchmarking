@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv
+from tqdm import tqdm
 
 from model_config import _slugify, load_registry
 from prompt_library import (
@@ -246,6 +247,37 @@ def main():
     debates = 0
 
     if args.mode == "ill-posed":
+        # Count total tasks for progress bar
+        total_tasks = 0
+        for bench_path in args.benchmark_dir.glob("*.json"):
+            q_slug = bench_path.stem
+            question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
+            if not question_model:
+                continue
+            answers_dir = args.answers_dir / q_slug
+            for answer_file in answers_dir.glob("*.json"):
+                answer_model_slug = answer_file.stem
+                answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_model_slug), None)
+                if not answer_model:
+                    continue
+                records = load_json(answer_file, [])
+                for idx, rec in enumerate(records):
+                    if args.limit is not None and total_tasks >= args.limit:
+                        break
+                    if rec.get("status") != "ill-posed":
+                        continue
+                    debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
+                    existing = load_json(debate_path, [])
+                    if len(existing) > idx and existing[idx]:
+                        continue
+                    total_tasks += 1
+                if args.limit is not None and total_tasks >= args.limit:
+                    break
+            if args.limit is not None and total_tasks >= args.limit:
+                break
+
+        # Process with progress bar
+        pbar = tqdm(total=total_tasks, desc="Ill-posed debates")
         for bench_path in args.benchmark_dir.glob("*.json"):
             q_slug = bench_path.stem
             question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
@@ -296,8 +328,60 @@ def main():
                     }
                     save_json(debate_path, existing)
                     debates += 1
+                    pbar.update(1)
+                if args.limit is not None and debates >= args.limit:
+                    break
+            if args.limit is not None and debates >= args.limit:
+                break
+        pbar.close()
     else:
         # critique debates
+        # Count total tasks for progress bar
+        total_tasks = 0
+        for crit_mode_dir in args.critiques_dir.glob("*"):
+            mode = crit_mode_dir.name
+            for q_dir in crit_mode_dir.glob("*"):
+                q_slug = q_dir.name
+                question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
+                if not question_model:
+                    continue
+                benchmark_entries = load_json(args.benchmark_dir / f"{q_slug}.json", [])
+                for crit_file in q_dir.glob("*.json"):
+                    parts = crit_file.stem.split("__")
+                    if len(parts) != 2:
+                        continue
+                    critic_slug, answer_slug = parts
+                    critic_model = next((spec for spec in registry.models.values() if spec.slug == critic_slug), None)
+                    answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_slug), None)
+                    if not critic_model or not answer_model:
+                        continue
+                    critiques = load_json(crit_file, [])
+                    answers = load_json(args.answers_dir / q_slug / f"{answer_slug}.json", [])
+                    if not answers and answer_slug == q_slug:
+                        answers = benchmark_answers(q_slug, benchmark_entries)
+                    for idx, crit_entry in enumerate(critiques):
+                        if args.limit is not None and total_tasks >= args.limit:
+                            break
+                        if not crit_entry or crit_entry.get("status") != "succeeded":
+                            continue
+                        if final_critique_verdict(crit_entry) == "correct":
+                            continue
+                        if idx >= len(answers):
+                            continue
+                        debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
+                        existing = load_json(debate_path, [])
+                        if len(existing) > idx and existing[idx]:
+                            continue
+                        total_tasks += 1
+                    if args.limit is not None and total_tasks >= args.limit:
+                        break
+                if args.limit is not None and total_tasks >= args.limit:
+                    break
+            if args.limit is not None and total_tasks >= args.limit:
+                break
+
+        # Process with progress bar
+        pbar = tqdm(total=total_tasks, desc="Critique debates")
         for crit_mode_dir in args.critiques_dir.glob("*"):
             mode = crit_mode_dir.name
             for q_dir in crit_mode_dir.glob("*"):
@@ -365,6 +449,14 @@ def main():
                         }
                         save_json(debate_path, existing)
                         debates += 1
+                        pbar.update(1)
+                    if args.limit is not None and debates >= args.limit:
+                        break
+                if args.limit is not None and debates >= args.limit:
+                    break
+            if args.limit is not None and debates >= args.limit:
+                break
+        pbar.close()
 
     logger.info(f"Generated {debates} debate transcripts.")
 
