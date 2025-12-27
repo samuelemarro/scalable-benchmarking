@@ -10,6 +10,12 @@ from collections import defaultdict
 from typing import Dict
 
 from utils import load_json
+from constants import (
+    VALID_CRITIQUE_VERDICTS,
+    VALID_CRITIQUE_DEBATE_VERDICTS,
+    VALID_ILLPOSED_DEBATE_VERDICTS,
+    VALID_STATUSES,
+)
 
 
 def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
@@ -106,7 +112,7 @@ def check_critique_issues(file_path: Path) -> Dict[str, int]:
             attempts = entry.get("attempts", [])
             if attempts:
                 verdict = attempts[-1].get("verdict")
-                if verdict and verdict not in ["pass", "fail", "correct", "incorrect"]:
+                if verdict and verdict not in VALID_CRITIQUE_VERDICTS:
                     issues["invalid_verdict"] += 1
 
             # Check for empty critiques (unless verdict is "correct")
@@ -177,27 +183,10 @@ def check_evaluation_issues(file_path: Path) -> Dict[str, int]:
                 continue
 
             verdict = evaluation.get("verdict")
-            # Valid verdicts for critique debates
-            valid_critique_verdicts = [
-                "claimant_wins",
-                "defender_wins_incorrect",
-                "defender_wins_minor",
-                "wrong_problem",
-                "mixed",
-                "unknown"
-            ]
-            # Valid verdicts for ill-posed debates
-            valid_illposed_verdicts = [
-                "claimant_wins",
-                "defender_wins_incorrect",
-                "wrong_problem",
-                "mixed",
-                "unknown"
-            ]
 
             if verdict == "unknown":
                 issues["unknown_verdict"] += 1
-            elif verdict not in valid_critique_verdicts and verdict not in valid_illposed_verdicts:
+            elif verdict not in VALID_CRITIQUE_DEBATE_VERDICTS and verdict not in VALID_ILLPOSED_DEBATE_VERDICTS:
                 issues["invalid_verdict"] += 1
 
             # Check for missing fields

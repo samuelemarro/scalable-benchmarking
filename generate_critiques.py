@@ -17,6 +17,7 @@ from prompt_library import (
 from self_improvement import self_improve_answers
 from utils import safe_load_json, clean_math, setup_logging
 from model_api import query_llm_batch, query_llm_single
+from constants import VALID_CRITIQUE_VERDICTS
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +81,9 @@ def extract_structured_critique(text: Optional[str]) -> Tuple[str, str]:
     """
     Parse a critique JSON (if available) and return verdict and notes (single string).
     Falls back to marking verdict unknown and capturing the raw text as notes.
+
+    Valid verdicts: "correct", "incorrect", "insufficient", "obscure"
+    Invalid verdicts are treated as "unknown".
     """
     verdict = "unknown"
     notes: str = ""
@@ -88,8 +92,15 @@ def extract_structured_critique(text: Optional[str]) -> Tuple[str, str]:
 
     parsed = safe_load_json(text, schema_hint='{"verdict": "...", "notes": "..."}')
     if isinstance(parsed, dict):
-        if isinstance(parsed.get("verdict"), str):
-            verdict = parsed["verdict"]
+        # Validate verdict against allowed set (from constants.py)
+        parsed_verdict = parsed.get("verdict")
+        if isinstance(parsed_verdict, str) and parsed_verdict in VALID_CRITIQUE_VERDICTS:
+            verdict = parsed_verdict
+        elif isinstance(parsed_verdict, str):
+            # Log invalid verdicts for debugging
+            logger.warning(f"Invalid critique verdict '{parsed_verdict}', treating as 'unknown'")
+            verdict = "unknown"
+
         raw_notes = parsed.get("notes")
         if isinstance(raw_notes, list):
             notes = "; ".join(str(n) for n in raw_notes)
