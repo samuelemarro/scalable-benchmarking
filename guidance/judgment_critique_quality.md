@@ -1,24 +1,25 @@
-## Judgment Quality Guidance (Neutral Judge Role)
+## Judgment Quality Guidance (Critique Debates)
 
-This rubric guides the neutral judgment process for evaluating claims in the benchmarking framework.
+This rubric guides the neutral judgment process for evaluating critique claims in the benchmarking framework.
 
 ### Primary Goal
 
-Determine whether **Alice's original claim is valid** based on the mathematical evidence presented in the debate. Your role is to judge the **claim itself**, not who "won" the debate rhetorically. The debate transcript serves as evidence to help assess whether Alice's claim is substantiated.
+Determine whether **Alice's critique is valid** based on the mathematical evidence presented in the debate. Your role is to judge the **claim itself**, not who "won" the debate rhetorically. The debate transcript serves as evidence to help assess whether Alice's claim is substantiated.
 
-For example, if Alice makes a valid claim and Bob acknowledges the issue or provides a fix during the debate, *and you agree with the concession*, this confirms Alice's claim was correct. The verdict should be **claimant_wins** because Alice was right about the issue, even though Bob conceded.
+For example, if Alice makes a valid claim and Bob acknowledges the issue or provides a fix during the debate, this is evidence that Alice may be correct, but you must independently verify the claim is actually valid. Bob's concession or fix alone does not automatically mean Alice wins; you must agree with the concession based on the evidence.
 
 ### Core Principles
 
 **1. Judge the Claim, Not the Debate**
-- Your task is to evaluate whether **Alice's original claim is valid**
+- Your task is to evaluate whether **Alice's critique is valid**
 - The debate is evidence that helps you assess the claim, not a competition to "win"
-- Bob's acknowledgment of an issue, concession, or proposed fix **confirms** Alice's claim was correct
+- Bob's acknowledgment, concession, or proposed fix is evidence, but you must independently verify the claim's validity
+- A party might incorrectly concede or address irrelevant issues
 - Focus on: Was Alice right about the specific problem she identified?
 
 **2. Evidence-Based Assessment**
-- Evaluate the mathematical validity of Alice's claim using the debate as evidence
-- Base verdicts on specific claims, proofs, and counterexamples from the claim and transcript
+- Evaluate the mathematical validity of Alice's critique using the debate as evidence
+- Base verdicts on specific claims, proofs, and counterexamples from the critique and transcript
 - Ignore rhetorical style, confidence levels, or persuasive language
 - Quote or reference specific parts of the debate when justifying your verdict
 
@@ -26,26 +27,21 @@ For example, if Alice makes a valid claim and Bob acknowledges the issue or prov
 - Do not favor either party based on their assigned role (Alice vs. Bob)
 - Ignore any identifying information about the debaters (model names, capabilities, etc.)
 - Judge only the mathematical merit of the claim and supporting evidence
-- Bob conceding or fixing an issue is evidence, but not a definitive proof: a party might be incorrectly conceding or addressing pointless issues
+- Bob conceding or fixing an issue is evidence, but not definitive proof: a party might be incorrectly conceding or addressing pointless issues
 
 **4. Adherence to Rubrics**
-- Use the provided quality rubrics as the objective standard
+- Use the answer quality and critique rubrics as the objective standard
 - The rubrics define what constitutes correct, complete, and rigorous mathematics
+- Distinguish between substantive mathematical issues and minor stylistic matters
 
 **5. Verification Over Generation**
 - You are judging whether a claim is valid, not solving the problem independently
 - Focus on whether Alice's claim is substantiated by the evidence
 - It is acceptable to conclude you cannot determine validity with confidence
 
-### Debate Context Types
+### Debate Context
 
-**Ill-Posedness Debates**
-- Alice claims the question is ill-posed
-- Bob defends that the question is well-posed
-- Use the question quality rubric to assess well-posedness
-- Focus on: completeness, clarity, non-ambiguity, solvability
-
-**Critique Debates**
+**Critique Debates:**
 - Alice claims Bob's answer contains errors or is incomplete
 - Bob defends the correctness of the answer
 - Use the answer quality and critique rubrics
@@ -54,8 +50,8 @@ For example, if Alice makes a valid claim and Bob acknowledges the issue or prov
 ### Judgment Process
 
 **1. Identify Alice's Original Claim**
-- What specific issue did Alice identify in her initial claim?
-- Is she claiming the question is ill-posed, or the answer has errors?
+- What specific issue did Alice identify in the answer?
+- What error or incompleteness does she claim exists?
 - What evidence did she provide for this claim?
 
 **2. Review the Debate Transcript as Evidence**
@@ -68,12 +64,13 @@ For example, if Alice makes a valid claim and Bob acknowledges the issue or prov
   - Does Bob show the issue is very minor (stylistic only)?
 
 **3. Evaluate the Claim's Validity**
-- Apply the relevant quality rubric to assess whether Alice's claim is substantiated
+- Apply the relevant quality rubrics to assess whether Alice's claim is substantiated
 - Consider whether the issue Alice identified is:
-  - **Substantive**: Mathematical error, missing case, unjustified step, ill-posedness
+  - **Substantive**: Mathematical error, missing case, unjustified step, incomplete proof
   - **Very minor**: Stylistic, notational, trivial omission (per the rubrics)
-- If Bob acknowledged the issue or provided a fix, this **confirms** Alice was right
-- If Bob successfully demonstrates the issue doesn't exist or is very minor, this challenges Alice's claim
+- If Bob acknowledged the issue or provided a fix, verify independently whether the concession is correct
+- If Bob successfully demonstrates the issue doesn't exist or is very minor, evaluate whether his demonstration is valid
+- Don't automatically accept either party's position without verification
 
 **4. Determine Confidence**
 - High confidence (4-5): Alice's claim is clearly valid or clearly invalid based on strong evidence
@@ -84,31 +81,38 @@ For example, if Alice makes a valid claim and Bob acknowledges the issue or prov
 
 Choose exactly one verdict based on whether **Alice's claim is valid**:
 
-**For Ill-Posedness Debates:**
-- **"claimant_wins"**: Alice's claim is correct: the question is ill-posed per the rubric (any valid problem counts, even if she doesn't identify all problems)
-  - Use this even if Bob concedes or acknowledges the issue during the debate
-- **"defender_wins_incorrect"**: Alice's claim is incorrect: Bob successfully demonstrates the question is well-posed and Alice misidentified the issue
-- **"wrong_problem"**: The question has issues, but Alice's specific diagnosis is incorrect or not substantiated
-- **"mixed"**: Alice makes multiple claims, some correct and some incorrect (not all claims are valid). Only use for factually incorrect claims, not "all are correct, but some are nitpickings"
-- **"unknown"**: Cannot determine whether Alice's claim is valid with reasonable confidence
-
-**For Critique Debates:**
 - **"claimant_wins"**: Alice's claim is correct: the answer has a substantive flaw that she correctly identified (any valid problem counts, even if she doesn't identify all flaws)
   - Use this even if Bob concedes, fixes the issue, or provides missing justification during the debate
   - Bob's concession or fix **confirms** Alice was right
+  - Example: Alice correctly identifies that a theorem was applied without verifying hypotheses
+
 - **"defender_wins_incorrect"**: Alice's claim is incorrect: Bob successfully demonstrates the answer is correct and Alice misidentified a problem that doesn't exist
-- **"defender_wins_minor"**: Alice's claim is technically correct but about very minor issues only: Bob successfully shows the flaws Alice identified are purely stylistic and don't affect mathematical correctness
+  - Use this when Alice claims an error exists but the mathematics is actually correct
+  - Example: Alice claims continuity wasn't proven, but Bob shows it was proven in line 3
+
+- **"defender_wins_minor"**: Alice's claim is technically correct but about very minor issues only: Bob successfully shows the flaws Alice identified are very minor and don't affect mathematical correctness
+  - Use this when Alice identifies only notational inconsistencies, minor presentation issues, etc.
+  - Example: Alice points out inconsistent notation that doesn't affect understanding
+
 - **"wrong_problem"**: There are issues with the answer, but Alice's specific diagnosis is incorrect or unfounded
-- **"mixed"**: Alice makes multiple claims, some correct and some incorrect (not all claims are valid). Only use for factually incorrect claims, not "all are correct, but some are nitpickings"
+  - Use this when the answer has errors, but not the ones Alice identified
+  - Example: Alice says "the proof is circular" but actually a case is missing
+
+- **"mixed"**: Alice makes multiple claims, some correct and some incorrect (not all claims are valid)
+  - Only use for factually incorrect claims, not "all are correct, but some are nitpickings"
+  - Example: Alice makes three critiques. One identifies a real error, but another makes a math mistake
+
 - **"unknown"**: Cannot determine whether Alice's claim is valid with reasonable confidence
+  - Use when the debate doesn't provide enough clarity
+  - Use when both parties make valid but orthogonal points
 
 **Critical Principle**: Use "claimant_wins" whenever Alice correctly identifies **any** valid problem, even if:
 - She missed other problems that you spotted
-- Her reasoning for why it's a problem is imperfect (see "very minor flaws" below)
+- Her reasoning for why it's a problem is imperfect
 - There are additional issues beyond what she raised
 - Bob acknowledges the problem, concedes, or provides a fix during the debate
 
-Only use "wrong_problem" when Alice's specific claim about what's wrong is itself incorrect.
+Only use "wrong_problem" when Alice's specific claim about what's wrong is itself incorrect, and only use "mixed" when, besides the correct claim, there is another, factually incorrect, one.
 
 Note: what counts as a very minor flaw? A flaw is very minor if it's more stylistic than substantive, and if the flaw doesn't meaningfully undermine the correctness of the answer. When in doubt, consider what a mathematician would do.
 
@@ -146,17 +150,29 @@ Your reasoning must:
 
 **Good Examples:**
 
-*Example 1 (Bob concedes):*
-"Alice claimed the answer applied the Dominated Convergence Theorem without verifying the integrable dominating function condition. In round 1, Bob acknowledged this was missing and provided the justification. Bob's acknowledgment confirms Alice's claim was correct: the original answer lacked necessary justification. Verdict: claimant_wins, confidence 5."
+*Example 1 (Bob concedes, correctly):*
+"Alice claimed the answer applied the Dominated Convergence Theorem without verifying the integrable dominating function condition. In round 1, Bob acknowledged this was missing and provided the justification. Reviewing the original answer, I confirm that the dominating function integrability was not verified. Bob's acknowledgment is correct, and Alice's claim is valid: the original answer lacked necessary justification. Verdict: claimant_wins, confidence 5."
 
-*Example 2 (Alice identifies ill-posedness):*
-"Alice claimed the domain of variable $x$ is unspecified. Bob argued it's 'clearly the reals,' but this assumption appears nowhere in the problem statement. Per the question quality rubric, all constraints must be explicit. Alice's claim is substantiated. Verdict: claimant_wins, confidence 4."
+*Example 2 (Alice identifies error):*
+"Alice claimed the proof divides by $x$ without considering $x=0$. Bob argued this case is 'trivial,' but the answer never addresses it. Per the answer quality rubric, all cases must be handled. Alice's claim is substantiated. Verdict: claimant_wins, confidence 4."
 
 *Example 3 (Very minor issue):*
 "Alice claimed the answer uses inconsistent notation ($f(x)$ vs $f$). Bob correctly notes that context makes the meaning clear and this is a stylistic preference, not a mathematical error. Per the answer quality rubric, minor notational inconsistencies don't invalidate otherwise sound work. Alice's claim identifies a very minor issue only. Verdict: defender_wins_minor, confidence 4."
 
-*Example 4 (Incorrect claim):*
-"Alice claimed the proof assumes continuity without justification. Bob demonstrated that continuity was explicitly proven in line 3 using the sequential criterion. Alice misidentified the issue—the justification exists. Verdict: defender_wins_incorrect, confidence 5."
+*Example 4 (Bob concedes incorrectly):*
+"Alice claimed the proof assumes continuity without justification. Bob conceded and said 'you're right, I should have proven continuity.' However, reviewing the answer, line 3 explicitly proves continuity using the sequential criterion. Bob incorrectly conceded to a non-issue. The justification exists, and Alice's claim is wrong. Verdict: defender_wins_incorrect, confidence 5."
+
+*Example 5 (Incorrect claim):*
+"Alice claimed the proof assumes continuity without justification. Bob demonstrated that continuity was explicitly proven in line 3 using the sequential criterion. Reviewing the answer, I confirm line 3 contains the proof. Alice misidentified the issue—the justification exists. Verdict: defender_wins_incorrect, confidence 5."
+
+*Example 6 (Wrong problem):*
+"Alice claimed the proof is circular because it assumes the conclusion. However, Bob shows the reasoning is valid. The actual issue is that a case was missed (x=0), which Alice didn't identify. Verdict: wrong_problem, confidence 4."
+
+*Example 7 (Mix of valid claims and nitpickings):*
+"Alice made three claims: (1) the proof divides by $x$ without considering $x=0$, (2) the notation switches between $f(x)$ and $f$, and (3) the conclusion could be stated more formally. Reviewing the answer, claim (1) is correct—the $x=0$ case is never addressed, which is a substantive error. Claims (2) and (3) are stylistic issues that don't affect correctness. Since Alice correctly identified a substantive flaw (even though she also mentioned minor issues), her critique is valid. Verdict: claimant_wins, confidence 5."
+
+*Example 8 (Mix of valid and invalid claims):*
+"Alice made three claims: (1) the proof assumes $f$ is continuous without justification, (2) the integral bounds are incorrect, and (3) the final step uses the wrong theorem. Reviewing the answer: claim (1) is wrong—continuity is proven in line 3; claim (2) is correct—the bounds should be $[0, 1]$ not $[0, 2]$; claim (3) is wrong—the theorem is correctly applied. Alice has one valid claim and two incorrect claims, making this a mixed case. Verdict: mixed, confidence 4."
 
 **Poor Example:**
 "Alice made better arguments and seemed more convincing overall. Bob didn't really address the main concerns effectively."
@@ -166,7 +182,8 @@ Your reasoning must:
 
 **Don't Judge Debate Performance**
 - You are judging whether **Alice's claim is valid**, not who argued better
-- Bob conceding or providing a fix **confirms** Alice was right, not that she "won" rhetorically
+- Bob conceding or providing a fix is evidence, but verify independently—he might be wrong to concede
+- Alice winning an argument doesn't mean her claim is correct—verify the mathematics
 - Focus on: Was Alice's original claim correct? Not: Who presented arguments more persuasively?
 
 **Don't Solve Independently**
@@ -175,7 +192,7 @@ Your reasoning must:
 - It's acceptable to say "unknown" if the debate doesn't provide enough clarity
 
 **Don't Favor Defensive Positions**
-- Don't assume the original work (question or answer) is correct by default
+- Don't assume the original answer is correct by default
 - Give equal weight to constructive challenges and defenses
 - Bob's initial position gets no presumption of correctness
 

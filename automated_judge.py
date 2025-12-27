@@ -10,7 +10,13 @@ from dotenv import load_dotenv
 
 from model_api import query_llm_batch, query_llm_single
 from model_config import ModelSpec, load_registry
-from prompt_library import load_answer_guidance, load_critique_guidance, load_judgment_guidance, load_question_guidance
+from prompt_library import (
+    load_answer_guidance,
+    load_critique_guidance,
+    load_judgment_illposed_guidance,
+    load_judgment_critique_guidance,
+    load_question_guidance,
+)
 from utils import safe_load_json, setup_logging
 
 logger = logging.getLogger(__name__)
@@ -423,7 +429,8 @@ def main():
     guidance_q = load_question_guidance()
     guidance_a = load_answer_guidance()
     guidance_c = load_critique_guidance()
-    guidance_j = load_judgment_guidance()
+    guidance_j_illposed = load_judgment_illposed_guidance()
+    guidance_j_critique = load_judgment_critique_guidance()
 
     tasks: List[Dict] = []
     if args.mode in {"illposed", "all"}:
@@ -466,9 +473,9 @@ def main():
             prompts = []
             for task in batch:
                 if task["type"] == "illposed":
-                    prompt = build_illposed_prompt(task, guidance_q, guidance_j, registry)
+                    prompt = build_illposed_prompt(task, guidance_q, guidance_j_illposed, registry)
                 else:
-                    prompt = build_critique_prompt(task, guidance_a, guidance_c, guidance_j, registry)
+                    prompt = build_critique_prompt(task, guidance_a, guidance_c, guidance_j_critique, registry)
                 prompts.append(prompt)
             try:
                 responses = _batched_query(

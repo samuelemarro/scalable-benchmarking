@@ -10,7 +10,8 @@ from model_config import _slugify, load_registry
 from prompt_library import (
     load_answer_guidance,
     load_critique_guidance,
-    load_debate_guidance,
+    load_debate_illposed_guidance,
+    load_debate_critique_guidance,
     load_question_guidance,
 )
 from model_api import query_llm_single
@@ -239,7 +240,8 @@ def main():
     guidance_q = load_question_guidance()
     guidance_a = load_answer_guidance()
     guidance_c = load_critique_guidance()
-    guidance_d = load_debate_guidance()
+    guidance_d_illposed = load_debate_illposed_guidance()
+    guidance_d_critique = load_debate_critique_guidance()
 
     debates = 0
 
@@ -274,7 +276,7 @@ def main():
                         args.rounds,
                         guidance_q,
                         guidance_a,
-                        guidance_d,
+                        guidance_d_illposed,
                         question_model.temperature,
                         question_model.reasoning,
                         answer_model.temperature,
@@ -342,7 +344,7 @@ def main():
                             args.rounds,
                             guidance_a,
                             guidance_c,
-                            guidance_d,
+                            guidance_d_critique,
                             answer_model.temperature,
                             answer_model.reasoning,
                             critic_model.temperature,

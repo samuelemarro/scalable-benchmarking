@@ -1,15 +1,22 @@
-## Debate Participation Guidance
+## Debate Participation Guidance (Critique Debates)
 
-This rubric guides participants in mathematical debates within the benchmarking framework. Your goal is to engage constructively, defend or challenge claims with evidence, and converge toward truth.
+This rubric guides participants in debates about answer correctness within the benchmarking framework. Your goal is to engage constructively, defend or challenge claims with evidence, and converge toward truth.
 
 ### Primary Goal
 
-Present clear, evidence-based arguments that either defend your position or acknowledge valid challenges. The debate aims to clarify whether the original claim (ill-posedness or critique) is substantiated.
+Present clear, evidence-based arguments that either defend your position or acknowledge valid challenges. The debate aims to clarify whether the answer contains errors or is incomplete.
+
+### Debate Context
+
+**Critique Debates:**
+- **Alice (Claimant)** argues the answer contains errors or is incomplete
+- **Bob (Defender)** argues the answer is correct or the issues are very minor
+- **Focus:** Answer quality and critique rubric criteria (correctness, completeness, rigor)
 
 ### Core Principles
 
 **1. Evidence-Based Argumentation**
-- Support claims with specific references to the question, answer, or critique
+- Support claims with specific references to the answer, question, or critique
 - Quote relevant portions when pointing to issues or defenses
 - Provide concrete examples or counterexamples where applicable
 - Avoid vague assertions without backing evidence
@@ -21,7 +28,7 @@ Present clear, evidence-based arguments that either defend your position or ackn
 - Update your stance if presented with convincing evidence
 
 **3. Focused Discussion**
-- Stay on topic: address the specific claim being debated
+- Stay on topic: address the specific claim about answer correctness
 - Respond directly to your opponent's arguments
 - Avoid introducing tangential issues or red herrings
 - Keep responses concise and to the point
@@ -35,35 +42,36 @@ Present clear, evidence-based arguments that either defend your position or ackn
 ### Debate Roles
 
 **Claimant (Alice)**
-- Claims the question is ill-posed OR the answer contains errors
+- Claims the answer contains errors or is incomplete
 - Bears the burden of demonstrating the specific issue
 - Must provide evidence that the claim is substantiated
 - Should acknowledge if the defender resolves the concern
 
 **Defender (Bob)**
-- Defends the question as well-posed OR the answer as correct
+- Defends the answer as correct
 - Responds to specific issues raised by the claimant
 - May provide clarifications, corrections, or counterarguments
 - Valid defenses include:
   - Showing the issue doesn't exist
   - Demonstrating the issue is very minor (stylistic, not substantive)
+  - Providing missing justification that makes the answer complete
 
 ### Debate Strategy
 
 **For Claimants:**
-1. **Be Specific**: Identify exactly what is wrong, not vague concerns
-2. **Provide Evidence**: Quote problematic portions, give counterexamples, cite rubric violations
+1. **Be Specific**: Identify exactly what mathematical error exists, not vague concerns
+2. **Provide Evidence**: Quote problematic steps, give counterexamples, cite rubric violations
 3. **Stay on Point**: If the defender addresses your concern, acknowledge it or explain why the response is insufficient
-4. **Distinguish Severity**: Clarify whether issues are substantive or minor
+4. **Distinguish Severity**: Clarify whether issues are substantive errors or minor stylistic matters
 
 **For Defenders:**
 1. **Address the Concern Directly**: Don't ignore the claimant's specific points
 2. **Provide Justification**: If accused of unjustified steps, provide the justification
 3. **Acknowledge Minor Issues**: If the critique identifies only stylistic problems, this is a valid defense per the rubrics
 4. **Correct When Necessary**: If the claimant identifies a genuine error, acknowledge and correct it
-5. **Cite Standards**: Reference the quality rubrics to support your defense
+5. **Cite Standards**: Reference the answer quality rubric to support your defense
 
-### Valid Defenses Against Critiques
+### Valid Defenses
 
 **When the Critique is About Very Minor Issues:**
 - Notational inconsistencies that don't affect clarity
@@ -85,6 +93,10 @@ If the critique misidentifies an issue or claims an error that doesn't exist:
 *Alice claims:* "The proof assumes $f$ is continuous without justification."
 *Bob responds:* "The proof doesn't assume $f$ is continuous. In line 3, I explicitly proved continuity using the sequential criterion: for any sequence $x_n \to x$, we have $f(x_n) \to f(x)$ by the uniform convergence established in line 2."
 
+**Example Defense for Minor Issues:**
+*Alice claims:* "The answer uses inconsistent notation, switching between $f(x)$ and $f$."
+*Bob responds:* "While I could have been more consistent with notation, the context makes the meaning clear throughout. This is a stylistic preference rather than a mathematical error. Per the answer quality rubric, minor notational inconsistencies don't invalidate otherwise sound work."
+
 ### Concession
 
 **When to Concede:**
@@ -97,8 +109,11 @@ If the critique misidentifies an issue or claims an error that doesn't exist:
 - State what convinced you (specific argument or evidence)
 - Don't equivocate or hedge after conceding
 
-**Example Good Concession:**
-"You're right. I claimed the domain was unspecified, but looking at the problem statement again, it does say 'for all real numbers $x$'. The question is well-posed with respect to domain specification."
+**Example Good Concession (Bob):**
+"You're correct that I applied the Dominated Convergence Theorem without verifying the dominating function is integrable. In this case, $|f_n(x)| \leq e^{-x^2}$ for all $n$ and $x \in \mathbb{R}$, and $\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi} < \infty$, so the condition is satisfied. I should have stated this explicitly in the original answer."
+
+**Example Good Concession (Alice):**
+"You're right. I claimed the proof assumes continuity without justification, but looking at line 3 again, continuity was indeed proven using the sequential criterion. The justification is present. I withdraw my critique on this point."
 
 **Example Poor Non-Concession:**
 "I see your point, but I still think there might be issues..." (when the point is definitive)
@@ -169,18 +184,6 @@ If the critique misidentifies an issue or claims an error that doesn't exist:
 *Alice:* "I still think there are problems."
 
 *Why this is poor:* No specific issues identified, no evidence provided, no productive movement toward resolution.
-
-### Ill-Posedness Debates vs. Critique Debates
-
-**Ill-Posedness Debates:**
-- Claimant argues the question lacks necessary information or has contradictory premises
-- Defender argues the question is well-specified and answerable
-- Focus: Question quality rubric criteria (completeness, clarity, non-ambiguity, solvability)
-
-**Critique Debates:**
-- Claimant argues the answer contains errors or is incomplete
-- Defender argues the answer is correct or the issues are very minor
-- Focus: Answer quality and critique rubric criteria (correctness, completeness, rigor)
 
 ### Final Reminders
 
