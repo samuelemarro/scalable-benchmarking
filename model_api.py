@@ -1,6 +1,6 @@
 import json
+from multiprocessing import Pool
 import os
-import re
 import tempfile
 import time
 import uuid
@@ -664,9 +664,13 @@ def query_llm_batch(model: str, messages_list: List[str], prompt: str = "You are
         return _query_anthropic_batch(norm_model, messages_list, prompt, response_format, temperature, api_kwargs, reasoning=reasoning)
     if 'openai' in model:
         return _query_openai_batch(model.replace('openai/', ''), messages_list, prompt, response_format, temperature, api_kwargs, reasoning=reasoning)
-    else:
-        from multiprocessing import Pool
-        worker_args = [(model, message, prompt, response_format, temperature, api_kwargs, reasoning) for message in messages_list]
-        with Pool(processes=max_workers) as pool:
-            results = pool.map(_single_query_worker, worker_args)
-        return results
+
+    worker_args = [(model, message, prompt, response_format, temperature, api_kwargs, reasoning) for message in messages_list]
+    with Pool(processes=max_workers) as pool:
+        results = list(tqdm(
+            pool.imap(_single_query_worker, worker_args),
+            total=len(worker_args),
+            desc=f"Processing {model}",
+            unit="query"
+        ))
+    return results
