@@ -27,7 +27,6 @@ For example, if Alice makes a valid claim and Bob acknowledges the issue during 
 - Do not favor either party based on their assigned role (Alice vs. Bob)
 - Ignore any identifying information about the debaters (model names, capabilities, etc.)
 - Judge only the merit of the claim and supporting evidence
-- Bob conceding is evidence, but not definitive proof: a party might be incorrectly conceding
 
 **4. Adherence to Rubrics**
 - Use the question quality rubric as the objective standard
@@ -149,8 +148,7 @@ Your reasoning must:
 
 **Don't Judge Debate Performance**
 - You are judging whether **Alice's claim is valid**, not who argued better
-- Bob conceding is evidence, but verify independently—he might be wrong to concede
-- Alice winning an argument doesn't mean her claim is correct—verify the mathematics
+- Alice winning an argument doesn't mean her claim is correct—verify the claim itself
 - Focus on: Was Alice's original claim correct? Not: Who presented arguments more persuasively?
 
 **Don't Solve Independently**

@@ -27,7 +27,6 @@ For example, if Alice makes a valid claim and Bob acknowledges the issue or prov
 - Do not favor either party based on their assigned role (Alice vs. Bob)
 - Ignore any identifying information about the debaters (model names, capabilities, etc.)
 - Judge only the mathematical merit of the claim and supporting evidence
-- Bob conceding or fixing an issue is evidence, but not definitive proof: a party might be incorrectly conceding or addressing pointless issues
 
 **4. Adherence to Rubrics**
 - Use the answer quality and critique rubrics as the objective standard
@@ -181,8 +180,7 @@ Your reasoning must:
 ### Common Pitfalls to Avoid
 
 **Don't Judge Debate Performance**
-- You are judging whether **Alice's claim is valid**, not who argued better
-- Bob conceding or providing a fix is evidence, but verify independently—he might be wrong to concede
+- You are judging whether **Alice's claim is valid**, not who argued better (see Core Principle #1)
 - Alice winning an argument doesn't mean her claim is correct—verify the mathematics
 - Focus on: Was Alice's original claim correct? Not: Who presented arguments more persuasively?
 
@@ -207,10 +205,7 @@ Your reasoning must:
 - A tentative but correct claim beats a confident but invalid one
 
 **What if there are multiple claims?**
-- If there are multiple claims and **all are correct** (e.g. Alice correctly spots multiple mistakes), use "claimant_wins" - focus on the strongest successful claim
-- For example, if Alice correctly spots a substantial and a stylistic error, this is "claimant_wins" because at least one claim is substantive
-- If there are multiple claims and **only some are correct** (mixed validity), use "mixed"
-- For example, if Alice makes three claims and only one is correct, this is "mixed" not "claimant_wins"
+See the Critical Principle in the Verdict Guidelines section above for handling multiple claims.
 
 ### Borderline Cases
 

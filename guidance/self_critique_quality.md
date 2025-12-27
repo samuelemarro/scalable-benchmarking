@@ -52,7 +52,6 @@ Determine whether your answer satisfies the quality standards well enough to be 
 - Unjustified steps that a reader couldn't verify
 - Incomplete handling of cases
 - Wrong final answer
-- Proceeded with an answer despite the question being ill-posed
 
 **Examples of substantive issues requiring refinement:**
 - Used a theorem without checking its hypotheses
