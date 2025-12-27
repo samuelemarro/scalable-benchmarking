@@ -200,14 +200,20 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
             else:
                 # Cross-model answer - count judges siding with defender
                 correct_count = sum(1 for v in verdicts if v in {"defender_wins_incorrect", "defender_wins_minor"})
-                majority_correct = correct_count > len(verdicts) / 2
 
-                # This answer was critiqued (not declared "correct"), so categorize based on judge majority
-                if majority_correct:
-                    cross_model_answers[answer_model][question_model]["critiqued_correct"] += 1
-                else:
-                    cross_model_answers[answer_model][question_model]["critiqued_wrong"] += 1
-                cross_model_answers[answer_model][question_model]["total"] += 1
+                # Exclude ties from analysis (per user decision Q1.2)
+                # Ties occur when correct_count == len(verdicts) / 2
+                is_tie = (correct_count == len(verdicts) / 2)
+
+                if not is_tie:
+                    majority_correct = correct_count > len(verdicts) / 2
+                    # This answer was critiqued (not declared "correct"), so categorize based on judge majority
+                    if majority_correct:
+                        cross_model_answers[answer_model][question_model]["critiqued_correct"] += 1
+                    else:
+                        cross_model_answers[answer_model][question_model]["critiqued_wrong"] += 1
+                    cross_model_answers[answer_model][question_model]["total"] += 1
+                # If tie, skip entirely (not counted in total)
 
             # Defender stats (Bob is the answer_model defending)
             defender_wins_count = sum(1 for v in verdicts if v in {"defender_wins_incorrect", "defender_wins_minor"})
@@ -249,7 +255,8 @@ def print_agreement_stats(model_stats, title, total_judges=None):
         if not percentages:
             continue
 
-        avg_percentage = sum(percentages) / len(percentages)
+        # Safe division with explicit check
+        avg_percentage = sum(percentages) / len(percentages) if percentages else 0.0
         print(f"  {model}: {avg_percentage:.1f}% average (across {len(percentages)} critiques)")
 
 
