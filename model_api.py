@@ -1,5 +1,6 @@
 import atexit
 import json
+import logging
 from multiprocessing import Pool
 import os
 import tempfile
@@ -11,6 +12,8 @@ import requests
 from tqdm import tqdm
 from google import genai
 from google.genai import types as genai_types
+
+logger = logging.getLogger(__name__)
 
 # Global session for connection pooling
 _http_session = None
@@ -609,11 +612,17 @@ def _query_gemini_batch(model: str, messages_list: List[str], prompt: str, respo
         raise RuntimeError(f"Gemini batch error: {job.error}")
     responses = []
 
+    # Handle different response formats
     if job.dest and getattr(job.dest, "file_name", None):
+        # File-based response format
         file_name = job.dest.file_name
+        logger.debug(f"Processing Gemini batch file-based response from {file_name}")
         content_bytes = client.files.download(file=file_name)
         text = content_bytes.decode("utf-8")
-        for line in text.strip().splitlines():
+        line_count = len(text.strip().splitlines())
+        logger.debug(f"Parsing {line_count} JSONL responses from Gemini batch file")
+
+        for idx, line in enumerate(text.strip().splitlines()):
             try:
                 obj = json.loads(line)
                 resp = obj.get("response") or obj.get("inlineResponse")
@@ -628,8 +637,15 @@ def _query_gemini_batch(model: str, messages_list: List[str], prompt: str, respo
                     raise RuntimeError("Gemini batch response missing text content")
                 responses.append("".join(text_parts))
             except json.JSONDecodeError as e:
+                logger.error(f"Failed to parse Gemini batch response line {idx}: {e}")
                 raise RuntimeError(f"Failed to parse Gemini batch response: {e}")
+        logger.debug(f"Successfully parsed {len(responses)} responses from Gemini batch file")
+
     elif job.dest and getattr(job.dest, "inlined_responses", None):
+        # Inlined response format
+        logger.debug("Processing Gemini batch inlined response format")
+        inline_count = len(job.dest.inlined_responses)
+        logger.debug(f"Processing {inline_count} inlined responses from Gemini batch")
         for inline_response in job.dest.inlined_responses:
             resp = getattr(inline_response, "response", None)
             if resp and getattr(resp, "candidates", None):
@@ -640,8 +656,10 @@ def _query_gemini_batch(model: str, messages_list: List[str], prompt: str, respo
                 raise RuntimeError(f"Gemini batch request failed: {inline_response.error}")
             else:
                 raise RuntimeError("Gemini batch request returned no response")
+        logger.debug(f"Successfully processed {len(responses)} inlined responses from Gemini batch")
     else:
-        raise RuntimeError("Gemini batch job has no recognized destination format")
+        logger.error(f"Gemini batch job has unrecognized destination format: {job.dest}")
+        raise RuntimeError(f"Gemini batch job has unrecognized destination format: {job.dest}")
 
     if len(responses) != len(messages_list):
         raise RuntimeError(f"Gemini batch returned {len(responses)} responses but expected {len(messages_list)}")
