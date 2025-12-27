@@ -143,7 +143,7 @@ def _query_openai_single(model: str, messages: List[Dict], response_format: Opti
     return content or ""
 
 
-def query_llm(model: str, messages: List[Dict], response_format: Optional[Dict] = None, temperature: Optional[float] = 1, api_kwargs: Optional[Dict] = None, reasoning: Optional[str] = None) -> str:
+def query_llm(model: str, messages: List[Dict], response_format: Optional[Dict] = None, temperature: Optional[float] = None, api_kwargs: Optional[Dict] = None, reasoning: Optional[str] = None) -> str:
     """
     Query a single LLM endpoint (OpenRouter).
     """
@@ -162,7 +162,7 @@ def query_llm(model: str, messages: List[Dict], response_format: Optional[Dict] 
     if "gemini" in model:
         return _query_gemini_single(model, messages, response_format, temperature, api_kwargs, reasoning)
 
-    if 'anthropic' in model and (temperature is not None and temperature != 1) and reasoning is not None:
+    if 'anthropic' in model and temperature is not None and reasoning is not None:
         raise ValueError("Cannot set both temperature and reasoning in Anthropic requests")
 
     json_kwargs = {}
@@ -200,7 +200,7 @@ def query_llm(model: str, messages: List[Dict], response_format: Optional[Dict] 
     return data["choices"][0]["message"]["content"]
 
 
-def query_llm_single(model: str, message: str, prompt: str = "You are a helpful assistant.", response_format: Optional[Dict] = None, temperature: Optional[float] = 1, api_kwargs: Optional[Dict] = None, reasoning: Optional[str] = None) -> str:
+def query_llm_single(model: str, message: str, prompt: str = "You are a helpful assistant.", response_format: Optional[Dict] = None, temperature: Optional[float] = None, api_kwargs: Optional[Dict] = None, reasoning: Optional[str] = None) -> str:
     messages = [
         {"role": "system", "content": prompt},
         {"role": "user", "content": message},
@@ -637,7 +637,7 @@ def _query_gemini_batch(model: str, messages_list: List[str], prompt: str, respo
     return responses
 
 
-def query_llm_batch(model: str, messages_list: List[str], prompt: str = "You are a helpful assistant.", response_format: Optional[Dict] = None, temperature: Optional[float] = 1, api_kwargs: Optional[Dict] = None, reasoning: Optional[str] = None, max_workers: int = 8) -> List[str]:
+def query_llm_batch(model: str, messages_list: List[str], prompt: str = "You are a helpful assistant.", response_format: Optional[Dict] = None, temperature: Optional[float] = None, api_kwargs: Optional[Dict] = None, reasoning: Optional[str] = None, max_workers: int = 8) -> List[str]:
     """
     Batch query for LLMs: only Anthropic Claude batch API is used. All other models use parallel processing (multiprocessing).
     reasoning: None, "medium", or "high". If set, enables Claude 'thinking' or OpenRouter 'reasoning'.
@@ -658,7 +658,7 @@ def query_llm_batch(model: str, messages_list: List[str], prompt: str = "You are
     if "gemini" in model:
         return _query_gemini_batch(model, messages_list, prompt, response_format, temperature, api_kwargs, reasoning)
     if 'anthropic' in model:
-        if (temperature is not None and temperature != 1) and reasoning is not None:
+        if temperature is not None and reasoning is not None:
             raise ValueError("Cannot set both temperature and reasoning in Anthropic requests")
         norm_model = ANTHROPIC_INTERNAL_NAMES.get(model.replace('anthropic/', ''), model.replace('anthropic/', ''))
         return _query_anthropic_batch(norm_model, messages_list, prompt, response_format, temperature, api_kwargs, reasoning=reasoning)
