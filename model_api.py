@@ -1,3 +1,4 @@
+import atexit
 import json
 from multiprocessing import Pool
 import os
@@ -20,6 +21,16 @@ def get_http_session() -> requests.Session:
     if _http_session is None:
         _http_session = requests.Session()
     return _http_session
+
+def _cleanup_http_session():
+    """Close the global HTTP session on program exit."""
+    global _http_session
+    if _http_session is not None:
+        _http_session.close()
+        _http_session = None
+
+# Register cleanup handler to close session on exit
+atexit.register(_cleanup_http_session)
 
 
 def get_model_metadata(model: str, response_data: Optional[Dict] = None) -> Dict:
