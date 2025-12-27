@@ -30,6 +30,22 @@ def load_debate_guidance(base: str = "guidance") -> str:
     return read_guidance(str(Path(base) / "debate_quality.md"))
 
 
+def load_debate_illposed_guidance(base: str = "guidance") -> str:
+    return read_guidance(str(Path(base) / "debate_illposed_quality.md"))
+
+
+def load_debate_critique_guidance(base: str = "guidance") -> str:
+    return read_guidance(str(Path(base) / "debate_critique_quality.md"))
+
+
+def load_judgment_illposed_guidance(base: str = "guidance") -> str:
+    return read_guidance(str(Path(base) / "judgment_illposed_quality.md"))
+
+
+def load_judgment_critique_guidance(base: str = "guidance") -> str:
+    return read_guidance(str(Path(base) / "judgment_critique_quality.md"))
+
+
 def build_question_prompt(topic: str, guidance_text: str, previous_questions: Optional[List[str]]) -> str:
     """
     Prompt for generating a challenging mathematics question with solution.
