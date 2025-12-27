@@ -119,6 +119,7 @@ def gather_illposed_tasks(
     answers_dir: Path,
     benchmark_dir: Path,
     registry,
+    allow_no_debate: bool = False,
 ) -> List[Dict]:
     tasks = []
     for debate_file in debates_dir.glob("illposed/*/*.json"):
@@ -139,6 +140,9 @@ def gather_illposed_tasks(
                 answer_text = benchmark_answer_for_index(benchmark_dir, q_slug, idx) or ""
             history = debate.get("history", [])
             if not question and not answer_text and not history:
+                continue
+            if not history and not allow_no_debate:
+                logger.warning(f"Skipping illposed/{q_slug}/{a_slug}/{idx}: no debate history (use --allow-no-debate to override)")
                 continue
             alice_model = registry.resolve_model_name(debate.get("alice_model") or a_slug)
             bob_model = registry.resolve_model_name(debate.get("bob_model") or q_slug)
@@ -174,6 +178,7 @@ def gather_critique_tasks(
     answers_dir: Path,
     benchmark_dir: Path,
     registry,
+    allow_no_debate: bool = False,
 ) -> List[Dict]:
     tasks = []
     for mode_dir in critiques_dir.glob("*"):
@@ -196,7 +201,7 @@ def gather_critique_tasks(
                         continue
                     attempts = crit_entry.get("attempts") or []
                     last_attempt = attempts[-1] if attempts else {}
-                    if last_attempt.get("verdict") == "correct answer":
+                    if last_attempt.get("verdict") == "correct":
                         continue
                     debate = debates[idx] if idx < len(debates) else {}
                     question = debate.get("question") or crit_entry.get("question", "")
@@ -207,6 +212,9 @@ def gather_critique_tasks(
                     critique_text = last_critique_text(crit_entry)
                     history = debate.get("history", [])
                     if not question and not critique_text and not history:
+                        continue
+                    if not history and not allow_no_debate:
+                        logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: no debate history (use --allow-no-debate to override)")
                         continue
                     alice_model = registry.resolve_model_name(debate.get("alice_model") or critic_slug)
                     bob_model = registry.resolve_model_name(debate.get("bob_model") or answer_slug)
@@ -420,6 +428,7 @@ def main():
     parser.add_argument("--limit", type=int, default=None, help="Limit tasks per judge.")
     parser.add_argument("--models", nargs="*", help="Subset of judge models to use (default: all).")
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument("--allow-no-debate", action="store_true", help="Allow judging even when there's no debate history.")
     parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL).")
     args = parser.parse_args()
 
@@ -434,7 +443,7 @@ def main():
 
     tasks: List[Dict] = []
     if args.mode in {"illposed", "all"}:
-        tasks.extend(gather_illposed_tasks(args.debates_dir, args.answers_dir, args.benchmark_dir, registry))
+        tasks.extend(gather_illposed_tasks(args.debates_dir, args.answers_dir, args.benchmark_dir, registry, args.allow_no_debate))
     if args.mode in {"critiques", "all"}:
         tasks.extend(
             gather_critique_tasks(
@@ -443,6 +452,7 @@ def main():
                 args.answers_dir,
                 args.benchmark_dir,
                 registry,
+                args.allow_no_debate,
             )
         )
 
