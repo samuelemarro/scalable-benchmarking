@@ -102,7 +102,15 @@ def format_debate(history: List[Dict], redactions: Iterable[Tuple[str, str]], sp
     if not history:
         return "(No debate transcript available.)"
     lines = []
-    for msg in history:
+    for idx, msg in enumerate(history):
+        # Validate message format
+        if not isinstance(msg, dict):
+            logger.warning(f"Invalid debate message format at index {idx}: expected dict, got {type(msg).__name__}")
+            continue
+        if "speaker" not in msg or "message" not in msg:
+            logger.warning(f"Debate message at index {idx} missing required fields (speaker/message): {msg.keys()}")
+            # Continue anyway with defaults
+
         speaker = msg.get("speaker") or "Speaker"
         speaker = speaker_map.get(speaker, speaker)
         message = redact_text(msg.get("message", ""), redactions)
