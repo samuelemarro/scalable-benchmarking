@@ -300,35 +300,41 @@ def main():
                     existing = load_json(debate_path, [])
                     if len(existing) > idx and existing[idx]:
                         continue
-                    history = illposed_debate(
-                        question_model.name,
-                        answer_model.name,
-                        rec.get("question", ""),
-                        claim,
-                        args.rounds,
-                        guidance_q,
-                        guidance_a,
-                        guidance_d_illposed,
-                        question_model.temperature,
-                        question_model.reasoning,
-                        answer_model.temperature,
-                        answer_model.reasoning,
-                        not args.no_allow_concede,
-                    )
-                    if len(existing) <= idx:
-                        existing.extend([{} for _ in range(idx - len(existing) + 1)])
-                    existing[idx] = {
-                        "question": rec.get("question"),
-                        "alice_model": answer_model.name,
-                        "bob_model": question_model.name,
-                        "claimant": answer_model.name,
-                        "run_id": rec.get("run_id"),
-                        "topic_slug": rec.get("topic_slug"),
-                        "history": history,
-                    }
-                    save_json(debate_path, existing)
-                    debates += 1
-                    pbar.update(1)
+
+                    try:
+                        history = illposed_debate(
+                            question_model.name,
+                            answer_model.name,
+                            rec.get("question", ""),
+                            claim,
+                            args.rounds,
+                            guidance_q,
+                            guidance_a,
+                            guidance_d_illposed,
+                            question_model.temperature,
+                            question_model.reasoning,
+                            answer_model.temperature,
+                            answer_model.reasoning,
+                            not args.no_allow_concede,
+                        )
+                        if len(existing) <= idx:
+                            existing.extend([{} for _ in range(idx - len(existing) + 1)])
+                        existing[idx] = {
+                            "question": rec.get("question"),
+                            "alice_model": answer_model.name,
+                            "bob_model": question_model.name,
+                            "claimant": answer_model.name,
+                            "run_id": rec.get("run_id"),
+                            "topic_slug": rec.get("topic_slug"),
+                            "history": history,
+                        }
+                        save_json(debate_path, existing)
+                        debates += 1
+                        pbar.update(1)
+                    except Exception as e:
+                        logger.error(f"Failed to generate ill-posed debate for {q_slug}/{answer_model_slug}/{idx}: {e}")
+                        pbar.update(1)
+                        continue
                 if args.limit is not None and debates >= args.limit:
                     break
             if args.limit is not None and debates >= args.limit:
@@ -419,37 +425,43 @@ def main():
                             continue
                         answer_text = final_answer(answer_entry) or ""
                         critique_text = resolved_critique_text(crit_entry)
-                        history = critique_debate(
-                            answer_model.name,
-                            critic_model.name,
-                            crit_entry.get("question", ""),
-                            answer_text,
-                            critique_text,
-                            args.rounds,
-                            guidance_a,
-                            guidance_c,
-                            guidance_d_critique,
-                            answer_model.temperature,
-                            answer_model.reasoning,
-                            critic_model.temperature,
-                            critic_model.reasoning,
-                            not args.no_allow_concede,
-                        )
-                        if len(existing) <= idx:
-                            existing.extend([{} for _ in range(idx - len(existing) + 1)])
-                        existing[idx] = {
-                            "question": crit_entry.get("question"),
-                            "alice_model": critic_model.name,
-                            "bob_model": answer_model.name,
-                            "run_id": crit_entry.get("run_id"),
-                            "topic_slug": crit_entry.get("topic_slug"),
-                            "answer_author": answer_model.name,
-                            "critic": critic_model.name,
-                            "history": history,
-                        }
-                        save_json(debate_path, existing)
-                        debates += 1
-                        pbar.update(1)
+
+                        try:
+                            history = critique_debate(
+                                answer_model.name,
+                                critic_model.name,
+                                crit_entry.get("question", ""),
+                                answer_text,
+                                critique_text,
+                                args.rounds,
+                                guidance_a,
+                                guidance_c,
+                                guidance_d_critique,
+                                answer_model.temperature,
+                                answer_model.reasoning,
+                                critic_model.temperature,
+                                critic_model.reasoning,
+                                not args.no_allow_concede,
+                            )
+                            if len(existing) <= idx:
+                                existing.extend([{} for _ in range(idx - len(existing) + 1)])
+                            existing[idx] = {
+                                "question": crit_entry.get("question"),
+                                "alice_model": critic_model.name,
+                                "bob_model": answer_model.name,
+                                "run_id": crit_entry.get("run_id"),
+                                "topic_slug": crit_entry.get("topic_slug"),
+                                "answer_author": answer_model.name,
+                                "critic": critic_model.name,
+                                "history": history,
+                            }
+                            save_json(debate_path, existing)
+                            debates += 1
+                            pbar.update(1)
+                        except Exception as e:
+                            logger.error(f"Failed to generate critique debate for {mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: {e}")
+                            pbar.update(1)
+                            continue
                     if args.limit is not None and debates >= args.limit:
                         break
                 if args.limit is not None and debates >= args.limit:
