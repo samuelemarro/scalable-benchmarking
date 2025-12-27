@@ -369,7 +369,14 @@ def parse_judgment(text: str, task: Dict) -> Dict:
     reasoning = None
     if isinstance(parsed, dict):
         verdict = parsed.get("verdict")
-        confidence = parse_confidence(parsed.get("confidence"))
+        # Catch confidence parsing exceptions and mark judgment as failed
+        try:
+            confidence = parse_confidence(parsed.get("confidence"))
+        except ValueError as e:
+            logger.warning(f"Failed to parse confidence for task {task.get('id')}: {e}")
+            confidence = None
+            # Mark as failed if confidence is required but missing/invalid
+            verdict = "unknown"
         reasoning = parsed.get("reasoning", None)
     if task["type"] == "illposed":
         verdict = normalize_illposed_verdict(verdict)
