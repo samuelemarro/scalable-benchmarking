@@ -1,7 +1,11 @@
 from collections import Counter, defaultdict
 from pathlib import Path
+import logging
 
 from utils import load_json
+from constants import DEFENDER_WIN_VERDICTS, CLAIMANT_WIN_VERDICTS
+
+logger = logging.getLogger(__name__)
 
 
 def count_human_labels(evaluations_dir: Path):
@@ -135,12 +139,20 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
     """Compute agreement statistics for various model roles."""
     decisions = collect_automated_evaluations(auto_eval_dir)
 
+    # Track all encountered model names for validation
+    encountered_models = set()
+
     # Group decisions by claim ID
     decisions_by_claim = defaultdict(list)
     for decision in decisions:
         claim_id = decision.get("id")
         if claim_id:
             decisions_by_claim[claim_id].append(decision)
+            # Track model names
+            for key in ["question_model", "answer_model", "critic_model", "judge_model"]:
+                model_name = decision.get(key)
+                if model_name:
+                    encountered_models.add(model_name)
 
     # For each model, track self-answer correctness percentages
     # Verdicts that mean "answer is correct": defender_wins_incorrect, defender_wins_minor
@@ -194,12 +206,12 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
             if is_self_answer:
                 # Calculate percentage of judges saying answer is correct
                 # Correct = defender wins (defender_wins_incorrect or defender_wins_minor)
-                correct_count = sum(1 for v in verdicts if v in {"defender_wins_incorrect", "defender_wins_minor"})
+                correct_count = sum(1 for v in verdicts if v in DEFENDER_WIN_VERDICTS)
                 percentage = 100 * correct_count / len(verdicts)
                 model_self_answers[answer_model].append(percentage)
             else:
                 # Cross-model answer - count judges siding with defender
-                correct_count = sum(1 for v in verdicts if v in {"defender_wins_incorrect", "defender_wins_minor"})
+                correct_count = sum(1 for v in verdicts if v in DEFENDER_WIN_VERDICTS)
 
                 # Exclude ties from analysis (per user decision Q1.2)
                 # Ties occur when correct_count == len(verdicts) / 2
@@ -216,12 +228,12 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
                 # If tie, skip entirely (not counted in total)
 
             # Defender stats (Bob is the answer_model defending)
-            defender_wins_count = sum(1 for v in verdicts if v in {"defender_wins_incorrect", "defender_wins_minor"})
+            defender_wins_count = sum(1 for v in verdicts if v in DEFENDER_WIN_VERDICTS)
             percentage = 100 * defender_wins_count / len(verdicts)
             model_defender[answer_model].append(percentage)
 
             # Claimant stats (Alice is the critic_model claiming error)
-            claimant_wins_count = sum(1 for v in verdicts if v in {"claimant_wins", "mixed"})
+            claimant_wins_count = sum(1 for v in verdicts if v in CLAIMANT_WIN_VERDICTS)
             percentage = 100 * claimant_wins_count / len(verdicts)
             model_claimant[critic_model].append(percentage)
 
@@ -239,6 +251,10 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
                     # Cross-model answer declared correct
                     cross_model_answers[answer_author][question_author]["declared_correct"] += 1
                     cross_model_answers[answer_author][question_author]["total"] += 1
+
+    # Log all model names encountered for verification
+    if encountered_models:
+        logger.info(f"Encountered {len(encountered_models)} unique model names in data: {sorted(encountered_models)}")
 
     return model_self_answers, model_self_answers_no_debate, model_defender, model_claimant, cross_model_answers
 
