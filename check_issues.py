@@ -18,6 +18,41 @@ from constants import (
 )
 
 
+def final_benchmark_question(entry: Dict) -> str:
+    gen_rounds = entry.get("generation_rounds") or []
+    if not gen_rounds:
+        return ""
+    refinements = gen_rounds[-1].get("refinement_rounds") or []
+    if not refinements:
+        return ""
+    return refinements[-1].get("question", "") or ""
+
+
+def final_benchmark_answer(entry: Dict) -> str:
+    gen_rounds = entry.get("generation_rounds") or []
+    if not gen_rounds:
+        return ""
+    refinements = gen_rounds[-1].get("refinement_rounds") or []
+    if not refinements:
+        return ""
+    return refinements[-1].get("answer", "") or ""
+
+
+def final_answer_text(entry: Dict) -> str:
+    attempts = entry.get("attempts") or []
+    if attempts:
+        return attempts[-1].get("answer", "") or ""
+    return entry.get("answer", "") or ""
+
+
+def final_critique_text(entry: Dict) -> str:
+    attempts = entry.get("attempts") or []
+    if not attempts:
+        return ""
+    last = attempts[-1]
+    return str(last.get("notes") or last.get("raw_critique") or "")
+
+
 def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
     """Check for issues in benchmark files."""
     issues = defaultdict(int)
@@ -40,12 +75,12 @@ def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
                 issues["unknown_status"] += 1
 
             # Check for empty questions
-            final_q = entry.get("final_question", "").strip()
+            final_q = final_benchmark_question(entry).strip()
             if not final_q and status == "succeeded":
                 issues["empty_question"] += 1
 
             # Check for empty answers
-            final_a = entry.get("final_answer", "").strip()
+            final_a = final_benchmark_answer(entry).strip()
             if not final_a and status == "succeeded":
                 issues["empty_answer"] += 1
 
@@ -77,7 +112,7 @@ def check_answer_issues(file_path: Path) -> Dict[str, int]:
                 issues["unknown_status"] += 1
 
             # Check for empty final answers (unless ill-posed)
-            final_a = entry.get("final_answer", "").strip()
+            final_a = final_answer_text(entry).strip()
             if not final_a and status == "succeeded":
                 issues["empty_answer"] += 1
 
@@ -116,7 +151,7 @@ def check_critique_issues(file_path: Path) -> Dict[str, int]:
                     issues["invalid_verdict"] += 1
 
             # Check for empty critiques (unless verdict is "correct")
-            final_c = entry.get("final_critique", "").strip()
+            final_c = final_critique_text(entry).strip()
             verdict = attempts[-1].get("verdict") if attempts else None
             if not final_c and status == "succeeded" and verdict != "correct":
                 issues["empty_critique"] += 1
