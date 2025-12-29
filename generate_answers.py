@@ -17,6 +17,7 @@ from prompt_library import (
 )
 from self_improvement import self_improve_answers
 from model_api import query_llm_batch, query_llm_single
+from constants import STATUS_FAILED, STATUS_ILL_POSED, STATUS_SUCCEEDED
 from data_models import validate_answer_file
 from utils import clean_math, setup_logging
 
@@ -70,7 +71,7 @@ def prepare_batch(
     for idx, entry in enumerate(benchmark_entries):
         if limit is not None and len(batch) >= limit:
             break
-        if entry.get("status") != "succeeded":
+        if entry.get("status") != STATUS_SUCCEEDED:
             logger.info(f"Skipping question {question_model}-{idx} (status: {entry.get('status')})")
             continue
         question_text = final_question(entry)
@@ -78,9 +79,9 @@ def prepare_batch(
             continue
         if idx < len(existing):
             prior = existing[idx]
-            if prior.get("status") == "succeeded":
+            if prior.get("status") == STATUS_SUCCEEDED:
                 continue
-            if prior.get("status") in {"failed", "ill-posed"} and not rerun_failures:
+            if prior.get("status") in {STATUS_FAILED, STATUS_ILL_POSED} and not rerun_failures:
                 continue
         batch.append((idx, entry, question_text))
     return batch

@@ -3,6 +3,7 @@ from typing import Callable, Dict, List, Optional, Sequence
 
 from model_api import query_llm_batch, query_llm_single
 from utils import safe_load_json
+from constants import STATUS_FAILED, STATUS_ILL_POSED, STATUS_SUCCEEDED
 
 
 @dataclass
@@ -18,7 +19,7 @@ class Attempt:
 class ImprovementResult:
     final_answer: Optional[str]
     attempts: List[Attempt] = field(default_factory=list)
-    status: str = "failed"  # succeeded/failed
+    status: str = STATUS_FAILED  # succeeded/failed
     last_feedback: Optional[Dict] = None
 
 
@@ -100,15 +101,15 @@ def self_improve_answers(
             results[idx].last_feedback = evaluation
 
             if evaluation.get("verdict") == "pass":
-                results[idx].status = "succeeded"
+                results[idx].status = STATUS_SUCCEEDED
                 continue
 
             if evaluation.get("ill_posed"):
-                results[idx].status = "ill-posed"
+                results[idx].status = STATUS_ILL_POSED
                 continue
 
             if round_idx == max_rounds - 1:
-                results[idx].status = "failed"
+                results[idx].status = STATUS_FAILED
                 continue
 
             refine_indices.append(idx)

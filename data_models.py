@@ -14,6 +14,8 @@ from constants import (
     VALID_CRITIQUE_DEBATE_VERDICTS,
     VALID_ILLPOSED_DEBATE_VERDICTS,
     VALID_STATUSES,
+    STATUS_FAILED,
+    STATUS_SUCCEEDED,
 )
 
 
@@ -69,7 +71,7 @@ class BenchmarkEntry(BaseModel):
     @classmethod
     def validate_status(cls, v: str) -> str:
         """Validate status against known values."""
-        if v not in {"succeeded", "failed", "ill-posed"}:
+        if v not in VALID_STATUSES:
             raise ValueError(f"Invalid status: {v}")
         return v
 
@@ -170,7 +172,7 @@ class CritiqueEntry(BaseModel):
     @classmethod
     def validate_status(cls, v: str) -> str:
         """Validate status against known values."""
-        if v not in {"succeeded", "failed"}:
+        if v not in {STATUS_SUCCEEDED, STATUS_FAILED}:
             raise ValueError(f"Invalid status: {v}")
         return v
 

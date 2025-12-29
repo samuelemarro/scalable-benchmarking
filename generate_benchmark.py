@@ -18,6 +18,7 @@ from prompt_library import (
 )
 from self_improvement import self_improve_answers
 from model_api import query_llm_batch, query_llm_single
+from constants import STATUS_FAILED, STATUS_ILL_POSED, STATUS_SUCCEEDED
 from data_models import validate_benchmark_file
 from utils import clean_math, setup_logging
 
@@ -96,7 +97,7 @@ def generate_questions(model: str, runs: List[Dict], prev_map: Dict[str, Dict], 
         topic_name = run["topic_name"]
         previous_attempts: List[str] = []
         prev_entry = prev_map.get(run_id, {})
-        if prev_entry.get("status") in {"failed", "ill-posed"}:
+        if prev_entry.get("status") in {STATUS_FAILED, STATUS_ILL_POSED}:
             for gen_round in prev_entry.get("generation_rounds", []):
                 refinements = gen_round.get("refinement_rounds", [])
                 if refinements:
@@ -150,9 +151,9 @@ def main():
 
         for run in runs:
             entry = run_id_to_entry.get(run["run_id"])
-            if entry and entry.get("status") == "succeeded":
+            if entry and entry.get("status") == STATUS_SUCCEEDED:
                 continue
-            if entry and entry.get("status") in ["failed", "ill-posed"] and not args.force_rerun_failures:
+            if entry and entry.get("status") in {STATUS_FAILED, STATUS_ILL_POSED} and not args.force_rerun_failures:
                 continue
             pending_runs.append(run)
 

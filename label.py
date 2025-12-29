@@ -3,6 +3,8 @@ import json
 from pathlib import Path
 from typing import Dict, List
 
+from constants import STATUS_ILL_POSED, STATUS_SUCCEEDED
+
 
 def load_json(path: Path, default):
     if not path.exists():
@@ -27,7 +29,7 @@ def list_illposed(answers_dir: Path, debates_dir: Path) -> List[Dict]:
             debate_file = debates_dir / "illposed" / q_slug / f"{a_slug}.json"
             debates = load_json(debate_file, [])
             for idx, rec in enumerate(records):
-                if rec.get("status") != "ill-posed":
+                if rec.get("status") != STATUS_ILL_POSED:
                     continue
                 debate_history = debates[idx] if idx < len(debates) else {}
                 items.append(
@@ -56,7 +58,7 @@ def list_critiques(critiques_dir: Path, debates_dir: Path) -> List[Dict]:
                 debate_file = debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                 debates = load_json(debate_file, [])
                 for idx, crit in enumerate(critiques):
-                    if not crit or crit.get("status") != "succeeded":
+                    if not crit or crit.get("status") != STATUS_SUCCEEDED:
                         continue
                     attempts = crit.get("attempts") or []
                     last_attempt = attempts[-1] if attempts else {}

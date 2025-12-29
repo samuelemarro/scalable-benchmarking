@@ -17,6 +17,7 @@ from prompt_library import (
 )
 from model_api import query_llm_single
 from utils import safe_load_json, clean_math, setup_logging
+from constants import CRITIQUE_VERDICT_CORRECT, STATUS_ILL_POSED, STATUS_SUCCEEDED
 from data_models import validate_debate_file
 
 logger = logging.getLogger(__name__)
@@ -264,7 +265,7 @@ def main():
                 for idx, rec in enumerate(records):
                     if args.limit is not None and total_tasks >= args.limit:
                         break
-                    if rec.get("status") != "ill-posed":
+                    if rec.get("status") != STATUS_ILL_POSED:
                         continue
                     debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
                     existing = load_json(debate_path, [])
@@ -298,7 +299,7 @@ def main():
                 for idx, rec in enumerate(records):
                     if args.limit is not None and debates >= args.limit:
                         break
-                    if rec.get("status") != "ill-posed":
+                    if rec.get("status") != STATUS_ILL_POSED:
                         continue
                     claim = rec.get("ill_posed_claim", {})
 
@@ -372,9 +373,9 @@ def main():
                     for idx, crit_entry in enumerate(critiques):
                         if args.limit is not None and total_tasks >= args.limit:
                             break
-                        if not crit_entry or crit_entry.get("status") != "succeeded":
+                        if not crit_entry or crit_entry.get("status") != STATUS_SUCCEEDED:
                             continue
-                        if final_critique_verdict(crit_entry) == "correct":
+                        if final_critique_verdict(crit_entry) == CRITIQUE_VERDICT_CORRECT:
                             continue
                         if idx >= len(answers):
                             continue
@@ -421,9 +422,9 @@ def main():
                     for idx, crit_entry in enumerate(critiques):
                         if args.limit is not None and debates >= args.limit:
                             break
-                        if not crit_entry or crit_entry.get("status") != "succeeded":
+                        if not crit_entry or crit_entry.get("status") != STATUS_SUCCEEDED:
                             continue
-                        if final_critique_verdict(crit_entry) == "correct":
+                        if final_critique_verdict(crit_entry) == CRITIQUE_VERDICT_CORRECT:
                             continue
                         if idx >= len(answers):
                             continue

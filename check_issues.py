@@ -11,6 +11,11 @@ from typing import Dict
 
 from utils import load_json
 from constants import (
+    CRITIQUE_VERDICT_CORRECT,
+    JUDGE_VERDICT_UNKNOWN,
+    STATUS_FAILED,
+    STATUS_ILL_POSED,
+    STATUS_SUCCEEDED,
     VALID_CRITIQUE_VERDICTS,
     VALID_CRITIQUE_DEBATE_VERDICTS,
     VALID_ILLPOSED_DEBATE_VERDICTS,
@@ -69,19 +74,19 @@ def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
                 continue
 
             status = entry.get("status")
-            if status == "failed":
+            if status == STATUS_FAILED:
                 issues["failed_generation"] += 1
-            elif status not in ["succeeded", "failed"]:
+            elif status not in {STATUS_SUCCEEDED, STATUS_FAILED, STATUS_ILL_POSED}:
                 issues["unknown_status"] += 1
 
             # Check for empty questions
             final_q = final_benchmark_question(entry).strip()
-            if not final_q and status == "succeeded":
+            if not final_q and status == STATUS_SUCCEEDED:
                 issues["empty_question"] += 1
 
             # Check for empty answers
             final_a = final_benchmark_answer(entry).strip()
-            if not final_a and status == "succeeded":
+            if not final_a and status == STATUS_SUCCEEDED:
                 issues["empty_answer"] += 1
 
     except Exception:
@@ -106,14 +111,14 @@ def check_answer_issues(file_path: Path) -> Dict[str, int]:
                 continue
 
             status = entry.get("status")
-            if status == "failed":
+            if status == STATUS_FAILED:
                 issues["failed_answer"] += 1
-            elif status not in ["succeeded", "failed", "ill-posed"]:
+            elif status not in VALID_STATUSES:
                 issues["unknown_status"] += 1
 
             # Check for empty final answers (unless ill-posed)
             final_a = final_answer_text(entry).strip()
-            if not final_a and status == "succeeded":
+            if not final_a and status == STATUS_SUCCEEDED:
                 issues["empty_answer"] += 1
 
     except Exception:
@@ -138,9 +143,9 @@ def check_critique_issues(file_path: Path) -> Dict[str, int]:
                 continue
 
             status = entry.get("status")
-            if status == "failed":
+            if status == STATUS_FAILED:
                 issues["failed_critique"] += 1
-            elif status not in ["succeeded", "failed"]:
+            elif status not in {STATUS_SUCCEEDED, STATUS_FAILED}:
                 issues["unknown_status"] += 1
 
             # Check verdict if present
@@ -153,7 +158,7 @@ def check_critique_issues(file_path: Path) -> Dict[str, int]:
             # Check for empty critiques (unless verdict is "correct")
             final_c = final_critique_text(entry).strip()
             verdict = attempts[-1].get("verdict") if attempts else None
-            if not final_c and status == "succeeded" and verdict != "correct":
+            if not final_c and status == STATUS_SUCCEEDED and verdict != CRITIQUE_VERDICT_CORRECT:
                 issues["empty_critique"] += 1
 
     except Exception:
@@ -219,7 +224,7 @@ def check_evaluation_issues(file_path: Path) -> Dict[str, int]:
 
             verdict = evaluation.get("verdict")
 
-            if verdict == "unknown":
+            if verdict == JUDGE_VERDICT_UNKNOWN:
                 issues["unknown_verdict"] += 1
             elif verdict not in VALID_CRITIQUE_DEBATE_VERDICTS and verdict not in VALID_ILLPOSED_DEBATE_VERDICTS:
                 issues["invalid_verdict"] += 1
@@ -242,9 +247,9 @@ def check_evaluation_issues(file_path: Path) -> Dict[str, int]:
 
             # Check status
             status = evaluation.get("status")
-            if status == "failed":
+            if status == STATUS_FAILED:
                 issues["failed_evaluation"] += 1
-            elif status not in ["succeeded", "failed", None]:
+            elif status not in {STATUS_SUCCEEDED, STATUS_FAILED, None}:
                 issues["unknown_status"] += 1
 
     except Exception:

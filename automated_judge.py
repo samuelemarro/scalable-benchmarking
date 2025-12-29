@@ -18,6 +18,15 @@ from prompt_library import (
     load_question_guidance,
 )
 from utils import safe_load_json, setup_logging
+from constants import (
+    CRITIQUE_VERDICT_CORRECT,
+    JUDGE_VERDICT_UNKNOWN,
+    STATUS_FAILED,
+    STATUS_ILL_POSED,
+    STATUS_SUCCEEDED,
+    VALID_CRITIQUE_DEBATE_VERDICTS,
+    VALID_ILLPOSED_DEBATE_VERDICTS,
+)
 from data_models import validate_evaluation_file
 
 logger = logging.getLogger(__name__)
@@ -143,7 +152,7 @@ def gather_illposed_tasks(
             debate = debates[idx] if idx < len(debates) else {}
             answer_record = answers[idx] if idx < len(answers) else {}
             status = answer_record.get("status")
-            if status and status != "ill-posed":
+            if status and status != STATUS_ILL_POSED:
                 continue
             question = debate.get("question") or answer_record.get("question", "")
             answer_text = final_answer(answer_record) or answer_record.get("answer") or ""
@@ -208,11 +217,11 @@ def gather_critique_tasks(
                     [],
                 )
                 for idx, crit_entry in enumerate(critiques):
-                    if not crit_entry or crit_entry.get("status") != "succeeded":
+                    if not crit_entry or crit_entry.get("status") != STATUS_SUCCEEDED:
                         continue
                     attempts = crit_entry.get("attempts") or []
                     last_attempt = attempts[-1] if attempts else {}
-                    if last_attempt.get("verdict") == "correct":
+                    if last_attempt.get("verdict") == CRITIQUE_VERDICT_CORRECT:
                         continue
                     debate = debates[idx] if idx < len(debates) else {}
                     question = debate.get("question") or crit_entry.get("question", "")
@@ -334,11 +343,11 @@ def normalize_illposed_verdict(verdict: Optional[str]) -> str:
     Only accepts canonical forms: claimant_wins, defender_wins_incorrect, wrong_problem, mixed, unknown
     """
     if not verdict:
-        return "unknown"
+        return JUDGE_VERDICT_UNKNOWN
     v = verdict.strip().lower()
-    if v in {"claimant_wins", "defender_wins_incorrect", "wrong_problem", "mixed", "unknown"}:
+    if v in VALID_ILLPOSED_DEBATE_VERDICTS:
         return v
-    return "unknown"
+    return JUDGE_VERDICT_UNKNOWN
 
 
 def normalize_critique_verdict(verdict: Optional[str]) -> str:
@@ -347,11 +356,11 @@ def normalize_critique_verdict(verdict: Optional[str]) -> str:
     Only accepts canonical forms: claimant_wins, defender_wins_incorrect, defender_wins_minor, wrong_problem, mixed, unknown
     """
     if not verdict:
-        return "unknown"
+        return JUDGE_VERDICT_UNKNOWN
     v = verdict.strip().lower()
-    if v in {"claimant_wins", "defender_wins_incorrect", "defender_wins_minor", "wrong_problem", "mixed", "unknown"}:
+    if v in VALID_CRITIQUE_DEBATE_VERDICTS:
         return v
-    return "unknown"
+    return JUDGE_VERDICT_UNKNOWN
 
 
 def parse_confidence(raw) -> int:
@@ -387,13 +396,13 @@ def parse_judgment(text: str, task: Dict) -> Dict:
             logger.warning(f"Failed to parse confidence for task {task.get('id')}: {e}")
             confidence = None
             # Mark as failed if confidence is required but missing/invalid
-            verdict = "unknown"
+            verdict = JUDGE_VERDICT_UNKNOWN
         reasoning = parsed.get("reasoning", None)
     if task["type"] == "illposed":
         verdict = normalize_illposed_verdict(verdict)
     else:
         verdict = normalize_critique_verdict(verdict)
-    status = "succeeded" if verdict not in {"unknown", "invalid"} else "failed"
+    status = STATUS_SUCCEEDED if verdict not in {JUDGE_VERDICT_UNKNOWN, "invalid"} else STATUS_FAILED
     return {
         "id": task["id"],
         "type": task["type"],

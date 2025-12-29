@@ -6,6 +6,7 @@ from typing import Dict, List, Optional
 import streamlit as st
 
 from model_config import _slugify, load_registry
+from constants import CRITIQUE_VERDICT_CORRECT
 
 
 def load_json(path: Path, default):
@@ -98,7 +99,7 @@ def gather_critiques(debates_dir: Path, critiques_dir: Path, answers_dir: Path, 
                     if not answer_text:
                         answer_text = benchmark_answer_for_index(benchmark_dir, q_slug, idx) or ""
                     critique_attempts = critique_entry.get("attempts") or []
-                    if critique_attempts and critique_attempts[-1].get("verdict") == "correct":
+                    if critique_attempts and critique_attempts[-1].get("verdict") == CRITIQUE_VERDICT_CORRECT:
                         continue
                     critique_text = critique_attempts[-1].get("raw_critique") if critique_attempts else ""
                     items.append(

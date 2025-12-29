@@ -3,7 +3,12 @@ from pathlib import Path
 import logging
 
 from utils import load_json
-from constants import DEFENDER_WIN_VERDICTS, CLAIMANT_WIN_VERDICTS
+from constants import (
+    CLAIMANT_WIN_VERDICTS,
+    CRITIQUE_VERDICT_CORRECT,
+    DEFENDER_WIN_VERDICTS,
+    STATUS_ILL_POSED,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -81,7 +86,7 @@ def count_illposed_answers(answers_dir: Path):
         for ans_file in q_dir.glob("*.json"):
             entries = load_json(ans_file, [])
             for entry in entries:
-                if entry.get("status") == "ill-posed":
+                if entry.get("status") == STATUS_ILL_POSED:
                     count += 1
     return count
 
@@ -239,7 +244,7 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
 
     # Now add answers declared "correct" by critics (these don't appear in automated evaluations)
     for cid, crit_info in critique_verdict_map.items():
-        if crit_info["verdict"] == "correct":
+        if crit_info["verdict"] == CRITIQUE_VERDICT_CORRECT:
             answer_author = crit_info["answer_author"]
             question_author = crit_info["question_author"]
 
@@ -328,7 +333,7 @@ def main():
         if cid.startswith("critique/"):
             crit_info = critique_verdict_map.get(cid, {})
             v = crit_info.get("verdict") if isinstance(crit_info, dict) else crit_info
-            if v == "correct":
+            if v == CRITIQUE_VERDICT_CORRECT:
                 continue
         filtered_claim_ids.add(cid)
 

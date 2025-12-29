@@ -17,7 +17,12 @@ from prompt_library import (
 from self_improvement import self_improve_answers
 from utils import safe_load_json, clean_math, setup_logging
 from model_api import query_llm_batch, query_llm_single
-from constants import VALID_CRITIQUE_VERDICTS
+from constants import (
+    CRITIQUE_VERDICT_UNKNOWN,
+    STATUS_FAILED,
+    STATUS_SUCCEEDED,
+    VALID_CRITIQUE_VERDICTS,
+)
 from data_models import validate_critique_file
 
 logger = logging.getLogger(__name__)
@@ -87,7 +92,7 @@ def extract_structured_critique(text: Optional[str]) -> Tuple[str, str]:
     Valid verdicts: "correct", "incorrect", "insufficient", "obscure"
     Invalid verdicts are treated as "unknown".
     """
-    verdict = "unknown"
+    verdict = CRITIQUE_VERDICT_UNKNOWN
     notes: str = ""
     if not text:
         return verdict, notes
@@ -101,7 +106,7 @@ def extract_structured_critique(text: Optional[str]) -> Tuple[str, str]:
         elif isinstance(parsed_verdict, str):
             # Log invalid verdicts for debugging
             logger.warning(f"Invalid critique verdict '{parsed_verdict}', treating as 'unknown'")
-            verdict = "unknown"
+            verdict = CRITIQUE_VERDICT_UNKNOWN
 
         raw_notes = parsed.get("notes")
         if isinstance(raw_notes, list):
@@ -352,7 +357,7 @@ def main():
             if idx >= len(answer_records):
                 continue
             answer_entry = answer_records[idx]
-            if answer_entry.get("status") == "failed":
+            if answer_entry.get("status") == STATUS_FAILED:
                 logger.info(f"Skipping critique for failed answer {question_model}-{answer_author}-{idx}")
                 continue
             question_entry = benchmark_entries[idx]
@@ -364,7 +369,7 @@ def main():
             if len(existing) <= idx:
                 existing.extend([{} for _ in range(idx - len(existing) + 1)])
 
-            if existing[idx].get("status") == "succeeded":
+            if existing[idx].get("status") == STATUS_SUCCEEDED:
                 continue
 
             answer_text = final_answer(answer_entry) or ""
@@ -400,7 +405,11 @@ def main():
                     if len(records) <= job["record_idx"]:
                         records.extend([{} for _ in range(job["record_idx"] - len(records) + 1)])
                     final_verdict = attempts[-1].get("verdict") if attempts else None
-                    status = "succeeded" if final_verdict and final_verdict != "unknown" else "failed"
+                    status = (
+                        STATUS_SUCCEEDED
+                        if final_verdict and final_verdict != CRITIQUE_VERDICT_UNKNOWN
+                        else STATUS_FAILED
+                    )
                     records[job["record_idx"]] = {
                         "question": job["question"],
                         "run_id": job["run_id"],
