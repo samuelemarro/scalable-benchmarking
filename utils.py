@@ -1,12 +1,12 @@
 import json
 import logging
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 
 from model_api import query_llm_single
+from data_models import AnswerAttempt, AnswerEntry, BenchmarkEntry
 
 logger = logging.getLogger(__name__)
 
@@ -46,10 +46,57 @@ def save_json(path: Path, payload):
 
 def clean_math(text: str) -> str:
     """Clean LaTeX math delimiters by converting to $ and $$ formats."""
+    if not text:
+        return text
     text = text.replace("\\( ", "$").replace("\\(", "$")
     text = text.replace(" \\)", "$").replace("\\)", "$")
     text = text.replace("\\[", "$$").replace("\\]", "$$")
+    for env in ("equation", "equation*", "align", "align*", "gather", "gather*"):
+        text = text.replace(f"\\begin{{{env}}}", "$$")
+        text = text.replace(f"\\end{{{env}}}", "$$")
     return text
+
+
+def benchmark_answers_from_entries(
+    question_model_slug: str,
+    benchmark_entries: List[Optional[BenchmarkEntry]],
+) -> List[Optional[AnswerEntry]]:
+    """Build AnswerEntry records from benchmark entries when self-answer files are disallowed or missing."""
+    answers: List[Optional[AnswerEntry]] = []
+    for entry in benchmark_entries:
+        if not entry:
+            answers.append(None)
+            continue
+        gen_rounds = entry.generation_rounds or []
+        if not gen_rounds:
+            answers.append(None)
+            continue
+        refinements = gen_rounds[-1].refinement_rounds or []
+        if not refinements:
+            answers.append(None)
+            continue
+        last_ref = refinements[-1]
+        attempts = [
+            AnswerAttempt(
+                round=att.round,
+                answer=att.answer,
+                raw_answer=att.raw_answer,
+                evaluation=att.evaluation,
+            )
+            for att in refinements
+        ]
+        answers.append(
+            AnswerEntry(
+                question_model=question_model_slug,
+                answer_model=question_model_slug,
+                question=last_ref.question,
+                run_id=entry.run_id,
+                topic_slug=entry.topic_slug,
+                status=entry.status,
+                attempts=attempts,
+            )
+        )
+    return answers
 
 
 def _load_parsing_config() -> Optional[Dict]:

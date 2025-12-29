@@ -62,23 +62,6 @@ def final_answer(entry: AnswerEntry) -> Optional[str]:
     return attempts[-1].answer
 
 
-def benchmark_answer_for_index(benchmark_dir: Path, q_slug: str, idx: int) -> Optional[str]:
-    bench_path = benchmark_dir / f"{q_slug}.json"
-    entries = load_benchmark_entries(bench_path)
-    if idx >= len(entries):
-        return None
-    entry = entries[idx]
-    if not entry:
-        return None
-    generations = entry.generation_rounds or []
-    if not generations:
-        return None
-    refinements = generations[-1].refinement_rounds or []
-    if not refinements:
-        return None
-    return refinements[-1].answer
-
-
 
 
 def build_redactions(registry, alice_model: str, bob_model: str) -> Tuple[List[Tuple[str, str]], Dict[str, str]]:
@@ -133,8 +116,21 @@ def gather_illposed_tasks(
     for debate_file in debates_dir.glob("illposed/*/*.json"):
         q_slug = debate_file.parent.name
         a_slug = debate_file.stem
+        benchmark_entries = load_benchmark_entries(benchmark_dir / f"{q_slug}.json")
+        fallback_answers = benchmark_answers_from_entries(
+            q_slug,
+            benchmark_entries,
+        )
         debates = load_debate_entries(debate_file)
-        answers = load_answer_entries(answers_dir / q_slug / f"{a_slug}.json")
+        answer_path = answers_dir / q_slug / f"{a_slug}.json"
+        if a_slug == q_slug:
+            if answer_path.exists():
+                raise RuntimeError(
+                    f"Self-answer file exists for {q_slug}. Remove {answer_path} to use benchmark answers."
+                )
+            answers = fallback_answers
+        else:
+            answers = load_answer_entries(answer_path)
         max_len = max(len(debates), len(answers))
         for idx in range(max_len):
             debate = debates[idx] if idx < len(debates) else None
@@ -145,7 +141,10 @@ def gather_illposed_tasks(
             question = (debate.question if debate else "") or (answer_record.question if answer_record else "")
             answer_text = final_answer(answer_record) if answer_record else ""
             if not answer_text:
-                answer_text = benchmark_answer_for_index(benchmark_dir, q_slug, idx) or ""
+                fallback_record = fallback_answers[idx] if idx < len(fallback_answers) else None
+                answer_text = final_answer(fallback_record) if fallback_record else ""
+                if not question and fallback_record:
+                    question = fallback_record.question
             history = debate.history if debate else []
             if not question and not answer_text and not history:
                 continue
@@ -193,13 +192,26 @@ def gather_critique_tasks(
         mode = mode_dir.name
         for q_dir in mode_dir.glob("*"):
             q_slug = q_dir.name
+            benchmark_entries = load_benchmark_entries(benchmark_dir / f"{q_slug}.json")
+            fallback_answers = benchmark_answers_from_entries(
+                q_slug,
+                benchmark_entries,
+            )
             for crit_file in q_dir.glob("*.json"):
                 parts = crit_file.stem.split("__")
                 if len(parts) != 2:
                     continue
                 critic_slug, answer_slug = parts
                 critiques = load_critique_entries(crit_file)
-                answers = load_answer_entries(answers_dir / q_slug / f"{answer_slug}.json")
+                answer_path = answers_dir / q_slug / f"{answer_slug}.json"
+                if answer_slug == q_slug:
+                    if answer_path.exists():
+                        raise RuntimeError(
+                            f"Self-answer file exists for {q_slug}. Remove {answer_path} to use benchmark answers."
+                        )
+                    answers = fallback_answers
+                else:
+                    answers = load_answer_entries(answer_path)
                 debates = load_debate_entries(
                     debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                 )
@@ -215,7 +227,10 @@ def gather_critique_tasks(
                     answer_record = answers[idx] if idx < len(answers) else None
                     answer_text = final_answer(answer_record) if answer_record else ""
                     if not answer_text:
-                        answer_text = benchmark_answer_for_index(benchmark_dir, q_slug, idx) or ""
+                        fallback_record = fallback_answers[idx] if idx < len(fallback_answers) else None
+                        answer_text = final_answer(fallback_record) if fallback_record else ""
+                        if not question and fallback_record:
+                            question = fallback_record.question
                     critique_text = last_critique_text(crit_entry)
                     history = debate.history if debate else []
                     if not question and not critique_text and not history:

@@ -16,7 +16,7 @@ from prompt_library import (
     load_critique_guidance,
 )
 from self_improvement import self_improve_answers
-from utils import safe_load_json, clean_math, setup_logging
+from utils import safe_load_json, clean_math, setup_logging, benchmark_answers_from_entries
 from model_api import query_llm_batch, query_llm_single
 from constants import (
     CRITIQUE_VERDICT_UNKNOWN,
@@ -25,7 +25,6 @@ from constants import (
     VALID_CRITIQUE_VERDICTS,
 )
 from data_models import (
-    AnswerAttempt,
     AnswerEntry,
     BenchmarkEntry,
     CritiqueAttempt,
@@ -68,45 +67,6 @@ def final_answer(entry: AnswerEntry) -> Optional[str]:
     if not attempts:
         return None
     return attempts[-1].answer
-
-
-def benchmark_answers(question_model: str, entries: List[Optional[BenchmarkEntry]]) -> List[Optional[AnswerEntry]]:
-    answers: List[Optional[AnswerEntry]] = []
-    q_slug = _slugify(question_model)
-    for entry in entries:
-        if not entry:
-            answers.append(None)
-            continue
-        gen_rounds = entry.generation_rounds or []
-        if not gen_rounds:
-            answers.append(None)
-            continue
-        refinements = gen_rounds[-1].refinement_rounds or []
-        if not refinements:
-            answers.append(None)
-            continue
-        last_ref = refinements[-1]
-        attempts = [
-            AnswerAttempt(
-                round=att.round,
-                answer=att.answer,
-                raw_answer=att.raw_answer,
-                evaluation=att.evaluation,
-            )
-            for att in refinements
-        ]
-        answers.append(
-            AnswerEntry(
-                question_model=q_slug,
-                answer_model=q_slug,
-                question=last_ref.question,
-                run_id=entry.run_id,
-                topic_slug=entry.topic_slug,
-                status=entry.status,
-                attempts=attempts,
-            )
-        )
-    return answers
 
 
 def extract_structured_critique(text: Optional[str]) -> Tuple[str, str]:
@@ -169,21 +129,26 @@ def prepare_pairs(
     pairs = []
     critic_name_set = set(critic_names or [])
     q_slug = _slugify(question_model)
-    owner_answer_path = answers_root / q_slug / f"{q_slug}.json"
-    owner_answers = load_answer_entries(owner_answer_path)
-    if not owner_answers:
-        owner_answers = benchmark_answers(question_model, benchmark_entries)
+    question_author_answer_path = answers_root / q_slug / f"{q_slug}.json"
+    if question_author_answer_path.exists():
+        raise RuntimeError(
+            f"Self-answer file exists for {q_slug}. Remove {question_author_answer_path} to use benchmark answers."
+        )
+    question_author_answers = benchmark_answers_from_entries(
+        q_slug,
+        benchmark_entries,
+    )
 
     if mode == "contradictor":
         critic_list = sorted(critic_name_set) if critic_name_set else answer_models
-        # Critics review the question owner's self-answers
+        # Critics review the question author's self-answers
         for critic_model in critic_list:
             if critic_model == question_model:
                 continue
-            for idx, owner_entry in enumerate(owner_answers):
+            for idx, author_entry in enumerate(question_author_answers):
                 if limit is not None and len(pairs) >= limit:
                     break
-                if not owner_entry:
+                if not author_entry:
                     continue
                 pairs.append((idx, critic_model, question_model))
         return pairs
@@ -198,14 +163,14 @@ def prepare_pairs(
         answer_path = answers_root / q_slug / f"{a_slug}.json"
         answer_records = load_answer_entries(answer_path)
         if answer_model == question_model and not answer_records:
-            answer_records = owner_answers
+            answer_records = question_author_answers
 
         for idx, _ in enumerate(answer_records):
             if limit is not None and len(pairs) >= limit:
                 break
-            owner_entry = pick_answer_record(owner_answers, idx)
+            question_author_entry = pick_answer_record(question_author_answers, idx)
             target_entry = pick_answer_record(answer_records, idx)
-            if not owner_entry or not target_entry:
+            if not question_author_entry or not target_entry:
                 continue
             if mode == "evaluator":
                 if answer_model == question_model:
@@ -309,7 +274,7 @@ def main():
     parser.add_argument("--self-improve", action="store_true", help="Enable critique self-improvement.")
     parser.add_argument("--disable-batch", action="store_true")
     parser.add_argument("--limit", type=int, default=None, help="Limit number of critiques per pair.")
-    parser.add_argument("--custom-map", type=Path, help="JSON for custom mode: list of {question_owner, answerer, critic}.")
+    parser.add_argument("--custom-map", type=Path, help="JSON for custom mode: list of {question_author, answer_author, critic}.")
     parser.add_argument("--models", nargs="*", help="Subset of models to involve (default: all critique-capable).")
     parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL).")
     args = parser.parse_args()
@@ -328,7 +293,12 @@ def main():
             raise ValueError("Custom mode requires --custom-map")
         payload = json.loads(args.custom_map.read_text()) if args.custom_map.exists() else []
         for item in payload:
-            custom_pairs.append((item["question_owner"], item["answerer"], item["critic"]))
+            question_author = item.get("question_author") or item.get("question_owner")
+            answer_author = item.get("answer_author") or item.get("answerer")
+            critic = item.get("critic")
+            if not question_author or not answer_author or not critic:
+                continue
+            custom_pairs.append((question_author, answer_author, critic))
 
     for bench_path in args.benchmark_dir.glob("*.json"):
         q_slug = bench_path.stem
@@ -340,16 +310,26 @@ def main():
 
         pairs: List[Tuple[int, str, str]] = []
         if args.mode == "custom":
-            for q_owner, answerer, critic in custom_pairs:
-                if q_owner != question_model:
+            for question_author, answerer, critic in custom_pairs:
+                if question_author != question_model:
                     continue
                 if critic not in critic_names:
                     continue
                 a_slug = _slugify(answerer)
                 answer_path = args.answers_dir / q_slug / f"{a_slug}.json"
-                if not answer_path.exists():
-                    continue
-                answer_records = load_answer_entries(answer_path)
+                if _slugify(answerer) == q_slug:
+                    if answer_path.exists():
+                        raise RuntimeError(
+                            f"Self-answer file exists for {q_slug}. Remove {answer_path} to use benchmark answers."
+                        )
+                    answer_records = benchmark_answers_from_entries(
+                        q_slug,
+                        benchmark_entries,
+                    )
+                else:
+                    if not answer_path.exists():
+                        continue
+                    answer_records = load_answer_entries(answer_path)
                 for idx, rec in enumerate(answer_records):
                     if args.limit is not None and len(pairs) >= args.limit:
                         break
@@ -377,9 +357,17 @@ def main():
             a_slug = _slugify(answer_author)
             critic_slug = critic_spec.slug
             answers_path = args.answers_dir / q_slug / f"{a_slug}.json"
-            answer_records = load_answer_entries(answers_path)
-            if not answer_records and _slugify(answer_author) == _slugify(question_model):
-                answer_records = benchmark_answers(question_model, benchmark_entries)
+            if _slugify(answer_author) == q_slug:
+                if answers_path.exists():
+                    raise RuntimeError(
+                        f"Self-answer file exists for {q_slug}. Remove {answers_path} to use benchmark answers."
+                    )
+                answer_records = benchmark_answers_from_entries(
+                    q_slug,
+                    benchmark_entries,
+                )
+            else:
+                answer_records = load_answer_entries(answers_path)
             if idx >= len(answer_records):
                 continue
             answer_entry = answer_records[idx]

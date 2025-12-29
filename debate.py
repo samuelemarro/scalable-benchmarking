@@ -63,44 +63,6 @@ def final_critique_verdict(entry: CritiqueEntry) -> Optional[str]:
     return attempts[-1].verdict
 
 
-def benchmark_answers(question_model_slug: str, benchmark_entries: List[Optional[BenchmarkEntry]]) -> List[Optional[AnswerEntry]]:
-    answers: List[Optional[AnswerEntry]] = []
-    for entry in benchmark_entries:
-        if not entry:
-            answers.append(None)
-            continue
-        gen_rounds = entry.generation_rounds or []
-        if not gen_rounds:
-            answers.append(None)
-            continue
-        refinements = gen_rounds[-1].refinement_rounds or []
-        if not refinements:
-            answers.append(None)
-            continue
-        last_ref = refinements[-1]
-        attempts = [
-            AnswerAttempt(
-                round=att.round,
-                answer=att.answer,
-                raw_answer=att.raw_answer,
-                evaluation=att.evaluation,
-            )
-            for att in refinements
-        ]
-        answers.append(
-            AnswerEntry(
-                question_model=question_model_slug,
-                answer_model=question_model_slug,
-                question=last_ref.question,
-                run_id=entry.run_id,
-                topic_slug=entry.topic_slug,
-                status=entry.status,
-                attempts=attempts,
-            )
-        )
-    return answers
-
-
 def run_round(
     speaker_model: str,
     system_prompt: str,
@@ -270,6 +232,10 @@ def main():
                 answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_model_slug), None)
                 if not answer_model:
                     continue
+                if answer_model_slug == q_slug:
+                    raise RuntimeError(
+                        f"Self-answer file exists for {q_slug}. Remove {answer_file} to use benchmark answers."
+                    )
                 records = load_answer_entries(answer_file)
                 for idx, rec in enumerate(records):
                     if args.limit is not None and total_tasks >= args.limit:
@@ -299,6 +265,10 @@ def main():
                 answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_model_slug), None)
                 if not answer_model:
                     continue
+                if answer_model_slug == q_slug:
+                    raise RuntimeError(
+                        f"Self-answer file exists for {q_slug}. Remove {answer_file} to use benchmark answers."
+                    )
                 records = load_answer_entries(answer_file)
 
                 # Load debate file once per answer_file instead of per record
@@ -375,9 +345,18 @@ def main():
                     if not critic_model or not answer_model:
                         continue
                     critiques = load_critique_entries(crit_file)
-                    answers = load_answer_entries(args.answers_dir / q_slug / f"{answer_slug}.json")
-                    if not answers and answer_slug == q_slug:
-                        answers = benchmark_answers(q_slug, benchmark_entries)
+                    answer_path = args.answers_dir / q_slug / f"{answer_slug}.json"
+                    if answer_slug == q_slug:
+                        if answer_path.exists():
+                            raise RuntimeError(
+                                f"Self-answer file exists for {q_slug}. Remove {answer_path} to use benchmark answers."
+                            )
+                        answers = benchmark_answers_from_entries(
+                            q_slug,
+                            benchmark_entries,
+                        )
+                    else:
+                        answers = load_answer_entries(answer_path)
                     for idx, crit_entry in enumerate(critiques):
                         if args.limit is not None and total_tasks >= args.limit:
                             break
@@ -419,9 +398,18 @@ def main():
                     if not critic_model or not answer_model:
                         continue
                     critiques = load_critique_entries(crit_file)
-                    answers = load_answer_entries(args.answers_dir / q_slug / f"{answer_slug}.json")
-                    if not answers and answer_slug == q_slug:
-                        answers = benchmark_answers(q_slug, benchmark_entries)
+                    answer_path = args.answers_dir / q_slug / f"{answer_slug}.json"
+                    if answer_slug == q_slug:
+                        if answer_path.exists():
+                            raise RuntimeError(
+                                f"Self-answer file exists for {q_slug}. Remove {answer_path} to use benchmark answers."
+                            )
+                        answers = benchmark_answers_from_entries(
+                            q_slug,
+                            benchmark_entries,
+                        )
+                    else:
+                        answers = load_answer_entries(answer_path)
 
                     # Load debate file once per critique file instead of per record
                     debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
