@@ -20,6 +20,7 @@ from utils import safe_load_json, clean_math, setup_logging, benchmark_answers_f
 from constants import CRITIQUE_VERDICT_CORRECT, STATUS_ILL_POSED, STATUS_SUCCEEDED
 from data_models import (
     AnswerEntry,
+    BenchmarkEntry,
     CritiqueEntry,
     DebateEntry,
     DebateMessage,
@@ -60,6 +61,22 @@ def final_critique_verdict(entry: CritiqueEntry) -> Optional[str]:
     return attempts[-1].verdict
 
 
+def load_answers_for_critique_debates(
+    answers_dir: Path,
+    q_slug: str,
+    answer_slug: str,
+    benchmark_entries: List[Optional[BenchmarkEntry]],
+) -> List[Optional[AnswerEntry]]:
+    answer_path = answers_dir / q_slug / f"{answer_slug}.json"
+    if answer_slug == q_slug:
+        if answer_path.exists():
+            raise RuntimeError(
+                f"Self-answer file exists for {q_slug}. Remove {answer_path} to use benchmark answers."
+            )
+        return benchmark_answers_from_entries(q_slug, benchmark_entries)
+    return load_answer_entries(answer_path)
+
+
 def run_round(
     speaker_model: str,
     system_prompt: str,
@@ -80,12 +97,6 @@ def run_round(
         return clean_math(parsed["message"]), parsed.get("concede", False)
     # Fallback if JSON parsing fails
     return clean_math(reply), False
-
-
-# TODO: What's the point of this method?
-def check_concession(concede: bool) -> bool:
-    """Check if the response contains a concession via the 'concede' field."""
-    return bool(concede)
 
 
 def illposed_debate(
@@ -120,7 +131,7 @@ def illposed_debate(
     for r in range(1, rounds + 1):
         defender_message, defender_concede = run_round(defender_model, system_prompt_defender, last_message, defender_temp, defender_reason)
         history.append(DebateMessage(round=r, speaker="Bob", message=defender_message, concede=defender_concede))
-        if allow_concede and check_concession(defender_concede):
+        if allow_concede and defender_concede:
             # Intentional asymmetry: defender concession ends the round immediately.
             break
         claimant_prompt = (
@@ -129,7 +140,7 @@ def illposed_debate(
         )
         claimant_message, claimant_concede = run_round(claimant_model, system_prompt_claimant, claimant_prompt, claimant_temp, claimant_reason)
         history.append(DebateMessage(round=r, speaker="Alice", message=claimant_message, concede=claimant_concede))
-        if allow_concede and check_concession(claimant_concede):
+        if allow_concede and claimant_concede:
             # Claimant concedes after both sides have spoken in this round.
             break
         last_message = (
@@ -173,7 +184,7 @@ def critique_debate(
     for r in range(1, rounds + 1):
         author_message, author_concede = run_round(defender_model, system_prompt_author, last_message, author_temp, author_reason)
         history.append(DebateMessage(round=r, speaker="Bob", message=author_message, concede=author_concede))
-        if allow_concede and check_concession(author_concede):
+        if allow_concede and author_concede:
             break
         critic_prompt = (
             f"Bob replied:\n{author_message}\n\nOriginal critique:\n{critique}\n\nQuestion:\n{question}\n"
@@ -181,7 +192,7 @@ def critique_debate(
         )
         critic_message, critic_concede = run_round(claimant_model, system_prompt_critic, critic_prompt, critic_temp, critic_reason)
         history.append(DebateMessage(round=r, speaker="Alice", message=critic_message, concede=critic_concede))
-        if allow_concede and check_concession(critic_concede):
+        if allow_concede and critic_concede:
             break
         last_message = (
             f"Alice replied:\n{critic_message}\n\nQuestion:\n{question}\nAnswer:\n{answer}\n"
@@ -345,18 +356,12 @@ def main():
                     if not critic_model or not answer_model:
                         continue
                     critiques = load_critique_entries(crit_file)
-                    answer_path = args.answers_dir / q_slug / f"{answer_slug}.json"
-                    if answer_slug == q_slug:
-                        if answer_path.exists():
-                            raise RuntimeError(
-                                f"Self-answer file exists for {q_slug}. Remove {answer_path} to use benchmark answers."
-                            )
-                        answers = benchmark_answers_from_entries(
-                            q_slug,
-                            benchmark_entries,
-                        )
-                    else:
-                        answers = load_answer_entries(answer_path)
+                    answers = load_answers_for_critique_debates(
+                        args.answers_dir,
+                        q_slug,
+                        answer_slug,
+                        benchmark_entries,
+                    )
                     for idx, crit_entry in enumerate(critiques):
                         if args.limit is not None and total_tasks >= args.limit:
                             break
@@ -398,18 +403,12 @@ def main():
                     if not critic_model or not answer_model:
                         continue
                     critiques = load_critique_entries(crit_file)
-                    answer_path = args.answers_dir / q_slug / f"{answer_slug}.json"
-                    if answer_slug == q_slug:
-                        if answer_path.exists():
-                            raise RuntimeError(
-                                f"Self-answer file exists for {q_slug}. Remove {answer_path} to use benchmark answers."
-                            )
-                        answers = benchmark_answers_from_entries(
-                            q_slug,
-                            benchmark_entries,
-                        )
-                    else:
-                        answers = load_answer_entries(answer_path)
+                    answers = load_answers_for_critique_debates(
+                        args.answers_dir,
+                        q_slug,
+                        answer_slug,
+                        benchmark_entries,
+                    )
 
                     # Load debate file once per critique file instead of per record
                     debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"

@@ -117,6 +117,26 @@ def pick_answer_record(answer_store: List[Optional[AnswerEntry]], idx: int) -> O
     return answer_store[idx]
 
 
+def load_answer_records(
+    answers_dir: Path,
+    q_slug: str,
+    answer_author: str,
+    benchmark_entries: List[Optional[BenchmarkEntry]],
+) -> List[Optional[AnswerEntry]]:
+    a_slug = _slugify(answer_author)
+    answer_path = answers_dir / q_slug / f"{a_slug}.json"
+    if a_slug == q_slug:
+        if answer_path.exists():
+            raise RuntimeError(
+                f"Self-answer file exists for {q_slug}. Remove {answer_path} to use benchmark answers."
+            )
+        return benchmark_answers_from_entries(
+            q_slug,
+            benchmark_entries,
+        )
+    return load_answer_entries(answer_path)
+
+
 def prepare_pairs(
     mode: str,
     question_model: str,
@@ -129,13 +149,10 @@ def prepare_pairs(
     pairs = []
     critic_name_set = set(critic_names or [])
     q_slug = _slugify(question_model)
-    question_author_answer_path = answers_root / q_slug / f"{q_slug}.json"
-    if question_author_answer_path.exists():
-        raise RuntimeError(
-            f"Self-answer file exists for {q_slug}. Remove {question_author_answer_path} to use benchmark answers."
-        )
-    question_author_answers = benchmark_answers_from_entries(
+    question_author_answers = load_answer_records(
+        answers_root,
         q_slug,
+        question_model,
         benchmark_entries,
     )
 
@@ -315,21 +332,12 @@ def main():
                     continue
                 if critic not in critic_names:
                     continue
-                a_slug = _slugify(answerer)
-                answer_path = args.answers_dir / q_slug / f"{a_slug}.json"
-                if _slugify(answerer) == q_slug:
-                    if answer_path.exists():
-                        raise RuntimeError(
-                            f"Self-answer file exists for {q_slug}. Remove {answer_path} to use benchmark answers."
-                        )
-                    answer_records = benchmark_answers_from_entries(
-                        q_slug,
-                        benchmark_entries,
-                    )
-                else:
-                    if not answer_path.exists():
-                        continue
-                    answer_records = load_answer_entries(answer_path)
+                answer_records = load_answer_records(
+                    args.answers_dir,
+                    q_slug,
+                    answerer,
+                    benchmark_entries,
+                )
                 for idx, rec in enumerate(answer_records):
                     if args.limit is not None and len(pairs) >= args.limit:
                         break
@@ -356,18 +364,12 @@ def main():
                 continue
             a_slug = _slugify(answer_author)
             critic_slug = critic_spec.slug
-            answers_path = args.answers_dir / q_slug / f"{a_slug}.json"
-            if _slugify(answer_author) == q_slug:
-                if answers_path.exists():
-                    raise RuntimeError(
-                        f"Self-answer file exists for {q_slug}. Remove {answers_path} to use benchmark answers."
-                    )
-                answer_records = benchmark_answers_from_entries(
-                    q_slug,
-                    benchmark_entries,
-                )
-            else:
-                answer_records = load_answer_entries(answers_path)
+            answer_records = load_answer_records(
+                args.answers_dir,
+                q_slug,
+                answer_author,
+                benchmark_entries,
+            )
             if idx >= len(answer_records):
                 continue
             answer_entry = answer_records[idx]

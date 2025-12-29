@@ -62,6 +62,21 @@ def final_answer(entry: AnswerEntry) -> Optional[str]:
     return attempts[-1].answer
 
 
+def load_answers_with_benchmark_fallback(
+    answer_path: Path,
+    answer_slug: str,
+    q_slug: str,
+    fallback_answers: List[Optional[AnswerEntry]],
+) -> List[Optional[AnswerEntry]]:
+    if answer_slug == q_slug:
+        if answer_path.exists():
+            raise RuntimeError(
+                f"Self-answer file exists for {q_slug}. Remove {answer_path} to use benchmark answers."
+            )
+        return fallback_answers
+    return load_answer_entries(answer_path)
+
+
 
 
 def build_redactions(registry, alice_model: str, bob_model: str) -> Tuple[List[Tuple[str, str]], Dict[str, str]]:
@@ -124,14 +139,12 @@ def gather_illposed_tasks(
         )
         debates = load_debate_entries(debate_file)
         answer_path = answers_dir / q_slug / f"{a_slug}.json"
-        if a_slug == q_slug:
-            if answer_path.exists():
-                raise RuntimeError(
-                    f"Self-answer file exists for {q_slug}. Remove {answer_path} to use benchmark answers."
-                )
-            answers = fallback_answers
-        else:
-            answers = load_answer_entries(answer_path)
+        answers = load_answers_with_benchmark_fallback(
+            answer_path,
+            a_slug,
+            q_slug,
+            fallback_answers,
+        )
         max_len = max(len(debates), len(answers))
         for idx in range(max_len):
             debate = debates[idx] if idx < len(debates) else None
@@ -206,14 +219,12 @@ def gather_critique_tasks(
                 critic_slug, answer_slug = parts
                 critiques = load_critique_entries(crit_file)
                 answer_path = answers_dir / q_slug / f"{answer_slug}.json"
-                if answer_slug == q_slug:
-                    if answer_path.exists():
-                        raise RuntimeError(
-                            f"Self-answer file exists for {q_slug}. Remove {answer_path} to use benchmark answers."
-                        )
-                    answers = fallback_answers
-                else:
-                    answers = load_answer_entries(answer_path)
+                answers = load_answers_with_benchmark_fallback(
+                    answer_path,
+                    answer_slug,
+                    q_slug,
+                    fallback_answers,
+                )
                 debates = load_debate_entries(
                     debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                 )
