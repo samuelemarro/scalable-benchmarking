@@ -290,14 +290,18 @@ def main():
                 if not answer_model:
                     continue
                 records = load_json(answer_file, [])
+
+                # Load debate file once per answer_file instead of per record
+                debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
+                existing = load_json(debate_path, [])
+
                 for idx, rec in enumerate(records):
                     if args.limit is not None and debates >= args.limit:
                         break
                     if rec.get("status") != "ill-posed":
                         continue
                     claim = rec.get("ill_posed_claim", {})
-                    debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
-                    existing = load_json(debate_path, [])
+
                     if len(existing) > idx and existing[idx]:
                         continue
 
@@ -409,6 +413,11 @@ def main():
                     answers = load_json(args.answers_dir / q_slug / f"{answer_slug}.json", [])
                     if not answers and answer_slug == q_slug:
                         answers = benchmark_answers(q_slug, benchmark_entries)
+
+                    # Load debate file once per critique file instead of per record
+                    debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
+                    existing = load_json(debate_path, [])
+
                     for idx, crit_entry in enumerate(critiques):
                         if args.limit is not None and debates >= args.limit:
                             break
@@ -419,8 +428,7 @@ def main():
                         if idx >= len(answers):
                             continue
                         answer_entry = answers[idx]
-                        debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
-                        existing = load_json(debate_path, [])
+
                         if len(existing) > idx and existing[idx]:
                             continue
                         answer_text = final_answer(answer_entry) or ""
