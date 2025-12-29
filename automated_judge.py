@@ -164,8 +164,8 @@ def gather_illposed_tasks(
                     "question": question,
                     "answer": answer_text,
                     "debate": history,
-                    "question_model": registry.display_name_for_slug(q_slug),
-                    "answer_model": registry.display_name_for_slug(a_slug),
+                    "question_model": q_slug,
+                    "answer_model": a_slug,
                     "alice_model": alice_model,
                     "bob_model": bob_model,
                     "run_id": debate.get("run_id") or answer_record.get("run_id"),
@@ -238,9 +238,9 @@ def gather_critique_tasks(
                             "answer": answer_text,
                             "critique": critique_text,
                             "debate": history,
-                            "question_model": registry.display_name_for_slug(q_slug),
-                            "answer_model": registry.display_name_for_slug(answer_slug),
-                            "critic_model": registry.display_name_for_slug(critic_slug),
+                            "question_model": q_slug,
+                            "answer_model": answer_slug,
+                            "critic_model": critic_slug,
                             "alice_model": alice_model,
                             "bob_model": bob_model,
                             "run_id": debate.get("run_id") or crit_entry.get("run_id"),
@@ -518,7 +518,7 @@ def main():
                 continue
             for task, response in zip(batch, responses):
                 decision = parse_judgment(response, task)
-                decision["judge_model"] = spec.pretty
+                decision["judge_model"] = spec.slug
                 decisions[task["id"]] = decision
             save_decisions(out_path, decisions)
             logger.info(f"{spec.pretty}: saved {len(batch)} evaluations")

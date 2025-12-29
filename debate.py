@@ -326,9 +326,9 @@ def main():
                             existing.extend([{} for _ in range(idx - len(existing) + 1)])
                         existing[idx] = {
                             "question": rec.get("question"),
-                            "alice_model": answer_model.name,
-                            "bob_model": question_model.name,
-                            "claimant": answer_model.name,
+                            "alice_model": answer_model.slug,
+                            "bob_model": question_model.slug,
+                            "claimant": answer_model.slug,
                             "run_id": rec.get("run_id"),
                             "topic_slug": rec.get("topic_slug"),
                             "history": history,
@@ -457,12 +457,12 @@ def main():
                                 existing.extend([{} for _ in range(idx - len(existing) + 1)])
                             existing[idx] = {
                                 "question": crit_entry.get("question"),
-                                "alice_model": critic_model.name,
-                                "bob_model": answer_model.name,
+                                "alice_model": critic_model.slug,
+                                "bob_model": answer_model.slug,
                                 "run_id": crit_entry.get("run_id"),
                                 "topic_slug": crit_entry.get("topic_slug"),
-                                "answer_author": answer_model.name,
-                                "critic": critic_model.name,
+                                "answer_author": answer_model.slug,
+                                "critic": critic_model.slug,
                                 "history": history,
                             }
                             validate_debate_file(existing)

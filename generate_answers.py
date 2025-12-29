@@ -136,8 +136,8 @@ def run_generation(
     outputs = []
     for (idx, entry, question_text), improved in zip(batch_items, results):
         record = {
-            "question_model": question_model,
-            "answer_model": answer_model,
+            "question_model": q_slug,
+            "answer_model": a_slug,
             "question": question_text,
             "run_id": entry.get("run_id"),
             "topic_slug": entry.get("topic_slug"),

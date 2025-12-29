@@ -57,6 +57,7 @@ def final_answer(entry: Dict) -> Optional[str]:
 
 def benchmark_answers(question_model: str, entries: List[Dict]) -> List[Dict]:
     answers: List[Dict] = []
+    q_slug = _slugify(question_model)
     for entry in entries:
         gen_rounds = entry.get("generation_rounds") or []
         if not gen_rounds:
@@ -69,7 +70,7 @@ def benchmark_answers(question_model: str, entries: List[Dict]) -> List[Dict]:
         last_ref = refinements[-1]
         answers.append(
             {
-                "answer_model": question_model,
+                "answer_model": q_slug,
                 "answer": last_ref.get("answer"),
                 "status": entry.get("status"),
                 "attempts": refinements,
@@ -326,7 +327,7 @@ def main():
             critic_slug = critic_spec.slug
             answers_path = args.answers_dir / q_slug / f"{a_slug}.json"
             answer_records = load_json(answers_path, [])
-            if not answer_records and answer_author == question_model:
+            if not answer_records and _slugify(answer_author) == _slugify(question_model):
                 answer_records = benchmark_answers(question_model, benchmark_entries)
             if idx >= len(answer_records):
                 continue
@@ -384,9 +385,9 @@ def main():
                         "question": job["question"],
                         "run_id": job["run_id"],
                         "topic_slug": job["topic_slug"],
-                        "question_author": job["question_author"],
-                        "critic": spec.name,
-                        "answer_author": job["answer_author"],
+                        "question_author": _slugify(job["question_author"]),
+                        "critic": spec.slug,
+                        "answer_author": _slugify(job["answer_author"]),
                         "status": status,
                         "attempts": attempts,
                     }
