@@ -18,6 +18,7 @@ from self_improvement import self_improve_answers
 from utils import safe_load_json, clean_math, setup_logging
 from model_api import query_llm_batch, query_llm_single
 from constants import VALID_CRITIQUE_VERDICTS
+from data_models import validate_critique_file
 
 logger = logging.getLogger(__name__)
 
@@ -389,6 +390,7 @@ def main():
                         "status": status,
                         "attempts": attempts,
                     }
+                    validate_critique_file(records)
                     save_json(job["output_path"], records)
                     logger.info(f"Critique done by {spec.name} for question #{job['record_idx']}")
 

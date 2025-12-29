@@ -17,6 +17,7 @@ from prompt_library import (
 )
 from model_api import query_llm_single
 from utils import safe_load_json, clean_math, setup_logging
+from data_models import validate_debate_file
 
 logger = logging.getLogger(__name__)
 
@@ -332,6 +333,7 @@ def main():
                             "topic_slug": rec.get("topic_slug"),
                             "history": history,
                         }
+                        validate_debate_file(existing)
                         save_json(debate_path, existing)
                         debates += 1
                         pbar.update(1)
@@ -463,6 +465,7 @@ def main():
                                 "critic": critic_model.name,
                                 "history": history,
                             }
+                            validate_debate_file(existing)
                             save_json(debate_path, existing)
                             debates += 1
                             pbar.update(1)

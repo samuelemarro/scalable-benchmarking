@@ -18,6 +18,7 @@ from prompt_library import (
     load_question_guidance,
 )
 from utils import safe_load_json, setup_logging
+from data_models import validate_evaluation_file
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +49,9 @@ def load_decisions(path: Path) -> Dict[str, Dict]:
 
 
 def save_decisions(path: Path, decisions: Dict[str, Dict]):
-    save_json(path, {"decisions": list(decisions.values())})
+    payload = {"decisions": list(decisions.values())}
+    validate_evaluation_file(payload)
+    save_json(path, payload)
 
 
 def final_answer(entry: Dict) -> Optional[str]:

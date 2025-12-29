@@ -7,7 +7,7 @@ throughout the pipeline, catching data corruption early and ensuring consistency
 See docs/schema.md for detailed schema documentation.
 """
 
-from typing import List, Optional, Dict, Any, Literal
+from typing import List, Optional, Dict, Any, Literal, Type, TypeVar
 from pydantic import BaseModel, Field, field_validator
 from constants import (
     VALID_CRITIQUE_VERDICTS,
@@ -47,7 +47,7 @@ class GenerationRound(BaseModel):
     refinement_rounds: List[RefinementAttempt] = Field(
         description="Self-improvement attempts"
     )
-    status: Literal["succeeded", "failed"] = Field(description="Round status")
+    status: Literal["succeeded", "failed", "ill-posed"] = Field(description="Round status")
 
 
 class BenchmarkEntry(BaseModel):
@@ -58,7 +58,7 @@ class BenchmarkEntry(BaseModel):
     topic_name: Optional[str] = Field(
         None, description="Human-readable topic name"
     )
-    status: Literal["succeeded", "failed"] = Field(
+    status: Literal["succeeded", "failed", "ill-posed"] = Field(
         description="Generation status"
     )
     generation_rounds: Optional[List[GenerationRound]] = Field(
@@ -69,7 +69,7 @@ class BenchmarkEntry(BaseModel):
     @classmethod
     def validate_status(cls, v: str) -> str:
         """Validate status against known values."""
-        if v not in {"succeeded", "failed"}:
+        if v not in {"succeeded", "failed", "ill-posed"}:
             raise ValueError(f"Invalid status: {v}")
         return v
 
@@ -183,9 +183,9 @@ class CritiqueEntry(BaseModel):
 class DebateMessage(BaseModel):
     """A single message in a debate transcript."""
 
-    round: int = Field(ge=0, description="Round number (0-indexed)")
-    speaker: Literal["defender", "claimant"] = Field(
-        description="Speaker role"
+    round: int = Field(ge=0, description="Round number")
+    speaker: Literal["defender", "claimant", "Alice", "Bob"] = Field(
+        description="Speaker role or alias"
     )
     message: str = Field(description="Argument text")
     concede: Optional[bool] = Field(
@@ -196,8 +196,8 @@ class DebateMessage(BaseModel):
     @classmethod
     def validate_speaker(cls, v: str) -> str:
         """Validate speaker is one of the allowed roles."""
-        if v not in {"defender", "claimant"}:
-            raise ValueError(f"Invalid speaker: {v} (must be 'defender' or 'claimant')")
+        if v not in {"defender", "claimant", "Alice", "Bob"}:
+            raise ValueError("Invalid speaker: must be 'defender', 'claimant', 'Alice', or 'Bob'")
         return v
 
 
@@ -209,7 +209,7 @@ class DebateEntry(BaseModel):
     topic_slug: Optional[str] = Field(None, description="Topic slug")
     alice_model: str = Field(description="Model playing Alice role")
     bob_model: str = Field(description="Model playing Bob role")
-    claimant: str = Field(description="Model making the claim")
+    claimant: Optional[str] = Field(None, description="Model making the claim")
     history: List[DebateMessage] = Field(description="Debate transcript")
 
     @field_validator("history")
@@ -237,23 +237,23 @@ class AutomatedEvaluation(BaseModel):
     """An automated judgment of a debate."""
 
     id: str = Field(description="Unique task identifier")
-    type: Literal["illposed", "critique_debate"] = Field(
+    type: Literal["illposed", "critique", "critique_debate"] = Field(
         description="Type of evaluation task"
     )
-    question_model: str = Field(description="Question author")
-    question: str = Field(description="Question text")
-    answer_model: str = Field(description="Answer author")
-    answer: str = Field(description="Answer text")
-    claim: str = Field(description="Claim being judged")
-    claimant: str = Field(description="Model making claim")
-    defender: str = Field(description="Model defending answer")
+    question_model: Optional[str] = Field(None, description="Question author")
+    question: Optional[str] = Field(None, description="Question text")
+    answer_model: Optional[str] = Field(None, description="Answer author")
+    answer: Optional[str] = Field(None, description="Answer text")
+    claim: Optional[str] = Field(None, description="Claim being judged")
+    claimant: Optional[str] = Field(None, description="Model making claim")
+    defender: Optional[str] = Field(None, description="Model defending answer")
     debate_history: Optional[List[DebateMessage]] = Field(
         None, description="Full debate transcript"
     )
     verdict: str = Field(description="Judge's decision")
     confidence: Optional[int] = Field(None, ge=1, le=5, description="Confidence level (1-5)")
-    reasoning: str = Field(description="Explanation of verdict")
-    judge_model: str = Field(description="Model making judgment")
+    reasoning: Optional[str] = Field(None, description="Explanation of verdict")
+    judge_model: Optional[str] = Field(None, description="Model making judgment")
     status: Optional[Literal["succeeded", "failed"]] = Field(
         None, description="Judgment status"
     )
@@ -262,7 +262,7 @@ class AutomatedEvaluation(BaseModel):
     @classmethod
     def validate_type(cls, v: str) -> str:
         """Validate evaluation type."""
-        if v not in {"illposed", "critique_debate"}:
+        if v not in {"illposed", "critique", "critique_debate"}:
             raise ValueError(f"Invalid evaluation type: {v}")
         return v
 
@@ -278,7 +278,7 @@ class AutomatedEvaluation(BaseModel):
                 raise ValueError(
                     f"Invalid illposed debate verdict: {v} (valid: {VALID_ILLPOSED_DEBATE_VERDICTS})"
                 )
-        elif eval_type == "critique_debate":
+        elif eval_type in {"critique", "critique_debate"}:
             if v not in VALID_CRITIQUE_DEBATE_VERDICTS:
                 raise ValueError(
                     f"Invalid critique debate verdict: {v} (valid: {VALID_CRITIQUE_DEBATE_VERDICTS})"
@@ -321,33 +321,51 @@ class Metadata(BaseModel):
 # ============================================================================
 
 
+ModelT = TypeVar("ModelT", bound=BaseModel)
+
+
+def _validate_entries(model: Type[ModelT], data: List[Dict[str, Any]]) -> List[ModelT]:
+    validated: List[ModelT] = []
+    for idx, entry in enumerate(data):
+        if not entry:
+            continue
+        try:
+            validated.append(model(**entry))
+        except Exception as exc:
+            raise ValueError(f"Invalid entry at index {idx}: {exc}") from exc
+    return validated
+
+
 def validate_benchmark_file(data: List[Dict[str, Any]]) -> List[BenchmarkEntry]:
     """Validate a benchmark JSON file."""
-    return [BenchmarkEntry(**entry) for entry in data]
+    return _validate_entries(BenchmarkEntry, data)
 
 
 def validate_answer_file(data: List[Dict[str, Any]]) -> List[AnswerEntry]:
     """Validate an answer JSON file."""
-    return [AnswerEntry(**entry) for entry in data]
+    return _validate_entries(AnswerEntry, data)
 
 
 def validate_critique_file(data: List[Dict[str, Any]]) -> List[CritiqueEntry]:
     """Validate a critique JSON file."""
-    return [CritiqueEntry(**entry) for entry in data]
+    return _validate_entries(CritiqueEntry, data)
 
 
 def validate_debate_file(data: List[Dict[str, Any]]) -> List[DebateEntry]:
     """Validate a debate JSON file."""
-    return [DebateEntry(**entry) for entry in data]
+    return _validate_entries(DebateEntry, data)
 
 
 def validate_evaluation_file(data: Dict[str, Any]) -> EvaluationFile:
     """Validate an automated evaluation JSON file."""
     if isinstance(data, dict) and "decisions" in data:
-        return EvaluationFile(**data)
+        decisions = data.get("decisions") or []
+        validated = _validate_entries(AutomatedEvaluation, decisions)
+        return EvaluationFile(decisions=validated)
     # Legacy format: dict of task_id -> evaluation
     elif isinstance(data, dict):
         decisions = list(data.values())
-        return EvaluationFile(decisions=decisions)
+        validated = _validate_entries(AutomatedEvaluation, decisions)
+        return EvaluationFile(decisions=validated)
     else:
         raise ValueError("Invalid evaluation file format")

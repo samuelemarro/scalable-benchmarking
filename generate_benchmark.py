@@ -18,6 +18,7 @@ from prompt_library import (
 )
 from self_improvement import self_improve_answers
 from model_api import query_llm_batch, query_llm_single
+from data_models import validate_benchmark_file
 from utils import clean_math, setup_logging
 
 logger = logging.getLogger(__name__)
@@ -217,6 +218,7 @@ def main():
 
             entry["status"] = result.status
 
+        validate_benchmark_file(current_entries)
         save_existing(output_path, current_entries)
         return f"Wrote {output_path}"
 

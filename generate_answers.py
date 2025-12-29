@@ -17,6 +17,7 @@ from prompt_library import (
 )
 from self_improvement import self_improve_answers
 from model_api import query_llm_batch, query_llm_single
+from data_models import validate_answer_file
 from utils import clean_math, setup_logging
 
 logger = logging.getLogger(__name__)
@@ -225,6 +226,7 @@ def main():
                         existing_records.extend([{} for _ in range(len(b_entries) - len(existing_records))])
                     for idx, record in outputs:
                         existing_records[idx] = record
+                    validate_answer_file(existing_records)
                     save_json(out, existing_records)
                     return qm, am.name, len(outputs)
 
