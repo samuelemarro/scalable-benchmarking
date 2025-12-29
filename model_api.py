@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 # Global session for connection pooling
 _http_session = None
+RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
 
 def get_http_session() -> requests.Session:
     """Get or create a shared HTTP session for connection pooling."""
@@ -36,32 +37,34 @@ def _cleanup_http_session():
 atexit.register(_cleanup_http_session)
 
 
-def get_model_metadata(model: str, response_data: Optional[Dict] = None) -> Dict:
-    """
-    Extract model version metadata from API response.
+def _request_with_retries(
+    session: requests.Session,
+    method: str,
+    url: str,
+    max_retries: int = 3,
+    backoff_seconds: int = 1,
+    **kwargs,
+) -> requests.Response:
+    last_exc = None
+    last_response = None
+    for attempt in range(max_retries):
+        try:
+            resp = session.request(method, url, **kwargs)
+            last_response = resp
+            if resp.status_code in RETRYABLE_STATUS_CODES and attempt < max_retries - 1:
+                time.sleep(backoff_seconds * (2 ** attempt))
+                continue
+            return resp
+        except requests.RequestException as exc:
+            last_exc = exc
+            if attempt < max_retries - 1:
+                time.sleep(backoff_seconds * (2 ** attempt))
+    if last_response is not None:
+        return last_response
+    if last_exc:
+        raise last_exc
+    raise RuntimeError(f"Request failed for {method} {url}")
 
-    Args:
-        model: Model name/identifier
-        response_data: Raw API response data (optional)
-
-    Returns:
-        Dictionary with model metadata including version info
-    """
-    metadata = {
-        "model_name": model,
-        "api_call_timestamp": None,  # Will be set by caller if needed
-    }
-
-    if response_data:
-        # Extract version info from different providers
-        if "model" in response_data:
-            metadata["model_version"] = response_data["model"]
-        if "id" in response_data:
-            metadata["response_id"] = response_data["id"]
-        if "created" in response_data:
-            metadata["created_timestamp"] = response_data["created"]
-
-    return metadata
 
 OPENAI_API_URL = "https://api.openai.com/v1"
 ANTHROPIC_INTERNAL_NAMES = {
@@ -143,7 +146,13 @@ def _query_openai_single(model: str, messages: List[Dict], response_format: Opti
                 payload[k] = v
 
     session = get_http_session()
-    resp = session.post(f"{OPENAI_API_URL}/chat/completions", headers=headers, json=payload)
+    resp = _request_with_retries(
+        session,
+        "POST",
+        f"{OPENAI_API_URL}/chat/completions",
+        headers=headers,
+        json=payload,
+    )
     if resp.status_code != 200:
         raise RuntimeError(f"OpenAI error: {resp.status_code} - {resp.text}")
     data = resp.json()
@@ -189,7 +198,8 @@ def query_llm(model: str, messages: List[Dict], response_format: Optional[Dict] 
 
     json_kwargs["model"] = model
     json_kwargs["messages"] = messages
-    json_kwargs["temperature"] = temperature
+    if temperature is not None:
+        json_kwargs["temperature"] = temperature
 
     if response_format:
         json_kwargs["response_format"] = response_format
@@ -202,7 +212,13 @@ def query_llm(model: str, messages: List[Dict], response_format: Optional[Dict] 
             json_kwargs[key] = value
 
     session = get_http_session()
-    response = session.post(OPENROUTER_API_URL, headers=headers, json=json_kwargs)
+    response = _request_with_retries(
+        session,
+        "POST",
+        OPENROUTER_API_URL,
+        headers=headers,
+        json=json_kwargs,
+    )
 
     if response.status_code != 200:
         raise RuntimeError(f"OpenRouter error: {response.status_code} - {response.text}")
@@ -319,7 +335,13 @@ def _query_anthropic_batch(model: str, messages_list: List[str], prompt: str, re
         "Content-Type": "application/json"
     }
     session = get_http_session()
-    resp = session.post(ANTHROPIC_API_URL, headers=headers, json=batch_payload)
+    resp = _request_with_retries(
+        session,
+        "POST",
+        ANTHROPIC_API_URL,
+        headers=headers,
+        json=batch_payload,
+    )
     if resp.status_code != 200:
         raise RuntimeError(f"Anthropic error: Batch creation failed: {resp.status_code} - {resp.text}")
     batch_id = resp.json()["id"]
@@ -329,7 +351,7 @@ def _query_anthropic_batch(model: str, messages_list: List[str], prompt: str, re
     with tqdm(total=1, desc="Polling Claude batch", bar_format='{desc}: {elapsed} [{bar}]') as pbar:
         while True:
             time.sleep(5)
-            poll_resp = session.get(poll_url, headers=headers)
+            poll_resp = _request_with_retries(session, "GET", poll_url, headers=headers)
             if poll_resp.status_code != 200:
                 raise RuntimeError(f"Anthropic error: Batch poll failed: {poll_resp.status_code} - {poll_resp.text}")
             poll_data = poll_resp.json()
@@ -341,7 +363,7 @@ def _query_anthropic_batch(model: str, messages_list: List[str], prompt: str, re
                 break
             pbar.set_postfix_str(f"Status: {status}")
 
-    results_resp = session.get(results_url, headers=headers)
+    results_resp = _request_with_retries(session, "GET", results_url, headers=headers)
     if results_resp.status_code != 200:
         raise RuntimeError(f"Anthropic error: Batch results download failed: {results_resp.status_code} - {results_resp.text}")
 
@@ -457,7 +479,14 @@ def _query_openai_batch(model: str, messages_list: List[str], prompt: str, respo
         with open(batch_file_path, "rb") as file_handle:
             files = {"file": (os.path.basename(batch_file_path), file_handle)}
             data = {"purpose": "batch"}
-            upload_resp = session.post(OPENAI_FILES_URL, headers=headers_auth, files=files, data=data)
+            upload_resp = _request_with_retries(
+                session,
+                "POST",
+                OPENAI_FILES_URL,
+                headers=headers_auth,
+                files=files,
+                data=data,
+            )
 
         if upload_resp.status_code != 200:
             raise RuntimeError(f"OpenAI batch file upload failed: {upload_resp.status_code} - {upload_resp.text}")
@@ -473,7 +502,13 @@ def _query_openai_batch(model: str, messages_list: List[str], prompt: str, respo
             "endpoint": "/v1/chat/completions",
             "completion_window": "24h",
         }
-        create_resp = session.post(OPENAI_BATCH_URL, headers=create_headers, json=create_payload)
+        create_resp = _request_with_retries(
+            session,
+            "POST",
+            OPENAI_BATCH_URL,
+            headers=create_headers,
+            json=create_payload,
+        )
 
         if create_resp.status_code != 200:
             raise RuntimeError(f"OpenAI batch creation failed: {create_resp.status_code} - {create_resp.text}")
@@ -483,7 +518,7 @@ def _query_openai_batch(model: str, messages_list: List[str], prompt: str, respo
 
         with tqdm(total=1, desc="Polling OpenAI batch", bar_format="{desc}: {elapsed} [{bar}]") as pbar:
             while True:
-                poll_resp = session.get(poll_url, headers=create_headers)
+                poll_resp = _request_with_retries(session, "GET", poll_url, headers=create_headers)
                 if poll_resp.status_code != 200:
                     raise RuntimeError(f"OpenAI batch poll failed: {poll_resp.status_code} - {poll_resp.text}")
 
@@ -503,7 +538,7 @@ def _query_openai_batch(model: str, messages_list: List[str], prompt: str, respo
                 time.sleep(5)
 
         content_url = OPENAI_CONTENT_URL.format(output_file_id=output_file_id)
-        results_resp = session.get(content_url, headers=headers_auth)
+        results_resp = _request_with_retries(session, "GET", content_url, headers=headers_auth)
         if results_resp.status_code != 200:
             raise RuntimeError(f"OpenAI batch results download failed: {results_resp.status_code} - {results_resp.text}")
 
