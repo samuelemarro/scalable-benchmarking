@@ -162,13 +162,13 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
     # Track self-answers declared "correct" by critics (no debate needed)
     model_self_answers_no_debate = defaultdict(int)
 
-    # For each defender model, track critique defense percentages
+    # For each defender model (answer author), track their success rate when defending answers
     # Verdicts that side with defender: defender_wins_incorrect, defender_wins_minor
-    model_defender = defaultdict(list)
+    model_as_defender_success_rate = defaultdict(list)
 
-    # For each claimant model, track critique claim percentages
+    # For each claimant model (critic), track their success rate when making claims
     # Verdicts that side with claimant: claimant_wins, mixed (partial win)
-    model_claimant = defaultdict(list)
+    model_as_claimant_success_rate = defaultdict(list)
 
     # For cross-model answers, track three categories per (answer_model, question_model) pair
     cross_model_answers = defaultdict(lambda: defaultdict(lambda: {
@@ -230,12 +230,12 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
             # Defender stats (Bob is the answer_model defending)
             defender_wins_count = sum(1 for v in verdicts if v in DEFENDER_WIN_VERDICTS)
             percentage = 100 * defender_wins_count / len(verdicts)
-            model_defender[answer_model].append(percentage)
+            model_as_defender_success_rate[answer_model].append(percentage)
 
             # Claimant stats (Alice is the critic_model claiming error)
             claimant_wins_count = sum(1 for v in verdicts if v in CLAIMANT_WIN_VERDICTS)
             percentage = 100 * claimant_wins_count / len(verdicts)
-            model_claimant[critic_model].append(percentage)
+            model_as_claimant_success_rate[critic_model].append(percentage)
 
     # Now add answers declared "correct" by critics (these don't appear in automated evaluations)
     for cid, crit_info in critique_verdict_map.items():
@@ -256,7 +256,7 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
     if encountered_models:
         logger.info(f"Encountered {len(encountered_models)} unique model names in data: {sorted(encountered_models)}")
 
-    return model_self_answers, model_self_answers_no_debate, model_defender, model_claimant, cross_model_answers
+    return model_self_answers, model_self_answers_no_debate, model_as_defender_success_rate, model_as_claimant_success_rate, cross_model_answers
 
 
 def print_agreement_stats(model_stats, title, total_judges=None):
@@ -349,7 +349,7 @@ def main():
         print(f"  {n_labels}: {label_hist[n_labels]}")
 
     # Compute and print automated evaluation statistics
-    model_self_answers, model_self_answers_no_debate, model_defender, model_claimant, cross_model_stats = compute_model_stats(auto_eval_dir, critiques_dir)
+    model_self_answers, model_self_answers_no_debate, model_as_defender_success_rate, model_as_claimant_success_rate, cross_model_stats = compute_model_stats(auto_eval_dir, critiques_dir)
 
     print_agreement_stats(
         model_self_answers,
@@ -364,12 +364,12 @@ def main():
             print(f"  {model}: {count} answers")
 
     print_agreement_stats(
-        model_defender,
+        model_as_defender_success_rate,
         "Defender success (number of judges siding with defender/answer)"
     )
 
     print_agreement_stats(
-        model_claimant,
+        model_as_claimant_success_rate,
         "Claimant success (number of judges siding with claimant/critic)"
     )
 
