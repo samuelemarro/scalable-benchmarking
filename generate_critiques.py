@@ -2,6 +2,7 @@ import argparse
 import json
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
@@ -23,63 +24,87 @@ from constants import (
     STATUS_SUCCEEDED,
     VALID_CRITIQUE_VERDICTS,
 )
-from data_models import validate_critique_file
+from data_models import (
+    AnswerAttempt,
+    AnswerEntry,
+    BenchmarkEntry,
+    CritiqueAttempt,
+    CritiqueEntry,
+    load_answer_entries,
+    load_benchmark_entries,
+    load_critique_entries,
+    save_critique_entries,
+)
 
 logger = logging.getLogger(__name__)
 
 load_dotenv()
 
 
-def load_json(path: Path, default):
-    if not path.exists():
-        return default
-    with path.open("r") as f:
-        return json.load(f)
+@dataclass(frozen=True)
+class CritiqueJob:
+    question: str
+    answer_text: str
+    answer_author: str
+    question_author: str
+    run_id: Optional[str]
+    topic_slug: Optional[str]
+    output_path: Path
+    record_idx: int
 
 
-def save_json(path: Path, payload):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w") as f:
-        json.dump(payload, f, indent=2)
-
-
-def final_question(entry: Dict) -> Optional[str]:
-    generations = entry.get("generation_rounds") or []
+def final_question(entry: BenchmarkEntry) -> Optional[str]:
+    generations = entry.generation_rounds or []
     if not generations:
         return None
-    refinements = generations[-1].get("refinement_rounds") or []
+    refinements = generations[-1].refinement_rounds or []
     if not refinements:
         return None
-    return refinements[-1].get("question")
+    return refinements[-1].question
 
 
-def final_answer(entry: Dict) -> Optional[str]:
-    attempts = entry.get("attempts") or []
+def final_answer(entry: AnswerEntry) -> Optional[str]:
+    attempts = entry.attempts or []
     if not attempts:
         return None
-    return attempts[-1].get("answer")
+    return attempts[-1].answer
 
 
-def benchmark_answers(question_model: str, entries: List[Dict]) -> List[Dict]:
-    answers: List[Dict] = []
+def benchmark_answers(question_model: str, entries: List[Optional[BenchmarkEntry]]) -> List[Optional[AnswerEntry]]:
+    answers: List[Optional[AnswerEntry]] = []
     q_slug = _slugify(question_model)
     for entry in entries:
-        gen_rounds = entry.get("generation_rounds") or []
-        if not gen_rounds:
-            answers.append({})
+        if not entry:
+            answers.append(None)
             continue
-        refinements = gen_rounds[-1].get("refinement_rounds") or []
+        gen_rounds = entry.generation_rounds or []
+        if not gen_rounds:
+            answers.append(None)
+            continue
+        refinements = gen_rounds[-1].refinement_rounds or []
         if not refinements:
-            answers.append({})
+            answers.append(None)
             continue
         last_ref = refinements[-1]
+        attempts = [
+            AnswerAttempt(
+                round=att.round,
+                answer=att.answer,
+                raw_answer=att.raw_answer,
+                evaluation=att.evaluation,
+            )
+            for att in refinements
+        ]
         answers.append(
-            {
-                "answer_model": q_slug,
-                "answer": last_ref.get("answer"),
-                "status": entry.get("status"),
-                "attempts": refinements,
-            }
+            AnswerEntry(
+                question_model=q_slug,
+                answer_model=q_slug,
+                question=last_ref.question,
+                run_id=entry.run_id,
+                topic_slug=entry.topic_slug,
+                status=entry.status,
+                attempts=attempts,
+            )
         )
     return answers
 
@@ -126,7 +151,7 @@ def _batched_query(model: str, prompts: List[str], disable_batch: bool, temperat
     return query_llm_batch(model, prompts, temperature=temperature, reasoning=reasoning)
 
 
-def pick_answer_record(answer_store: List[Dict], idx: int) -> Optional[Dict]:
+def pick_answer_record(answer_store: List[Optional[AnswerEntry]], idx: int) -> Optional[AnswerEntry]:
     if idx >= len(answer_store):
         return None
     return answer_store[idx]
@@ -138,14 +163,14 @@ def prepare_pairs(
     answer_models: List[str],
     answers_root: Path,
     limit: Optional[int],
-    benchmark_entries: List[Dict],
+    benchmark_entries: List[Optional[BenchmarkEntry]],
     critic_names: Optional[Set[str]],
 ) -> List[Tuple[int, str, str]]:
     pairs = []
     critic_name_set = set(critic_names or [])
     q_slug = _slugify(question_model)
     owner_answer_path = answers_root / q_slug / f"{q_slug}.json"
-    owner_answers = load_json(owner_answer_path, [])
+    owner_answers = load_answer_entries(owner_answer_path)
     if not owner_answers:
         owner_answers = benchmark_answers(question_model, benchmark_entries)
 
@@ -171,7 +196,7 @@ def prepare_pairs(
             continue
         a_slug = _slugify(answer_model)
         answer_path = answers_root / q_slug / f"{a_slug}.json"
-        answer_records = load_json(answer_path, [])
+        answer_records = load_answer_entries(answer_path)
         if answer_model == question_model and not answer_records:
             answer_records = owner_answers
 
@@ -189,46 +214,47 @@ def prepare_pairs(
                 pairs.append((idx, critic, answer_model))
             elif mode in {"all", "custom"}:
                 critic = answer_model
-                pairs.append((idx, critic, target_entry.get("answer_model", answer_model)))
+                pairs.append((idx, critic, target_entry.answer_model))
     return pairs
 
 
 def generate_critiques_batch(
     critic_model: str,
-    jobs: List[Dict],
+    jobs: List[CritiqueJob],
     guidance: str,
     max_rounds: int,
     self_improve: bool,
     disable_batch: bool,
     temperature: float,
     reasoning: Optional[str],
-) -> List[List[Dict]]:
+) -> List[List[CritiqueAttempt]]:
     prompts = [
-        build_critique_prompt(job["question"], job["answer_author"], job["answer_text"], guidance)
+        build_critique_prompt(job.question, job.answer_author, job.answer_text, guidance)
         for job in jobs
     ]
     raw_critiques = _batched_query(critic_model, prompts, disable_batch, temperature, reasoning)
     cleaned_critiques = [clean_math(r) for r in raw_critiques]
 
     if not self_improve:
-        results = []
+        results: List[List[CritiqueAttempt]] = []
         for cleaned_text, raw_text in zip(cleaned_critiques, raw_critiques):
             verdict, notes = extract_structured_critique(cleaned_text)
             results.append(
                 [
-                    {
-                        "round": 1,
-                        "raw_critique": raw_text,
-                        "verdict": verdict,
-                        "notes": notes,
-                        "evaluation": None,
-                    }
+                    CritiqueAttempt(
+                        round=1,
+                        cleaned_critique=cleaned_text,
+                        raw_critique=raw_text,
+                        verdict=verdict,
+                        notes=notes,
+                        evaluation=None,
+                    )
                 ]
             )
         return results
 
-    questions = [job["question"] for job in jobs]
-    answer_texts = [job["answer_text"] for job in jobs]
+    questions = [job.question for job in jobs]
+    answer_texts = [job.answer_text for job in jobs]
 
     def eval_prompt(q: str, crit: str, idx: int):
         return build_critique_self_check(q, answer_texts[idx], crit, guidance)
@@ -252,20 +278,20 @@ def generate_critiques_batch(
         raw_initial_answers=raw_critiques,
     )
 
-    enriched_all: List[List[Dict]] = []
+    enriched_all: List[List[CritiqueAttempt]] = []
     for res in results:
         enriched_attempts = []
         for att in res.attempts:
             verdict, notes = extract_structured_critique(att.answer)
             enriched_attempts.append(
-                {
-                    "round": att.round,
-                    "cleaned_critique": att.answer,
-                    "raw_critique": att.raw_answer,
-                    "verdict": verdict,
-                    "notes": notes,
-                    "evaluation": att.evaluation,
-                }
+                CritiqueAttempt(
+                    round=att.round,
+                    cleaned_critique=att.answer,
+                    raw_critique=att.raw_answer or "",
+                    verdict=verdict,
+                    notes=notes,
+                    evaluation=att.evaluation,
+                )
             )
         enriched_all.append(enriched_attempts)
 
@@ -300,7 +326,7 @@ def main():
     if args.mode == "custom":
         if not args.custom_map:
             raise ValueError("Custom mode requires --custom-map")
-        payload = load_json(args.custom_map, [])
+        payload = json.loads(args.custom_map.read_text()) if args.custom_map.exists() else []
         for item in payload:
             custom_pairs.append((item["question_owner"], item["answerer"], item["critic"]))
 
@@ -309,7 +335,7 @@ def main():
         question_model = next((spec.name for spec in registry.models.values() if spec.slug == q_slug), None)
         if not question_model:
             continue
-        benchmark_entries = load_json(bench_path, [])
+        benchmark_entries = load_benchmark_entries(bench_path)
         answer_models = [spec.name for spec in registry.models.values() if "answer" in spec.roles]
 
         pairs: List[Tuple[int, str, str]] = []
@@ -323,7 +349,7 @@ def main():
                 answer_path = args.answers_dir / q_slug / f"{a_slug}.json"
                 if not answer_path.exists():
                     continue
-                answer_records = load_json(answer_path, [])
+                answer_records = load_answer_entries(answer_path)
                 for idx, rec in enumerate(answer_records):
                     if args.limit is not None and len(pairs) >= args.limit:
                         break
@@ -351,45 +377,47 @@ def main():
             a_slug = _slugify(answer_author)
             critic_slug = critic_spec.slug
             answers_path = args.answers_dir / q_slug / f"{a_slug}.json"
-            answer_records = load_json(answers_path, [])
+            answer_records = load_answer_entries(answers_path)
             if not answer_records and _slugify(answer_author) == _slugify(question_model):
                 answer_records = benchmark_answers(question_model, benchmark_entries)
             if idx >= len(answer_records):
                 continue
             answer_entry = answer_records[idx]
-            if answer_entry.get("status") == STATUS_FAILED:
+            if not answer_entry or answer_entry.status == STATUS_FAILED:
                 logger.info(f"Skipping critique for failed answer {question_model}-{answer_author}-{idx}")
                 continue
             question_entry = benchmark_entries[idx]
+            if not question_entry:
+                continue
             question_text = final_question(question_entry)
             if not question_text:
                 continue
             output_path = args.output_dir / args.mode / q_slug / f"{critic_slug}__{a_slug}.json"
-            existing = load_json(output_path, [])
+            existing = load_critique_entries(output_path)
             if len(existing) <= idx:
-                existing.extend([{} for _ in range(idx - len(existing) + 1)])
+                existing.extend([None for _ in range(idx - len(existing) + 1)])
 
-            if existing[idx].get("status") == STATUS_SUCCEEDED:
+            if existing[idx] and existing[idx].status == STATUS_SUCCEEDED:
                 continue
 
             answer_text = final_answer(answer_entry) or ""
-            job = {
-                "question": question_text,
-                "answer_text": answer_text,
-                "answer_author": answer_author,
-                "question_author": question_model,
-                "run_id": question_entry.get("run_id"),
-                "topic_slug": question_entry.get("topic_slug"),
-                "output_path": output_path,
-                "record_idx": idx,
-            }
+            job = CritiqueJob(
+                question=question_text,
+                answer_text=answer_text,
+                answer_author=answer_author,
+                question_author=question_model,
+                run_id=question_entry.run_id,
+                topic_slug=question_entry.topic_slug,
+                output_path=output_path,
+                record_idx=idx,
+            )
             bucket = jobs_by_critic.setdefault(critic_spec.name, {"spec": critic_spec, "jobs": []})
             bucket["jobs"].append(job)
 
         with ThreadPoolExecutor(max_workers=max(4, len(jobs_by_critic))) as pool:
             futures = []
 
-            def process_batch(spec: ModelSpec, jobs: List[Dict]):
+            def process_batch(spec: ModelSpec, jobs: List[CritiqueJob]):
                 attempts_list = generate_critiques_batch(
                     spec.name,
                     jobs,
@@ -401,28 +429,27 @@ def main():
                     spec.reasoning,
                 )
                 for job, attempts in zip(jobs, attempts_list):
-                    records = load_json(job["output_path"], [])
-                    if len(records) <= job["record_idx"]:
-                        records.extend([{} for _ in range(job["record_idx"] - len(records) + 1)])
-                    final_verdict = attempts[-1].get("verdict") if attempts else None
+                    records = load_critique_entries(job.output_path)
+                    if len(records) <= job.record_idx:
+                        records.extend([None for _ in range(job.record_idx - len(records) + 1)])
+                    final_verdict = attempts[-1].verdict if attempts else None
                     status = (
                         STATUS_SUCCEEDED
                         if final_verdict and final_verdict != CRITIQUE_VERDICT_UNKNOWN
                         else STATUS_FAILED
                     )
-                    records[job["record_idx"]] = {
-                        "question": job["question"],
-                        "run_id": job["run_id"],
-                        "topic_slug": job["topic_slug"],
-                        "question_author": _slugify(job["question_author"]),
-                        "critic": spec.slug,
-                        "answer_author": _slugify(job["answer_author"]),
-                        "status": status,
-                        "attempts": attempts,
-                    }
-                    validate_critique_file(records)
-                    save_json(job["output_path"], records)
-                    logger.info(f"Critique done by {spec.name} for question #{job['record_idx']}")
+                    records[job.record_idx] = CritiqueEntry(
+                        question=job.question,
+                        run_id=job.run_id,
+                        topic_slug=job.topic_slug,
+                        question_author=_slugify(job.question_author),
+                        critic=spec.slug,
+                        answer_author=_slugify(job.answer_author),
+                        status=status,
+                        attempts=attempts,
+                    )
+                    save_critique_entries(job.output_path, records)
+                    logger.info(f"Critique done by {spec.name} for question #{job.record_idx}")
 
             for critic_name, payload in jobs_by_critic.items():
                 spec: ModelSpec = payload["spec"]

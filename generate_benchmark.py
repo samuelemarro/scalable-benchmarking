@@ -3,7 +3,7 @@ import json
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv
 
@@ -19,7 +19,13 @@ from prompt_library import (
 from self_improvement import self_improve_answers
 from model_api import query_llm_batch, query_llm_single
 from constants import STATUS_FAILED, STATUS_ILL_POSED, STATUS_SUCCEEDED
-from data_models import validate_benchmark_file
+from data_models import (
+    BenchmarkEntry,
+    GenerationRound,
+    RefinementAttempt,
+    load_benchmark_entries,
+    save_benchmark_entries,
+)
 from utils import clean_math, setup_logging
 
 logger = logging.getLogger(__name__)
@@ -49,19 +55,6 @@ def load_runs(path: Path, topic_info: Dict[str, Dict]) -> List[Dict]:
     return runs
 
 
-def load_existing(path: Path) -> List[Dict]:
-    if not path.exists():
-        return []
-    with path.open("r") as f:
-        return json.load(f)
-
-
-def save_existing(path: Path, data: List[Dict]):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w") as f:
-        json.dump(data, f, indent=2)
-
-
 def parse_question_answer(text: str) -> Tuple[str, str]:
     if "[QUESTION]" in text and "[ANSWER]" in text:
         question, answer = text.split("[ANSWER]", 1)
@@ -75,33 +68,46 @@ def parse_question_answer(text: str) -> Tuple[str, str]:
 
 
 
-def upsert(entries: List[Dict], run_id: str, topic_slug: str, topic_name: str) -> Dict:
+def upsert(
+    entries: List[Optional[BenchmarkEntry]],
+    run_id: str,
+    topic_slug: str,
+    topic_name: str,
+) -> BenchmarkEntry:
     for entry in entries:
-        if entry.get("run_id") == run_id:
+        if entry and entry.run_id == run_id:
             return entry
-    entry = {
-        "run_id": run_id,
-        "topic_slug": topic_slug,
-        "topic_name": topic_name,
-        "status": "pending",
-        "generation_rounds": [],
-    }
+    entry = BenchmarkEntry(
+        run_id=run_id,
+        topic_slug=topic_slug,
+        topic_name=topic_name,
+        status="pending",
+        generation_rounds=[],
+    )
     entries.append(entry)
     return entry
 
 
-def generate_questions(model: str, runs: List[Dict], prev_map: Dict[str, Dict], disable_batch: bool, guidance: str, temperature: float, reasoning: str):
+def generate_questions(
+    model: str,
+    runs: List[Dict],
+    prev_map: Dict[str, BenchmarkEntry],
+    disable_batch: bool,
+    guidance: str,
+    temperature: float,
+    reasoning: str,
+):
     prompts = []
     for run in runs:
         run_id = run["run_id"]
         topic_name = run["topic_name"]
         previous_attempts: List[str] = []
-        prev_entry = prev_map.get(run_id, {})
-        if prev_entry.get("status") in {STATUS_FAILED, STATUS_ILL_POSED}:
-            for gen_round in prev_entry.get("generation_rounds", []):
-                refinements = gen_round.get("refinement_rounds", [])
+        prev_entry = prev_map.get(run_id)
+        if prev_entry and prev_entry.status in {STATUS_FAILED, STATUS_ILL_POSED}:
+            for gen_round in prev_entry.generation_rounds or []:
+                refinements = gen_round.refinement_rounds or []
                 if refinements:
-                    question = refinements[-1].get("question")
+                    question = refinements[-1].question
                     if question:
                         previous_attempts.append(question)
         prompts.append(build_question_prompt(topic_name, guidance, previous_attempts if previous_attempts else None))
@@ -144,16 +150,16 @@ def main():
     def process_model(model_spec):
         slug = _slugify(model_spec.name)
         output_path = args.output_dir / f"{slug}.json"
-        current_entries = load_existing(output_path)
+        current_entries = load_benchmark_entries(output_path)
 
-        run_id_to_entry = {entry.get("run_id"): entry for entry in current_entries}
+        run_id_to_entry = {entry.run_id: entry for entry in current_entries if entry}
         pending_runs = []
 
         for run in runs:
             entry = run_id_to_entry.get(run["run_id"])
-            if entry and entry.get("status") == STATUS_SUCCEEDED:
+            if entry and entry.status == STATUS_SUCCEEDED:
                 continue
-            if entry and entry.get("status") in {STATUS_FAILED, STATUS_ILL_POSED} and not args.force_rerun_failures:
+            if entry and entry.status in {STATUS_FAILED, STATUS_ILL_POSED} and not args.force_rerun_failures:
                 continue
             pending_runs.append(run)
 
@@ -200,27 +206,25 @@ def main():
         for run, question, result in zip(pending_runs, questions, improvements):
             entry = upsert(current_entries, run["run_id"], run["topic_slug"], run["topic_name"])
             attempt_records = [
-                {
-                    "round": att.round,
-                    "question": question,
-                    "answer": att.answer,
-                    "raw_answer": att.raw_answer,
-                    "evaluation": att.evaluation,
-                }
+                RefinementAttempt(
+                    round=att.round,
+                    question=question,
+                    answer=att.answer,
+                    raw_answer=att.raw_answer,
+                    evaluation=att.evaluation,
+                )
                 for att in result.attempts
             ]
-
-            entry["generation_rounds"].append(
-                {
-                    "refinement_rounds": attempt_records,
-                    "status": result.status,
-                }
+            generation_round = GenerationRound(
+                refinement_rounds=attempt_records,
+                status=result.status,
             )
+            if entry.generation_rounds is None:
+                entry.generation_rounds = []
+            entry.generation_rounds.append(generation_round)
+            entry.status = result.status
 
-            entry["status"] = result.status
-
-        validate_benchmark_file(current_entries)
-        save_existing(output_path, current_entries)
+        save_benchmark_entries(output_path, current_entries)
         return f"Wrote {output_path}"
 
     with ThreadPoolExecutor(max_workers=max(4, len(models))) as pool:

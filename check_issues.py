@@ -5,11 +5,10 @@ Check for issues in output files across the pipeline.
 Reports files with failed statuses, unknown verdicts, parsing errors, etc.
 """
 
+import json
 from pathlib import Path
 from collections import defaultdict
 from typing import Dict
-
-from utils import load_json
 from constants import (
     CRITIQUE_VERDICT_CORRECT,
     JUDGE_VERDICT_UNKNOWN,
@@ -21,41 +20,51 @@ from constants import (
     VALID_ILLPOSED_DEBATE_VERDICTS,
     VALID_STATUSES,
 )
+from data_models import (
+    AnswerEntry,
+    BenchmarkEntry,
+    CritiqueEntry,
+    load_answer_entries,
+    load_benchmark_entries,
+    load_critique_entries,
+    load_debate_entries,
+    load_evaluation_entries,
+)
 
 
-def final_benchmark_question(entry: Dict) -> str:
-    gen_rounds = entry.get("generation_rounds") or []
+def final_benchmark_question(entry: BenchmarkEntry) -> str:
+    gen_rounds = entry.generation_rounds or []
     if not gen_rounds:
         return ""
-    refinements = gen_rounds[-1].get("refinement_rounds") or []
+    refinements = gen_rounds[-1].refinement_rounds or []
     if not refinements:
         return ""
-    return refinements[-1].get("question", "") or ""
+    return refinements[-1].question or ""
 
 
-def final_benchmark_answer(entry: Dict) -> str:
-    gen_rounds = entry.get("generation_rounds") or []
+def final_benchmark_answer(entry: BenchmarkEntry) -> str:
+    gen_rounds = entry.generation_rounds or []
     if not gen_rounds:
         return ""
-    refinements = gen_rounds[-1].get("refinement_rounds") or []
+    refinements = gen_rounds[-1].refinement_rounds or []
     if not refinements:
         return ""
-    return refinements[-1].get("answer", "") or ""
+    return refinements[-1].answer or ""
 
 
-def final_answer_text(entry: Dict) -> str:
-    attempts = entry.get("attempts") or []
-    if attempts:
-        return attempts[-1].get("answer", "") or ""
-    return entry.get("answer", "") or ""
+def final_answer_text(entry: AnswerEntry) -> str:
+    attempts = entry.attempts or []
+    if not attempts:
+        return ""
+    return attempts[-1].answer or ""
 
 
-def final_critique_text(entry: Dict) -> str:
-    attempts = entry.get("attempts") or []
+def final_critique_text(entry: CritiqueEntry) -> str:
+    attempts = entry.attempts or []
     if not attempts:
         return ""
     last = attempts[-1]
-    return str(last.get("notes") or last.get("raw_critique") or "")
+    return str(last.notes or last.raw_critique or "")
 
 
 def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
@@ -63,17 +72,22 @@ def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
     issues = defaultdict(int)
 
     try:
-        data = load_json(file_path, [])
-        if not isinstance(data, list):
-            issues["invalid_format"] += 1
+        try:
+            data = load_benchmark_entries(file_path)
+        except json.JSONDecodeError:
+            issues["parse_error"] += 1
+            return issues
+        except Exception as exc:
+            if "Expected list" in str(exc):
+                issues["invalid_format"] += 1
+            else:
+                issues["schema_error"] += 1
             return issues
 
-        for idx, entry in enumerate(data):
-            if not isinstance(entry, dict):
-                issues["invalid_entry"] += 1
+        for entry in data:
+            if not entry:
                 continue
-
-            status = entry.get("status")
+            status = entry.status
             if status == STATUS_FAILED:
                 issues["failed_generation"] += 1
             elif status not in {STATUS_SUCCEEDED, STATUS_FAILED, STATUS_ILL_POSED}:
@@ -88,7 +102,6 @@ def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
             final_a = final_benchmark_answer(entry).strip()
             if not final_a and status == STATUS_SUCCEEDED:
                 issues["empty_answer"] += 1
-
     except Exception:
         issues["parse_error"] += 1
 
@@ -100,17 +113,23 @@ def check_answer_issues(file_path: Path) -> Dict[str, int]:
     issues = defaultdict(int)
 
     try:
-        data = load_json(file_path, [])
-        if not isinstance(data, list):
-            issues["invalid_format"] += 1
+        try:
+            data = load_answer_entries(file_path)
+        except json.JSONDecodeError:
+            issues["parse_error"] += 1
+            return issues
+        except Exception as exc:
+            if "Expected list" in str(exc):
+                issues["invalid_format"] += 1
+            else:
+                issues["schema_error"] += 1
             return issues
 
-        for idx, entry in enumerate(data):
-            if not isinstance(entry, dict):
-                issues["invalid_entry"] += 1
+        for entry in data:
+            if not entry:
                 continue
 
-            status = entry.get("status")
+            status = entry.status
             if status == STATUS_FAILED:
                 issues["failed_answer"] += 1
             elif status not in VALID_STATUSES:
@@ -120,7 +139,6 @@ def check_answer_issues(file_path: Path) -> Dict[str, int]:
             final_a = final_answer_text(entry).strip()
             if not final_a and status == STATUS_SUCCEEDED:
                 issues["empty_answer"] += 1
-
     except Exception:
         issues["parse_error"] += 1
 
@@ -132,35 +150,40 @@ def check_critique_issues(file_path: Path) -> Dict[str, int]:
     issues = defaultdict(int)
 
     try:
-        data = load_json(file_path, [])
-        if not isinstance(data, list):
-            issues["invalid_format"] += 1
+        try:
+            data = load_critique_entries(file_path)
+        except json.JSONDecodeError:
+            issues["parse_error"] += 1
+            return issues
+        except Exception as exc:
+            if "Expected list" in str(exc):
+                issues["invalid_format"] += 1
+            else:
+                issues["schema_error"] += 1
             return issues
 
-        for idx, entry in enumerate(data):
-            if not isinstance(entry, dict):
-                issues["invalid_entry"] += 1
+        for entry in data:
+            if not entry:
                 continue
 
-            status = entry.get("status")
+            status = entry.status
             if status == STATUS_FAILED:
                 issues["failed_critique"] += 1
             elif status not in {STATUS_SUCCEEDED, STATUS_FAILED}:
                 issues["unknown_status"] += 1
 
             # Check verdict if present
-            attempts = entry.get("attempts", [])
+            attempts = entry.attempts or []
             if attempts:
-                verdict = attempts[-1].get("verdict")
+                verdict = attempts[-1].verdict
                 if verdict and verdict not in VALID_CRITIQUE_VERDICTS:
                     issues["invalid_verdict"] += 1
 
             # Check for empty critiques (unless verdict is "correct")
             final_c = final_critique_text(entry).strip()
-            verdict = attempts[-1].get("verdict") if attempts else None
+            verdict = attempts[-1].verdict if attempts else None
             if not final_c and status == STATUS_SUCCEEDED and verdict != CRITIQUE_VERDICT_CORRECT:
                 issues["empty_critique"] += 1
-
     except Exception:
         issues["parse_error"] += 1
 
@@ -172,29 +195,31 @@ def check_debate_issues(file_path: Path) -> Dict[str, int]:
     issues = defaultdict(int)
 
     try:
-        data = load_json(file_path, [])
-        if not isinstance(data, list):
-            issues["invalid_format"] += 1
+        try:
+            data = load_debate_entries(file_path)
+        except json.JSONDecodeError:
+            issues["parse_error"] += 1
+            return issues
+        except Exception as exc:
+            if "Expected list" in str(exc):
+                issues["invalid_format"] += 1
+            else:
+                issues["schema_error"] += 1
             return issues
 
-        for idx, entry in enumerate(data):
-            if not isinstance(entry, dict):
-                issues["invalid_entry"] += 1
+        for entry in data:
+            if not entry:
                 continue
 
             # Check for empty debates
-            history = entry.get("history", [])
+            history = entry.history
             if not history:
                 issues["empty_debate"] += 1
 
             # Check for malformed history entries
             for round_entry in history:
-                if not isinstance(round_entry, dict):
-                    issues["invalid_round"] += 1
-                    continue
-                if "message" not in round_entry or "speaker" not in round_entry:
+                if not round_entry.message or not round_entry.speaker:
                     issues["incomplete_round"] += 1
-
     except Exception:
         issues["parse_error"] += 1
 
@@ -206,23 +231,22 @@ def check_evaluation_issues(file_path: Path) -> Dict[str, int]:
     issues = defaultdict(int)
 
     try:
-        data = load_json(file_path, {})
-        if not isinstance(data, dict):
-            issues["invalid_format"] += 1
+        try:
+            payload = load_evaluation_entries(file_path)
+        except json.JSONDecodeError:
+            issues["parse_error"] += 1
+            return issues
+        except Exception as exc:
+            if "Invalid evaluation file format" in str(exc):
+                issues["invalid_format"] += 1
+            else:
+                issues["schema_error"] += 1
             return issues
 
-        # New format: {"decisions": [...]}
-        decisions = data.get("decisions", [])
-        if not isinstance(decisions, list):
-            issues["invalid_format"] += 1
-            return issues
+        decisions = payload.decisions
 
         for evaluation in decisions:
-            if not isinstance(evaluation, dict):
-                issues["invalid_entry"] += 1
-                continue
-
-            verdict = evaluation.get("verdict")
+            verdict = evaluation.verdict
 
             if verdict == JUDGE_VERDICT_UNKNOWN:
                 issues["unknown_verdict"] += 1
@@ -230,13 +254,13 @@ def check_evaluation_issues(file_path: Path) -> Dict[str, int]:
                 issues["invalid_verdict"] += 1
 
             # Check for missing fields
-            if not evaluation.get("reasoning"):
+            if not evaluation.reasoning:
                 issues["missing_reasoning"] += 1
-            if not evaluation.get("judge_model"):
+            if not evaluation.judge_model:
                 issues["missing_judge"] += 1
 
             # Check confidence
-            confidence = evaluation.get("confidence")
+            confidence = evaluation.confidence
             if confidence is not None:
                 if not isinstance(confidence, int) or not (1 <= confidence <= 5):
                     issues["invalid_confidence"] += 1
@@ -246,12 +270,11 @@ def check_evaluation_issues(file_path: Path) -> Dict[str, int]:
                 issues["missing_confidence"] += 1
 
             # Check status
-            status = evaluation.get("status")
+            status = evaluation.status
             if status == STATUS_FAILED:
                 issues["failed_evaluation"] += 1
             elif status not in {STATUS_SUCCEEDED, STATUS_FAILED, None}:
                 issues["unknown_status"] += 1
-
     except Exception:
         issues["parse_error"] += 1
 

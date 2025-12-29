@@ -1,5 +1,4 @@
 import argparse
-import json
 import logging
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -27,62 +26,57 @@ from constants import (
     VALID_CRITIQUE_DEBATE_VERDICTS,
     VALID_ILLPOSED_DEBATE_VERDICTS,
 )
-from data_models import validate_evaluation_file
+from data_models import (
+    AnswerEntry,
+    AutomatedEvaluation,
+    CritiqueEntry,
+    DebateMessage,
+    EvaluationFile,
+    JudgingTask,
+    load_answer_entries,
+    load_benchmark_entries,
+    load_critique_entries,
+    load_debate_entries,
+    load_evaluation_entries,
+    save_evaluation_entries,
+)
 
 logger = logging.getLogger(__name__)
 
 load_dotenv()
 
 
-def load_json(path: Path, default):
-    if not path.exists():
-        return default
-    with path.open("r") as f:
-        return json.load(f)
+def load_decisions(path: Path) -> Dict[str, AutomatedEvaluation]:
+    payload = load_evaluation_entries(path)
+    return {entry.id: entry for entry in payload.decisions if entry.id}
 
 
-def save_json(path: Path, payload):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w") as f:
-        json.dump(payload, f, indent=2)
+def save_decisions(path: Path, decisions: Dict[str, AutomatedEvaluation]):
+    save_evaluation_entries(path, EvaluationFile(decisions=list(decisions.values())))
 
 
-def load_decisions(path: Path) -> Dict[str, Dict]:
-    payload = load_json(path, {"decisions": []})
-    decisions = {}
-    for entry in payload.get("decisions", []):
-        entry_id = entry.get("id")
-        if entry_id:
-            decisions[entry_id] = entry
-    return decisions
-
-
-def save_decisions(path: Path, decisions: Dict[str, Dict]):
-    payload = {"decisions": list(decisions.values())}
-    validate_evaluation_file(payload)
-    save_json(path, payload)
-
-
-def final_answer(entry: Dict) -> Optional[str]:
-    attempts = entry.get("attempts") or []
+def final_answer(entry: AnswerEntry) -> Optional[str]:
+    attempts = entry.attempts or []
     if not attempts:
         return None
-    return attempts[-1].get("answer")
+    return attempts[-1].answer
 
 
 def benchmark_answer_for_index(benchmark_dir: Path, q_slug: str, idx: int) -> Optional[str]:
     bench_path = benchmark_dir / f"{q_slug}.json"
-    entries = load_json(bench_path, [])
+    entries = load_benchmark_entries(bench_path)
     if idx >= len(entries):
         return None
     entry = entries[idx]
-    generations = entry.get("generation_rounds") or []
+    if not entry:
+        return None
+    generations = entry.generation_rounds or []
     if not generations:
         return None
-    refinements = generations[-1].get("refinement_rounds") or []
+    refinements = generations[-1].refinement_rounds or []
     if not refinements:
         return None
-    return refinements[-1].get("answer")
+    return refinements[-1].answer
 
 
 
@@ -110,25 +104,19 @@ def redact_text(text: str, redactions: Iterable[Tuple[str, str]]) -> str:
     return redacted
 
 
-def format_debate(history: List[Dict], redactions: Iterable[Tuple[str, str]], speaker_map: Dict[str, str]) -> str:
+def format_debate(
+    history: Optional[List[DebateMessage]],
+    redactions: Iterable[Tuple[str, str]],
+    speaker_map: Dict[str, str],
+) -> str:
     if not history:
         return "(No debate transcript available.)"
     lines = []
-    for idx, msg in enumerate(history):
-        # Validate message format
-        if not isinstance(msg, dict):
-            logger.warning(f"Invalid debate message format at index {idx}: expected dict, got {type(msg).__name__}")
-            continue
-        if "speaker" not in msg or "message" not in msg:
-            logger.warning(f"Debate message at index {idx} missing required fields (speaker/message): {msg.keys()}")
-            # Continue anyway with defaults
-
-        speaker = msg.get("speaker") or "Speaker"
-        speaker = speaker_map.get(speaker, speaker)
-        message = redact_text(msg.get("message", ""), redactions)
-        round_no = msg.get("round")
-        if round_no is not None:
-            lines.append(f"- {speaker} (round {round_no}): {message}")
+    for msg in history:
+        speaker = speaker_map.get(msg.speaker, msg.speaker)
+        message = redact_text(msg.message, redactions)
+        if msg.round is not None:
+            lines.append(f"- {speaker} (round {msg.round}): {message}")
         else:
             lines.append(f"- {speaker}: {message}")
     return "\n".join(lines)
@@ -140,56 +128,56 @@ def gather_illposed_tasks(
     benchmark_dir: Path,
     registry,
     allow_no_debate: bool = False,
-) -> List[Dict]:
+) -> List[JudgingTask]:
     tasks = []
     for debate_file in debates_dir.glob("illposed/*/*.json"):
         q_slug = debate_file.parent.name
         a_slug = debate_file.stem
-        debates = load_json(debate_file, [])
-        answers = load_json(answers_dir / q_slug / f"{a_slug}.json", [])
+        debates = load_debate_entries(debate_file)
+        answers = load_answer_entries(answers_dir / q_slug / f"{a_slug}.json")
         max_len = max(len(debates), len(answers))
         for idx in range(max_len):
-            debate = debates[idx] if idx < len(debates) else {}
-            answer_record = answers[idx] if idx < len(answers) else {}
-            status = answer_record.get("status")
+            debate = debates[idx] if idx < len(debates) else None
+            answer_record = answers[idx] if idx < len(answers) else None
+            status = answer_record.status if answer_record else None
             if status and status != STATUS_ILL_POSED:
                 continue
-            question = debate.get("question") or answer_record.get("question", "")
-            answer_text = final_answer(answer_record) or answer_record.get("answer") or ""
+            question = (debate.question if debate else "") or (answer_record.question if answer_record else "")
+            answer_text = final_answer(answer_record) if answer_record else ""
             if not answer_text:
                 answer_text = benchmark_answer_for_index(benchmark_dir, q_slug, idx) or ""
-            history = debate.get("history", [])
+            history = debate.history if debate else []
             if not question and not answer_text and not history:
                 continue
             if not history and not allow_no_debate:
                 logger.warning(f"Skipping illposed/{q_slug}/{a_slug}/{idx}: no debate history (use --allow-no-debate to override)")
                 continue
-            alice_model = registry.resolve_model_name(debate.get("alice_model") or a_slug)
-            bob_model = registry.resolve_model_name(debate.get("bob_model") or q_slug)
+            alice_model = registry.resolve_model_name((debate.alice_model if debate else None) or a_slug)
+            bob_model = registry.resolve_model_name((debate.bob_model if debate else None) or q_slug)
             tasks.append(
-                {
-                    "id": f"illposed/{q_slug}/{a_slug}/{idx}",
-                    "type": "illposed",
-                    "question": question,
-                    "answer": answer_text,
-                    "debate": history,
-                    "question_model": q_slug,
-                    "answer_model": a_slug,
-                    "alice_model": alice_model,
-                    "bob_model": bob_model,
-                    "run_id": debate.get("run_id") or answer_record.get("run_id"),
-                    "topic_slug": debate.get("topic_slug") or answer_record.get("topic_slug"),
-                }
+                JudgingTask(
+                    id=f"illposed/{q_slug}/{a_slug}/{idx}",
+                    type="illposed",
+                    question=question,
+                    answer=answer_text,
+                    debate_history=history,
+                    question_model=q_slug,
+                    answer_model=a_slug,
+                    alice_model=alice_model,
+                    bob_model=bob_model,
+                    run_id=(debate.run_id if debate else None) or (answer_record.run_id if answer_record else None),
+                    topic_slug=(debate.topic_slug if debate else None) or (answer_record.topic_slug if answer_record else None),
+                )
             )
     return tasks
 
 
-def last_critique_text(crit_entry: Dict) -> str:
-    attempts = crit_entry.get("attempts") or []
+def last_critique_text(crit_entry: CritiqueEntry) -> str:
+    attempts = crit_entry.attempts or []
     if not attempts:
         return ""
     last = attempts[-1]
-    return last.get("raw_critique") or str(last.get("notes") or "")
+    return last.raw_critique or str(last.notes or "")
 
 
 def gather_critique_tasks(
@@ -199,7 +187,7 @@ def gather_critique_tasks(
     benchmark_dir: Path,
     registry,
     allow_no_debate: bool = False,
-) -> List[Dict]:
+) -> List[JudgingTask]:
     tasks = []
     for mode_dir in critiques_dir.glob("*"):
         mode = mode_dir.name
@@ -210,60 +198,59 @@ def gather_critique_tasks(
                 if len(parts) != 2:
                     continue
                 critic_slug, answer_slug = parts
-                critiques = load_json(crit_file, [])
-                answers = load_json(answers_dir / q_slug / f"{answer_slug}.json", [])
-                debates = load_json(
-                    debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json",
-                    [],
+                critiques = load_critique_entries(crit_file)
+                answers = load_answer_entries(answers_dir / q_slug / f"{answer_slug}.json")
+                debates = load_debate_entries(
+                    debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                 )
                 for idx, crit_entry in enumerate(critiques):
-                    if not crit_entry or crit_entry.get("status") != STATUS_SUCCEEDED:
+                    if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
                         continue
-                    attempts = crit_entry.get("attempts") or []
-                    last_attempt = attempts[-1] if attempts else {}
-                    if last_attempt.get("verdict") == CRITIQUE_VERDICT_CORRECT:
+                    attempts = crit_entry.attempts or []
+                    last_attempt = attempts[-1] if attempts else None
+                    if last_attempt and last_attempt.verdict == CRITIQUE_VERDICT_CORRECT:
                         continue
-                    debate = debates[idx] if idx < len(debates) else {}
-                    question = debate.get("question") or crit_entry.get("question", "")
-                    answer_record = answers[idx] if idx < len(answers) else {}
-                    answer_text = final_answer(answer_record) or answer_record.get("answer") or ""
+                    debate = debates[idx] if idx < len(debates) else None
+                    question = (debate.question if debate else "") or crit_entry.question
+                    answer_record = answers[idx] if idx < len(answers) else None
+                    answer_text = final_answer(answer_record) if answer_record else ""
                     if not answer_text:
                         answer_text = benchmark_answer_for_index(benchmark_dir, q_slug, idx) or ""
                     critique_text = last_critique_text(crit_entry)
-                    history = debate.get("history", [])
+                    history = debate.history if debate else []
                     if not question and not critique_text and not history:
                         continue
                     if not history and not allow_no_debate:
                         logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: no debate history (use --allow-no-debate to override)")
                         continue
-                    alice_model = registry.resolve_model_name(debate.get("alice_model") or critic_slug)
-                    bob_model = registry.resolve_model_name(debate.get("bob_model") or answer_slug)
+                    alice_model = registry.resolve_model_name((debate.alice_model if debate else None) or critic_slug)
+                    bob_model = registry.resolve_model_name((debate.bob_model if debate else None) or answer_slug)
                     tasks.append(
-                        {
-                            "id": f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}",
-                            "type": "critique",
-                            "mode": mode,
-                            "question": question,
-                            "answer": answer_text,
-                            "critique": critique_text,
-                            "debate": history,
-                            "question_model": q_slug,
-                            "answer_model": answer_slug,
-                            "critic_model": critic_slug,
-                            "alice_model": alice_model,
-                            "bob_model": bob_model,
-                            "run_id": debate.get("run_id") or crit_entry.get("run_id"),
-                            "topic_slug": debate.get("topic_slug") or crit_entry.get("topic_slug"),
-                        }
+                        JudgingTask(
+                            id=f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}",
+                            type="critique",
+                            mode=mode,
+                            question=question,
+                            answer=answer_text,
+                            critique=critique_text,
+                            debate_history=history,
+                            question_model=q_slug,
+                            answer_model=answer_slug,
+                            critic_model=critic_slug,
+                            alice_model=alice_model,
+                            bob_model=bob_model,
+                            run_id=(debate.run_id if debate else None) or crit_entry.run_id,
+                            topic_slug=(debate.topic_slug if debate else None) or crit_entry.topic_slug,
+                        )
                     )
     return tasks
 
 
-def build_illposed_prompt(task: Dict, guidance_q: str, guidance_j: str, registry) -> str:
-    redactions, speaker_map = build_redactions(registry, task["alice_model"], task["bob_model"])
-    question = redact_text(task.get("question", ""), redactions)
-    answer = redact_text(task.get("answer", ""), redactions)
-    debate = format_debate(task.get("debate", []), redactions, speaker_map)
+def build_illposed_prompt(task: JudgingTask, guidance_q: str, guidance_j: str, registry) -> str:
+    redactions, speaker_map = build_redactions(registry, task.alice_model or "", task.bob_model or "")
+    question = redact_text(task.question or "", redactions)
+    answer = redact_text(task.answer or "", redactions)
+    debate = format_debate(task.debate_history, redactions, speaker_map)
     return (
         "You are a neutral judge. Your task: Determine if ALICE'S CLAIM is valid.\n"
         "Alice claims the question is ill-posed. Bob defends that it is well-posed.\n"
@@ -295,12 +282,12 @@ def build_illposed_prompt(task: Dict, guidance_q: str, guidance_j: str, registry
     )
 
 
-def build_critique_prompt(task: Dict, guidance_a: str, guidance_c: str, guidance_j: str, registry) -> str:
-    redactions, speaker_map = build_redactions(registry, task["alice_model"], task["bob_model"])
-    question = redact_text(task.get("question", ""), redactions)
-    answer = redact_text(task.get("answer", ""), redactions)
-    critique = redact_text(task.get("critique", ""), redactions)
-    debate = format_debate(task.get("debate", []), redactions, speaker_map)
+def build_critique_prompt(task: JudgingTask, guidance_a: str, guidance_c: str, guidance_j: str, registry) -> str:
+    redactions, speaker_map = build_redactions(registry, task.alice_model or "", task.bob_model or "")
+    question = redact_text(task.question or "", redactions)
+    answer = redact_text(task.answer or "", redactions)
+    critique = redact_text(task.critique or "", redactions)
+    debate = format_debate(task.debate_history, redactions, speaker_map)
     return (
         "You are a neutral judge. Your task: Determine if ALICE'S CRITIQUE is correct.\n"
         "Alice claims Bob's answer has errors/issues. Bob defends the answer.\n"
@@ -379,7 +366,7 @@ def parse_confidence(raw) -> int:
         raise ValueError(f"Invalid confidence value: {raw}") from e
 
 
-def parse_judgment(text: str, task: Dict) -> Dict:
+def parse_judgment(text: str, task: JudgingTask, judge_slug: str) -> AutomatedEvaluation:
     schema_hint = (
         '{"verdict": "...", "confidence": "...", "reasoning": "..."}'
     )
@@ -393,35 +380,35 @@ def parse_judgment(text: str, task: Dict) -> Dict:
         try:
             confidence = parse_confidence(parsed.get("confidence"))
         except ValueError as e:
-            logger.warning(f"Failed to parse confidence for task {task.get('id')}: {e}")
+            logger.warning(f"Failed to parse confidence for task {task.id}: {e}")
             confidence = None
             # Mark as failed if confidence is required but missing/invalid
             verdict = JUDGE_VERDICT_UNKNOWN
         reasoning = parsed.get("reasoning", None)
-    if task["type"] == "illposed":
+    if task.type == "illposed":
         verdict = normalize_illposed_verdict(verdict)
     else:
         verdict = normalize_critique_verdict(verdict)
     status = STATUS_SUCCEEDED if verdict not in {JUDGE_VERDICT_UNKNOWN, "invalid"} else STATUS_FAILED
-    return {
-        "id": task["id"],
-        "type": task["type"],
-        "mode": task.get("mode"),
-        "question_model": task.get("question_model"),
-        "answer_model": task.get("answer_model"),
-        "critic_model": task.get("critic_model"),
-        "verdict": verdict,
-        "confidence": confidence,
-        "reasoning": reasoning,
-        "status": status,
-        "raw_response": text,
-        "run_id": task.get("run_id"),
-        "topic_slug": task.get("topic_slug"),
-        "judge_model": task.get("judge_model"),  # Track which model made the judgment
-    }
+    return AutomatedEvaluation(
+        id=task.id,
+        type=task.type,
+        mode=task.mode,
+        question_model=task.question_model,
+        answer_model=task.answer_model,
+        critic_model=task.critic_model,
+        verdict=verdict,
+        confidence=confidence,
+        reasoning=reasoning,
+        status=status,
+        raw_response=text,
+        run_id=task.run_id,
+        topic_slug=task.topic_slug,
+        judge_model=judge_slug,
+    )
 
 
-def chunked(items: List[Dict], size: Optional[int]) -> Iterable[List[Dict]]:
+def chunked(items: List[JudgingTask], size: Optional[int]) -> Iterable[List[JudgingTask]]:
     if not size or size <= 0:
         yield items
         return
@@ -468,7 +455,7 @@ def main():
     guidance_j_illposed = load_judgment_illposed_guidance()
     guidance_j_critique = load_judgment_critique_guidance()
 
-    tasks: List[Dict] = []
+    tasks: List[JudgingTask] = []
     if args.mode in {"illposed", "all"}:
         tasks.extend(gather_illposed_tasks(args.debates_dir, args.answers_dir, args.benchmark_dir, registry, args.allow_no_debate))
     if args.mode in {"critiques", "all"}:
@@ -484,21 +471,21 @@ def main():
         )
 
     judges = registry.pick(args.models) if args.models else list(registry.models.values())
-    jobs_by_judge: Dict[str, Dict] = {spec.name: {"spec": spec, "tasks": []} for spec in judges}
+    jobs_by_judge: Dict[str, Dict[str, object]] = {spec.name: {"spec": spec, "tasks": []} for spec in judges}
 
     for task in tasks:
-        participants = {task.get("alice_model"), task.get("bob_model")}
+        participants = {task.alice_model, task.bob_model}
         for spec in judges:
             if spec.name in participants:
                 continue
             jobs_by_judge[spec.name]["tasks"].append(task)
 
-    def process_judge(spec: ModelSpec, tasks_for_judge: List[Dict]) -> int:
+    def process_judge(spec: ModelSpec, tasks_for_judge: List[JudgingTask]) -> int:
         out_path = args.output_dir / f"{spec.slug}.json"
         decisions = load_decisions(out_path)
         pending = []
         for task in tasks_for_judge:
-            if not args.overwrite and task["id"] in decisions:
+            if not args.overwrite and task.id in decisions:
                 continue
             pending.append(task)
             if args.limit is not None and len(pending) >= args.limit:
@@ -509,7 +496,7 @@ def main():
         for batch in chunked(pending, args.batch_size):
             prompts = []
             for task in batch:
-                if task["type"] == "illposed":
+                if task.type == "illposed":
                     prompt = build_illposed_prompt(task, guidance_q, guidance_j_illposed, registry)
                 else:
                     prompt = build_critique_prompt(task, guidance_a, guidance_c, guidance_j_critique, registry)
@@ -526,9 +513,8 @@ def main():
                 logger.error(f"Judge batch failed for {spec.name}: {exc}")
                 continue
             for task, response in zip(batch, responses):
-                decision = parse_judgment(response, task)
-                decision["judge_model"] = spec.slug
-                decisions[task["id"]] = decision
+                decision = parse_judgment(response, task, spec.slug)
+                decisions[task.id] = decision
             save_decisions(out_path, decisions)
             logger.info(f"{spec.pretty}: saved {len(batch)} evaluations")
         return len(pending)

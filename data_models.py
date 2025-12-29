@@ -7,6 +7,8 @@ throughout the pipeline, catching data corruption early and ensuring consistency
 See docs/schema.md for detailed schema documentation.
 """
 
+import json
+from pathlib import Path
 from typing import List, Optional, Dict, Any, Literal, Type, TypeVar
 from pydantic import BaseModel, Field, field_validator
 from constants import (
@@ -30,6 +32,9 @@ class RefinementAttempt(BaseModel):
     round: int = Field(ge=1, description="Round number (1-indexed)")
     question: str = Field(description="Question text for this attempt")
     answer: str = Field(description="Answer text for this attempt")
+    raw_answer: Optional[str] = Field(
+        None, description="Raw answer text before any cleaning"
+    )
     evaluation: Dict[str, Any] = Field(
         description="Self-check evaluation (verdict, ill_posed, issues, improvements)"
     )
@@ -111,6 +116,9 @@ class AnswerEntry(BaseModel):
     question: str = Field(description="The question being answered")
     run_id: Optional[str] = Field(None, description="Run identifier")
     topic_slug: Optional[str] = Field(None, description="Topic slug")
+    ill_posed_claim: Optional[Dict[str, Any]] = Field(
+        None, description="Claim details if answer marked ill-posed"
+    )
     status: Literal["succeeded", "failed", "ill-posed"] = Field(
         description="Answer generation status"
     )
@@ -136,6 +144,9 @@ class CritiqueAttempt(BaseModel):
     """A single critique attempt in self-improvement loop."""
 
     round: int = Field(ge=1, description="Round number")
+    cleaned_critique: Optional[str] = Field(
+        None, description="Cleaned critique text"
+    )
     raw_critique: str = Field(description="Raw critique text from model")
     verdict: str = Field(description="Parsed verdict")
     notes: str = Field(description="Parsed critique notes")
@@ -212,6 +223,8 @@ class DebateEntry(BaseModel):
     alice_model: str = Field(description="Model playing Alice role")
     bob_model: str = Field(description="Model playing Bob role")
     claimant: Optional[str] = Field(None, description="Model making the claim")
+    answer_author: Optional[str] = Field(None, description="Answer author (critique debates)")
+    critic: Optional[str] = Field(None, description="Critic model (critique debates)")
     history: List[DebateMessage] = Field(description="Debate transcript")
 
     @field_validator("history")
@@ -242,10 +255,12 @@ class AutomatedEvaluation(BaseModel):
     type: Literal["illposed", "critique", "critique_debate"] = Field(
         description="Type of evaluation task"
     )
+    mode: Optional[str] = Field(None, description="Critique mode")
     question_model: Optional[str] = Field(None, description="Question author")
     question: Optional[str] = Field(None, description="Question text")
     answer_model: Optional[str] = Field(None, description="Answer author")
     answer: Optional[str] = Field(None, description="Answer text")
+    critic_model: Optional[str] = Field(None, description="Critic model")
     claim: Optional[str] = Field(None, description="Claim being judged")
     claimant: Optional[str] = Field(None, description="Model making claim")
     defender: Optional[str] = Field(None, description="Model defending answer")
@@ -259,6 +274,9 @@ class AutomatedEvaluation(BaseModel):
     status: Optional[Literal["succeeded", "failed"]] = Field(
         None, description="Judgment status"
     )
+    raw_response: Optional[str] = Field(None, description="Raw judge response")
+    run_id: Optional[str] = Field(None, description="Run identifier")
+    topic_slug: Optional[str] = Field(None, description="Topic slug")
 
     @field_validator("type")
     @classmethod
@@ -295,6 +313,87 @@ class EvaluationFile(BaseModel):
     decisions: List[AutomatedEvaluation] = Field(
         description="List of automated evaluation decisions"
     )
+
+
+# ============================================================================
+# Human Evaluation Models
+# ============================================================================
+
+
+class HumanEvaluation(BaseModel):
+    """A human judgment for labeling tasks."""
+
+    id: str = Field(description="Unique task identifier")
+    type: Literal["illposed", "critique"] = Field(
+        description="Type of evaluation task"
+    )
+    mode: Optional[str] = Field(None, description="Critique mode")
+    question_model: Optional[str] = Field(None, description="Question author")
+    answer_model: Optional[str] = Field(None, description="Answer author")
+    critic_model: Optional[str] = Field(None, description="Critic model")
+    verdict: str = Field(description="Human verdict")
+    confidence: Optional[int] = Field(None, ge=1, le=5, description="Confidence level (1-5)")
+    comment: Optional[str] = Field(None, description="Optional comment")
+
+    @field_validator("verdict")
+    @classmethod
+    def validate_verdict(cls, v: str, info) -> str:
+        eval_type = info.data.get("type")
+        illposed_verdicts = {
+            "ill-posed",
+            "not ill-posed",
+            "ill-posed but wrong reason",
+            "correct",
+            "incorrect",
+            "unknown",
+            "invalid",
+        }
+        critique_verdicts = {
+            "incorrect",
+            "correct",
+            "incorrect but wrong reason",
+            "unknown",
+            "invalid",
+        }
+        if eval_type == "illposed" and v not in illposed_verdicts:
+            raise ValueError(f"Invalid ill-posed verdict: {v}")
+        if eval_type == "critique" and v not in critique_verdicts:
+            raise ValueError(f"Invalid critique verdict: {v}")
+        return v
+
+
+class HumanEvaluationFile(BaseModel):
+    """Container for human evaluations."""
+
+    decisions: List[HumanEvaluation] = Field(
+        description="List of human evaluation decisions"
+    )
+
+
+# ============================================================================
+# Judging Task Models
+# ============================================================================
+
+
+class JudgingTask(BaseModel):
+    """A task prepared for automated or human judging."""
+
+    id: str = Field(description="Unique task identifier")
+    type: Literal["illposed", "critique"] = Field(description="Task type")
+    mode: Optional[str] = Field(None, description="Critique mode")
+    question_model: Optional[str] = Field(None, description="Question author")
+    answer_model: Optional[str] = Field(None, description="Answer author")
+    critic_model: Optional[str] = Field(None, description="Critic model")
+    question: Optional[str] = Field(None, description="Question text")
+    answer: Optional[str] = Field(None, description="Answer text")
+    critique: Optional[str] = Field(None, description="Critique text")
+    debate_history: Optional[List[DebateMessage]] = Field(
+        None, description="Debate transcript"
+    )
+    alice_model: Optional[str] = Field(None, description="Alice role model")
+    bob_model: Optional[str] = Field(None, description="Bob role model")
+    run_id: Optional[str] = Field(None, description="Run identifier")
+    topic_slug: Optional[str] = Field(None, description="Topic slug")
 
 
 # ============================================================================
@@ -364,10 +463,113 @@ def validate_evaluation_file(data: Dict[str, Any]) -> EvaluationFile:
         decisions = data.get("decisions") or []
         validated = _validate_entries(AutomatedEvaluation, decisions)
         return EvaluationFile(decisions=validated)
-    # Legacy format: dict of task_id -> evaluation
-    elif isinstance(data, dict):
-        decisions = list(data.values())
-        validated = _validate_entries(AutomatedEvaluation, decisions)
-        return EvaluationFile(decisions=validated)
-    else:
-        raise ValueError("Invalid evaluation file format")
+    raise ValueError("Invalid evaluation file format")
+
+
+def load_model_list(path: Path, model: Type[ModelT]) -> List[Optional[ModelT]]:
+    if not path.exists():
+        return []
+    data = json.loads(path.read_text())
+    if not isinstance(data, list):
+        raise ValueError(f"Expected list in {path}, got {type(data).__name__}")
+    parsed: List[Optional[ModelT]] = []
+    for idx, entry in enumerate(data):
+        if not entry:
+            parsed.append(None)
+            continue
+        try:
+            parsed.append(model(**entry))
+        except Exception as exc:
+            raise ValueError(f"Invalid entry at index {idx} in {path}: {exc}") from exc
+    return parsed
+
+
+def save_model_list(path: Path, items: List[Optional[BaseModel]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload: List[Dict[str, Any]] = []
+    for item in items:
+        if item is None:
+            payload.append({})
+        else:
+            payload.append(item.model_dump(exclude_none=True))
+    path.write_text(json.dumps(payload, indent=2))
+
+
+def load_benchmark_entries(path: Path) -> List[Optional[BenchmarkEntry]]:
+    return load_model_list(path, BenchmarkEntry)
+
+
+def load_answer_entries(path: Path) -> List[Optional[AnswerEntry]]:
+    return load_model_list(path, AnswerEntry)
+
+
+def load_critique_entries(path: Path) -> List[Optional[CritiqueEntry]]:
+    return load_model_list(path, CritiqueEntry)
+
+
+def load_debate_entries(path: Path) -> List[Optional[DebateEntry]]:
+    return load_model_list(path, DebateEntry)
+
+
+def save_benchmark_entries(path: Path, entries: List[Optional[BenchmarkEntry]]) -> None:
+    save_model_list(path, entries)
+
+
+def save_answer_entries(path: Path, entries: List[Optional[AnswerEntry]]) -> None:
+    save_model_list(path, entries)
+
+
+def save_critique_entries(path: Path, entries: List[Optional[CritiqueEntry]]) -> None:
+    save_model_list(path, entries)
+
+
+def save_debate_entries(path: Path, entries: List[Optional[DebateEntry]]) -> None:
+    save_model_list(path, entries)
+
+
+def load_evaluation_entries(path: Path) -> EvaluationFile:
+    if not path.exists():
+        return EvaluationFile(decisions=[])
+    data = json.loads(path.read_text())
+    if not (isinstance(data, dict) and "decisions" in data):
+        raise ValueError(f"Invalid evaluation file format in {path}")
+    raw_decisions = data.get("decisions") or []
+    decisions: List[AutomatedEvaluation] = []
+    for idx, entry in enumerate(raw_decisions):
+        if not entry:
+            continue
+        try:
+            decisions.append(AutomatedEvaluation(**entry))
+        except Exception as exc:
+            raise ValueError(f"Invalid decision at index {idx} in {path}: {exc}") from exc
+    return EvaluationFile(decisions=decisions)
+
+
+def save_evaluation_entries(path: Path, payload: EvaluationFile) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    decisions = [entry.model_dump(exclude_none=True) for entry in payload.decisions]
+    path.write_text(json.dumps({"decisions": decisions}, indent=2))
+
+
+def load_human_evaluation_entries(path: Path) -> HumanEvaluationFile:
+    if not path.exists():
+        return HumanEvaluationFile(decisions=[])
+    data = json.loads(path.read_text())
+    if not (isinstance(data, dict) and "decisions" in data):
+        raise ValueError(f"Invalid human evaluation file format in {path}")
+    raw_decisions = data.get("decisions") or []
+    decisions: List[HumanEvaluation] = []
+    for idx, entry in enumerate(raw_decisions):
+        if not entry:
+            continue
+        try:
+            decisions.append(HumanEvaluation(**entry))
+        except Exception as exc:
+            raise ValueError(f"Invalid human decision at index {idx} in {path}: {exc}") from exc
+    return HumanEvaluationFile(decisions=decisions)
+
+
+def save_human_evaluation_entries(path: Path, payload: HumanEvaluationFile) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    decisions = [entry.model_dump(exclude_none=True) for entry in payload.decisions]
+    path.write_text(json.dumps({"decisions": decisions}, indent=2))

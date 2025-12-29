@@ -18,72 +18,87 @@ from prompt_library import (
 from model_api import query_llm_single
 from utils import safe_load_json, clean_math, setup_logging
 from constants import CRITIQUE_VERDICT_CORRECT, STATUS_ILL_POSED, STATUS_SUCCEEDED
-from data_models import validate_debate_file
+from data_models import (
+    AnswerAttempt,
+    AnswerEntry,
+    BenchmarkEntry,
+    CritiqueAttempt,
+    CritiqueEntry,
+    DebateEntry,
+    DebateMessage,
+    load_answer_entries,
+    load_benchmark_entries,
+    load_critique_entries,
+    load_debate_entries,
+    save_debate_entries,
+)
 
 logger = logging.getLogger(__name__)
 
 load_dotenv()
 
 
-def load_json(path: Path, default):
-    if not path.exists():
-        return default
-    with path.open("r") as f:
-        return json.load(f)
-
-
-def final_answer(entry: Dict) -> Optional[str]:
-    attempts = entry.get("attempts") or []
+def final_answer(entry: AnswerEntry) -> Optional[str]:
+    attempts = entry.attempts or []
     if not attempts:
         return None
-    return attempts[-1].get("answer")
+    return attempts[-1].answer
 
 
-def resolved_critique_text(entry: Dict) -> str:
-    attempts = entry.get("attempts") or []
+def resolved_critique_text(entry: CritiqueEntry) -> str:
+    attempts = entry.attempts or []
     if attempts:
         last = attempts[-1]
-        if last.get("raw_critique"):
-            return last["raw_critique"]
-        if last.get("notes"):
-            return str(last["notes"])
+        if last.raw_critique:
+            return last.raw_critique
+        if last.notes:
+            return str(last.notes)
     return ""
 
 
-def final_critique_verdict(entry: Dict) -> Optional[str]:
-    attempts = entry.get("attempts") or []
+def final_critique_verdict(entry: CritiqueEntry) -> Optional[str]:
+    attempts = entry.attempts or []
     if not attempts:
         return None
-    return attempts[-1].get("verdict")
+    return attempts[-1].verdict
 
 
-def benchmark_answers(question_model_slug: str, benchmark_entries: List[Dict]) -> List[Dict]:
-    answers: List[Dict] = []
+def benchmark_answers(question_model_slug: str, benchmark_entries: List[Optional[BenchmarkEntry]]) -> List[Optional[AnswerEntry]]:
+    answers: List[Optional[AnswerEntry]] = []
     for entry in benchmark_entries:
-        gen_rounds = entry.get("generation_rounds") or []
-        if not gen_rounds:
-            answers.append({})
+        if not entry:
+            answers.append(None)
             continue
-        refinements = gen_rounds[-1].get("refinement_rounds") or []
+        gen_rounds = entry.generation_rounds or []
+        if not gen_rounds:
+            answers.append(None)
+            continue
+        refinements = gen_rounds[-1].refinement_rounds or []
         if not refinements:
-            answers.append({})
+            answers.append(None)
             continue
         last_ref = refinements[-1]
+        attempts = [
+            AnswerAttempt(
+                round=att.round,
+                answer=att.answer,
+                raw_answer=att.raw_answer,
+                evaluation=att.evaluation,
+            )
+            for att in refinements
+        ]
         answers.append(
-            {
-                "answer_model": question_model_slug,
-                "answer": last_ref.get("answer"),
-                "status": entry.get("status"),
-                "attempts": refinements,
-            }
+            AnswerEntry(
+                question_model=question_model_slug,
+                answer_model=question_model_slug,
+                question=last_ref.question,
+                run_id=entry.run_id,
+                topic_slug=entry.topic_slug,
+                status=entry.status,
+                attempts=attempts,
+            )
         )
     return answers
-
-
-def save_json(path: Path, payload):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w") as f:
-        json.dump(payload, f, indent=2)
 
 
 def run_round(
@@ -92,10 +107,7 @@ def run_round(
     user_message: str,
     temperature: float,
     reasoning: Optional[str],
-) -> Dict:
-    """
-    Returns a dict with 'message' and 'concede' fields.
-    """
+) -> Tuple[str, bool]:
     reply = query_llm_single(
         speaker_model,
         user_message,
@@ -106,17 +118,14 @@ def run_round(
     )
     parsed = safe_load_json(reply)
     if isinstance(parsed, dict) and "message" in parsed:
-        return {
-            "message": clean_math(parsed["message"]),
-            "concede": parsed.get("concede", False)
-        }
+        return clean_math(parsed["message"]), parsed.get("concede", False)
     # Fallback if JSON parsing fails
-    return {"message": clean_math(reply), "concede": False}
+    return clean_math(reply), False
 
 
-def check_concession(response: Dict) -> bool:
+def check_concession(concede: bool) -> bool:
     """Check if the response contains a concession via the 'concede' field."""
-    return response.get("concede", False)
+    return bool(concede)
 
 
 def illposed_debate(
@@ -132,8 +141,8 @@ def illposed_debate(
     claimant_temp: float,
     claimant_reason: Optional[str],
     allow_concede: bool,
-) -> List[Dict]:
-    history = []
+) -> List[DebateMessage]:
+    history: List[DebateMessage] = []
     system_prompt_owner = (
         "You are Bob, defending the well-posedness of your question. Use the guidance to rebut the ill-posedness claim."
         f"\nQuestion quality guidance:\n{guidance_q}\n\n"
@@ -149,20 +158,20 @@ def illposed_debate(
         "Respond with a short defense as Bob."
     )
     for r in range(1, rounds + 1):
-        owner_reply = run_round(defender_model, system_prompt_owner, last_message, defender_temp, defender_reason)
-        history.append({"round": r, "speaker": "Bob", "message": owner_reply["message"], "concede": owner_reply["concede"]})
-        if allow_concede and check_concession(owner_reply):
+        owner_message, owner_concede = run_round(defender_model, system_prompt_owner, last_message, defender_temp, defender_reason)
+        history.append(DebateMessage(round=r, speaker="Bob", message=owner_message, concede=owner_concede))
+        if allow_concede and check_concession(owner_concede):
             break
         claimant_prompt = (
-            f"Bob responded:\n{owner_reply['message']}\n\nQuestion:\n{question}\n\n"
+            f"Bob responded:\n{owner_message}\n\nQuestion:\n{question}\n\n"
             "Restate your ill-posedness reasoning or acknowledge if the defense resolves your concerns as Alice."
         )
-        claimant_reply = run_round(claimant_model, system_prompt_claimant, claimant_prompt, claimant_temp, claimant_reason)
-        history.append({"round": r, "speaker": "Alice", "message": claimant_reply["message"], "concede": claimant_reply["concede"]})
-        if allow_concede and check_concession(claimant_reply):
+        claimant_message, claimant_concede = run_round(claimant_model, system_prompt_claimant, claimant_prompt, claimant_temp, claimant_reason)
+        history.append(DebateMessage(round=r, speaker="Alice", message=claimant_message, concede=claimant_concede))
+        if allow_concede and check_concession(claimant_concede):
             break
         last_message = (
-            f"Alice replied:\n{claimant_reply['message']}\n\nQuestion:\n{question}\n"
+            f"Alice replied:\n{claimant_message}\n\nQuestion:\n{question}\n"
             "Respond briefly to move the discussion forward as Bob."
         )
     return history
@@ -183,8 +192,8 @@ def critique_debate(
     critic_temp: float,
     critic_reason: Optional[str],
     allow_concede: bool,
-) -> List[Dict]:
-    history = []
+) -> List[DebateMessage]:
+    history: List[DebateMessage] = []
     system_prompt_author = (
         "You are Bob, responding to Alice's critique of your answer. Be concise and correct errors when valid."
         f"\nAnswer quality guidance:\n{guidance_a}\n\n"
@@ -200,20 +209,20 @@ def critique_debate(
         "Respond briefly as Bob."
     )
     for r in range(1, rounds + 1):
-        author_reply = run_round(defender_model, system_prompt_author, last_message, author_temp, author_reason)
-        history.append({"round": r, "speaker": "Bob", "message": author_reply["message"], "concede": author_reply["concede"]})
-        if allow_concede and check_concession(author_reply):
+        author_message, author_concede = run_round(defender_model, system_prompt_author, last_message, author_temp, author_reason)
+        history.append(DebateMessage(round=r, speaker="Bob", message=author_message, concede=author_concede))
+        if allow_concede and check_concession(author_concede):
             break
         critic_prompt = (
-            f"Bob replied:\n{author_reply['message']}\n\nOriginal critique:\n{critique}\n\nQuestion:\n{question}\n"
+            f"Bob replied:\n{author_message}\n\nOriginal critique:\n{critique}\n\nQuestion:\n{question}\n"
             "Follow up concisely as Alice."
         )
-        critic_reply = run_round(claimant_model, system_prompt_critic, critic_prompt, critic_temp, critic_reason)
-        history.append({"round": r, "speaker": "Alice", "message": critic_reply["message"], "concede": critic_reply["concede"]})
-        if allow_concede and check_concession(critic_reply):
+        critic_message, critic_concede = run_round(claimant_model, system_prompt_critic, critic_prompt, critic_temp, critic_reason)
+        history.append(DebateMessage(round=r, speaker="Alice", message=critic_message, concede=critic_concede))
+        if allow_concede and check_concession(critic_concede):
             break
         last_message = (
-            f"Alice replied:\n{critic_reply['message']}\n\nQuestion:\n{question}\nAnswer:\n{answer}\n"
+            f"Alice replied:\n{critic_message}\n\nQuestion:\n{question}\nAnswer:\n{answer}\n"
             "Respond briefly as Bob."
         )
     return history
@@ -261,14 +270,14 @@ def main():
                 answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_model_slug), None)
                 if not answer_model:
                     continue
-                records = load_json(answer_file, [])
+                records = load_answer_entries(answer_file)
                 for idx, rec in enumerate(records):
                     if args.limit is not None and total_tasks >= args.limit:
                         break
-                    if rec.get("status") != STATUS_ILL_POSED:
+                    if not rec or rec.status != STATUS_ILL_POSED:
                         continue
                     debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
-                    existing = load_json(debate_path, [])
+                    existing = load_debate_entries(debate_path)
                     if len(existing) > idx and existing[idx]:
                         continue
                     total_tasks += 1
@@ -290,18 +299,18 @@ def main():
                 answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_model_slug), None)
                 if not answer_model:
                     continue
-                records = load_json(answer_file, [])
+                records = load_answer_entries(answer_file)
 
                 # Load debate file once per answer_file instead of per record
                 debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
-                existing = load_json(debate_path, [])
+                existing = load_debate_entries(debate_path)
 
                 for idx, rec in enumerate(records):
                     if args.limit is not None and debates >= args.limit:
                         break
-                    if rec.get("status") != STATUS_ILL_POSED:
+                    if not rec or rec.status != STATUS_ILL_POSED:
                         continue
-                    claim = rec.get("ill_posed_claim", {})
+                    claim = rec.ill_posed_claim or {}
 
                     if len(existing) > idx and existing[idx]:
                         continue
@@ -310,7 +319,7 @@ def main():
                         history = illposed_debate(
                             question_model.name,
                             answer_model.name,
-                            rec.get("question", ""),
+                            rec.question,
                             claim,
                             args.rounds,
                             guidance_q,
@@ -322,18 +331,17 @@ def main():
                             not args.no_allow_concede,
                         )
                         if len(existing) <= idx:
-                            existing.extend([{} for _ in range(idx - len(existing) + 1)])
-                        existing[idx] = {
-                            "question": rec.get("question"),
-                            "alice_model": answer_model.slug,
-                            "bob_model": question_model.slug,
-                            "claimant": answer_model.slug,
-                            "run_id": rec.get("run_id"),
-                            "topic_slug": rec.get("topic_slug"),
-                            "history": history,
-                        }
-                        validate_debate_file(existing)
-                        save_json(debate_path, existing)
+                            existing.extend([None for _ in range(idx - len(existing) + 1)])
+                        existing[idx] = DebateEntry(
+                            question=rec.question,
+                            alice_model=answer_model.slug,
+                            bob_model=question_model.slug,
+                            claimant=answer_model.slug,
+                            run_id=rec.run_id,
+                            topic_slug=rec.topic_slug,
+                            history=history,
+                        )
+                        save_debate_entries(debate_path, existing)
                         debates += 1
                         pbar.update(1)
                     except Exception as e:
@@ -356,7 +364,7 @@ def main():
                 question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
                 if not question_model:
                     continue
-                benchmark_entries = load_json(args.benchmark_dir / f"{q_slug}.json", [])
+                benchmark_entries = load_benchmark_entries(args.benchmark_dir / f"{q_slug}.json")
                 for crit_file in q_dir.glob("*.json"):
                     parts = crit_file.stem.split("__")
                     if len(parts) != 2:
@@ -366,21 +374,21 @@ def main():
                     answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_slug), None)
                     if not critic_model or not answer_model:
                         continue
-                    critiques = load_json(crit_file, [])
-                    answers = load_json(args.answers_dir / q_slug / f"{answer_slug}.json", [])
+                    critiques = load_critique_entries(crit_file)
+                    answers = load_answer_entries(args.answers_dir / q_slug / f"{answer_slug}.json")
                     if not answers and answer_slug == q_slug:
                         answers = benchmark_answers(q_slug, benchmark_entries)
                     for idx, crit_entry in enumerate(critiques):
                         if args.limit is not None and total_tasks >= args.limit:
                             break
-                        if not crit_entry or crit_entry.get("status") != STATUS_SUCCEEDED:
+                        if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
                             continue
                         if final_critique_verdict(crit_entry) == CRITIQUE_VERDICT_CORRECT:
                             continue
                         if idx >= len(answers):
                             continue
                         debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
-                        existing = load_json(debate_path, [])
+                        existing = load_debate_entries(debate_path)
                         if len(existing) > idx and existing[idx]:
                             continue
                         total_tasks += 1
@@ -400,7 +408,7 @@ def main():
                 question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
                 if not question_model:
                     continue
-                benchmark_entries = load_json(args.benchmark_dir / f"{q_slug}.json", [])
+                benchmark_entries = load_benchmark_entries(args.benchmark_dir / f"{q_slug}.json")
                 for crit_file in q_dir.glob("*.json"):
                     parts = crit_file.stem.split("__")
                     if len(parts) != 2:
@@ -410,19 +418,19 @@ def main():
                     answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_slug), None)
                     if not critic_model or not answer_model:
                         continue
-                    critiques = load_json(crit_file, [])
-                    answers = load_json(args.answers_dir / q_slug / f"{answer_slug}.json", [])
+                    critiques = load_critique_entries(crit_file)
+                    answers = load_answer_entries(args.answers_dir / q_slug / f"{answer_slug}.json")
                     if not answers and answer_slug == q_slug:
                         answers = benchmark_answers(q_slug, benchmark_entries)
 
                     # Load debate file once per critique file instead of per record
                     debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
-                    existing = load_json(debate_path, [])
+                    existing = load_debate_entries(debate_path)
 
                     for idx, crit_entry in enumerate(critiques):
                         if args.limit is not None and debates >= args.limit:
                             break
-                        if not crit_entry or crit_entry.get("status") != STATUS_SUCCEEDED:
+                        if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
                             continue
                         if final_critique_verdict(crit_entry) == CRITIQUE_VERDICT_CORRECT:
                             continue
@@ -432,6 +440,8 @@ def main():
 
                         if len(existing) > idx and existing[idx]:
                             continue
+                        if not answer_entry:
+                            continue
                         answer_text = final_answer(answer_entry) or ""
                         critique_text = resolved_critique_text(crit_entry)
 
@@ -439,7 +449,7 @@ def main():
                             history = critique_debate(
                                 answer_model.name,
                                 critic_model.name,
-                                crit_entry.get("question", ""),
+                                crit_entry.question,
                                 answer_text,
                                 critique_text,
                                 args.rounds,
@@ -453,19 +463,18 @@ def main():
                                 not args.no_allow_concede,
                             )
                             if len(existing) <= idx:
-                                existing.extend([{} for _ in range(idx - len(existing) + 1)])
-                            existing[idx] = {
-                                "question": crit_entry.get("question"),
-                                "alice_model": critic_model.slug,
-                                "bob_model": answer_model.slug,
-                                "run_id": crit_entry.get("run_id"),
-                                "topic_slug": crit_entry.get("topic_slug"),
-                                "answer_author": answer_model.slug,
-                                "critic": critic_model.slug,
-                                "history": history,
-                            }
-                            validate_debate_file(existing)
-                            save_json(debate_path, existing)
+                                existing.extend([None for _ in range(idx - len(existing) + 1)])
+                            existing[idx] = DebateEntry(
+                                question=crit_entry.question,
+                                alice_model=critic_model.slug,
+                                bob_model=answer_model.slug,
+                                run_id=crit_entry.run_id,
+                                topic_slug=crit_entry.topic_slug,
+                                answer_author=answer_model.slug,
+                                critic=critic_model.slug,
+                                history=history,
+                            )
+                            save_debate_entries(debate_path, existing)
                             debates += 1
                             pbar.update(1)
                         except Exception as e:

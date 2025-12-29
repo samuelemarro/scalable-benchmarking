@@ -1,22 +1,18 @@
 import argparse
 import json
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from constants import STATUS_ILL_POSED, STATUS_SUCCEEDED
-
-
-def load_json(path: Path, default):
-    if not path.exists():
-        return default
-    with path.open("r") as f:
-        return json.load(f)
-
-
-def save_json(path: Path, payload):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w") as f:
-        json.dump(payload, f, indent=2)
+from data_models import (
+    HumanEvaluation,
+    HumanEvaluationFile,
+    load_answer_entries,
+    load_critique_entries,
+    load_debate_entries,
+    load_human_evaluation_entries,
+    save_human_evaluation_entries,
+)
 
 
 def list_illposed(answers_dir: Path, debates_dir: Path) -> List[Dict]:
@@ -25,19 +21,19 @@ def list_illposed(answers_dir: Path, debates_dir: Path) -> List[Dict]:
         q_slug = q_dir.name
         for answer_file in q_dir.glob("*.json"):
             a_slug = answer_file.stem
-            records = load_json(answer_file, [])
+            records = load_answer_entries(answer_file)
             debate_file = debates_dir / "illposed" / q_slug / f"{a_slug}.json"
-            debates = load_json(debate_file, [])
+            debates = load_debate_entries(debate_file)
             for idx, rec in enumerate(records):
-                if rec.get("status") != STATUS_ILL_POSED:
+                if not rec or rec.status != STATUS_ILL_POSED:
                     continue
-                debate_history = debates[idx] if idx < len(debates) else {}
+                debate_history = debates[idx] if idx < len(debates) else None
                 items.append(
                     {
                         "key": f"{q_slug}/{a_slug}/{idx}",
-                        "question": rec.get("question"),
-                        "claim": rec.get("ill_posed_claim"),
-                        "debate": debate_history,
+                        "question": rec.question,
+                        "claim": rec.ill_posed_claim,
+                        "debate": debate_history.model_dump(exclude_none=True) if debate_history else {},
                     }
                 )
     return items
@@ -54,36 +50,50 @@ def list_critiques(critiques_dir: Path, debates_dir: Path) -> List[Dict]:
                 if len(parts) != 2:
                     continue
                 critic_slug, answer_slug = parts
-                critiques = load_json(crit_file, [])
+                critiques = load_critique_entries(crit_file)
                 debate_file = debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
-                debates = load_json(debate_file, [])
+                debates = load_debate_entries(debate_file)
                 for idx, crit in enumerate(critiques):
-                    if not crit or crit.get("status") != STATUS_SUCCEEDED:
+                    if not crit or crit.status != STATUS_SUCCEEDED:
                         continue
-                    attempts = crit.get("attempts") or []
-                    last_attempt = attempts[-1] if attempts else {}
-                    debate_history = debates[idx] if idx < len(debates) else {}
+                    attempts = crit.attempts or []
+                    last_attempt = attempts[-1] if attempts else None
+                    debate_history = debates[idx] if idx < len(debates) else None
                     items.append(
                         {
                             "key": f"{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}",
-                            "question": crit.get("question"),
-                            "critique": last_attempt.get("raw_critique"),
-                            "verdict": last_attempt.get("verdict"),
-                            "notes": last_attempt.get("notes"),
+                            "question": crit.question,
+                            "critique": last_attempt.raw_critique if last_attempt else None,
+                            "verdict": last_attempt.verdict if last_attempt else None,
+                            "notes": last_attempt.notes if last_attempt else None,
                             "critic": critic_slug,
                             "answer_author": answer_slug,
-                            "debate": debate_history,
+                            "debate": debate_history.model_dump(exclude_none=True) if debate_history else {},
                         }
                     )
     return items
 
 
-def record_evaluation(username: str, key: str, verdict: str, comment: str, section: str, store_dir: Path):
+def record_evaluation(
+    username: str,
+    key: str,
+    verdict: str,
+    comment: str,
+    eval_type: str,
+    store_dir: Path,
+    mode: Optional[str] = None,
+):
     eval_path = store_dir / f"{username}.json"
-    payload = load_json(eval_path, {"ill_posed": {}, "critiques": {}})
-    payload.setdefault(section, {})
-    payload[section][key] = {"verdict": verdict, "comment": comment}
-    save_json(eval_path, payload)
+    payload = load_human_evaluation_entries(eval_path)
+    decisions = {decision.id: decision for decision in payload.decisions if decision.id}
+    decisions[key] = HumanEvaluation(
+        id=key,
+        type=eval_type,
+        mode=mode,
+        verdict=verdict,
+        comment=comment,
+    )
+    save_human_evaluation_entries(eval_path, HumanEvaluationFile(decisions=list(decisions.values())))
 
 
 def show_item(item: Dict):
@@ -120,12 +130,12 @@ def main():
             q_slug, a_slug, idx = parts[0], parts[1], int(parts[2])
             answer_file = args.answers_dir / q_slug / f"{a_slug}.json"
             debate_file = args.debates_dir / "illposed" / q_slug / f"{a_slug}.json"
-            answers = load_json(answer_file, [])
-            debates = load_json(debate_file, [])
+            answers = load_answer_entries(answer_file)
+            debates = load_debate_entries(debate_file)
             item = {
                 "key": key,
-                "answer_record": answers[idx] if idx < len(answers) else {},
-                "debate": debates[idx] if idx < len(debates) else {},
+                "answer_record": answers[idx].model_dump(exclude_none=True) if idx < len(answers) and answers[idx] else {},
+                "debate": debates[idx].model_dump(exclude_none=True) if idx < len(debates) and debates[idx] else {},
             }
             show_item(item)
         else:
@@ -137,12 +147,12 @@ def main():
             idx = int(idx_str)
             crit_file = args.critiques_dir / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
             debate_file = args.debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
-            critiques = load_json(crit_file, [])
-            debates = load_json(debate_file, [])
+            critiques = load_critique_entries(crit_file)
+            debates = load_debate_entries(debate_file)
             item = {
                 "key": key,
-                "critique_record": critiques[idx] if idx < len(critiques) else {},
-                "debate": debates[idx] if idx < len(debates) else {},
+                "critique_record": critiques[idx].model_dump(exclude_none=True) if idx < len(critiques) and critiques[idx] else {},
+                "debate": debates[idx].model_dump(exclude_none=True) if idx < len(debates) and debates[idx] else {},
             }
             show_item(item)
         return
@@ -152,8 +162,12 @@ def main():
         if not key:
             raise ValueError("Provide verdict as key:decision (e.g., ill-posed/openai-gpt-5-2025-08-07__...:correct)")
         key_part, decision = args.verdict.split(":")
-        section = "ill_posed" if key_part.count("/") == 2 else "critiques"
-        record_evaluation(args.username, key_part, decision, args.comment, section, args.evaluations_dir)
+        eval_type = "illposed" if key_part.count("/") == 2 else "critique"
+        mode = None
+        if eval_type == "critique":
+            parts = key_part.split("/")
+            mode = parts[0] if len(parts) == 4 else None
+        record_evaluation(args.username, key_part, decision, args.comment, eval_type, args.evaluations_dir, mode=mode)
         print(f"Recorded {decision} for {key_part}")
         return
 

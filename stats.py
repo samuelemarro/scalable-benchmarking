@@ -2,7 +2,15 @@ from collections import Counter, defaultdict
 from pathlib import Path
 import logging
 
-from utils import load_json
+from data_models import (
+    AutomatedEvaluation,
+    load_answer_entries,
+    load_benchmark_entries,
+    load_critique_entries,
+    load_debate_entries,
+    load_evaluation_entries,
+    load_human_evaluation_entries,
+)
 from constants import (
     CLAIMANT_WIN_VERDICTS,
     CRITIQUE_VERDICT_CORRECT,
@@ -16,9 +24,9 @@ logger = logging.getLogger(__name__)
 def count_human_labels(evaluations_dir: Path):
     label_counts = defaultdict(int)
     for eval_file in evaluations_dir.glob("*.json"):
-        data = load_json(eval_file, {"decisions": []})
-        for dec in data.get("decisions", []):
-            label_counts[dec.get("id")] += 1
+        data = load_human_evaluation_entries(eval_file)
+        for dec in data.decisions:
+            label_counts[dec.id] += 1
     return label_counts
 
 
@@ -26,18 +34,18 @@ def count_items(path: Path, kind: str):
     counts = 0
     if kind == "questions":
         for file in path.glob("*.json"):
-            entries = load_json(file, [])
+            entries = load_benchmark_entries(file)
             counts += len(entries)
     elif kind == "answers":
         for q_dir in path.glob("*"):
             for ans_file in q_dir.glob("*.json"):
-                entries = load_json(ans_file, [])
+                entries = load_answer_entries(ans_file)
                 counts += len(entries)
     elif kind in {"critiques", "illposed"}:
         base = "critiques" if kind == "critiques" else "debates/illposed"
         base_path = Path(base)
         for sub in base_path.glob("**/*.json"):
-            entries = load_json(sub, [])
+            entries = load_debate_entries(sub) if kind == "illposed" else load_critique_entries(sub)
             counts += len(entries)
     return counts
 
@@ -48,13 +56,13 @@ def collect_claim_ids(critiques_dir: Path, debates_dir: Path):
         for q_dir in mode_dir.glob("*"):
             for crit_file in q_dir.glob("*.json"):
                 q_slug = q_dir.name
-                crit_ids = load_json(crit_file, [])
+                crit_ids = load_critique_entries(crit_file)
                 for idx, _ in enumerate(crit_ids):
                     claim_ids.add(f"critique/{mode_dir.name}/{q_slug}/{crit_file.stem}/{idx}")
     for debate_file in (debates_dir / "illposed").glob("*/*.json"):
         q_slug = debate_file.parent.name
         a_slug = debate_file.stem
-        debates = load_json(debate_file, [])
+        debates = load_debate_entries(debate_file)
         for idx, _ in enumerate(debates):
             claim_ids.add(f"illposed/{q_slug}/{a_slug}/{idx}")
     return claim_ids
@@ -65,13 +73,16 @@ def critique_verdicts(critiques_dir: Path):
     for mode_dir in critiques_dir.glob("*"):
         for q_dir in mode_dir.glob("*"):
             for crit_file in q_dir.glob("*.json"):
-                entries = load_json(crit_file, [])
+                entries = load_critique_entries(crit_file)
                 for entry in entries:
-                    attempts = entry.get("attempts") or []
+                    if not entry:
+                        verdict_counts["missing"] += 1
+                        continue
+                    attempts = entry.attempts or []
                     if not attempts:
                         verdict_counts["missing"] += 1
                         continue
-                    verdict = attempts[-1].get("verdict")
+                    verdict = attempts[-1].verdict
                     if not verdict:
                         verdict_counts["missing"] += 1
                     else:
@@ -84,22 +95,22 @@ def count_illposed_answers(answers_dir: Path):
     count = 0
     for q_dir in answers_dir.glob("*"):
         for ans_file in q_dir.glob("*.json"):
-            entries = load_json(ans_file, [])
+            entries = load_answer_entries(ans_file)
             for entry in entries:
-                if entry.get("status") == STATUS_ILL_POSED:
+                if entry and entry.status == STATUS_ILL_POSED:
                     count += 1
     return count
 
 
-def collect_automated_evaluations(auto_eval_dir: Path):
+def collect_automated_evaluations(auto_eval_dir: Path) -> List[AutomatedEvaluation]:
     """Collect all automated evaluation decisions from all judge files."""
     all_decisions = []
     if not auto_eval_dir.exists():
         return all_decisions
 
     for eval_file in auto_eval_dir.glob("*.json"):
-        data = load_json(eval_file, {"decisions": []})
-        all_decisions.extend(data.get("decisions", []))
+        data = load_evaluation_entries(eval_file)
+        all_decisions.extend(data.decisions)
 
     return all_decisions
 
@@ -121,14 +132,14 @@ def build_critique_verdict_map(critiques_dir: Path) -> Dict[str, Dict]:
         for q_dir in mode_dir.glob("*"):
             for crit_file in q_dir.glob("*.json"):
                 q_slug = q_dir.name
-                entries = load_json(crit_file, [])
+                entries = load_critique_entries(crit_file)
                 for idx, entry in enumerate(entries):
-                    attempts = entry.get("attempts") or []
-                    verdict = attempts[-1].get("verdict") if attempts else None
+                    attempts = entry.attempts if entry else None
+                    verdict = attempts[-1].verdict if attempts else None
                     # Extract answer author and question author from entry
-                    answer_author = entry.get("answer_author")
-                    question_author = entry.get("question_author")
-                    critic_model_name = entry.get("critic")
+                    answer_author = entry.answer_author if entry else None
+                    question_author = entry.question_author if entry else None
+                    critic_model_name = entry.critic if entry else None
 
                     cid = f"critique/{mode_dir.name}/{q_slug}/{crit_file.stem}/{idx}"
                     critique_verdict_map[cid] = {
@@ -150,12 +161,12 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
     # Group decisions by claim ID
     decisions_by_claim = defaultdict(list)
     for decision in decisions:
-        claim_id = decision.get("id")
+        claim_id = decision.id
         if claim_id:
             decisions_by_claim[claim_id].append(decision)
             # Track model names
             for key in ["question_model", "answer_model", "critic_model", "judge_model"]:
-                model_name = decision.get(key)
+                model_name = getattr(decision, key)
                 if model_name:
                     encountered_models.add(model_name)
 
@@ -192,15 +203,15 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
 
         # Extract metadata from first decision (all should have same metadata)
         first = claim_decisions[0]
-        claim_type = first.get("type")
-        question_model = first.get("question_model")
-        answer_model = first.get("answer_model")
-        critic_model = first.get("critic_model")
-        mode = first.get("mode")
+        claim_type = first.type
+        question_model = first.question_model
+        answer_model = first.answer_model
+        critic_model = first.critic_model
+        mode = first.mode
 
         if claim_type == "critique":
             # Count verdicts for this claim
-            verdicts = [d.get("verdict") for d in claim_decisions if d.get("verdict")]
+            verdicts = [d.verdict for d in claim_decisions if d.verdict]
 
             if not verdicts:
                 continue

@@ -18,7 +18,14 @@ from prompt_library import (
 from self_improvement import self_improve_answers
 from model_api import query_llm_batch, query_llm_single
 from constants import STATUS_FAILED, STATUS_ILL_POSED, STATUS_SUCCEEDED
-from data_models import validate_answer_file
+from data_models import (
+    AnswerAttempt,
+    AnswerEntry,
+    BenchmarkEntry,
+    load_answer_entries,
+    load_benchmark_entries,
+    save_answer_entries,
+)
 from utils import clean_math, setup_logging
 
 logger = logging.getLogger(__name__)
@@ -33,12 +40,6 @@ def load_json(path: Path, default):
         return json.load(f)
 
 
-def save_json(path: Path, payload):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w") as f:
-        json.dump(payload, f, indent=2)
-
-
 def build_override_note(overrides: Dict, q_slug: str, a_slug: str, idx: int) -> Optional[str]:
     key = f"{q_slug}/{a_slug}"
     reason = overrides.get("overrides", {}).get(key, {}).get(str(idx))
@@ -47,21 +48,21 @@ def build_override_note(overrides: Dict, q_slug: str, a_slug: str, idx: int) -> 
     return None
 
 
-def final_question(entry: Dict) -> Optional[str]:
-    generations = entry.get("generation_rounds") or []
+def final_question(entry) -> Optional[str]:
+    generations = entry.generation_rounds or []
     if not generations:
         return None
-    refinements = generations[-1].get("refinement_rounds") or []
+    refinements = generations[-1].refinement_rounds or []
     if not refinements:
         return None
-    return refinements[-1].get("question")
+    return refinements[-1].question
 
 
 def prepare_batch(
     question_model: str,
     answer_model: str,
-    benchmark_entries: List[Dict],
-    existing: List[Dict],
+    benchmark_entries: List[Optional[BenchmarkEntry]],
+    existing: List[Optional[AnswerEntry]],
     rerun_failures: bool,
     limit: Optional[int],
 ) -> List[Tuple[int, Dict, str]]:
@@ -71,17 +72,18 @@ def prepare_batch(
     for idx, entry in enumerate(benchmark_entries):
         if limit is not None and len(batch) >= limit:
             break
-        if entry.get("status") != STATUS_SUCCEEDED:
-            logger.info(f"Skipping question {question_model}-{idx} (status: {entry.get('status')})")
+        if not entry or entry.status != STATUS_SUCCEEDED:
+            status = entry.status if entry else "missing"
+            logger.info(f"Skipping question {question_model}-{idx} (status: {status})")
             continue
         question_text = final_question(entry)
         if not question_text:
             continue
         if idx < len(existing):
             prior = existing[idx]
-            if prior.get("status") == STATUS_SUCCEEDED:
+            if prior and prior.status == STATUS_SUCCEEDED:
                 continue
-            if prior.get("status") in {STATUS_FAILED, STATUS_ILL_POSED} and not rerun_failures:
+            if prior and prior.status in {STATUS_FAILED, STATUS_ILL_POSED} and not rerun_failures:
                 continue
         batch.append((idx, entry, question_text))
     return batch
@@ -90,7 +92,7 @@ def prepare_batch(
 def run_generation(
     question_model: str,
     answer_model: str,
-    batch_items: List[Tuple[int, Dict, str]],
+    batch_items: List[Tuple[int, BenchmarkEntry, str]],
     answer_guidance: str,
     self_critique_guidance: str,
     max_rounds: int,
@@ -136,23 +138,24 @@ def run_generation(
 
     outputs = []
     for (idx, entry, question_text), improved in zip(batch_items, results):
-        record = {
-            "question_model": q_slug,
-            "answer_model": a_slug,
-            "question": question_text,
-            "run_id": entry.get("run_id"),
-            "topic_slug": entry.get("topic_slug"),
-            "status": improved.status,
-            "attempts": [
-                {
-                    "round": att.round,
-                    "answer": att.answer,
-                    "raw_answer": att.raw_answer,
-                    "evaluation": att.evaluation,
-                }
-                for att in improved.attempts
-            ],
-        }
+        attempts = [
+            AnswerAttempt(
+                round=att.round,
+                answer=att.answer,
+                raw_answer=att.raw_answer,
+                evaluation=att.evaluation,
+            )
+            for att in improved.attempts
+        ]
+        record = AnswerEntry(
+            question_model=q_slug,
+            answer_model=a_slug,
+            question=question_text,
+            run_id=entry.run_id,
+            topic_slug=entry.topic_slug,
+            status=improved.status,
+            attempts=attempts,
+        )
         outputs.append((idx, record))
     return outputs
 
@@ -188,7 +191,7 @@ def main():
             question_model = next((spec.name for spec in registry.models.values() if _slugify(spec.name) == q_slug), None)
             if not question_model:
                 continue
-            benchmark_entries = load_json(bench_path, [])
+            benchmark_entries = load_benchmark_entries(bench_path)
             if not benchmark_entries:
                 logger.info(f"Skipping empty benchmark: {bench_path}")
                 continue
@@ -196,7 +199,7 @@ def main():
                 if answer_spec.name == question_model:
                     continue
                 out_path = args.output_dir / q_slug / f"{answer_spec.slug}.json"
-                existing = load_json(out_path, [])
+                existing = load_answer_entries(out_path)
                 batch = prepare_batch(
                     question_model,
                     answer_spec.name,
@@ -221,14 +224,13 @@ def main():
                         am.reasoning,
                         overrides,
                     )
-                    existing_records = load_json(out, [])
+                    existing_records = load_answer_entries(out)
                     # Ensure list length
                     if len(existing_records) < len(b_entries):
-                        existing_records.extend([{} for _ in range(len(b_entries) - len(existing_records))])
+                        existing_records.extend([None for _ in range(len(b_entries) - len(existing_records))])
                     for idx, record in outputs:
                         existing_records[idx] = record
-                    validate_answer_file(existing_records)
-                    save_json(out, existing_records)
+                    save_answer_entries(out, existing_records)
                     return qm, am.name, len(outputs)
 
                 tasks.append(pool.submit(run_task))
