@@ -191,18 +191,18 @@ def generate_critiques_batch(
         build_critique_prompt(job["question"], job["answer_author"], job["answer_text"], guidance)
         for job in jobs
     ]
-    raw = _batched_query(critic_model, prompts, disable_batch, temperature, reasoning)
-    raw = [clean_math(r) for r in raw]
+    raw_critiques = _batched_query(critic_model, prompts, disable_batch, temperature, reasoning)
+    cleaned_critiques = [clean_math(r) for r in raw_critiques]
 
     if not self_improve:
         results = []
-        for text in raw:
-            verdict, notes = extract_structured_critique(text)
+        for cleaned_text, raw_text in zip(cleaned_critiques, raw_critiques):
+            verdict, notes = extract_structured_critique(cleaned_text)
             results.append(
                 [
                     {
                         "round": 1,
-                        "raw_critique": text,
+                        "raw_critique": raw_text,
                         "verdict": verdict,
                         "notes": notes,
                         "evaluation": None,
@@ -226,13 +226,14 @@ def generate_critiques_batch(
     results = self_improve_answers(
         critic_model,
         questions,
-        raw,
+        cleaned_critiques,
         eval_prompt,
         refine_prompt,
         max_rounds=max_rounds,
         disable_batch=disable_batch,
         temperature=temperature,
         reasoning=reasoning,
+        raw_initial_answers=raw_critiques,
     )
 
     enriched_all: List[List[Dict]] = []
@@ -243,7 +244,8 @@ def generate_critiques_batch(
             enriched_attempts.append(
                 {
                     "round": att.round,
-                    "raw_critique": att.answer,
+                    "cleaned_critique": att.answer,
+                    "raw_critique": att.raw_answer,
                     "verdict": verdict,
                     "notes": notes,
                     "evaluation": att.evaluation,
