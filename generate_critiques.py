@@ -3,7 +3,7 @@ import json
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 from dotenv import load_dotenv
 
@@ -134,32 +134,41 @@ def prepare_pairs(
     answers_root: Path,
     limit: Optional[int],
     benchmark_entries: List[Dict],
+    critic_names: Optional[Set[str]],
 ) -> List[Tuple[int, str, str]]:
     pairs = []
+    critic_name_set = set(critic_names or [])
     q_slug = _slugify(question_model)
     owner_answer_path = answers_root / q_slug / f"{q_slug}.json"
     owner_answers = load_json(owner_answer_path, [])
     if not owner_answers:
         owner_answers = benchmark_answers(question_model, benchmark_entries)
 
-    for answer_model in answer_models:
-        a_slug = _slugify(answer_model)
-        answer_path = answers_root / q_slug / f"{a_slug}.json"
-        answer_records = load_json(answer_path, [])
-        if answer_model == question_model and not answer_records:
-            answer_records = owner_answers
-
-        if mode == "contradictor":
-            # Critics review the question owner's self-answers
-            if answer_model == question_model:
+    if mode == "contradictor":
+        critic_list = sorted(critic_name_set) if critic_name_set else answer_models
+        # Critics review the question owner's self-answers
+        for critic_model in critic_list:
+            if critic_model == question_model:
                 continue
             for idx, owner_entry in enumerate(owner_answers):
                 if limit is not None and len(pairs) >= limit:
                     break
                 if not owner_entry:
                     continue
-                pairs.append((idx, answer_model, question_model))
+                pairs.append((idx, critic_model, question_model))
+        return pairs
+
+    if mode == "evaluator" and critic_name_set and question_model not in critic_name_set:
+        return pairs
+
+    for answer_model in answer_models:
+        if mode in {"all", "custom"} and critic_name_set and answer_model not in critic_name_set:
             continue
+        a_slug = _slugify(answer_model)
+        answer_path = answers_root / q_slug / f"{a_slug}.json"
+        answer_records = load_json(answer_path, [])
+        if answer_model == question_model and not answer_records:
+            answer_records = owner_answers
 
         for idx, _ in enumerate(answer_records):
             if limit is not None and len(pairs) >= limit:
@@ -280,6 +289,7 @@ def main():
     guidance = load_critique_guidance()
 
     critic_specs = registry.pick(args.models) if args.models else registry.by_role("critique")
+    critic_names = {spec.name for spec in critic_specs}
 
     custom_pairs: List[Tuple[str, str, str]] = []
     if args.mode == "custom":
@@ -302,6 +312,8 @@ def main():
             for q_owner, answerer, critic in custom_pairs:
                 if q_owner != question_model:
                     continue
+                if critic not in critic_names:
+                    continue
                 a_slug = _slugify(answerer)
                 answer_path = args.answers_dir / q_slug / f"{a_slug}.json"
                 if not answer_path.exists():
@@ -312,7 +324,15 @@ def main():
                         break
                     pairs.append((idx, critic, answerer))
         else:
-            pairs = prepare_pairs(args.mode, question_model, answer_models, args.answers_dir, args.limit, benchmark_entries)
+            pairs = prepare_pairs(
+                args.mode,
+                question_model,
+                answer_models,
+                args.answers_dir,
+                args.limit,
+                benchmark_entries,
+                critic_names,
+            )
 
         if not pairs:
             continue
