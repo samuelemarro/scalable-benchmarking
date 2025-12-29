@@ -65,8 +65,9 @@ def prepare_batch(
     existing: List[Optional[AnswerEntry]],
     rerun_failures: bool,
     limit: Optional[int],
+    allow_self_answering: bool,
 ) -> List[Tuple[int, Dict, str]]:
-    if question_model == answer_model:
+    if question_model == answer_model and not allow_self_answering:
         return []
     batch = []
     for idx, entry in enumerate(benchmark_entries):
@@ -170,6 +171,7 @@ def main():
     parser.add_argument("--disable-batch", action="store_true", help="Disable batching.")
     parser.add_argument("--limit", type=int, default=None, help="Limit number of questions per pair.")
     parser.add_argument("--rerun-failures", action="store_true", help="Retry failed entries.")
+    parser.add_argument("--allow-self-answering", action="store_true", help="Allow models to answer their own questions.")
     parser.add_argument("--illposed-overrides", type=Path, default=Path("configs/illposed_overrides.json"), help="Overrides JSON.")
     parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL).")
     args = parser.parse_args()
@@ -196,7 +198,7 @@ def main():
                 logger.info(f"Skipping empty benchmark: {bench_path}")
                 continue
             for answer_spec in answer_models:
-                if answer_spec.name == question_model:
+                if answer_spec.name == question_model and not args.allow_self_answering:
                     continue
                 out_path = args.output_dir / q_slug / f"{answer_spec.slug}.json"
                 existing = load_answer_entries(out_path)
@@ -207,6 +209,7 @@ def main():
                     existing,
                     args.rerun_failures,
                     args.limit,
+                    args.allow_self_answering,
                 )
                 if not batch:
                     continue

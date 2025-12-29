@@ -16,7 +16,7 @@ from prompt_library import (
     load_judgment_critique_guidance,
     load_question_guidance,
 )
-from utils import safe_load_json, setup_logging
+from utils import safe_load_json, setup_logging, benchmark_answers_from_entries
 from constants import (
     CRITIQUE_VERDICT_CORRECT,
     JUDGE_VERDICT_UNKNOWN,
@@ -80,10 +80,11 @@ def redact_text(text: str, redactions: Iterable[Tuple[str, str]]) -> str:
     if not text:
         return ""
     redacted = text
-    for needle, replacement in redactions:
+    for needle, replacement in sorted(redactions, key=lambda item: -len(item[0] or "")):
         if not needle:
             continue
-        redacted = re.sub(re.escape(needle), replacement, redacted, flags=re.IGNORECASE)
+        pattern = rf"(?<![A-Za-z0-9]){re.escape(needle)}(?![A-Za-z0-9])"
+        redacted = re.sub(pattern, replacement, redacted, flags=re.IGNORECASE)
     return redacted
 
 
@@ -186,6 +187,7 @@ def gather_critique_tasks(
     benchmark_dir: Path,
     registry,
     allow_no_debate: bool = False,
+    include_correct: bool = False,
 ) -> List[JudgingTask]:
     tasks = []
     for mode_dir in critiques_dir.glob("*"):
@@ -220,7 +222,7 @@ def gather_critique_tasks(
                         continue
                     attempts = crit_entry.attempts or []
                     last_attempt = attempts[-1] if attempts else None
-                    if last_attempt and last_attempt.verdict == CRITIQUE_VERDICT_CORRECT:
+                    if last_attempt and last_attempt.verdict == CRITIQUE_VERDICT_CORRECT and not include_correct:
                         continue
                     debate = debates[idx] if idx < len(debates) else None
                     question = (debate.question if debate else "") or crit_entry.question
@@ -458,6 +460,7 @@ def main():
     parser.add_argument("--models", nargs="*", help="Subset of judge models to use (default: all).")
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--allow-no-debate", action="store_true", help="Allow judging even when there's no debate history.")
+    parser.add_argument("--force-correct-critiques", action="store_true", help="Include critiques with verdict 'correct' in judging.")
     parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL).")
     args = parser.parse_args()
 
@@ -482,6 +485,7 @@ def main():
                 args.benchmark_dir,
                 registry,
                 args.allow_no_debate,
+                args.force_correct_critiques,
             )
         )
 
@@ -507,7 +511,7 @@ def main():
                 break
         if not pending:
             return 0
-
+        processed = 0
         for batch in chunked(pending, args.batch_size):
             prompts = []
             for task in batch:
@@ -530,8 +534,10 @@ def main():
             for task, response in zip(batch, responses):
                 decision = parse_judgment(response, task, spec.slug)
                 decisions[task.id] = decision
+            processed += len(batch)
+            logger.info(f"{spec.pretty}: processed {len(batch)} evaluations")
+        if processed:
             save_decisions(out_path, decisions)
-            logger.info(f"{spec.pretty}: saved {len(batch)} evaluations")
         return len(pending)
 
     with ThreadPoolExecutor(max_workers=max(4, len(jobs_by_judge))) as pool:

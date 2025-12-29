@@ -16,13 +16,10 @@ from prompt_library import (
     load_question_guidance,
 )
 from model_api import query_llm_single
-from utils import safe_load_json, clean_math, setup_logging
+from utils import safe_load_json, clean_math, setup_logging, benchmark_answers_from_entries
 from constants import CRITIQUE_VERDICT_CORRECT, STATUS_ILL_POSED, STATUS_SUCCEEDED
 from data_models import (
-    AnswerAttempt,
     AnswerEntry,
-    BenchmarkEntry,
-    CritiqueAttempt,
     CritiqueEntry,
     DebateEntry,
     DebateMessage,
@@ -85,6 +82,7 @@ def run_round(
     return clean_math(reply), False
 
 
+# TODO: What's the point of this method?
 def check_concession(concede: bool) -> bool:
     """Check if the response contains a concession via the 'concede' field."""
     return bool(concede)
@@ -105,7 +103,7 @@ def illposed_debate(
     allow_concede: bool,
 ) -> List[DebateMessage]:
     history: List[DebateMessage] = []
-    system_prompt_owner = (
+    system_prompt_defender = (
         "You are Bob, defending the well-posedness of your question. Use the guidance to rebut the ill-posedness claim."
         f"\nQuestion quality guidance:\n{guidance_q}\n\n"
         f"Debate guidance:\n{guidance_d}\n"
@@ -120,17 +118,19 @@ def illposed_debate(
         "Respond with a short defense as Bob."
     )
     for r in range(1, rounds + 1):
-        owner_message, owner_concede = run_round(defender_model, system_prompt_owner, last_message, defender_temp, defender_reason)
-        history.append(DebateMessage(round=r, speaker="Bob", message=owner_message, concede=owner_concede))
-        if allow_concede and check_concession(owner_concede):
+        defender_message, defender_concede = run_round(defender_model, system_prompt_defender, last_message, defender_temp, defender_reason)
+        history.append(DebateMessage(round=r, speaker="Bob", message=defender_message, concede=defender_concede))
+        if allow_concede and check_concession(defender_concede):
+            # Intentional asymmetry: defender concession ends the round immediately.
             break
         claimant_prompt = (
-            f"Bob responded:\n{owner_message}\n\nQuestion:\n{question}\n\n"
+            f"Bob responded:\n{defender_message}\n\nQuestion:\n{question}\n\n"
             "Restate your ill-posedness reasoning or acknowledge if the defense resolves your concerns as Alice."
         )
         claimant_message, claimant_concede = run_round(claimant_model, system_prompt_claimant, claimant_prompt, claimant_temp, claimant_reason)
         history.append(DebateMessage(round=r, speaker="Alice", message=claimant_message, concede=claimant_concede))
         if allow_concede and check_concession(claimant_concede):
+            # Claimant concedes after both sides have spoken in this round.
             break
         last_message = (
             f"Alice replied:\n{claimant_message}\n\nQuestion:\n{question}\n"
