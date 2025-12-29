@@ -130,8 +130,9 @@ def _query_openai_single(model: str, messages: List[Dict], response_format: Opti
     payload = {
         "model": model,
         "messages": messages,
-        "temperature": temperature,
     }
+    if temperature is not None:
+        payload["temperature"] = temperature
     if response_format:
         payload["response_format"] = response_format
     if reasoning:
@@ -347,7 +348,7 @@ def _query_anthropic_batch(model: str, messages_list: List[str], prompt: str, re
     return _map_batch_results(results_resp.text, custom_ids)
 
 
-def _build_openai_batch_requests(model: str, messages_list: List[str], prompt: str, response_format: Optional[Dict], temperature: float, api_kwargs: Optional[Dict], reasoning: Optional[str] = None) -> Tuple[List[Tuple[str, Dict]], List[str]]:
+def _build_openai_batch_requests(model: str, messages_list: List[str], prompt: str, response_format: Optional[Dict], temperature: Optional[float], api_kwargs: Optional[Dict], reasoning: Optional[str] = None) -> Tuple[List[Tuple[str, Dict]], List[str]]:
     """
     Build batch requests for the OpenAI chat completions endpoint.
     Returns: (batch_requests, custom_ids)
@@ -365,8 +366,9 @@ def _build_openai_batch_requests(model: str, messages_list: List[str], prompt: s
                 {"role": "system", "content": prompt},
                 {"role": "user", "content": message},
             ],
-            "temperature": temperature,
         }
+        if temperature is not None:
+            body["temperature"] = temperature
 
         # OpenAI chat/completions batches do not accept the "reasoning" param; ignore if provided.
         if response_format:
@@ -576,15 +578,18 @@ def _query_gemini_batch(model: str, messages_list: List[str], prompt: str, respo
     requests_inline = []
     for msg in messages_list:
         contents, system_instruction = _gemini_contents_from_messages([{"role": "user", "content": msg}], prompt)
+        thinking_config = None
+        if reasoning in ["medium", "high"]:
+            thinking_config = genai_types.ThinkingConfig(
+                include_thoughts=False,
+                thinking_level=reasoning,
+            )
         requests_inline.append(
             genai_types.InlinedRequest(
                 contents=contents,
                 config=genai_types.GenerateContentConfig(
                     temperature=temperature,
-                    thinking_config=genai_types.ThinkingConfig(
-                        include_thoughts=False,
-                        thinking_level=reasoning
-                    ),
+                    thinking_config=thinking_config,
                     system_instruction=system_instruction
                 )
             )
