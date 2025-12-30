@@ -2,6 +2,8 @@ from collections import Counter, defaultdict
 from pathlib import Path
 import logging
 
+from typing import Dict, List
+
 from data_models import (
     AutomatedEvaluation,
     load_answer_entries,
