@@ -1,6 +1,6 @@
 ## Judgment Quality Guidance (Ill-Posedness Debates)
 
-This rubric guides the neutral judgment process for evaluating ill-posedness claims in the benchmarking framework.
+This rubric guides the neutral judgment process for evaluating ill-posedness claims.
 
 ### Primary Goal
 

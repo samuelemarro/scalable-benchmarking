@@ -1,6 +1,6 @@
 ## Judgment Quality Guidance (Critique Debates)
 
-This rubric guides the neutral judgment process for evaluating critique claims in the benchmarking framework.
+This rubric guides the neutral judgment process for evaluating critique claims.
 
 ### Primary Goal
 

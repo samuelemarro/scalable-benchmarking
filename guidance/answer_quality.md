@@ -1,6 +1,6 @@
 ## Answer Correctness and Completeness
 
-This rubric implements the correctness verification predicate. An answer passes only if it satisfies ALL criteria below.
+This rubric guides the answering process.
 
 ### Core Requirements
 

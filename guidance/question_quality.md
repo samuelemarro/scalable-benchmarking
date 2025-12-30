@@ -1,6 +1,6 @@
 ## Question Quality and Meaningfulness
 
-This rubric implements the meaningfulness predicate. A question passes only if it satisfies ALL criteria below.
+This rubric guides question generation.
 
 ### Core Requirements
 

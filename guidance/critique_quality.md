@@ -1,6 +1,6 @@
 ## Critique Guidance (Verification Role)
 
-This rubric guides the critique/verification process, which is central to the benchmarking framework's reliance on the verification-generation asymmetry.
+This rubric guides the critique/verification process.
 
 ### Primary Goal
 
