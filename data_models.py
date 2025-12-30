@@ -10,13 +10,14 @@ See docs/schema.md for detailed schema documentation.
 import json
 from pathlib import Path
 from typing import List, Optional, Dict, Any, Literal, Type, TypeVar
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_serializer
 from constants import (
     VALID_CRITIQUE_VERDICTS,
     VALID_CRITIQUE_DEBATE_VERDICTS,
     VALID_ILLPOSED_DEBATE_VERDICTS,
     VALID_STATUSES,
     STATUS_FAILED,
+    STATUS_PENDING,
     STATUS_SUCCEEDED,
 )
 
@@ -65,7 +66,7 @@ class BenchmarkEntry(BaseModel):
     topic_name: Optional[str] = Field(
         None, description="Human-readable topic name"
     )
-    status: Literal["succeeded", "failed", "ill-posed"] = Field(
+    status: Literal["succeeded", "failed", "ill-posed", "pending"] = Field(
         description="Generation status"
     )
     generation_rounds: Optional[List[GenerationRound]] = Field(
@@ -76,9 +77,15 @@ class BenchmarkEntry(BaseModel):
     @classmethod
     def validate_status(cls, v: str) -> str:
         """Validate status against known values."""
-        if v not in VALID_STATUSES:
+        if v not in VALID_STATUSES and v != STATUS_PENDING:
             raise ValueError(f"Invalid status: {v}")
         return v
+
+    @model_serializer(mode="wrap")
+    def serialize_benchmark_entry(self, handler):
+        if self.status == STATUS_PENDING:
+            raise ValueError("Cannot serialize BenchmarkEntry with status 'pending'")
+        return handler(self)
 
 
 # ============================================================================
@@ -150,6 +157,9 @@ class CritiqueAttempt(BaseModel):
     raw_critique: str = Field(description="Raw critique text from model")
     verdict: str = Field(description="Parsed verdict")
     notes: str = Field(description="Parsed critique notes")
+    suggestions: Optional[str] = Field(
+        None, description="Optional improvement suggestions from critique"
+    )
     evaluation: Optional[Dict[str, Any]] = Field(
         None, description="Self-check evaluation"
     )

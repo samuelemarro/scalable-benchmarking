@@ -240,6 +240,9 @@ def gather_critique_tasks(
                         continue
                     attempts = crit_entry.attempts or []
                     last_attempt = attempts[-1] if attempts else None
+                    if not last_attempt or last_attempt.verdict in {None, CRITIQUE_VERDICT_UNKNOWN}:
+                        logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: no valid final verdict")
+                        continue
                     if last_attempt and last_attempt.verdict == CRITIQUE_VERDICT_CORRECT and not include_correct:
                         continue
                     debate = debates[idx] if idx < len(debates) else None

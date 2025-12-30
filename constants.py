@@ -63,6 +63,7 @@ CLAIMANT_WIN_VERDICTS = {
 STATUS_SUCCEEDED = "succeeded"
 STATUS_FAILED = "failed"
 STATUS_ILL_POSED = "ill-posed"
+STATUS_PENDING = "pending"  # Internal-only; do not serialize.
 
 VALID_STATUSES = {
     STATUS_SUCCEEDED,

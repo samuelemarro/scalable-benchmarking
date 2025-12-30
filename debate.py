@@ -395,6 +395,11 @@ def main():
                         if args.limit is not None and total_tasks >= args.limit:
                             break
                         if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
+                            logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: not succeeded")
+                            continue
+                        verdict = final_critique_verdict(crit_entry)
+                        if verdict in {None, CRITIQUE_VERDICT_UNKNOWN}:
+                            logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: unknown final verdict")
                             continue
                         if final_critique_verdict(crit_entry) == CRITIQUE_VERDICT_CORRECT:
                             continue
@@ -448,7 +453,11 @@ def main():
                             break
                         if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
                             continue
-                        if final_critique_verdict(crit_entry) == CRITIQUE_VERDICT_CORRECT:
+                        verdict = final_critique_verdict(crit_entry)
+                        if verdict in {None, CRITIQUE_VERDICT_UNKNOWN}:
+                            logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: unknown final verdict")
+                            continue
+                        if verdict == CRITIQUE_VERDICT_CORRECT:
                             continue
                         if idx >= len(answers):
                             continue
