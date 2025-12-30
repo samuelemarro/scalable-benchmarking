@@ -128,11 +128,10 @@ def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[Dict]:
     cfg = _load_parsing_config()
 
     if not cfg:
-        return None
+        raise RuntimeError("No parsing config found for JSON repair")
     model = cfg.get("model")
     if not model:
-        logger.warning("No model specified in parsing config")
-        return None
+        raise RuntimeError("No model specified in parsing config for JSON repair")
     temperature = cfg.get("temperature", None)
     prompt_lines = [
         "You are a strict JSON repair assistant.",
@@ -149,8 +148,18 @@ def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[Dict]:
 
     try:
         repaired = query_llm_single(model, text, prompt=prompt, temperature=temperature, response_format={"type": "json_object"})
+        print('Repaired type:', type(repaired))
         #repaired = clean_json_text(repaired)
-        parsed = json.loads(repaired)
+        try:
+            parsed = json.loads(repaired)
+        except json.JSONDecodeError:
+            # Last attempt: clean and try again
+            cleaned = clean_json_text(repaired)
+            
+            try:
+                parsed = json.loads(cleaned)
+            except json.JSONDecodeError:
+                parsed = {"parsing_error": "Cannot parse"}
 
         if "parsing_error" in parsed:
             return None
