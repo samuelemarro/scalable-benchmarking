@@ -69,7 +69,7 @@ def final_answer(entry: AnswerEntry) -> Optional[str]:
     return attempts[-1].answer
 
 
-def extract_structured_critique(text: Optional[str]) -> Tuple[str, str]:
+def extract_structured_critique(text: Optional[str]) -> Tuple[str, str, Optional[str]]:
     """
     Parse a critique JSON (if available) and return verdict and notes (single string).
     Falls back to marking verdict unknown and capturing the raw text as notes.
@@ -79,8 +79,9 @@ def extract_structured_critique(text: Optional[str]) -> Tuple[str, str]:
     """
     verdict = CRITIQUE_VERDICT_UNKNOWN
     notes: str = ""
+    suggestions: Optional[str] = None
     if not text:
-        return verdict, notes
+        return verdict, notes, suggestions
 
     parsed = safe_load_json(text, schema_hint='{"verdict": "...", "notes": "..."}')
     if isinstance(parsed, dict):
@@ -93,16 +94,26 @@ def extract_structured_critique(text: Optional[str]) -> Tuple[str, str]:
             logger.warning(f"Invalid critique verdict '{parsed_verdict}', treating as 'unknown'")
             verdict = CRITIQUE_VERDICT_UNKNOWN
 
+        if "notes" not in parsed:
+            logger.warning("Critique JSON missing required 'notes' field; treating as 'unknown'")
+            return CRITIQUE_VERDICT_UNKNOWN, "", None
+
         raw_notes = parsed.get("notes")
         if isinstance(raw_notes, list):
             notes = "; ".join(str(n) for n in raw_notes)
         elif raw_notes is not None:
             notes = str(raw_notes)
 
-    if not notes and text.strip():
+        raw_suggestions = parsed.get("suggestions")
+        if isinstance(raw_suggestions, list):
+            suggestions = "; ".join(str(s) for s in raw_suggestions)
+        elif raw_suggestions is not None:
+            suggestions = str(raw_suggestions)
+
+    if not notes and text.strip() and verdict == CRITIQUE_VERDICT_UNKNOWN:
         notes = text.strip()
 
-    return verdict, notes
+    return verdict, notes, suggestions
 
 
 def _batched_query(model: str, prompts: List[str], disable_batch: bool, temperature: float, reasoning: Optional[str]) -> List[str]:
@@ -220,7 +231,7 @@ def generate_critiques_batch(
     if not self_improve:
         results: List[List[CritiqueAttempt]] = []
         for cleaned_text, raw_text in zip(cleaned_critiques, raw_critiques):
-            verdict, notes = extract_structured_critique(cleaned_text)
+            verdict, notes, suggestions = extract_structured_critique(cleaned_text)
             results.append(
                 [
                     CritiqueAttempt(
@@ -229,6 +240,7 @@ def generate_critiques_batch(
                         raw_critique=raw_text,
                         verdict=verdict,
                         notes=notes,
+                        suggestions=suggestions,
                         evaluation=None,
                     )
                 ]
@@ -264,7 +276,7 @@ def generate_critiques_batch(
     for res in results:
         enriched_attempts = []
         for att in res.attempts:
-            verdict, notes = extract_structured_critique(att.answer)
+            verdict, notes, suggestions = extract_structured_critique(att.answer)
             enriched_attempts.append(
                 CritiqueAttempt(
                     round=att.round,
@@ -272,6 +284,7 @@ def generate_critiques_batch(
                     raw_critique=att.raw_answer or "",
                     verdict=verdict,
                     notes=notes,
+                    suggestions=suggestions,
                     evaluation=att.evaluation,
                 )
             )
