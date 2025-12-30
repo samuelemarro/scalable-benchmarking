@@ -64,12 +64,7 @@ def build_question_prompt(topic: str, guidance_text: str, previous_questions: Op
         "# Task: Generate a Challenging Mathematics Problem\n\n"
         "You are acting as a **tester** in a benchmarking framework. Your goal is to create a single, "
         "challenging but solvable mathematics problem along with a complete, verifiable solution.\n\n"
-        "## Requirements\n\n"
-        "- The question should be at an advanced mathematical level, suitable for testing strong reasoning capabilities\n"
-        "- It must be fully self-contained, well-posed, and solvable with the information provided\n"
-        "- Your answer must be complete, rigorous, and demonstrate that the question is actually solvable\n"
-        "- Use standard LaTeX notation for mathematical expressions where appropriate, delineated with $ or $$\n\n"
-        "## Quality Rubric (CRITICAL)\n\n"
+        "## Quality Rubric\n\n"
         f"{guidance_text}\n\n"
         "## Topic\n\n"
         f"Generate a problem in the following domain: **{topic}**\n"
@@ -81,7 +76,8 @@ def build_question_prompt(topic: str, guidance_text: str, previous_questions: Op
         "[ANSWER]\n"
         "<Your complete solution here>\n\n"
         "**Important**: Your solution will be verified first (self-solve gate). If it fails verification, "
-        "the question will be rejected without being used to test other models."
+        "the question will be rejected without being used to test other models.\n"
+        "Use standard LaTeX notation for mathematical expressions where appropriate, delineated with $ or $$."
     )
 
 
@@ -99,15 +95,24 @@ def build_answer_prompt(question: str, guidance_text: str) -> str:
         "## The Question\n\n"
         f"{question}\n\n"
         "## Your Response\n\n"
-        "Provide your complete answer below. Use LaTeX notation for mathematical expressions where appropriate, delineated with $ or $$.\n"
+        "Provide your complete answer below. Use standard LaTeX notation for mathematical expressions where appropriate, delineated with $ or $$.\n"
         "If the question is ill-posed, explicitly state this and explain why rather than attempting to answer."
     )
 
 
-def build_self_check_prompt(question: str, answer: str, self_critique_guidance: str) -> str:
+def build_self_check_prompt(
+    question: str,
+    answer: str,
+    self_critique_guidance: str,
+    answer_guidance: str,
+) -> str:
     """
     Prompt for self-critique of an answer during the self-improvement loop.
     """
+    answer_section = (
+        "## Answer Quality Requirements\n\n"
+        f"{answer_guidance}\n\n"
+    )
     return (
         "# Task: Evaluate Your Own Answer\n\n"
         "Review the answer you provided to the question below and assess whether it meets the quality standards.\n\n"
@@ -115,6 +120,7 @@ def build_self_check_prompt(question: str, answer: str, self_critique_guidance: 
         f"{question}\n\n"
         "## Your Answer\n\n"
         f"{answer}\n\n"
+        f"{answer_section}"
         "## Evaluation Rubric\n\n"
         f"{self_critique_guidance}\n\n"
         "## Required Output Format\n\n"
@@ -131,7 +137,8 @@ def build_self_check_prompt(question: str, answer: str, self_critique_guidance: 
         '- `verdict`: "pass" if the answer is correct and complete, "fail" otherwise\n'
         '- `ill_posed`: true if the question itself is unanswerable as stated, false otherwise\n'
         '- `issues`: List of specific problems with the answer (empty list if none)\n'
-        '- `improvements`: Short, concrete guidance on how to fix the answer (empty string if verdict is "pass")'
+        '- `improvements`: Short, concrete guidance on how to fix the answer (empty string if verdict is "pass")\n\n'
+        'Use standard LaTeX notation for mathematical expressions where appropriate, delineated with $ or $$.'
     )
 
 
@@ -152,7 +159,7 @@ def build_refine_prompt(question: str, answer: str, feedback: str, guidance: str
         f"{guidance}\n\n"
         "## Your Revised Answer\n\n"
         "Provide only the improved answer below (no meta-commentary). "
-        "Use LaTeX notation for mathematical expressions where appropriate, delineated with $ or $$."
+        "Use standard LaTeX notation for mathematical expressions where appropriate, delineated with $ or $$."
     )
 
 
@@ -185,6 +192,7 @@ def build_critique_prompt(question: str, author: str, answer: str, guidance: str
         '- `"incorrect"`: Contains errors, invalid reasoning, or fundamental flaws\n'
         '- `"insufficient"`: Partially correct but meaningfully incomplete\n'
         '- `"obscure"`: Too unclear to verify\n\n'
+        'Use standard LaTeX notation for mathematical expressions where appropriate, delineated with $ or $$.\n\n'
     )
 
 
@@ -215,6 +223,8 @@ def build_critique_self_check(question: str, answer: str, critique: str, guidanc
         '- `verdict`: "pass" if your critique is accurate and well-justified, "fail" if it needs revision\n'
         '- `issues`: Specific problems with your critique (e.g., incorrect claims, missing evidence)\n'
         "- `improvements`: Guidance on how to make the critique more accurate"
+        "\n\n"
+        "Use standard LaTeX notation for mathematical expressions where appropriate, delineated with $ or $$."
     )
 
 
@@ -247,5 +257,6 @@ def build_critique_refine(question: str, answer: str, critique: str, feedback: s
         '- `"incorrect"`: Contains errors, invalid reasoning, or fundamental flaws\n'
         '- `"insufficient"`: Partially correct but meaningfully incomplete\n'
         '- `"obscure"`: Too unclear to verify\n\n'
-        "Provide your improved critique using the JSON format above."
+        "Provide your improved critique using the JSON format above.\n"
+        "Use standard LaTeX notation for mathematical expressions where appropriate, delineated with $ or $$."
     )
