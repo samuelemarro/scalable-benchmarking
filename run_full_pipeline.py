@@ -55,7 +55,7 @@ def main() -> int:
     parser.add_argument("--allow-no-debate", action="store_true")
     parser.add_argument("--force-correct-critiques", action="store_true")
     parser.add_argument("--batch-size", type=int, default=None)
-    parser.add_argument("--critique-modes", nargs="*", default=["contradictor"])
+    parser.add_argument("--critique-modes", nargs="*", default=["both"])
     parser.add_argument("--benchmark-models", nargs="*")
     parser.add_argument("--answer-models", nargs="*")
     parser.add_argument("--critique-models", nargs="*")
