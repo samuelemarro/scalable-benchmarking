@@ -1,8 +1,7 @@
 import argparse
-import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv
 from tqdm import tqdm
@@ -17,7 +16,7 @@ from prompt_library import (
 )
 from model_api import query_llm_single
 from utils import safe_load_json, clean_math, setup_logging, benchmark_answers_from_entries
-from constants import CRITIQUE_VERDICT_CORRECT, STATUS_ILL_POSED, STATUS_SUCCEEDED
+from constants import CRITIQUE_VERDICT_CORRECT, CRITIQUE_VERDICT_UNKNOWN, STATUS_ILL_POSED, STATUS_SUCCEEDED
 from data_models import (
     AnswerEntry,
     BenchmarkEntry,
@@ -43,15 +42,45 @@ def final_answer(entry: AnswerEntry) -> Optional[str]:
     return attempts[-1].answer
 
 
-def resolved_critique_text(entry: CritiqueEntry) -> str:
+def format_illposed_claim(claim: Dict[str, Any], context: str) -> str:
+    required = {"verdict": str, "ill_posed": bool, "issues": list, "improvements": str}
+    missing = [key for key in required if key not in claim]
+    if missing:
+        raise ValueError(f"Missing ill-posed claim fields for {context}: {missing}")
+    if not isinstance(claim["verdict"], str):
+        raise ValueError(f"Invalid ill-posed claim verdict type for {context}")
+    if not isinstance(claim["ill_posed"], bool):
+        raise ValueError(f"Invalid ill-posed claim ill_posed type for {context}")
+    if not isinstance(claim["issues"], list):
+        raise ValueError(f"Invalid ill-posed claim issues type for {context}")
+    if not isinstance(claim["improvements"], str):
+        raise ValueError(f"Invalid ill-posed claim improvements type for {context}")
+    issues = claim["issues"] or []
+    if any(not isinstance(issue, str) for issue in issues):
+        raise ValueError(f"Invalid ill-posed claim issue entries for {context}")
+    issue_lines = [f"- {issue}" for issue in issues] if issues else ["- (none)"]
+    return (
+        "Parsed ill-posed claim:\n"
+        f"- verdict: {claim['verdict']}\n"
+        f"- ill_posed: {claim['ill_posed']}\n"
+        "- issues:\n"
+        f"{chr(10).join(issue_lines)}\n"
+        f"- improvements: {claim['improvements']}"
+    )
+
+
+def format_critique_for_debate(entry: CritiqueEntry, context: str) -> str:
     attempts = entry.attempts or []
-    if attempts:
-        last = attempts[-1]
-        if last.raw_critique:
-            return last.raw_critique
-        if last.notes:
-            return str(last.notes)
-    return ""
+    if not attempts:
+        raise ValueError(f"Missing critique attempts for {context}")
+    last = attempts[-1]
+    if not last.verdict:
+        raise ValueError(f"Missing critique verdict for {context}")
+    if last.notes is None:
+        raise ValueError(f"Missing critique notes for {context}")
+    if not isinstance(last.notes, str):
+        raise ValueError(f"Invalid critique notes type for {context}")
+    return f"Verdict: {last.verdict}\nNotes: {last.notes}"
 
 
 def final_critique_verdict(entry: CritiqueEntry) -> Optional[str]:
@@ -430,7 +459,8 @@ def main():
                         if not answer_entry:
                             continue
                         answer_text = final_answer(answer_entry) or ""
-                        critique_text = resolved_critique_text(crit_entry)
+                        context = f"{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}"
+                        critique_text = format_critique_for_debate(crit_entry, context)
 
                         try:
                             history = critique_debate(

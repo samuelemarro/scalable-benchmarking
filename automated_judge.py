@@ -19,6 +19,7 @@ from prompt_library import (
 from utils import safe_load_json, setup_logging, benchmark_answers_from_entries
 from constants import (
     CRITIQUE_VERDICT_CORRECT,
+    CRITIQUE_VERDICT_UNKNOWN,
     JUDGE_VERDICT_UNKNOWN,
     STATUS_FAILED,
     STATUS_ILL_POSED,
@@ -185,12 +186,18 @@ def gather_illposed_tasks(
     return tasks
 
 
-def last_critique_text(crit_entry: CritiqueEntry) -> str:
+def last_critique_text(crit_entry: CritiqueEntry, context: str) -> str:
     attempts = crit_entry.attempts or []
     if not attempts:
-        return ""
+        raise ValueError(f"Missing critique attempts for judgment task: {context}")
     last = attempts[-1]
-    return last.raw_critique or str(last.notes or "")
+    if not last.verdict:
+        raise ValueError(f"Missing critique verdict for judgment task: {context}")
+    if last.notes is None:
+        raise ValueError(f"Missing critique notes for judgment task: {context}")
+    if not isinstance(last.notes, str):
+        raise ValueError(f"Invalid critique notes type for judgment task: {context}")
+    return f"Verdict: {last.verdict}\nNotes: {last.notes}"
 
 
 def gather_critique_tasks(
@@ -244,7 +251,8 @@ def gather_critique_tasks(
                         answer_text = final_answer(fallback_record) if fallback_record else ""
                         if not question and fallback_record:
                             question = fallback_record.question
-                    critique_text = last_critique_text(crit_entry)
+                    context = f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}"
+                    critique_text = last_critique_text(crit_entry, context)
                     history = debate.history if debate else []
                     if not question and not critique_text and not history:
                         continue
