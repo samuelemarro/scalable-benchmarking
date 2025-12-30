@@ -120,7 +120,7 @@ def run_generation(
 
     def eval_prompt(question: str, answer: str, local_idx: int):
         note = build_override_note(override_payload, q_slug, a_slug, batch_items[local_idx][0])
-        base = build_self_check_prompt(question, answer, self_critique_guidance)
+        base = build_self_check_prompt(question, answer, self_critique_guidance, answer_guidance)
         return base + f"\n\n{note}" if note else base
     refine_prompts = lambda q, a, fb: build_refine_prompt(q, a, fb, answer_guidance)
 
@@ -148,12 +148,19 @@ def run_generation(
             )
             for att in improved.attempts
         ]
+        ill_posed_claim = None
+        if improved.status == STATUS_ILL_POSED:
+            if improved.attempts:
+                ill_posed_claim = improved.attempts[-1].evaluation
+            if ill_posed_claim is None:
+                ill_posed_claim = improved.last_feedback
         record = AnswerEntry(
             question_model=q_slug,
             answer_model=a_slug,
             question=question_text,
             run_id=entry.run_id,
             topic_slug=entry.topic_slug,
+            ill_posed_claim=ill_posed_claim,
             status=improved.status,
             attempts=attempts,
         )

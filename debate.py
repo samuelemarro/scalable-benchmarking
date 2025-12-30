@@ -132,7 +132,7 @@ def illposed_debate(
     defender_model: str,
     claimant_model: str,
     question: str,
-    claim_details: Dict,
+    claim_summary: str,
     rounds: int,
     guidance_q: str,
     guidance_d: str,
@@ -154,7 +154,7 @@ def illposed_debate(
         f"Debate guidance:\n{guidance_d}\n"
     )
     last_message = (
-        f"Alice argues your question is ill-posed.\nQuestion:\n{question}\n\nClaim:\n{json.dumps(claim_details, indent=2)}\n"
+        f"Alice argues your question is ill-posed.\nQuestion:\n{question}\n\nClaim:\n{claim_summary}\n"
         "Respond with a short defense as Bob."
     )
     for r in range(1, rounds + 1):
@@ -321,6 +321,8 @@ def main():
                     if not rec or rec.status != STATUS_ILL_POSED:
                         continue
                     claim = rec.ill_posed_claim or {}
+                    context = f"{q_slug}/{answer_model_slug}/{idx}"
+                    claim_summary = format_illposed_claim(claim, context)
 
                     if len(existing) > idx and existing[idx]:
                         continue
@@ -330,7 +332,7 @@ def main():
                             question_model.name,
                             answer_model.name,
                             rec.question,
-                            claim,
+                            claim_summary,
                             args.rounds,
                             guidance_q,
                             guidance_d_illposed,

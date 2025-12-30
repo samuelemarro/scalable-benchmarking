@@ -201,7 +201,12 @@ def main():
                 answers.append(a)
                 raw_answers_list.append(raw)  # Store raw output
 
-            eval_prompts = lambda q, a, idx: build_self_check_prompt(q, a, self_critique_guidance)
+            eval_prompts = lambda q, a, idx: build_self_check_prompt(
+                q,
+                a,
+                self_critique_guidance,
+                answer_guidance,
+            )
             refine_prompts = lambda q, a, fb: build_refine_prompt(q, a, fb, answer_guidance)
 
             improvements = self_improve_answers(
