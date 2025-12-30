@@ -128,9 +128,14 @@ def main():
     parser.add_argument("--config", type=Path, default=Path("configs/models.json"), help="Model registry JSON.")
     parser.add_argument("--output-dir", type=Path, default=Path("benchmarks"), help="Where to store benchmark files.")
     parser.add_argument("--max-rounds", type=int, default=5, help="Self-critique rounds.")
+    parser.add_argument(
+        "--max-question-attempts",
+        type=int,
+        default=5,
+        help="Max full question-generation attempts per run (includes past runs).",
+    )
     parser.add_argument("--limit", type=int, default=None, help="Limit number of topics (for testing).")
     parser.add_argument("--disable-batch", action="store_true", help="Disable batching even when available.")
-    parser.add_argument("--force-rerun-failures", action="store_true", help="Retry topics marked as failed.")
     parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL).")
     args = parser.parse_args()
 
@@ -153,76 +158,88 @@ def main():
         current_entries = load_benchmark_entries(output_path)
 
         run_id_to_entry = {entry.run_id: entry for entry in current_entries if entry}
-        pending_runs = []
 
-        for run in runs:
-            entry = run_id_to_entry.get(run["run_id"])
-            if entry and entry.status == STATUS_SUCCEEDED:
-                continue
-            if entry and entry.status in {STATUS_FAILED, STATUS_ILL_POSED} and not args.force_rerun_failures:
-                continue
-            pending_runs.append(run)
+        def question_attempts(entry: Optional[BenchmarkEntry]) -> int:
+            if not entry or not entry.generation_rounds:
+                return 0
+            return len(entry.generation_rounds)
 
+        def select_pending_runs() -> List[Dict]:
+            pending = []
+            for run in runs:
+                entry = run_id_to_entry.get(run["run_id"])
+                if entry and entry.status == STATUS_SUCCEEDED:
+                    continue
+                if question_attempts(entry) >= args.max_question_attempts:
+                    continue
+                pending.append(run)
+            return pending
+
+        pending_runs = select_pending_runs()
         if not pending_runs:
             return f"No pending topics for {model_spec.name}"
 
-        raw_outputs = generate_questions(
-            model_spec.name,
-            pending_runs,
-            run_id_to_entry,
-            args.disable_batch,
-            question_guidance,
-            model_spec.temperature,
-            model_spec.reasoning,
-        )
-
-        questions = []
-        answers = []
-        raw_answers_list = []
-        for run, raw in zip(pending_runs, raw_outputs):
-            q, a = parse_question_answer(raw)
-            q = clean_math(q)
-            a = clean_math(a)
-            questions.append(q)
-            answers.append(a)
-            raw_answers_list.append(raw)  # Store raw output
-
-        eval_prompts = lambda q, a, idx: build_self_check_prompt(q, a, self_critique_guidance)
-        refine_prompts = lambda q, a, fb: build_refine_prompt(q, a, fb, answer_guidance)
-
-        improvements = self_improve_answers(
-            model_spec.name,
-            questions,
-            answers,
-            eval_prompts,
-            refine_prompts,
-            max_rounds=args.max_rounds,
-            disable_batch=args.disable_batch,
-            temperature=model_spec.temperature,
-            reasoning=model_spec.reasoning,
-            raw_initial_answers=raw_answers_list,
-        )
-
-        for run, question, result in zip(pending_runs, questions, improvements):
-            entry = upsert(current_entries, run["run_id"], run["topic_slug"], run["topic_name"])
-            attempt_records = [
-                RefinementAttempt(
-                    round=att.round,
-                    question=question,
-                    answer=att.answer,
-                    raw_answer=att.raw_answer,
-                    evaluation=att.evaluation,
-                )
-                for att in result.attempts
-            ]
-            generation_round = GenerationRound(
-                refinement_rounds=attempt_records,
-                status=result.status,
+        while pending_runs:
+            raw_outputs = generate_questions(
+                model_spec.name,
+                pending_runs,
+                run_id_to_entry,
+                args.disable_batch,
+                question_guidance,
+                model_spec.temperature,
+                model_spec.reasoning,
             )
-            if entry.generation_rounds is None:
-                entry.generation_rounds = []
-            entry.generation_rounds.append(generation_round)
-            entry.status = result.status
+
+            questions = []
+            answers = []
+            raw_answers_list = []
+            for run, raw in zip(pending_runs, raw_outputs):
+                q, a = parse_question_answer(raw)
+                q = clean_math(q)
+                a = clean_math(a)
+                questions.append(q)
+                answers.append(a)
+                raw_answers_list.append(raw)  # Store raw output
+
+            eval_prompts = lambda q, a, idx: build_self_check_prompt(q, a, self_critique_guidance)
+            refine_prompts = lambda q, a, fb: build_refine_prompt(q, a, fb, answer_guidance)
+
+            improvements = self_improve_answers(
+                model_spec.name,
+                questions,
+                answers,
+                eval_prompts,
+                refine_prompts,
+                max_rounds=args.max_rounds,
+                disable_batch=args.disable_batch,
+                temperature=model_spec.temperature,
+                reasoning=model_spec.reasoning,
+                raw_initial_answers=raw_answers_list,
+            )
+
+            for run, question, result in zip(pending_runs, questions, improvements):
+                entry = upsert(current_entries, run["run_id"], run["topic_slug"], run["topic_name"])
+                run_id_to_entry[entry.run_id] = entry
+                attempt_records = [
+                    RefinementAttempt(
+                        round=att.round,
+                        question=question,
+                        answer=att.answer,
+                        raw_answer=att.raw_answer,
+                        evaluation=att.evaluation,
+                    )
+                    for att in result.attempts
+                ]
+                generation_round = GenerationRound(
+                    refinement_rounds=attempt_records,
+                    status=result.status,
+                )
+                if entry.generation_rounds is None:
+                    entry.generation_rounds = []
+                entry.generation_rounds.append(generation_round)
+                entry.status = result.status
+
+            pending_runs = select_pending_runs()
 
         save_benchmark_entries(output_path, current_entries)
         return f"Wrote {output_path}"
