@@ -182,31 +182,6 @@ def prepare_pairs(
         benchmark_entries,
     )
 
-    if mode == "both":
-        pairs.extend(
-            prepare_pairs(
-                "contradictor",
-                question_model,
-                answer_models,
-                answers_root,
-                limit,
-                benchmark_entries,
-                critic_names,
-            )
-        )
-        pairs.extend(
-            prepare_pairs(
-                "evaluator",
-                question_model,
-                answer_models,
-                answers_root,
-                limit,
-                benchmark_entries,
-                critic_names,
-            )
-        )
-        return pairs
-
     if mode == "contradictor":
         critic_list = sorted(critic_name_set) if critic_name_set else answer_models
         # Critics review the question author's self-answers
@@ -337,8 +312,8 @@ def main():
     parser = argparse.ArgumentParser(description="Generate critiques for answers.")
     parser.add_argument(
         "--mode",
-        choices=["contradictor", "evaluator", "both", "all", "custom"],
-        default="contradictor",
+        choices=["contradictor", "evaluator", "all", "custom"],
+        required=True,
     )
     parser.add_argument("--config", type=Path, default=Path("configs/models.json"))
     parser.add_argument("--benchmark-dir", type=Path, default=Path("benchmarks"))
