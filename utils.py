@@ -2,7 +2,7 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 
 from model_api import query_llm_single
@@ -124,7 +124,7 @@ def clean_json_text(text: str) -> str:
     return text
 
 
-def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[Dict]:
+def _repair_with_model(text: str, schema: Optional[Dict[str, Any]]) -> Optional[Dict]:
     cfg = _load_parsing_config()
 
     if not cfg:
@@ -139,10 +139,11 @@ def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[Dict]:
         "Be careful to fix stuff like incorrect escaping, missing commas, unbalanced braces, and incorrect quotes.",
         "Some escapings might be done correctly, so be cautious not to over-escape. Use contextual judgment.",
         "You will handle what is mostly math, so use your knowledge of LaTeX syntax to avoid breaking math expressions.",
-        "Do not add, remove or change the content of any fields.",
+        "Do not add, remove or change the content of any fields. In particular, if a string field doesn't match an enum allowed value, fail to parse rather than changing it.",
     ]
-    if schema_hint:
-        prompt_lines.append(f"Schema: {schema_hint}")
+    if schema:
+        prompt_lines.append("JSON Schema:")
+        prompt_lines.append(json.dumps(schema, indent=2, sort_keys=False))
     prompt_lines.append('If you cannot repair, respond with the following JSON: { \"parsing_error\" : \"Cannot parse\" }.')
     prompt = "\n".join(prompt_lines)
 
@@ -170,13 +171,13 @@ def _repair_with_model(text: str, schema_hint: Optional[str]) -> Optional[Dict]:
         return None
 
 
-def safe_load_json(text: str, schema_hint: Optional[str] = None, strict: bool = False) -> Optional[Dict]:
+def safe_load_json(text: str, schema: Optional[Dict[str, Any]] = None, strict: bool = False) -> Optional[Dict]:
     """
     Attempt to parse JSON with progressive fallback strategies.
 
     Args:
         text: The text to parse as JSON
-        schema_hint: Optional hint about expected schema for repair
+        schema: Optional JSON Schema for repair
         strict: If True, only allow direct JSON parsing (no cleaning or repair)
 
     Returns:
@@ -200,7 +201,7 @@ def safe_load_json(text: str, schema_hint: Optional[str] = None, strict: bool = 
 
     # Fallback 2: Use LLM to repair
     logger.info("Attempting LLM-based JSON repair")
-    repaired = _repair_with_model(text, schema_hint)
+    repaired = _repair_with_model(text, schema)
     if repaired:
         logger.info("JSON repaired successfully with LLM")
     else:

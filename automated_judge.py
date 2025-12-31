@@ -406,10 +406,48 @@ def parse_confidence(raw) -> int:
 
 
 def parse_judgment(text: str, task: JudgingTask, judge_slug: str) -> AutomatedEvaluation:
-    schema_hint = (
-        '{"verdict": "...", "confidence": "...", "reasoning": "..."}'
-    )
-    parsed = safe_load_json(text or "", schema_hint=schema_hint)
+    if task.type == "illposed":
+        schema = {
+            "type": "object",
+            "properties": {
+                "verdict": {
+                    "type": "string",
+                    "enum": [
+                        "claimant_wins",
+                        "defender_wins_incorrect",
+                        "wrong_problem",
+                        "mixed",
+                        "unknown",
+                    ],
+                },
+                "confidence": {"type": "integer", "minimum": 1, "maximum": 5},
+                "reasoning": {"type": "string"},
+            },
+            "required": ["verdict", "confidence", "reasoning"],
+            "additionalProperties": False,
+        }
+    else:
+        schema = {
+            "type": "object",
+            "properties": {
+                "verdict": {
+                    "type": "string",
+                    "enum": [
+                        "claimant_wins",
+                        "defender_wins_incorrect",
+                        "defender_wins_minor",
+                        "wrong_problem",
+                        "mixed",
+                        "unknown",
+                    ],
+                },
+                "confidence": {"type": "integer", "minimum": 1, "maximum": 5},
+                "reasoning": {"type": "string"},
+            },
+            "required": ["verdict", "confidence", "reasoning"],
+            "additionalProperties": False,
+        }
+    parsed = safe_load_json(text or "", schema=schema)
     verdict = None
     confidence = None
     reasoning = None

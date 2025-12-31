@@ -83,7 +83,22 @@ def extract_structured_critique(text: Optional[str]) -> Tuple[str, str, Optional
     if not text:
         return verdict, notes, suggestions
 
-    parsed = safe_load_json(text, schema_hint='{"verdict": "...", "notes": "..."}')
+    parsed = safe_load_json(
+        text,
+        schema={
+            "type": "object",
+            "properties": {
+                "verdict": {
+                    "type": "string",
+                    "enum": ["correct", "incorrect", "insufficient", "obscure"],
+                },
+                "notes": {"type": "string"},
+                "suggestions": {"type": "string"},
+            },
+            "required": ["verdict", "notes"],
+            "additionalProperties": False,
+        },
+    )
     if isinstance(parsed, dict):
         # Validate verdict against allowed set (from constants.py)
         parsed_verdict = parsed.get("verdict")

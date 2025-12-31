@@ -81,8 +81,18 @@ def self_improve_answers(
         for idx, eval_text in zip(active_indices, eval_responses):
             evaluation = safe_load_json(
                 eval_text,
-                schema_hint='{"verdict": "pass|fail", "ill_posed": bool, "issues": [string], "improvements": string}',
-            ) or {
+                schema={
+                    "type": "object",
+                    "properties": {
+                        "verdict": {"type": "string", "enum": ["pass", "fail"]},
+                        "ill_posed": {"type": "boolean"},
+                        "issues": {"type": "array", "items": {"type": "string"}},
+                        "improvements": {"type": "string"},
+                    },
+                    "required": ["verdict", "ill_posed", "issues", "improvements"],
+                    "additionalProperties": False,
+                },
+            ) or { # TODO: Drop the alternative, fail loudly/declare a failure with "unknown" if evaluation is None, and add it to the list of issues to check
                 "verdict": "fail",
                 "issues": ["Could not parse evaluation JSON."],
                 "ill_posed": False,
