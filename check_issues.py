@@ -8,7 +8,7 @@ Reports files with failed statuses, unknown verdicts, parsing errors, etc.
 import json
 from pathlib import Path
 from collections import defaultdict
-from typing import Dict
+from typing import Any, Dict, Optional
 from constants import (
     CRITIQUE_VERDICT_CORRECT,
     JUDGE_VERDICT_UNKNOWN,
@@ -67,6 +67,15 @@ def final_critique_text(entry: CritiqueEntry) -> str:
     return str(last.notes or last.raw_critique or "")
 
 
+def _has_unknown_self_check(evaluation: Optional[Dict[str, Any]]) -> bool:
+    if evaluation is None:
+        return True
+    if not isinstance(evaluation, dict):
+        return True
+    issues = evaluation.get("issues")
+    return isinstance(issues, list) and "unknown" in issues
+
+
 def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
     """Check for issues in benchmark files."""
     issues = defaultdict(int)
@@ -92,6 +101,12 @@ def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
                 issues["failed_generation"] += 1
             elif status not in {STATUS_SUCCEEDED, STATUS_FAILED, STATUS_ILL_POSED}:
                 issues["unknown_status"] += 1
+
+            gen_rounds = entry.generation_rounds or []
+            if gen_rounds:
+                refinements = gen_rounds[-1].refinement_rounds or []
+                if refinements and _has_unknown_self_check(refinements[-1].evaluation):
+                    issues["unknown_self_check"] += 1
 
             # Check for empty questions
             final_q = final_benchmark_question(entry).strip()
@@ -134,6 +149,10 @@ def check_answer_issues(file_path: Path) -> Dict[str, int]:
                 issues["failed_answer"] += 1
             elif status not in VALID_STATUSES:
                 issues["unknown_status"] += 1
+
+            attempts = entry.attempts or []
+            if attempts and _has_unknown_self_check(attempts[-1].evaluation):
+                issues["unknown_self_check"] += 1
 
             # Check for empty final answers (unless ill-posed)
             final_a = final_answer_text(entry).strip()
@@ -178,6 +197,8 @@ def check_critique_issues(file_path: Path) -> Dict[str, int]:
                 verdict = attempts[-1].verdict
                 if verdict and verdict not in VALID_CRITIQUE_VERDICTS:
                     issues["invalid_verdict"] += 1
+                if _has_unknown_self_check(attempts[-1].evaluation):
+                    issues["unknown_self_check"] += 1
 
             # Check for empty critiques (unless verdict is "correct")
             final_c = final_critique_text(entry).strip()

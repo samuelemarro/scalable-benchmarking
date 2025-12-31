@@ -92,12 +92,15 @@ def self_improve_answers(
                     "required": ["verdict", "ill_posed", "issues", "improvements"],
                     "additionalProperties": False,
                 },
-            ) or { # TODO: Drop the alternative, fail loudly/declare a failure with "unknown" if evaluation is None, and add it to the list of issues to check
-                "verdict": "fail",
-                "issues": ["Could not parse evaluation JSON."],
-                "ill_posed": False,
-                "improvements": "Rewrite the answer carefully.",
-            }
+            )
+            evaluation_missing = evaluation is None
+            if evaluation_missing:
+                evaluation = {
+                    "verdict": "fail",
+                    "issues": ["Could not parse evaluation JSON."],
+                    "ill_posed": False,
+                    "improvements": "Self-check evaluation unknown due to parsing failure.",
+                }
             # Get raw answer for this round
             raw_answer = raw_answers_map.get(idx, {}).get(round_idx, results[idx].final_answer)
             attempt = Attempt(
@@ -109,6 +112,10 @@ def self_improve_answers(
             )
             results[idx].attempts.append(attempt)
             results[idx].last_feedback = evaluation
+
+            if evaluation_missing:
+                results[idx].status = STATUS_FAILED
+                continue
 
             if evaluation.get("verdict") == "pass":
                 results[idx].status = STATUS_SUCCEEDED
