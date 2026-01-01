@@ -124,13 +124,18 @@ def build_self_check_prompt(
         "## Evaluation Rubric\n\n"
         f"{self_critique_guidance}\n\n"
         "## Required Output Format\n\n"
-        "Return ONLY a JSON object with this exact schema (no additional text):\n\n"
+        "Return ONLY a JSON object that matches this JSON Schema (no additional text):\n\n"
         "```json\n"
         "{\n"
-        '  "verdict": "pass" | "fail",\n'
-        '  "ill_posed": true | false,\n'
-        '  "issues": ["<specific issue 1>", "<specific issue 2>", ...],\n'
-        '  "improvements": "<actionable guidance for improvement>"\n'
+        '  "type": "object",\n'
+        '  "additionalProperties": false,\n'
+        '  "required": ["verdict", "ill_posed", "issues", "improvements"],\n'
+        '  "properties": {\n'
+        '    "verdict": { "type": "string", "enum": ["pass", "fail"] },\n'
+        '    "ill_posed": { "type": "boolean" },\n'
+        '    "issues": { "type": "array", "items": { "type": "string" } },\n'
+        '    "improvements": { "type": "string" }\n'
+        "  }\n"
         "}\n"
         "```\n\n"
         "**Field Descriptions:**\n"
@@ -179,12 +184,20 @@ def build_critique_prompt(question: str, author: str, answer: str, guidance: str
         "## Answer to Evaluate\n\n"
         f"{answer}\n\n"
         "## Required Output Format\n\n"
-        "Return ONLY a JSON object with this exact schema (no additional text):\n\n"
+        "Return ONLY a JSON object that matches this JSON Schema (no additional text):\n\n"
         "```json\n"
         "{\n"
-        '  "verdict": "correct" | "incorrect" | "insufficient" | "obscure",\n'
-        '  "notes": "<evidence-based explanation with specific quotes or examples>",\n'
-        '  "suggestions": "<optional: what needs to be fixed for non-correct verdicts>"\n'
+        '  "type": "object",\n'
+        '  "additionalProperties": false,\n'
+        '  "required": ["verdict", "notes"],\n'
+        '  "properties": {\n'
+        '    "verdict": {\n'
+        '      "type": "string",\n'
+        '      "enum": ["correct", "incorrect", "insufficient", "obscure"]\n'
+        "    },\n"
+        '    "notes": { "type": "string" },\n'
+        '    "suggestions": { "type": "string" }\n'
+        "  }\n"
         "}\n"
         "```\n\n"
         "**Verdict Definitions:**\n"
@@ -212,12 +225,18 @@ def build_critique_self_check(question: str, answer: str, critique: str, guidanc
         "## Evaluation Standards\n\n"
         f"{guidance}\n\n"
         "## Required Output Format\n\n"
-        "Return ONLY a JSON object with this exact schema (no additional text):\n\n"
+        "Return ONLY a JSON object that matches this JSON Schema (no additional text):\n\n"
         "```json\n"
         "{\n"
-        '  "verdict": "pass" | "fail",\n'
-        '  "issues": ["<specific issue with the critique>", ...],\n'
-        '  "improvements": "<how to improve the critique>"\n'
+        '  "type": "object",\n'
+        '  "additionalProperties": false,\n'
+        '  "required": ["verdict", "ill_posed", "issues", "improvements"],\n'
+        '  "properties": {\n'
+        '    "verdict": { "type": "string", "enum": ["pass", "fail"] },\n'
+        '    "ill_posed": { "type": "boolean" },\n'
+        '    "issues": { "type": "array", "items": { "type": "string" } },\n'
+        '    "improvements": { "type": "string" }\n'
+        "  }\n"
         "}\n"
         "```\n\n"
         '- `verdict`: "pass" if your critique is accurate and well-justified, "fail" if it needs revision\n'
@@ -244,12 +263,20 @@ def build_critique_refine(question: str, answer: str, critique: str, feedback: s
         "## Feedback on Your Critique\n\n"
         f"{feedback}\n\n"
         "## Required Output Format\n\n"
-        "Return ONLY a JSON object with this exact schema (no additional text):\n\n"
+        "Return ONLY a JSON object that matches this JSON Schema (no additional text):\n\n"
         "```json\n"
         "{\n"
-        '  "verdict": "correct" | "incorrect" | "insufficient" | "obscure",\n'
-        '  "notes": "<evidence-based explanation with specific quotes or examples>",\n'
-        '  "suggestions": "<optional: what needs to be fixed for non-correct verdicts>"\n'
+        '  "type": "object",\n'
+        '  "additionalProperties": false,\n'
+        '  "required": ["verdict", "notes"],\n'
+        '  "properties": {\n'
+        '    "verdict": {\n'
+        '      "type": "string",\n'
+        '      "enum": ["correct", "incorrect", "insufficient", "obscure"]\n'
+        "    },\n"
+        '    "notes": { "type": "string" },\n'
+        '    "suggestions": { "type": "string" }\n'
+        "  }\n"
         "}\n"
         "```\n\n"
         "**Verdict Definitions:**\n"

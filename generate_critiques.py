@@ -95,8 +95,7 @@ def extract_structured_critique(text: Optional[str]) -> Tuple[str, str, Optional
                 "notes": {"type": "string"},
                 "suggestions": {"type": "string"},
             },
-            "required": ["verdict", "notes"],
-            "additionalProperties": False,
+            "required": ["verdict", "notes"]
         },
     )
     if isinstance(parsed, dict):

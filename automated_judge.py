@@ -423,8 +423,7 @@ def parse_judgment(text: str, task: JudgingTask, judge_slug: str) -> AutomatedEv
                 "confidence": {"type": "integer", "minimum": 1, "maximum": 5},
                 "reasoning": {"type": "string"},
             },
-            "required": ["verdict", "confidence", "reasoning"],
-            "additionalProperties": False,
+            "required": ["verdict", "confidence", "reasoning"]
         }
     else:
         schema = {
@@ -444,8 +443,7 @@ def parse_judgment(text: str, task: JudgingTask, judge_slug: str) -> AutomatedEv
                 "confidence": {"type": "integer", "minimum": 1, "maximum": 5},
                 "reasoning": {"type": "string"},
             },
-            "required": ["verdict", "confidence", "reasoning"],
-            "additionalProperties": False,
+            "required": ["verdict", "confidence", "reasoning"]
         }
     parsed = safe_load_json(text or "", schema=schema)
     verdict = None

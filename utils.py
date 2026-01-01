@@ -133,6 +133,7 @@ def _repair_with_model(text: str, schema: Optional[Dict[str, Any]]) -> Optional[
     if not model:
         raise RuntimeError("No model specified in parsing config for JSON repair")
     temperature = cfg.get("temperature", None)
+    reasoning = cfg.get("reasoning", None)
     prompt_lines = [
         "You are a strict JSON repair assistant.",
         "Given the malformed text below, output a valid JSON object only.",
@@ -140,35 +141,47 @@ def _repair_with_model(text: str, schema: Optional[Dict[str, Any]]) -> Optional[
         "Some escapings might be done correctly, so be cautious not to over-escape. Use contextual judgment.",
         "You will handle what is mostly math, so use your knowledge of LaTeX syntax to avoid breaking math expressions.",
         "Do not add, remove or change the content of any fields. In particular, if a string field doesn't match an enum allowed value, fail to parse rather than changing it.",
+        "Note: if a field is optional in the schema, but the value is null in the input, it should be dropped in the output (unless null is specifically allowed by the schema).",
+        "If there are extra fields not in the schema, drop them.",
     ]
     if schema:
         prompt_lines.append("JSON Schema:")
         prompt_lines.append(json.dumps(schema, indent=2, sort_keys=False))
-    prompt_lines.append('If you cannot repair, respond with the following JSON: { \"parsing_error\" : \"Cannot parse\" }.')
+    prompt_lines.append('If you cannot repair, respond with the following JSON: { \"parsing_error\" : \"Cannot parse\", \"reason\": ... }.')
     prompt = "\n".join(prompt_lines)
+    prompt += "\n\nMalformed text:\n"
 
-    try:
-        repaired = query_llm_single(model, text, prompt=prompt, temperature=temperature, response_format={"type": "json_object"})
-        print('Repaired type:', type(repaired))
-        #repaired = clean_json_text(repaired)
+    for i in range(3): # Up to 3 attempts because we live in a world where determinism is dead
         try:
-            parsed = json.loads(repaired)
-        except json.JSONDecodeError:
-            # Last attempt: clean and try again
-            cleaned = clean_json_text(repaired)
-            
+            repaired = query_llm_single(
+                model,
+                text,
+                prompt=prompt,
+                temperature=temperature,
+                response_format={"type": "json_object"},
+                reasoning=reasoning,
+            )
+            #repaired = clean_json_text(repaired)
             try:
-                parsed = json.loads(cleaned)
+                parsed = json.loads(repaired)
             except json.JSONDecodeError:
-                parsed = {"parsing_error": "Cannot parse"}
+                # Last attempt: clean and try again
+                cleaned = clean_json_text(repaired)
 
-        if "parsing_error" in parsed:
-            return None
-        return parsed
+                try:
+                    parsed = json.loads(cleaned)
+                except json.JSONDecodeError:
+                    parsed = {"parsing_error": "Cannot parse"}
 
-    except Exception:
-        logger.exception("Error repairing JSON with model")
-        return None
+            if "parsing_error" in parsed:
+                logger.warning(f"LLM JSON repair attempt {i+1} failed: {parsed.get('reason', 'no reason provided')}")
+            else:
+                return parsed
+
+        except Exception:
+            logger.exception("Error repairing JSON with model")
+
+    return None
 
 
 def safe_load_json(text: str, schema: Optional[Dict[str, Any]] = None, strict: bool = False) -> Optional[Dict]:

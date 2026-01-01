@@ -89,15 +89,14 @@ def self_improve_answers(
                         "issues": {"type": "array", "items": {"type": "string"}},
                         "improvements": {"type": "string"},
                     },
-                    "required": ["verdict", "ill_posed", "issues", "improvements"],
-                    "additionalProperties": False,
+                    "required": ["verdict", "ill_posed", "issues", "improvements"]
                 },
             )
             evaluation_missing = evaluation is None
             if evaluation_missing:
                 evaluation = {
                     "verdict": "fail",
-                    "issues": ["Could not parse evaluation JSON."],
+                    "issues": ["Could not parse evaluation JSON. Raw text: " + eval_text],
                     "ill_posed": False,
                     "improvements": "Self-check evaluation unknown due to parsing failure.",
                 }
