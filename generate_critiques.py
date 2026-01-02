@@ -279,10 +279,10 @@ def generate_critiques_batch(
         cleaned_critiques,
         eval_prompt,
         refine_prompt,
-        max_rounds=max_rounds,
-        disable_batch=disable_batch,
         temperature=temperature,
         reasoning=reasoning,
+        max_rounds=max_rounds,
+        disable_batch=disable_batch,
         raw_initial_critiques=raw_critiques,
     )
 

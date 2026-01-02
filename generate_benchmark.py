@@ -215,10 +215,10 @@ def main():
                 answers,
                 eval_prompts,
                 refine_prompts,
-                max_rounds=args.max_rounds,
-                disable_batch=args.disable_batch,
                 temperature=model_spec.temperature,
                 reasoning=model_spec.reasoning,
+                max_rounds=args.max_rounds,
+                disable_batch=args.disable_batch,
                 raw_initial_answers=raw_answers_list,
             )
 

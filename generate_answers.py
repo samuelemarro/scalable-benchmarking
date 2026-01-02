@@ -130,10 +130,10 @@ def run_generation(
         cleaned_answers,
         eval_prompt,
         refine_prompts,
-        max_rounds=max_rounds,
-        disable_batch=disable_batch,
         temperature=temperature,
         reasoning=reasoning,
+        max_rounds=max_rounds,
+        disable_batch=disable_batch,
         raw_initial_answers=raw_answers,
     )
 
