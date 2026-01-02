@@ -15,7 +15,7 @@ from prompt_library import (
     build_critique_self_check,
     load_critique_guidance,
 )
-from self_improvement import self_improve_answers
+from self_improvement import self_improve_critiques
 from utils import safe_load_json, clean_math, setup_logging, benchmark_answers_from_entries
 from model_api import query_llm_batch, query_llm_single
 from constants import (
@@ -273,7 +273,7 @@ def generate_critiques_batch(
         base_answer = answer_lookup.get(q, "")
         return build_critique_refine(q, base_answer, crit, fb)
 
-    results = self_improve_answers(
+    results = self_improve_critiques(
         critic_model,
         questions,
         cleaned_critiques,
@@ -283,7 +283,7 @@ def generate_critiques_batch(
         disable_batch=disable_batch,
         temperature=temperature,
         reasoning=reasoning,
-        raw_initial_answers=raw_critiques,
+        raw_initial_critiques=raw_critiques,
     )
 
     enriched_all: List[List[CritiqueAttempt]] = []

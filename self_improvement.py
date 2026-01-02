@@ -92,7 +92,7 @@ def self_improve_answers(
                     "required": ["verdict", "ill_posed", "issues", "improvements"]
                 },
             )
-            evaluation_missing = evaluation is None
+            evaluation_missing = not isinstance(evaluation, dict)
             if evaluation_missing:
                 evaluation = {
                     "verdict": "fail",
@@ -154,6 +154,125 @@ def self_improve_answers(
                 raw_answers_map[idx] = {}
             raw_answers_map[idx][round_idx + 1] = new_answer
             results[idx].final_answer = new_answer
+
+        active_indices = next_active
+
+    return results
+
+
+def self_improve_critiques(
+    model: str,
+    questions: Sequence[str],
+    initial_critiques: Sequence[str],
+    build_eval_prompt: Callable[[str, str, int], str],
+    build_refine_prompt: Callable[[str, str, str], str],
+    max_rounds: int = 5,
+    disable_batch: bool = False,
+    temperature: float = 0.7,
+    reasoning: Optional[str] = None,
+    raw_initial_critiques: Optional[Sequence[str]] = None,
+) -> List[ImprovementResult]:
+    """
+    Perform self-critique/improvement loops on a batch of critiques.
+    """
+    if max_rounds < 1:
+        raise ValueError("max_rounds must be >= 1")
+
+    results = [ImprovementResult(final_answer=crit) for crit in initial_critiques]
+    active_indices = list(range(len(questions)))
+
+    raw_critiques_map: Dict[int, Dict[int, str]] = {}
+    if raw_initial_critiques:
+        for i, raw in enumerate(raw_initial_critiques):
+            raw_critiques_map[i] = {0: raw}
+    else:
+        for i in range(len(initial_critiques)):
+            raw_critiques_map[i] = {0: initial_critiques[i]}
+
+    for round_idx in range(max_rounds):
+        eval_prompts = [
+            build_eval_prompt(questions[i], results[i].final_answer, i) for i in active_indices
+        ]
+        eval_responses = _batched_query(
+            model,
+            eval_prompts,
+            disable_batch,
+            temperature=temperature,
+            reasoning=reasoning,
+        )
+
+        next_active = []
+        refine_prompts = []
+        refine_indices = []
+
+        for idx, eval_text in zip(active_indices, eval_responses):
+            evaluation = safe_load_json(
+                eval_text,
+                schema={
+                    "type": "object",
+                    "properties": {
+                        "verdict": {"type": "string", "enum": ["pass", "fail"]},
+                        "issues": {"type": "array", "items": {"type": "string"}},
+                        "improvements": {"type": "string"},
+                    },
+                    "required": ["verdict", "issues", "improvements"]
+                },
+            )
+            evaluation_missing = not isinstance(evaluation, dict)
+            if evaluation_missing:
+                evaluation = {
+                    "verdict": "fail",
+                    "issues": ["Could not parse evaluation JSON. Raw text: " + eval_text],
+                    "improvements": "Self-check evaluation unknown due to parsing failure.",
+                }
+            raw_answer = raw_critiques_map.get(idx, {}).get(round_idx, results[idx].final_answer)
+            attempt = Attempt(
+                round=round_idx + 1,
+                answer=results[idx].final_answer,
+                raw_answer=raw_answer,
+                evaluation=evaluation,
+                improved_from=round_idx,
+            )
+            results[idx].attempts.append(attempt)
+            results[idx].last_feedback = evaluation
+
+            if evaluation_missing:
+                results[idx].status = STATUS_FAILED
+                continue
+
+            if evaluation.get("verdict") == "pass":
+                results[idx].status = STATUS_SUCCEEDED
+                continue
+
+            if round_idx == max_rounds - 1:
+                results[idx].status = STATUS_FAILED
+                continue
+
+            refine_indices.append(idx)
+            refine_prompts.append(
+                build_refine_prompt(
+                    questions[idx],
+                    results[idx].final_answer,
+                    evaluation.get("improvements", "No specific improvement suggestions provided."),
+                )
+            )
+            next_active.append(idx)
+
+        if not refine_prompts:
+            break
+
+        refined_critiques = _batched_query(
+            model,
+            refine_prompts,
+            disable_batch,
+            temperature=temperature,
+            reasoning=reasoning,
+        )
+        for idx, new_critique in zip(refine_indices, refined_critiques):
+            if idx not in raw_critiques_map:
+                raw_critiques_map[idx] = {}
+            raw_critiques_map[idx][round_idx + 1] = new_critique
+            results[idx].final_answer = new_critique
 
         active_indices = next_active
 

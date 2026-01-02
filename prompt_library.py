@@ -215,7 +215,8 @@ def build_critique_self_check(question: str, answer: str, critique: str, guidanc
     """
     return (
         "# Task: Review Your Critique for Accuracy\n\n"
-        "Assess whether your critique correctly identifies issues (if any) and provides accurate, evidence-based reasoning.\n\n"
+        "Assess whether your critique correctly identifies issues (if any) and provides accurate, evidence-based reasoning.\n"
+        "Also verify that your critique follows the required critique JSON format.\n\n"
         "## Question\n\n"
         f"{question}\n\n"
         "## Answer Being Critiqued\n\n"
@@ -224,16 +225,19 @@ def build_critique_self_check(question: str, answer: str, critique: str, guidanc
         f"{critique}\n\n"
         "## Evaluation Standards\n\n"
         f"{guidance}\n\n"
+        "## Critique Format Check\n\n"
+        "Your critique must be valid JSON with `verdict` in {correct, incorrect, insufficient, obscure}, "
+        "`notes` as a string, and optional `suggestions`. If the format is invalid, set verdict to \"fail\" "
+        "and list the formatting problems in `issues`.\n\n"
         "## Required Output Format\n\n"
         "Return ONLY a JSON object that matches this JSON Schema (no additional text):\n\n"
         "```json\n"
         "{\n"
         '  "type": "object",\n'
         '  "additionalProperties": false,\n'
-        '  "required": ["verdict", "ill_posed", "issues", "improvements"],\n'
+        '  "required": ["verdict", "issues", "improvements"],\n'
         '  "properties": {\n'
         '    "verdict": { "type": "string", "enum": ["pass", "fail"] },\n'
-        '    "ill_posed": { "type": "boolean" },\n'
         '    "issues": { "type": "array", "items": { "type": "string" } },\n'
         '    "improvements": { "type": "string" }\n'
         "  }\n"
