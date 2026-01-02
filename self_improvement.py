@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Sequence
 
+from tqdm import tqdm
+
 from model_api import query_llm_batch, query_llm_single
 from utils import safe_load_json
 from constants import STATUS_FAILED, STATUS_ILL_POSED, STATUS_SUCCEEDED
@@ -62,7 +64,7 @@ def self_improve_answers(
         for i in range(len(initial_answers)):
             raw_answers_map[i] = {0: initial_answers[i]}
 
-    for round_idx in range(max_rounds):
+    for round_idx in tqdm(range(max_rounds), desc="Self-improve answers", leave=False):
         eval_prompts = [
             build_eval_prompt(questions[i], results[i].final_answer, i) for i in active_indices
         ]
@@ -189,7 +191,7 @@ def self_improve_critiques(
         for i in range(len(initial_critiques)):
             raw_critiques_map[i] = {0: initial_critiques[i]}
 
-    for round_idx in range(max_rounds):
+    for round_idx in tqdm(range(max_rounds), desc="Self-improve critiques", leave=False):
         eval_prompts = [
             build_eval_prompt(questions[i], results[i].final_answer, i) for i in active_indices
         ]
