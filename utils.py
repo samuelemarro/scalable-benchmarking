@@ -143,6 +143,7 @@ def _repair_with_model(text: str, schema: Optional[Dict[str, Any]]) -> Optional[
         "Do not add, remove or change the content of any fields. In particular, if a string field doesn't match an enum allowed value, fail to parse rather than changing it.",
         "Note: if a field is optional in the schema, but the value is null in the input, it should be dropped in the output (unless null is specifically allowed by the schema).",
         "If there are extra fields not in the schema, drop them.",
+        "Note 2: If the input text is natural language instead of JSON, but it contains all the relevant information in sufficiently obvious format, try to convert it into JSON format. Just don't try to invent fields.",
     ]
     if schema:
         prompt_lines.append("JSON Schema:")

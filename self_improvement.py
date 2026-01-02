@@ -135,7 +135,7 @@ def self_improve_answers(
                 build_refine_prompt(
                     questions[idx],
                     results[idx].final_answer,
-                    evaluation.get("improvements", "Improve correctness and completeness."),
+                    evaluation.get("improvements", "No specific improvement suggestions provided."),
                 )
             )
             next_active.append(idx)
