@@ -2,6 +2,7 @@ import argparse
 import shlex
 import subprocess
 import sys
+import time
 from pathlib import Path
 from typing import Iterable, List, Tuple
 
@@ -25,6 +26,59 @@ def _run_step(name: str, cmd: List[str], timeout_seconds: int) -> int:
     except subprocess.CalledProcessError as exc:
         print(f"{name} failed with exit code {exc.returncode}.", file=sys.stderr)
         return exc.returncode
+    return 0
+
+
+def _terminate_processes(processes: Iterable[subprocess.Popen]) -> None:
+    for proc in processes:
+        if proc.poll() is None:
+            proc.terminate()
+    for proc in processes:
+        if proc.poll() is None:
+            try:
+                proc.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+
+
+def _run_steps_parallel(steps: List[Tuple[str, List[str]]], timeout_seconds: int) -> int:
+    processes: List[Tuple[str, subprocess.Popen, float]] = []
+    for name, cmd in steps:
+        rendered = " ".join(shlex.quote(part) for part in cmd)
+        print(f"\n==> {name}")
+        print(rendered)
+        try:
+            proc = subprocess.Popen(cmd)
+        except OSError as exc:
+            print(f"{name} failed to start: {exc}.", file=sys.stderr)
+            _terminate_processes([proc for _, proc, _ in processes])
+            return 1
+        processes.append((name, proc, time.monotonic()))
+
+    while processes:
+        for name, proc, start_time in list(processes):
+            return_code = proc.poll()
+            if return_code is not None:
+                processes.remove((name, proc, start_time))
+                if return_code != 0:
+                    print(
+                        f"{name} failed with exit code {return_code}.",
+                        file=sys.stderr,
+                    )
+                    _terminate_processes([proc for _, proc, _ in processes])
+                    return return_code
+                continue
+
+            if time.monotonic() - start_time > timeout_seconds:
+                print(
+                    f"{name} timed out after {timeout_seconds} seconds.",
+                    file=sys.stderr,
+                )
+                _terminate_processes([proc for _, proc, _ in processes])
+                return 124
+
+        time.sleep(0.1)
+
     return 0
 
 
@@ -60,6 +114,11 @@ def main() -> int:
     parser.add_argument("--answer-models", nargs="*")
     parser.add_argument("--critique-models", nargs="*")
     parser.add_argument("--judge-models", nargs="*")
+    parser.add_argument(
+        "--run-parallel",
+        action="store_true",
+        help="Run all pipeline steps concurrently instead of sequentially.",
+    )
     args = parser.parse_args()
 
     timeout_seconds = int(args.timeout_hours * 3600)
@@ -232,10 +291,15 @@ def main() -> int:
     _append_args(judge_cmd, "--models", args.judge_models)
     steps.append(("Automated judging", judge_cmd))
 
-    for name, cmd in steps:
-        code = _run_step(name, cmd, timeout_seconds)
+    if args.run_parallel:
+        code = _run_steps_parallel(steps, timeout_seconds)
         if code != 0:
             return code
+    else:
+        for name, cmd in steps:
+            code = _run_step(name, cmd, timeout_seconds)
+            if code != 0:
+                return code
 
     print("\nPipeline completed.")
     return 0
