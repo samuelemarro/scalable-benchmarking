@@ -43,6 +43,7 @@ def _terminate_processes(processes: Iterable[subprocess.Popen]) -> None:
 
 def _run_steps_parallel(steps: List[Tuple[str, List[str]]], timeout_seconds: int) -> int:
     processes: List[Tuple[str, subprocess.Popen, float]] = []
+    timed_out_steps: List[str] = []
     for name, cmd in steps:
         rendered = " ".join(shlex.quote(part) for part in cmd)
         print(f"\n==> {name}")
@@ -74,11 +75,21 @@ def _run_steps_parallel(steps: List[Tuple[str, List[str]]], timeout_seconds: int
                     f"{name} timed out after {timeout_seconds} seconds.",
                     file=sys.stderr,
                 )
-                _terminate_processes([proc for _, proc, _ in processes])
-                return 124
+                _terminate_processes([proc])
+                processes.remove((name, proc, start_time))
+                timed_out_steps.append(name)
+                continue
 
         time.sleep(0.1)
 
+    if timed_out_steps:
+        print(
+            "\nPipeline completed with timeouts in parallel steps:",
+            file=sys.stderr,
+        )
+        for name in timed_out_steps:
+            print(f"  - {name}", file=sys.stderr)
+        return 124
     return 0
 
 
@@ -296,10 +307,20 @@ def main() -> int:
         if code != 0:
             return code
     else:
+        timed_out_steps: List[str] = []
         for name, cmd in steps:
             code = _run_step(name, cmd, timeout_seconds)
+            if code == 124:
+                timed_out_steps.append(name)
+                continue
             if code != 0:
                 return code
+
+        if timed_out_steps:
+            print("\nPipeline completed with timeouts:", file=sys.stderr)
+            for name in timed_out_steps:
+                print(f"  - {name}", file=sys.stderr)
+            return 124
 
     print("\nPipeline completed.")
     return 0
