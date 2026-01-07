@@ -2,7 +2,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 import logging
 
-from typing import Dict, List
+from typing import Dict, List, Optional, Tuple
 
 from data_models import (
     AutomatedEvaluation,
@@ -115,6 +115,61 @@ def collect_automated_evaluations(auto_eval_dir: Path) -> List[AutomatedEvaluati
         all_decisions.extend(data.decisions)
 
     return all_decisions
+
+
+def _critique_target_key(claim_id: str) -> Optional[str]:
+    parts = claim_id.split("/")
+    if len(parts) < 5:
+        return None
+    q_slug = parts[-3]
+    critic_and_answer = parts[-2]
+    idx = parts[-1]
+    if "__" not in critic_and_answer:
+        return None
+    _, answer_slug = critic_and_answer.split("__", 1)
+    return f"critique/{q_slug}/{answer_slug}/{idx}"
+
+
+def _illposed_target_key(claim_id: str) -> Optional[str]:
+    parts = claim_id.split("/")
+    if len(parts) < 4:
+        return None
+    q_slug = parts[-3]
+    idx = parts[-1]
+    return f"illposed/{q_slug}/{idx}"
+
+
+def count_inter_judge_disagreements(auto_eval_dir: Path) -> Tuple[int, int]:
+    """Count claims with non-unanimous judge verdicts."""
+    decisions = collect_automated_evaluations(auto_eval_dir)
+    decisions_by_claim = defaultdict(list)
+    for decision in decisions:
+        if decision.id:
+            decisions_by_claim[decision.id].append(decision)
+
+    naive_count = 0
+    dedup_targets = set()
+
+    for claim_id, claim_decisions in decisions_by_claim.items():
+        if not claim_decisions:
+            continue
+        claim_type = claim_decisions[0].type
+        if claim_type not in {"critique", "critique_debate", "illposed"}:
+            continue
+        verdicts = [d.verdict for d in claim_decisions if d.verdict]
+        if len(verdicts) < 2:
+            continue
+        if len(set(verdicts)) <= 1:
+            continue
+
+        naive_count += 1
+        if claim_type in {"critique", "critique_debate"}:
+            target_key = _critique_target_key(claim_id)
+        else:
+            target_key = _illposed_target_key(claim_id)
+        dedup_targets.add(target_key or f"{claim_type}/{claim_id}")
+
+    return naive_count, len(dedup_targets)
 
 
 def build_critique_verdict_map(critiques_dir: Path) -> Dict[str, Dict]:
@@ -365,6 +420,11 @@ def main():
     print("\nLabel histogram (number of labels -> count of claims):")
     for n_labels in sorted(label_hist):
         print(f"  {n_labels}: {label_hist[n_labels]}")
+
+    inter_judge_naive, inter_judge_dedup = count_inter_judge_disagreements(auto_eval_dir)
+    print("\nInter-judge disagreements (critiques/ill-posed claims):")
+    print(f"  naive: {inter_judge_naive}")
+    print(f"  deduped by answer/question: {inter_judge_dedup}")
 
     # Compute and print automated evaluation statistics
     model_self_answers, model_self_answers_no_debate, model_as_defender_success_rate, model_as_claimant_success_rate, cross_model_stats = compute_model_stats(auto_eval_dir, critiques_dir)
