@@ -132,13 +132,15 @@ def _count_question_stats(
         success_runs: Set[str] = set()
         for run_idx, run_id in enumerate(run_ids):
             entry = _pick_entry(entries, entries_by_run, run_idx, run_id)
-            if entry and entry.status == STATUS_SUCCEEDED:
-                counts["succeeded"] += 1
-                success_runs.add(run_id)
-            elif entry and entry.status == STATUS_ILL_POSED:
-                counts["ill_posed"] += 1
-            elif entry and entry.status == STATUS_FAILED:
-                counts["failed"] += 1
+            if entry:
+                counts["generated"] += 1
+                if entry.status == STATUS_SUCCEEDED:
+                    counts["succeeded"] += 1
+                    success_runs.add(run_id)
+                elif entry.status == STATUS_ILL_POSED:
+                    counts["ill_posed"] += 1
+                elif entry.status == STATUS_FAILED:
+                    counts["failed"] += 1
             else:
                 counts["missing"] += 1
         success_runs_by_slug[q_slug] = success_runs
@@ -172,12 +174,14 @@ def _count_answer_stats(
                 if run_id not in success_runs:
                     continue
                 entry = _pick_entry(entries, entries_by_run, run_idx, run_id)
-                if entry and entry.status == STATUS_SUCCEEDED:
-                    counts["succeeded"] += 1
-                elif entry and entry.status == STATUS_ILL_POSED:
-                    counts["ill_posed"] += 1
-                elif entry and entry.status == STATUS_FAILED:
-                    counts["failed"] += 1
+                if entry:
+                    counts["generated"] += 1
+                    if entry.status == STATUS_SUCCEEDED:
+                        counts["succeeded"] += 1
+                    elif entry.status == STATUS_ILL_POSED:
+                        counts["ill_posed"] += 1
+                    elif entry.status == STATUS_FAILED:
+                        counts["failed"] += 1
                 else:
                     counts["missing"] += 1
     return counts, expected
@@ -330,10 +334,12 @@ def _count_critique_stats(
                 for crit_file in q_dir.glob("*.json"):
                     entries = load_critique_entries(crit_file)
                     for entry in entries:
-                        if entry and entry.status == STATUS_SUCCEEDED:
-                            counts["succeeded"] += 1
-                        elif entry:
-                            counts["failed"] += 1
+                        if entry:
+                            counts["generated"] += 1
+                            if entry.status == STATUS_SUCCEEDED:
+                                counts["succeeded"] += 1
+                            else:
+                                counts["failed"] += 1
                         else:
                             counts["missing"] += 1
         actual_by_mode[mode] = counts
@@ -361,13 +367,13 @@ def _count_debate_stats(
             continue
         for answer_file in q_dir.glob("*.json"):
             entries = load_answer_entries(answer_file)
-            expected_illposed["total"] += sum(
+            expected_illposed["expected"] += sum(
                 1 for entry in entries if entry and entry.status == STATUS_ILL_POSED
             )
 
     for debate_file in (debates_dir / "illposed").glob("*/*.json"):
         entries = load_debate_entries(debate_file)
-        actual_illposed["total"] += sum(1 for entry in entries if entry)
+        actual_illposed["generated"] += sum(1 for entry in entries if entry)
 
     for mode in critique_modes:
         expected = 0
@@ -615,32 +621,36 @@ def main() -> int:
     print(f"- Judge models: {len(judge_specs)}")
 
     print("\nQuestions:")
-    print(f"- Succeeded: {_format_ratio(question_counts['succeeded'], question_expected)}")
+    print(f"- Generated: {_format_ratio(question_counts['generated'], question_expected)}")
+    if question_counts["succeeded"]:
+        print(f"- Succeeded: {_format_ratio(question_counts['succeeded'], question_expected)}")
     if question_counts["ill_posed"]:
         print(f"- Ill-posed: {_format_ratio(question_counts['ill_posed'], question_expected)}")
     if question_counts["failed"]:
         print(f"- Failed: {_format_ratio(question_counts['failed'], question_expected)}")
 
     print("\nAnswers:")
-    print(f"- Succeeded: {_format_ratio(answer_counts['succeeded'], answer_expected)}")
-    answered_total = answer_counts["succeeded"] + answer_counts["ill_posed"]
-    print(f"- Answered (succeeded + ill-posed): {_format_ratio(answered_total, answer_expected)}")
+    print(f"- Generated: {_format_ratio(answer_counts['generated'], answer_expected)}")
+    if answer_counts["succeeded"]:
+        print(f"- Succeeded: {_format_ratio(answer_counts['succeeded'], answer_expected)}")
+    if answer_counts["ill_posed"]:
+        print(f"- Ill-posed: {_format_ratio(answer_counts['ill_posed'], answer_expected)}")
     if answer_counts["failed"]:
         print(f"- Failed: {_format_ratio(answer_counts['failed'], answer_expected)}")
 
     print("\nCritiques:")
     total_expected = sum(critique_expected_by_mode.values())
-    total_succeeded = sum(counts["succeeded"] for counts in critique_counts_by_mode.values())
-    print(f"- Total succeeded: {_format_ratio(total_succeeded, total_expected)}")
+    total_generated = sum(counts["generated"] for counts in critique_counts_by_mode.values())
+    print(f"- Total generated: {_format_ratio(total_generated, total_expected)}")
     for mode in args.critique_modes:
         expected = critique_expected_by_mode.get(mode, 0)
-        succeeded = critique_counts_by_mode.get(mode, Counter())["succeeded"]
-        print(f"- {mode}: {_format_ratio(succeeded, expected)}")
+        generated = critique_counts_by_mode.get(mode, Counter())["generated"]
+        print(f"- {mode}: {_format_ratio(generated, expected)}")
 
     print("\nDebates:")
-    print(f"- Ill-posed: {_format_ratio(actual_illposed['total'], expected_illposed['total'])}")
-    total_expected_debates = expected_illposed["total"] + sum(expected_critique_by_mode.values())
-    total_actual_debates = actual_illposed["total"] + sum(actual_critique_by_mode.values())
+    print(f"- Ill-posed: {_format_ratio(actual_illposed['generated'], expected_illposed['expected'])}")
+    total_expected_debates = expected_illposed["expected"] + sum(expected_critique_by_mode.values())
+    total_actual_debates = actual_illposed["generated"] + sum(actual_critique_by_mode.values())
     print(f"- Critique total: {_format_ratio(sum(actual_critique_by_mode.values()), sum(expected_critique_by_mode.values()))}")
     for mode in args.critique_modes:
         expected = expected_critique_by_mode.get(mode, 0)
