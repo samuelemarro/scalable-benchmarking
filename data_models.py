@@ -496,11 +496,9 @@ def load_model_list(path: Path, model: Type[ModelT]) -> List[Optional[ModelT]]:
 
 def save_model_list(path: Path, items: List[Optional[BaseModel]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    payload: List[Dict[str, Any]] = []
+    payload: List[Optional[Dict[str, Any]]] = []
     for item in items:
-        if item is None:
-            payload.append({})
-        else:
+        if item is not None:
             payload.append(item.model_dump(exclude_none=True))
     path.write_text(json.dumps(payload, indent=2))
 
