@@ -1,0 +1,73 @@
+[
+  {
+    "question": "Let $(\\varphi_e)_{e \\in \\mathbb{N}}$ be a standard acceptable numbering of all partial recursive functions (for instance, derived from a fixed enumeration of Turing machines). Define\n$$\n\\mathrm{Tot} = \\{ e \\in \\mathbb{N} \\mid \\varphi_e \\text{ is total} \\}.\n$$\nProve that $\\mathrm{Tot}$ is not recursively enumerable.",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The proof is mathematically sound and complete. It correctly assumes Tot is r.e., constructs a diagonal function f, shows f is total recursive, derives a contradiction via index self-application. All steps are logically valid and the reasoning is clear. Minor informality (e.g., phrasing of the contradiction) does not affect correctness.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The proof is mathematically sound and complete. It correctly assumes Tot is r.e., constructs a diagonal function f, shows f is total recursive, derives a contradiction via index self-application. All steps are logically valid and the reasoning is clear. Minor informality (e.g., phrasing of the contradiction) does not affect correctness.\"\n}",
+        "verdict": "correct",
+        "notes": "The proof is mathematically sound and complete. It correctly assumes Tot is r.e., constructs a diagonal function f, shows f is total recursive, derives a contradiction via index self-application. All steps are logically valid and the reasoning is clear. Minor informality (e.g., phrasing of the contradiction) does not affect correctness.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Prove that for every nonnegative integer $n$,\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}.\n$$",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a critical error: it claims that $\\\\sum_{k=0}^{n} \\\\binom{n}{k} (-4)^{-k} \\\\binom{2k}{k} = \\\\binom{-1/2}{n}$ (Step 10). This is false; for $n=1$, the left side equals $1 - \\\\frac{1}{2}=0.5$, while $\\\\binom{-1/2}{1} = -0.5$. Moreover, even if that identity were true, the subsequent simplification incorrectly drops the factor $(-1)^n$ when substituting $\\\\binom{-1/2}{n} = (-1)^n \\\\binom{2n}{n}/4^n$, writing $4^n \\\\cdot \\\\frac{\\\\binom{2n}{n}}{4^n}$ instead of $4^n \\\\cdot (-1)^n \\\\frac{\\\\binom{2n}{n}}{4^n}$. The derivation therefore does not establish the required identity.\",\n  \"suggestions\": \"A correct proof could use the identity $\\\\binom{2k}{k}=(-1)^k 4^k \\\\binom{-1/2}{k}$ to transform the sum into $\\\\sum_{k=0}^n \\\\binom{n}{k} \\\\binom{-1/2}{k}$, then apply a suitable combinatorial identity (e.g., Chu\u2013Vandermonde) or generating functions to evaluate it as $\\\\binom{2n}{n}/4^n$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a critical error: it claims that $\\\\sum_{k=0}^{n} \\\\binom{n}{k} (-4)^{-k} \\\\binom{2k}{k} = \\\\binom{-1/2}{n}$ (Step 10). This is false; for $n=1$, the left side equals $1 - \\\\frac{1}{2}=0.5$, while $\\\\binom{-1/2}{1} = -0.5$. Moreover, even if that identity were true, the subsequent simplification incorrectly drops the factor $(-1)^n$ when substituting $\\\\binom{-1/2}{n} = (-1)^n \\\\binom{2n}{n}/4^n$, writing $4^n \\\\cdot \\\\frac{\\\\binom{2n}{n}}{4^n}$ instead of $4^n \\\\cdot (-1)^n \\\\frac{\\\\binom{2n}{n}}{4^n}$. The derivation therefore does not establish the required identity.\",\n  \"suggestions\": \"A correct proof could use the identity $\\\\binom{2k}{k}=(-1)^k 4^k \\\\binom{-1/2}{k}$ to transform the sum into $\\\\sum_{k=0}^n \\\\binom{n}{k} \\\\binom{-1/2}{k}$, then apply a suitable combinatorial identity (e.g., Chu\u2013Vandermonde) or generating functions to evaluate it as $\\\\binom{2n}{n}/4^n$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains a critical error: it claims that $\\sum_{k=0}^{n} \\binom{n}{k} (-4)^{-k} \\binom{2k}{k} = \\binom{-1/2}{n}$ (Step 10). This is false; for $n=1$, the left side equals $1 - \\frac{1}{2}=0.5$, while $\\binom{-1/2}{1} = -0.5$. Moreover, even if that identity were true, the subsequent simplification incorrectly drops the factor $(-1)^n$ when substituting $\\binom{-1/2}{n} = (-1)^n \\binom{2n}{n}/4^n$, writing $4^n \\cdot \\frac{\\binom{2n}{n}}{4^n}$ instead of $4^n \\cdot (-1)^n \\frac{\\binom{2n}{n}}{4^n}$. The derivation therefore does not establish the required identity.",
+        "suggestions": "A correct proof could use the identity $\\binom{2k}{k}=(-1)^k 4^k \\binom{-1/2}{k}$ to transform the sum into $\\sum_{k=0}^n \\binom{n}{k} \\binom{-1/2}{k}$, then apply a suitable combinatorial identity (e.g., Chu\u2013Vandermonde) or generating functions to evaluate it as $\\binom{2n}{n}/4^n$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique correctly identifies the errors and provides a clear counterexample. It is accurate and follows the required format."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Find all integer solutions $(x, y)$ to the equation $y^3 = x^2 + 2$.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly rules out negative y (since y^3 < 0 while x^2+2 > 0) and finds the solutions (5,3) and (-5,3) from y=3. However, the argument for positive y > 3 is incomplete: it only checks y=4 and then handwaves about growth rates without proving that no larger y can work. A rigorous proof is needed to show that y=3 is the only positive solution. Therefore the answer is meaningfully incomplete.\",\n  \"suggestions\": \"Provide a rigorous proof that no integer solutions exist for y > 3. For instance, show that for y \\u2265 4, y^3 - 2 lies between consecutive squares, or use factorization in Z[\\u221a-2] (a UFD) to derive a contradiction for larger y.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly rules out negative y (since y^3 < 0 while x^2+2 > 0) and finds the solutions (5,3) and (-5,3) from y=3. However, the argument for positive y > 3 is incomplete: it only checks y=4 and then handwaves about growth rates without proving that no larger y can work. A rigorous proof is needed to show that y=3 is the only positive solution. Therefore the answer is meaningfully incomplete.\",\n  \"suggestions\": \"Provide a rigorous proof that no integer solutions exist for y > 3. For instance, show that for y \\u2265 4, y^3 - 2 lies between consecutive squares, or use factorization in Z[\\u221a-2] (a UFD) to derive a contradiction for larger y.\"\n}",
+        "verdict": "insufficient",
+        "notes": "The answer correctly rules out negative y (since y^3 < 0 while x^2+2 > 0) and finds the solutions (5,3) and (-5,3) from y=3. However, the argument for positive y > 3 is incomplete: it only checks y=4 and then handwaves about growth rates without proving that no larger y can work. A rigorous proof is needed to show that y=3 is the only positive solution. Therefore the answer is meaningfully incomplete.",
+        "suggestions": "Provide a rigorous proof that no integer solutions exist for y > 3. For instance, show that for y \u2265 4, y^3 - 2 lies between consecutive squares, or use factorization in Z[\u221a-2] (a UFD) to derive a contradiction for larger y.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no improvements needed."
+        }
+      }
+    ]
+  }
+]

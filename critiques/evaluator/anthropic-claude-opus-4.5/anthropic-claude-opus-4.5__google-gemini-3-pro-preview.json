@@ -1,0 +1,117 @@
+[
+  {
+    "question": "Let $\\omega$ denote the first infinite ordinal. Consider the ordinals\n$$\\alpha = \\omega^2 \\cdot 2 + \\omega \\cdot 5 + 3 \\quad \\text{and} \\quad \\beta = \\omega^2 + \\omega \\cdot 3 + 7.$$\nCompute the ordinal product $\\alpha \\cdot \\beta$ using ordinal arithmetic, and express your answer in Cantor normal form.\n\n(Recall that the Cantor normal form of an ordinal $\\gamma > 0$ is the unique representation $\\gamma = \\omega^{\\delta_1} \\cdot c_1 + \\omega^{\\delta_2} \\cdot c_2 + \\cdots + \\omega^{\\delta_k} \\cdot c_k$ where $\\delta_1 > \\delta_2 > \\cdots > \\delta_k \\geq 0$ and each $c_i$ is a positive integer.)",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies ordinal arithmetic rules throughout. The key steps are verified: (1) $\\\\alpha \\\\cdot \\\\omega^2 = \\\\omega^{2+2} = \\\\omega^4$ correctly uses the rule that for $\\\\alpha$ with leading term $\\\\omega^\\\\delta$, we have $\\\\alpha \\\\cdot \\\\omega^\\\\gamma = \\\\omega^{\\\\delta + \\\\gamma}$; (2) $\\\\alpha \\\\cdot (\\\\omega \\\\cdot 3) = (\\\\alpha \\\\cdot \\\\omega) \\\\cdot 3 = \\\\omega^3 \\\\cdot 3$ correctly applies associativity; (3) $\\\\alpha \\\\cdot 7 = \\\\omega^2 \\\\cdot 14 + \\\\omega \\\\cdot 5 + 3$ correctly applies the rule for multiplication by finite ordinals, where only the leading coefficient is multiplied while lower-order terms are preserved. The final summation correctly observes that since exponents are strictly decreasing (4 > 3 > 2 > 1 > 0), no absorption occurs between the terms. The final answer $\\\\omega^4 + \\\\omega^3 \\\\cdot 3 + \\\\omega^2 \\\\cdot 14 + \\\\omega \\\\cdot 5 + 3$ is valid Cantor normal form with strictly decreasing exponents and positive integer coefficients.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies ordinal arithmetic rules throughout. The key steps are verified: (1) $\\\\alpha \\\\cdot \\\\omega^2 = \\\\omega^{2+2} = \\\\omega^4$ correctly uses the rule that for $\\\\alpha$ with leading term $\\\\omega^\\\\delta$, we have $\\\\alpha \\\\cdot \\\\omega^\\\\gamma = \\\\omega^{\\\\delta + \\\\gamma}$; (2) $\\\\alpha \\\\cdot (\\\\omega \\\\cdot 3) = (\\\\alpha \\\\cdot \\\\omega) \\\\cdot 3 = \\\\omega^3 \\\\cdot 3$ correctly applies associativity; (3) $\\\\alpha \\\\cdot 7 = \\\\omega^2 \\\\cdot 14 + \\\\omega \\\\cdot 5 + 3$ correctly applies the rule for multiplication by finite ordinals, where only the leading coefficient is multiplied while lower-order terms are preserved. The final summation correctly observes that since exponents are strictly decreasing (4 > 3 > 2 > 1 > 0), no absorption occurs between the terms. The final answer $\\\\omega^4 + \\\\omega^3 \\\\cdot 3 + \\\\omega^2 \\\\cdot 14 + \\\\omega \\\\cdot 5 + 3$ is valid Cantor normal form with strictly decreasing exponents and positive integer coefficients.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies ordinal arithmetic rules throughout. The key steps are verified: (1) $\\alpha \\cdot \\omega^2 = \\omega^{2+2} = \\omega^4$ correctly uses the rule that for $\\alpha$ with leading term $\\omega^\\delta$, we have $\\alpha \\cdot \\omega^\\gamma = \\omega^{\\delta + \\gamma}$; (2) $\\alpha \\cdot (\\omega \\cdot 3) = (\\alpha \\cdot \\omega) \\cdot 3 = \\omega^3 \\cdot 3$ correctly applies associativity; (3) $\\alpha \\cdot 7 = \\omega^2 \\cdot 14 + \\omega \\cdot 5 + 3$ correctly applies the rule for multiplication by finite ordinals, where only the leading coefficient is multiplied while lower-order terms are preserved. The final summation correctly observes that since exponents are strictly decreasing (4 > 3 > 2 > 1 > 0), no absorption occurs between the terms. The final answer $\\omega^4 + \\omega^3 \\cdot 3 + \\omega^2 \\cdot 14 + \\omega \\cdot 5 + 3$ is valid Cantor normal form with strictly decreasing exponents and positive integer coefficients.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "A sequence $(a_1, a_2, \\ldots, a_n)$ of positive integers is called **almost increasing** if $a_{i+1} \\geq a_i - 1$ for all $1 \\leq i \\leq n-1$.\n\nFind the number of almost increasing sequences of length 6 where each $a_i \\in \\{1, 2, 3\\}$.",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\"verdict\": \"correct\", \"notes\": \"The answer correctly identifies that the only forbidden transition is $(3, 1)$, properly sets up the recurrence relations ($x_k = x_{k-1} + y_{k-1}$, $y_k = z_k = T_{k-1}$), and computes all values correctly through $k = 6$. I verified the arithmetic: $T_1 = 3$, $T_2 = 8$, $T_3 = 21$, $T_4 = 55$, $T_5 = 144$, $T_6 = 377$. The intermediate values and final answer of 377 are all correct. The Fibonacci pattern observation ($T_k = F_{2k+2}$) also checks out and provides additional verification.\"}",
+        "raw_critique": "{\"verdict\": \"correct\", \"notes\": \"The answer correctly identifies that the only forbidden transition is $(3, 1)$, properly sets up the recurrence relations ($x_k = x_{k-1} + y_{k-1}$, $y_k = z_k = T_{k-1}$), and computes all values correctly through $k = 6$. I verified the arithmetic: $T_1 = 3$, $T_2 = 8$, $T_3 = 21$, $T_4 = 55$, $T_5 = 144$, $T_6 = 377$. The intermediate values and final answer of 377 are all correct. The Fibonacci pattern observation ($T_k = F_{2k+2}$) also checks out and provides additional verification.\"}",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies that the only forbidden transition is $(3, 1)$, properly sets up the recurrence relations ($x_k = x_{k-1} + y_{k-1}$, $y_k = z_k = T_{k-1}$), and computes all values correctly through $k = 6$. I verified the arithmetic: $T_1 = 3$, $T_2 = 8$, $T_3 = 21$, $T_4 = 55$, $T_5 = 144$, $T_6 = 377$. The intermediate values and final answer of 377 are all correct. The Fibonacci pattern observation ($T_k = F_{2k+2}$) also checks out and provides additional verification.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "For a positive integer $n$, let $\\tau(n)$ denote the number of positive divisors of $n$. Find all positive integers $n$ such that $\\tau(n^2) = n$.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. The case analysis correctly handles $n=1$ separately, then for $n>1$ establishes that $n$ must be odd through parity analysis of $\\\\tau(n^2)$. The key lemma that $p^e \\\\geq 2e+1$ for odd primes $p \\\\geq 3$ with equality iff $p=3, e=1$ is proven correctly via induction. The product argument (if each factor $\\\\frac{p_i^{e_i}}{2e_i+1} \\\\geq 1$ and the product equals 1, then each factor equals 1) is valid. The conclusion that all prime factors must be $(p_i, e_i) = (3, 1)$, forcing $n = 3$ (or $n = 1$ for the empty product), is correctly derived and verified. The final answer $\\\\{1, 3\\\\}$ is correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. The case analysis correctly handles $n=1$ separately, then for $n>1$ establishes that $n$ must be odd through parity analysis of $\\\\tau(n^2)$. The key lemma that $p^e \\\\geq 2e+1$ for odd primes $p \\\\geq 3$ with equality iff $p=3, e=1$ is proven correctly via induction. The product argument (if each factor $\\\\frac{p_i^{e_i}}{2e_i+1} \\\\geq 1$ and the product equals 1, then each factor equals 1) is valid. The conclusion that all prime factors must be $(p_i, e_i) = (3, 1)$, forcing $n = 3$ (or $n = 1$ for the empty product), is correctly derived and verified. The final answer $\\\\{1, 3\\\\}$ is correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. The case analysis correctly handles $n=1$ separately, then for $n>1$ establishes that $n$ must be odd through parity analysis of $\\tau(n^2)$. The key lemma that $p^e \\geq 2e+1$ for odd primes $p \\geq 3$ with equality iff $p=3, e=1$ is proven correctly via induction. The product argument (if each factor $\\frac{p_i^{e_i}}{2e_i+1} \\geq 1$ and the product equals 1, then each factor equals 1) is valid. The conclusion that all prime factors must be $(p_i, e_i) = (3, 1)$, forcing $n = 3$ (or $n = 1$ for the empty product), is correctly derived and verified. The final answer $\\{1, 3\\}$ is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $D_6$ denote the set of positive divisors of $6$, equipped with the partial order given by divisibility (i.e., $a \\leq b$ if and only if $a \\mid b$). Under this ordering, $D_6$ forms a lattice where the meet operation is $a \\wedge b = \\gcd(a,b)$ and the join operation is $a \\vee b = \\text{lcm}(a,b)$.\n\nA **sublattice** of $D_6$ is a nonempty subset $S \\subseteq D_6$ such that for all $a, b \\in S$, both $\\gcd(a,b) \\in S$ and $\\text{lcm}(a,b) \\in S$.\n\nDetermine the total number of sublattices of $D_6$.",
+    "run_id": "4",
+    "topic_slug": "order_lattices_and_ordered_algebraic_structures",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly analyzes the lattice structure of $D_6 = \\\\{1, 2, 3, 6\\\\}$ and systematically enumerates all sublattices. The key observation that $\\\\{2, 3\\\\}$ is the only incomparable pair, requiring both $\\\\gcd(2,3) = 1$ and $\\\\text{lcm}(2,3) = 6$ to be present if both 2 and 3 are in a sublattice, is correct. The enumeration is complete: 4 singletons, 5 two-element chains (correctly excluding $\\\\{2,3\\\\}$), 2 three-element chains ($\\\\{1,2,6\\\\}$ and $\\\\{1,3,6\\\\}$), and 1 four-element sublattice ($D_6$ itself). The verification that subsets like $\\\\{1,2,3\\\\}$ and $\\\\{2,3,6\\\\}$ fail to be sublattices (missing 6 and 1 respectively) is accurate. The final count of 12 is correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly analyzes the lattice structure of $D_6 = \\\\{1, 2, 3, 6\\\\}$ and systematically enumerates all sublattices. The key observation that $\\\\{2, 3\\\\}$ is the only incomparable pair, requiring both $\\\\gcd(2,3) = 1$ and $\\\\text{lcm}(2,3) = 6$ to be present if both 2 and 3 are in a sublattice, is correct. The enumeration is complete: 4 singletons, 5 two-element chains (correctly excluding $\\\\{2,3\\\\}$), 2 three-element chains ($\\\\{1,2,6\\\\}$ and $\\\\{1,3,6\\\\}$), and 1 four-element sublattice ($D_6$ itself). The verification that subsets like $\\\\{1,2,3\\\\}$ and $\\\\{2,3,6\\\\}$ fail to be sublattices (missing 6 and 1 respectively) is accurate. The final count of 12 is correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly analyzes the lattice structure of $D_6 = \\{1, 2, 3, 6\\}$ and systematically enumerates all sublattices. The key observation that $\\{2, 3\\}$ is the only incomparable pair, requiring both $\\gcd(2,3) = 1$ and $\\text{lcm}(2,3) = 6$ to be present if both 2 and 3 are in a sublattice, is correct. The enumeration is complete: 4 singletons, 5 two-element chains (correctly excluding $\\{2,3\\}$), 2 three-element chains ($\\{1,2,6\\}$ and $\\{1,3,6\\}$), and 1 four-element sublattice ($D_6$ itself). The verification that subsets like $\\{1,2,3\\}$ and $\\{2,3,6\\}$ fail to be sublattices (missing 6 and 1 respectively) is accurate. The final count of 12 is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $K = \\mathbb{Q}[x]/(x^3 - 2)$ be the quotient ring. Express the tensor product $K \\otimes_{\\mathbb{Q}} K$ as a direct product of fields and identify each factor explicitly, including its degree over $\\mathbb{Q}$.",
+    "run_id": "5",
+    "topic_slug": "general_algebraic_systems",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly establishes $K \\\\otimes_{\\\\mathbb{Q}} K \\\\cong K[y]/(y^3 - 2)$, then factors $y^3 - 2 = (y - \\\\alpha)(y^2 + \\\\alpha y + \\\\alpha^2)$ over $K$. The verification that $q(y) = y^2 + \\\\alpha y + \\\\alpha^2$ is irreducible over $K$ is sound: since $K = \\\\mathbb{Q}(\\\\sqrt[3]{2}) \\\\subset \\\\mathbb{R}$ and the roots $\\\\alpha\\\\omega, \\\\alpha\\\\omega^2$ are non-real, the quadratic has no roots in $K$. The Chinese Remainder Theorem application is correct. Factor identification is accurate: $F_1 \\\\cong K$ with degree 3, and $F_2 = K(\\\\omega) = \\\\mathbb{Q}(\\\\sqrt[3]{2}, \\\\omega)$ (the splitting field of $x^3-2$) with degree 6. The dimension check $3 + 6 = 9 = 3 \\\\times 3$ confirms consistency.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly establishes $K \\\\otimes_{\\\\mathbb{Q}} K \\\\cong K[y]/(y^3 - 2)$, then factors $y^3 - 2 = (y - \\\\alpha)(y^2 + \\\\alpha y + \\\\alpha^2)$ over $K$. The verification that $q(y) = y^2 + \\\\alpha y + \\\\alpha^2$ is irreducible over $K$ is sound: since $K = \\\\mathbb{Q}(\\\\sqrt[3]{2}) \\\\subset \\\\mathbb{R}$ and the roots $\\\\alpha\\\\omega, \\\\alpha\\\\omega^2$ are non-real, the quadratic has no roots in $K$. The Chinese Remainder Theorem application is correct. Factor identification is accurate: $F_1 \\\\cong K$ with degree 3, and $F_2 = K(\\\\omega) = \\\\mathbb{Q}(\\\\sqrt[3]{2}, \\\\omega)$ (the splitting field of $x^3-2$) with degree 6. The dimension check $3 + 6 = 9 = 3 \\\\times 3$ confirms consistency.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly establishes $K \\otimes_{\\mathbb{Q}} K \\cong K[y]/(y^3 - 2)$, then factors $y^3 - 2 = (y - \\alpha)(y^2 + \\alpha y + \\alpha^2)$ over $K$. The verification that $q(y) = y^2 + \\alpha y + \\alpha^2$ is irreducible over $K$ is sound: since $K = \\mathbb{Q}(\\sqrt[3]{2}) \\subset \\mathbb{R}$ and the roots $\\alpha\\omega, \\alpha\\omega^2$ are non-real, the quadratic has no roots in $K$. The Chinese Remainder Theorem application is correct. Factor identification is accurate: $F_1 \\cong K$ with degree 3, and $F_2 = K(\\omega) = \\mathbb{Q}(\\sqrt[3]{2}, \\omega)$ (the splitting field of $x^3-2$) with degree 6. The dimension check $3 + 6 = 9 = 3 \\times 3$ confirms consistency.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  }
+]

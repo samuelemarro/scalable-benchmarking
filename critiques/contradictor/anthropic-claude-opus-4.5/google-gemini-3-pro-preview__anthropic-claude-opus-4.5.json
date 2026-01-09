@@ -1,0 +1,1050 @@
+[
+  {
+    "question": "Let $\\omega$ denote the first infinite ordinal. Consider the ordinals\n$$\\alpha = \\omega^2 \\cdot 2 + \\omega \\cdot 5 + 3 \\quad \\text{and} \\quad \\beta = \\omega^2 + \\omega \\cdot 3 + 7.$$\nCompute the ordinal product $\\alpha \\cdot \\beta$ using ordinal arithmetic, and express your answer in Cantor normal form.\n\n(Recall that the Cantor normal form of an ordinal $\\gamma > 0$ is the unique representation $\\gamma = \\omega^{\\delta_1} \\cdot c_1 + \\omega^{\\delta_2} \\cdot c_2 + \\cdots + \\omega^{\\delta_k} \\cdot c_k$ where $\\delta_1 > \\delta_2 > \\cdots > \\delta_k \\geq 0$ and each $c_i$ is a positive integer.)",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly expands the product using the left-distributive property (mistakenly called 'right-distributive', but the applied formula $\\\\alpha(\\\\beta+\\\\gamma) = \\\\alpha\\\\beta + \\\\alpha\\\\gamma$ is correct). The term-wise multiplications $\\\\alpha \\\\cdot \\\\omega^2 = \\\\omega^4$, $\\\\alpha \\\\cdot (\\\\omega \\\\cdot 3) = \\\\omega^3 \\\\cdot 3$, and $\\\\alpha \\\\cdot 7 = \\\\omega^2 \\\\cdot 14 + \\\\omega \\\\cdot 5 + 3$ are computed correctly according to the rules of ordinal arithmetic. The final summation is correctly identified as being in Cantor normal form.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly expands the product using the left-distributive property (mistakenly called 'right-distributive', but the applied formula $\\\\alpha(\\\\beta+\\\\gamma) = \\\\alpha\\\\beta + \\\\alpha\\\\gamma$ is correct). The term-wise multiplications $\\\\alpha \\\\cdot \\\\omega^2 = \\\\omega^4$, $\\\\alpha \\\\cdot (\\\\omega \\\\cdot 3) = \\\\omega^3 \\\\cdot 3$, and $\\\\alpha \\\\cdot 7 = \\\\omega^2 \\\\cdot 14 + \\\\omega \\\\cdot 5 + 3$ are computed correctly according to the rules of ordinal arithmetic. The final summation is correctly identified as being in Cantor normal form.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly expands the product using the left-distributive property (mistakenly called 'right-distributive', but the applied formula $\\alpha(\\beta+\\gamma) = \\alpha\\beta + \\alpha\\gamma$ is correct). The term-wise multiplications $\\alpha \\cdot \\omega^2 = \\omega^4$, $\\alpha \\cdot (\\omega \\cdot 3) = \\omega^3 \\cdot 3$, and $\\alpha \\cdot 7 = \\omega^2 \\cdot 14 + \\omega \\cdot 5 + 3$ are computed correctly according to the rules of ordinal arithmetic. The final summation is correctly identified as being in Cantor normal form.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "A sequence $(a_1, a_2, \\ldots, a_n)$ of positive integers is called **almost increasing** if $a_{i+1} \\geq a_i - 1$ for all $1 \\leq i \\leq n-1$.\n\nFind the number of almost increasing sequences of length 6 where each $a_i \\in \\{1, 2, 3\\}$.",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly sets up the recurrence relations based on the definition of an almost increasing sequence. Specifically, the condition $a_{i+1} \\geq a_i - 1$ implies that if the current term is $x$, the previous term could be any value $y$ such that $y \\leq x+1$. Restricting values to $\\{1, 2, 3\\}$, this leads to the correct transition logic and recurrence relations. The iterative calculations are error-free, and the connection to Fibonacci numbers is correctly identified. The final answer, 377, is correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly sets up the recurrence relations based on the definition of an almost increasing sequence. Specifically, the condition $a_{i+1} \\geq a_i - 1$ implies that if the current term is $x$, the previous term could be any value $y$ such that $y \\leq x+1$. Restricting values to $\\{1, 2, 3\\}$, this leads to the correct transition logic and recurrence relations. The iterative calculations are error-free, and the connection to Fibonacci numbers is correctly identified. The final answer, 377, is correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly sets up the recurrence relations based on the definition of an almost increasing sequence. Specifically, the condition $a_{i+1} \\geq a_i - 1$ implies that if the current term is $x$, the previous term could be any value $y$ such that $y \\leq x+1$. Restricting values to $\\{1, 2, 3\\}$, this leads to the correct transition logic and recurrence relations. The iterative calculations are error-free, and the connection to Fibonacci numbers is correctly identified. The final answer, 377, is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "For a positive integer $n$, let $\\tau(n)$ denote the number of positive divisors of $n$. Find all positive integers $n$ such that $\\tau(n^2) = n$.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound, complete, and rigorous. It correctly identifies the trivial solution $n=1$ and the prime power solution $n=3$. The case analysis for $n > 1$ is well-structured: it appropriately handles prime powers using growth inequalities and composite numbers by establishing that $n$ must be odd and subsequently showing that $\\\\prod p_i^{a_i} > \\\\prod (2a_i+1)$ whenever $n$ has at least two distinct odd prime factors.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound, complete, and rigorous. It correctly identifies the trivial solution $n=1$ and the prime power solution $n=3$. The case analysis for $n > 1$ is well-structured: it appropriately handles prime powers using growth inequalities and composite numbers by establishing that $n$ must be odd and subsequently showing that $\\\\prod p_i^{a_i} > \\\\prod (2a_i+1)$ whenever $n$ has at least two distinct odd prime factors.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound, complete, and rigorous. It correctly identifies the trivial solution $n=1$ and the prime power solution $n=3$. The case analysis for $n > 1$ is well-structured: it appropriately handles prime powers using growth inequalities and composite numbers by establishing that $n$ must be odd and subsequently showing that $\\prod p_i^{a_i} > \\prod (2a_i+1)$ whenever $n$ has at least two distinct odd prime factors.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $D_6$ denote the set of positive divisors of $6$, equipped with the partial order given by divisibility (i.e., $a \\leq b$ if and only if $a \\mid b$). Under this ordering, $D_6$ forms a lattice where the meet operation is $a \\wedge b = \\gcd(a,b)$ and the join operation is $a \\vee b = \\text{lcm}(a,b)$.\n\nA **sublattice** of $D_6$ is a nonempty subset $S \\subseteq D_6$ such that for all $a, b \\in S$, both $\\gcd(a,b) \\in S$ and $\\text{lcm}(a,b) \\in S$.\n\nDetermine the total number of sublattices of $D_6$.",
+    "run_id": "4",
+    "topic_slug": "order_lattices_and_ordered_algebraic_structures",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the elements of the divisor lattice $D_6$ and systematically enumerates all nonempty sublattices by cardinality. The logic for determining which subsets are sublattices (checking closure under gcd and lcm) is sound. The specific cases where subsets fail to be sublattices (e.g., $\\{2,3\\}$ missing its join and meet) are correctly identified.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the elements of the divisor lattice $D_6$ and systematically enumerates all nonempty sublattices by cardinality. The logic for determining which subsets are sublattices (checking closure under gcd and lcm) is sound. The specific cases where subsets fail to be sublattices (e.g., $\\{2,3\\}$ missing its join and meet) are correctly identified.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the elements of the divisor lattice $D_6$ and systematically enumerates all nonempty sublattices by cardinality. The logic for determining which subsets are sublattices (checking closure under gcd and lcm) is sound. The specific cases where subsets fail to be sublattices (e.g., $\\{2,3\\}$ missing its join and meet) are correctly identified.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $K = \\mathbb{Q}[x]/(x^3 - 2)$ be the quotient ring. Express the tensor product $K \\otimes_{\\mathbb{Q}} K$ as a direct product of fields and identify each factor explicitly, including its degree over $\\mathbb{Q}$.",
+    "run_id": "5",
+    "topic_slug": "general_algebraic_systems",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the structure of the tensor product $K \\\\otimes_{\\\\mathbb{Q}} K$. The steps taken\u2014using the isomorphism $K \\\\otimes_{\\\\mathbb{Q}} K \\\\cong K[y]/(y^3-2)$, factoring the polynomial over $K$, establishing irreducibility of the quadratic factor via the real embedding of $K$, and identifying the resulting fields and their degrees\u2014are mathematically sound and rigorous. The dimensional check ($3+6=9$) confirms the result.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the structure of the tensor product $K \\\\otimes_{\\\\mathbb{Q}} K$. The steps taken\u2014using the isomorphism $K \\\\otimes_{\\\\mathbb{Q}} K \\\\cong K[y]/(y^3-2)$, factoring the polynomial over $K$, establishing irreducibility of the quadratic factor via the real embedding of $K$, and identifying the resulting fields and their degrees\u2014are mathematically sound and rigorous. The dimensional check ($3+6=9$) confirms the result.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the structure of the tensor product $K \\otimes_{\\mathbb{Q}} K$. The steps taken\u2014using the isomorphism $K \\otimes_{\\mathbb{Q}} K \\cong K[y]/(y^3-2)$, factoring the polynomial over $K$, establishing irreducibility of the quadratic factor via the real embedding of $K$, and identifying the resulting fields and their degrees\u2014are mathematically sound and rigorous. The dimensional check ($3+6=9$) confirms the result.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f(x) = x^5 - 4x + 2 \\in \\mathbb{Q}[x]$, and let $\\alpha \\in \\mathbb{C}$ be a root of $f(x)$.\n\n**(a)** Prove that $f(x)$ is irreducible over $\\mathbb{Q}$.\n\n**(b)** Since $f$ is irreducible and monic of degree 5, the set $\\{1, \\alpha, \\alpha^2, \\alpha^3, \\alpha^4\\}$ forms a basis for the field extension $\\mathbb{Q}(\\alpha)$ over $\\mathbb{Q}$. Express $\\alpha^{-1}$ as a $\\mathbb{Q}$-linear combination of this basis.",
+    "run_id": "6",
+    "topic_slug": "field_theory_and_polynomials",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies Eisenstein's criterion with $p=2$ to prove irreducibility in part (a). In part (b), the derivation of $\\\\alpha^{-1}$ from the relation $\\\\alpha^5 - 4\\\\alpha + 2 = 0$ is algebraically sound, and the final result is correctly expressed as a linear combination of the basis elements.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies Eisenstein's criterion with $p=2$ to prove irreducibility in part (a). In part (b), the derivation of $\\\\alpha^{-1}$ from the relation $\\\\alpha^5 - 4\\\\alpha + 2 = 0$ is algebraically sound, and the final result is correctly expressed as a linear combination of the basis elements.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies Eisenstein's criterion with $p=2$ to prove irreducibility in part (a). In part (b), the derivation of $\\alpha^{-1}$ from the relation $\\alpha^5 - 4\\alpha + 2 = 0$ is algebraically sound, and the final result is correctly expressed as a linear combination of the basis elements.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $k$ be a field and let $R = k[x, y, z]/(xz, yz)$. Compute the Krull dimension and the depth of $R$ (with respect to the maximal ideal $\\mathfrak{m} = (x, y, z)R$). Determine whether $R$ is a Cohen-Macaulay ring.",
+    "run_id": "7",
+    "topic_slug": "commutative_algebra",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the minimal primes to find the dimension, finds a regular element to establish the depth, and correctly concludes the ring is not Cohen-Macaulay. \\n\\nThere is a minor logical flaw in the algebraic verification in Step 2: the derivation implies that $(x+z)f \\in I$ forces $f=0$ as a polynomial, which is false (it only forces $f \\in I$). However, the conclusion that $x+z$ is a non-zerodivisor in $R$ is correct because $x+z$ does not lie in the union of the associated primes $(z) \\cup (x,y)$. The subsequent depth calculation for the quotient ring is correct.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the minimal primes to find the dimension, finds a regular element to establish the depth, and correctly concludes the ring is not Cohen-Macaulay. \\n\\nThere is a minor logical flaw in the algebraic verification in Step 2: the derivation implies that $(x+z)f \\in I$ forces $f=0$ as a polynomial, which is false (it only forces $f \\in I$). However, the conclusion that $x+z$ is a non-zerodivisor in $R$ is correct because $x+z$ does not lie in the union of the associated primes $(z) \\cup (x,y)$. The subsequent depth calculation for the quotient ring is correct.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the minimal primes to find the dimension, finds a regular element to establish the depth, and correctly concludes the ring is not Cohen-Macaulay. \n\nThere is a minor logical flaw in the algebraic verification in Step 2: the derivation implies that $(x+z)f \\in I$ forces $f=0$ as a polynomial, which is false (it only forces $f \\in I$). However, the conclusion that $x+z$ is a non-zerodivisor in $R$ is correct because $x+z$ does not lie in the union of the associated primes $(z) \\cup (x,y)$. The subsequent depth calculation for the quotient ring is correct.",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "The critique assigns a 'correct' verdict to an answer containing a significant logical error in Step 2.",
+            "The answer's proof that x+z is a non-zerodivisor uses invalid algebraic reasoning (incorrectly comparing coefficients) and draws a false conclusion (that f must be the zero polynomial), which constitutes 'invalid reasoning steps' under the 'incorrect' rubric.",
+            "The critique characterizes this fundamental error as a 'minor logical flaw', which is too lenient given that the validity of the depth calculation depends on this step."
+          ],
+          "improvements": "Change the verdict to 'incorrect'. Modify the notes to state that while the Krull dimension, depth value, and Cohen-Macaulay conclusion are correct, the proof of regularity in Step 2 is mathematically invalid and must be corrected to demonstrate f is in I, not f is 0."
+        }
+      },
+      {
+        "round": 2,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"While the Krull dimension, depth value, and Cohen-Macaulay conclusion are correct, the proof of regularity in Step 2 is mathematically invalid and must be corrected to demonstrate f is in I, not f is 0. The current algebraic derivation incorrectly implies that if a polynomial multiple lies in the ideal, the polynomial itself must be zero (implying the ideal is zero), rather than showing the polynomial represents the zero class in the ring.\",\n  \"suggestions\": \"Replace the invalid algebraic proof in Step 2. A correct argument would establish that $x+z$ is a non-zerodivisor by verifying it does not belong to any of the associated primes of $I$. Since $\\\\text{Ass}(R) = \\\\{(z), (x,y)\\\\}$ and $x+z \\\\notin (z) \\\\cup (x,y)$, the element is regular. Alternatively, if performing an element-wise proof, show that $(x+z)f \\\\in I \\\\implies f \\\\in I$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"While the Krull dimension, depth value, and Cohen-Macaulay conclusion are correct, the proof of regularity in Step 2 is mathematically invalid and must be corrected to demonstrate f is in I, not f is 0. The current algebraic derivation incorrectly implies that if a polynomial multiple lies in the ideal, the polynomial itself must be zero (implying the ideal is zero), rather than showing the polynomial represents the zero class in the ring.\",\n  \"suggestions\": \"Replace the invalid algebraic proof in Step 2. A correct argument would establish that $x+z$ is a non-zerodivisor by verifying it does not belong to any of the associated primes of $I$. Since $\\\\text{Ass}(R) = \\\\{(z), (x,y)\\\\}$ and $x+z \\\\notin (z) \\\\cup (x,y)$, the element is regular. Alternatively, if performing an element-wise proof, show that $(x+z)f \\\\in I \\\\implies f \\\\in I$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "While the Krull dimension, depth value, and Cohen-Macaulay conclusion are correct, the proof of regularity in Step 2 is mathematically invalid and must be corrected to demonstrate f is in I, not f is 0. The current algebraic derivation incorrectly implies that if a polynomial multiple lies in the ideal, the polynomial itself must be zero (implying the ideal is zero), rather than showing the polynomial represents the zero class in the ring.",
+        "suggestions": "Replace the invalid algebraic proof in Step 2. A correct argument would establish that $x+z$ is a non-zerodivisor by verifying it does not belong to any of the associated primes of $I$. Since $\\text{Ass}(R) = \\{(z), (x,y)\\}$ and $x+z \\notin (z) \\cup (x,y)$, the element is regular. Alternatively, if performing an element-wise proof, show that $(x+z)f \\in I \\implies f \\in I$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $C$ be the projective closure in $\\mathbb{P}^2_{\\mathbb{C}}$ of the affine plane curve defined by $y^3 = x^5 - x^4$.\n\n(a) Find all singular points of $C$.\n\n(b) Compute the geometric genus of $C$.",
+    "run_id": "8",
+    "topic_slug": "algebraic_geometry",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the two singular points, $(0:0:1)$ and $(0:1:0)$, by solving the system of partial derivatives. The homogenization of the curve equation is correct. The arithmetic genus is correctly calculated as $p_a = 6$. The delta invariants for the singularities are correctly determined using Newton polygon analysis and standard formulas for semi-quasi-homogeneous singularities ($E_6$ type for the first, $A_4$ type for the second). The final geometric genus calculation ($g = 6 - 3 - 2 = 1$) is accurate.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the two singular points, $(0:0:1)$ and $(0:1:0)$, by solving the system of partial derivatives. The homogenization of the curve equation is correct. The arithmetic genus is correctly calculated as $p_a = 6$. The delta invariants for the singularities are correctly determined using Newton polygon analysis and standard formulas for semi-quasi-homogeneous singularities ($E_6$ type for the first, $A_4$ type for the second). The final geometric genus calculation ($g = 6 - 3 - 2 = 1$) is accurate.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the two singular points, $(0:0:1)$ and $(0:1:0)$, by solving the system of partial derivatives. The homogenization of the curve equation is correct. The arithmetic genus is correctly calculated as $p_a = 6$. The delta invariants for the singularities are correctly determined using Newton polygon analysis and standard formulas for semi-quasi-homogeneous singularities ($E_6$ type for the first, $A_4$ type for the second). The final geometric genus calculation ($g = 6 - 3 - 2 = 1$) is accurate.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Looking at this problem, I need to create a challenging matrix theory problem that requires substantive reasoning about eigenvalues and their constraints.\n\n\nLet $A$ be a $4 \\times 4$ matrix with real entries such that $A^4 = I$ (the identity matrix) and $\\operatorname{tr}(A) = 0$. Find all possible values of $\\det(A - I)$.",
+    "run_id": "9",
+    "topic_slug": "linear_and_multilinear_algebra",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the constraints on the eigenvalues imposed by the matrix equation $A^4=I$, the trace condition, and the fact that $A$ is a real matrix (requiring conjugate pairs for non-real eigenvalues). The enumeration of possible eigenvalue configurations is complete, and the determinant calculations for each case are accurate. The existence of matrices for each case is also properly verified.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the constraints on the eigenvalues imposed by the matrix equation $A^4=I$, the trace condition, and the fact that $A$ is a real matrix (requiring conjugate pairs for non-real eigenvalues). The enumeration of possible eigenvalue configurations is complete, and the determinant calculations for each case are accurate. The existence of matrices for each case is also properly verified.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the constraints on the eigenvalues imposed by the matrix equation $A^4=I$, the trace condition, and the fact that $A$ is a real matrix (requiring conjugate pairs for non-real eigenvalues). The enumeration of possible eigenvalue configurations is complete, and the determinant calculations for each case are accurate. The existence of matrices for each case is also properly verified.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $p$ be a prime number, and consider the quotient ring $R = \\mathbb{F}_p[x]/(x^p - x)$, where $\\mathbb{F}_p = \\mathbb{Z}/p\\mathbb{Z}$ is the finite field with $p$ elements.\n\n(a) Prove that $R \\cong \\mathbb{F}_p^p$ as rings, where $\\mathbb{F}_p^p$ denotes the direct product of $p$ copies of $\\mathbb{F}_p$.\n\n(b) Determine the total number of idempotent elements in $R$ (i.e., elements $e \\in R$ satisfying $e^2 = e$).\n\n(c) Determine the number of unital ring homomorphisms from $R$ to $\\mathbb{F}_p$ (homomorphisms $\\phi: R \\to \\mathbb{F}_p$ satisfying $\\phi(1_R) = 1_{\\mathbb{F}_p}$).",
+    "run_id": "10",
+    "topic_slug": "associative_rings_and_algebras",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound, complete, and rigorous. Part (a) correctly applies the Chinese Remainder Theorem using the distinct roots of $x^p-x$. Part (b) correctly identifies idempotents component-wise in the direct product structure. Part (c) correctly characterizes unital homomorphisms from a finite direct product of fields to a field as the projection maps, yielding $p$ homomorphisms.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound, complete, and rigorous. Part (a) correctly applies the Chinese Remainder Theorem using the distinct roots of $x^p-x$. Part (b) correctly identifies idempotents component-wise in the direct product structure. Part (c) correctly characterizes unital homomorphisms from a finite direct product of fields to a field as the projection maps, yielding $p$ homomorphisms.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound, complete, and rigorous. Part (a) correctly applies the Chinese Remainder Theorem using the distinct roots of $x^p-x$. Part (b) correctly identifies idempotents component-wise in the direct product structure. Part (c) correctly characterizes unital homomorphisms from a finite direct product of fields to a field as the projection maps, yielding $p$ homomorphisms.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathfrak{g}$ be the 4-dimensional Lie algebra over $\\mathbb{R}$ with basis $\\{H, X, Y, Z\\}$ and Lie bracket defined by:\n$$[H, X] = X, \\quad [H, Y] = -Y, \\quad [H, Z] = 0, \\quad [X, Y] = Z,$$\nwith all other brackets of basis elements being zero or determined by antisymmetry (i.e., $[X, Z] = [Y, Z] = 0$).\n\n**(a)** Verify that the Jacobi identity $[a, [b, c]] + [b, [c, a]] + [c, [a, b]] = 0$ holds for this bracket by checking it on the triple $(H, X, Y)$.\n\n**(b)** Compute the derived series $\\mathfrak{g}^{(0)} \\supseteq \\mathfrak{g}^{(1)} \\supseteq \\mathfrak{g}^{(2)} \\supseteq \\cdots$, where $\\mathfrak{g}^{(0)} = \\mathfrak{g}$ and $\\mathfrak{g}^{(k+1)} = [\\mathfrak{g}^{(k)}, \\mathfrak{g}^{(k)}]$.\n\n**(c)** Compute the lower central series $\\mathfrak{g}^1 \\supseteq \\mathfrak{g}^2 \\supseteq \\mathfrak{g}^3 \\supseteq \\cdots$, where $\\mathfrak{g}^1 = \\mathfrak{g}$ and $\\mathfrak{g}^{k+1} = [\\mathfrak{g}, \\mathfrak{g}^k]$.\n\n**(d)** Determine whether $\\mathfrak{g}$ is solvable, nilpotent, both, or neither. Justify your answer using the results from parts (b) and (c).",
+    "run_id": "11",
+    "topic_slug": "nonassociative_rings_and_algebras",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly verifies the Jacobi identity for the given triple, accurately computes the derived and lower central series, and correctly classifies the Lie algebra as solvable but not nilpotent based on those computations. All steps are logically sound and mathematically valid.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly verifies the Jacobi identity for the given triple, accurately computes the derived and lower central series, and correctly classifies the Lie algebra as solvable but not nilpotent based on those computations. All steps are logically sound and mathematically valid.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly verifies the Jacobi identity for the given triple, accurately computes the derived and lower central series, and correctly classifies the Lie algebra as solvable but not nilpotent based on those computations. All steps are logically sound and mathematically valid.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "No improvements necessary; the critique correctly identifies that the solution is accurate and complete."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R = \\mathbb{Z}[x]/(x^2)$ be the ring of dual numbers over the integers. Consider $\\mathbb{Z}$ as an $R$-module via the augmentation homomorphism $\\varepsilon: R \\to \\mathbb{Z}$ defined by $\\varepsilon(a + bx) = a$ for $a, b \\in \\mathbb{Z}$ (equivalently, $x$ acts on $\\mathbb{Z}$ as zero). \n\nCompute the abelian groups $\\mathrm{Ext}^n_R(\\mathbb{Z}, \\mathbb{Z})$ for all integers $n \\geq 0$.",
+    "run_id": "12",
+    "topic_slug": "category_theory_and_homological_algebra",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly constructs the standard periodic projective resolution for the module $\\\\mathbb{Z}$ over the ring $\\\\mathbb{Z}[x]/(x^2)$. The identification of the Hom-sets as $\\\\mathbb{Z}$ and the determination that the induced differentials are zero maps are mathematically sound. The final cohomology computation is correct.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly constructs the standard periodic projective resolution for the module $\\\\mathbb{Z}$ over the ring $\\\\mathbb{Z}[x]/(x^2)$. The identification of the Hom-sets as $\\\\mathbb{Z}$ and the determination that the induced differentials are zero maps are mathematically sound. The final cohomology computation is correct.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly constructs the standard periodic projective resolution for the module $\\mathbb{Z}$ over the ring $\\mathbb{Z}[x]/(x^2)$. The identification of the Hom-sets as $\\mathbb{Z}$ and the determination that the induced differentials are zero maps are mathematically sound. The final cohomology computation is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathbb{CP}^2$ be the complex projective plane and let $H$ denote the tautological line bundle over $\\mathbb{CP}^2$. Define $\\xi = [H] - 1 \\in K^0(\\mathbb{CP}^2)$, where $K^0$ denotes complex topological K-theory.\n\nIt is a standard result that $K^0(\\mathbb{CP}^2) \\cong \\mathbb{Z}[\\xi]/(\\xi^3)$ as rings, and that every complex vector bundle over $\\mathbb{CP}^2$ splits as a direct sum of line bundles (Grothendieck's splitting theorem). Line bundles over $\\mathbb{CP}^2$ are precisely the tensor powers $H^m$ for $m \\in \\mathbb{Z}$.\n\n**(a)** Prove that for all $n \\in \\mathbb{Z}$:\n$$(1+\\xi)^n = 1 + n\\xi + \\binom{n}{2}\\xi^2$$\nwhere $\\binom{n}{2} = \\frac{n(n-1)}{2}$ is the generalized binomial coefficient.\n\n**(b)** A class $\\alpha \\in K^0(\\mathbb{CP}^2)$ is called *effective of rank $r$* if $\\alpha = [E]$ for some complex vector bundle $E$ over $\\mathbb{CP}^2$ of rank $r$.\n\nProve that the class $2 - \\xi \\in K^0(\\mathbb{CP}^2)$ is **not** effective of rank $2$.",
+    "run_id": "13",
+    "topic_slug": "k_theory",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (a) is correct. Part (b) is incorrect because it relies on a false premise provided in the question statement. The claim that 'every complex vector bundle over $\\\\mathbb{CP}^2$ splits as a direct sum of line bundles' is false; Grothendieck's splitting principle only asserts that bundles split after pulling back to a flag manifold, not on the base space itself. As a result, the conclusion that $2-\\\\xi$ is not effective is false. The class $2-\\\\xi$ is in fact effective of rank 2, represented by the twisted tangent bundle $T(-2) \\\\cong T_{\\\\mathbb{CP}^2} \\\\otimes H^{-2}$. We have $[T] = 3[H]-1 = 2+3\\\\xi$, so $[T(-2)] = (2+3\\\\xi)(1+\\\\xi)^{-2} = 2-\\\\xi$. The answer failed to identify that the question was ill-posed due to the false premise.\",\n  \"suggestions\": \"Identify that the premise 'every bundle splits on $\\\\mathbb{CP}^2$' is false. Instead of using the splitting assumption, use the Euler sequence or properties of the tangent bundle to investigate the class. Specifically, verify that $T(-2)$ has the required K-theory class.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (a) is correct. Part (b) is incorrect because it relies on a false premise provided in the question statement. The claim that 'every complex vector bundle over $\\\\mathbb{CP}^2$ splits as a direct sum of line bundles' is false; Grothendieck's splitting principle only asserts that bundles split after pulling back to a flag manifold, not on the base space itself. As a result, the conclusion that $2-\\\\xi$ is not effective is false. The class $2-\\\\xi$ is in fact effective of rank 2, represented by the twisted tangent bundle $T(-2) \\\\cong T_{\\\\mathbb{CP}^2} \\\\otimes H^{-2}$. We have $[T] = 3[H]-1 = 2+3\\\\xi$, so $[T(-2)] = (2+3\\\\xi)(1+\\\\xi)^{-2} = 2-\\\\xi$. The answer failed to identify that the question was ill-posed due to the false premise.\",\n  \"suggestions\": \"Identify that the premise 'every bundle splits on $\\\\mathbb{CP}^2$' is false. Instead of using the splitting assumption, use the Euler sequence or properties of the tangent bundle to investigate the class. Specifically, verify that $T(-2)$ has the required K-theory class.\"\n}",
+        "verdict": "incorrect",
+        "notes": "Part (a) is correct. Part (b) is incorrect because it relies on a false premise provided in the question statement. The claim that 'every complex vector bundle over $\\mathbb{CP}^2$ splits as a direct sum of line bundles' is false; Grothendieck's splitting principle only asserts that bundles split after pulling back to a flag manifold, not on the base space itself. As a result, the conclusion that $2-\\xi$ is not effective is false. The class $2-\\xi$ is in fact effective of rank 2, represented by the twisted tangent bundle $T(-2) \\cong T_{\\mathbb{CP}^2} \\otimes H^{-2}$. We have $[T] = 3[H]-1 = 2+3\\xi$, so $[T(-2)] = (2+3\\xi)(1+\\xi)^{-2} = 2-\\xi$. The answer failed to identify that the question was ill-posed due to the false premise.",
+        "suggestions": "Identify that the premise 'every bundle splits on $\\mathbb{CP}^2$' is false. Instead of using the splitting assumption, use the Euler sequence or properties of the tangent bundle to investigate the class. Specifically, verify that $T(-2)$ has the required K-theory class.",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "The critique relies on an incorrect definition of the bundle $H$. The question defines $H$ as the tautological line bundle (standardly $\\mathcal{O}(-1)$), but the critique's calculation $[T] = 3[H]-1$ implies $H$ is the hyperplane bundle ($\\mathcal{O}(1)$).",
+            "Due to this definitional error, the critique demonstrates the effectiveness of the class $2-([\\mathcal{O}(1)]-1)$ using the bundle $T(-2)$, rather than the requested class $2-([\\mathcal{O}(-1)]-1)$.",
+            "The correct bundle representing the class $2-\\xi$ (where $\\xi=[\\mathcal{O}(-1)]-1$) is $T(-1)$ (i.e., $T \\otimes H$), not $T(-2)$."
+          ],
+          "improvements": "Update the critique to use the correct definition of $H$ as the tautological bundle. Calculate $[T] = 3[H]^{-1} - 1$ using the Euler sequence for $\\mathcal{O}(-1)$. Show that the bundle $T(-1)$ (equivalent to $T \\otimes H$) has the K-theory class $2-\\xi$, thereby correctly proving effectiveness."
+        }
+      },
+      {
+        "round": 2,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (a) is correct. Part (b) is incorrect because it relies on the false premise stated in the problem that every complex vector bundle over $\\\\mathbb{CP}^2$ splits into line bundles. While this is true for projective lines, it fails for $\\\\mathbb{CP}^n$ ($n \\\\geq 2$); for instance, the tangent bundle $T$ does not split. Consequently, the conclusion that $2 - \\\\xi$ is not effective is false. Using the correct definition of $H$ as the tautological line bundle $\\\\mathcal{O}(-1)$, we have the Euler sequence $0 \\\\to \\\\mathcal{O} \\\\to \\\\mathcal{O}(1)^{\\\\oplus 3} \\\\to T \\\\to 0$. In K-theory, since $[\\\\mathcal{O}(1)] = [H^{-1}] = (1+\\\\xi)^{-1} = 1 - \\\\xi + \\\\xi^2$, this yields $[T] = 3(1 - \\\\xi + \\\\xi^2) - 1 = 2 - 3\\\\xi + 3\\\\xi^2$. The twisted tangent bundle $T(-1) \\\\cong T \\\\otimes H$ then has the class $[T][H] = (2 - 3\\\\xi + 3\\\\xi^2)(1+\\\\xi) = 2 - \\\\xi$. Thus, the class is effective of rank 2.\",\n  \"suggestions\": \"Discard the assumption that all bundles split. Instead, define $H$ as $\\\\mathcal{O}(-1)$ and use the Euler sequence for the tangent bundle $T$ to derive $[T] = 3[H]^{-1} - 1$. Calculate the K-theory class of $T(-1) \\\\cong T \\\\otimes H$ to demonstrate that it equals $2 - \\\\xi$, thereby proving that the class is effective.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (a) is correct. Part (b) is incorrect because it relies on the false premise stated in the problem that every complex vector bundle over $\\\\mathbb{CP}^2$ splits into line bundles. While this is true for projective lines, it fails for $\\\\mathbb{CP}^n$ ($n \\\\geq 2$); for instance, the tangent bundle $T$ does not split. Consequently, the conclusion that $2 - \\\\xi$ is not effective is false. Using the correct definition of $H$ as the tautological line bundle $\\\\mathcal{O}(-1)$, we have the Euler sequence $0 \\\\to \\\\mathcal{O} \\\\to \\\\mathcal{O}(1)^{\\\\oplus 3} \\\\to T \\\\to 0$. In K-theory, since $[\\\\mathcal{O}(1)] = [H^{-1}] = (1+\\\\xi)^{-1} = 1 - \\\\xi + \\\\xi^2$, this yields $[T] = 3(1 - \\\\xi + \\\\xi^2) - 1 = 2 - 3\\\\xi + 3\\\\xi^2$. The twisted tangent bundle $T(-1) \\\\cong T \\\\otimes H$ then has the class $[T][H] = (2 - 3\\\\xi + 3\\\\xi^2)(1+\\\\xi) = 2 - \\\\xi$. Thus, the class is effective of rank 2.\",\n  \"suggestions\": \"Discard the assumption that all bundles split. Instead, define $H$ as $\\\\mathcal{O}(-1)$ and use the Euler sequence for the tangent bundle $T$ to derive $[T] = 3[H]^{-1} - 1$. Calculate the K-theory class of $T(-1) \\\\cong T \\\\otimes H$ to demonstrate that it equals $2 - \\\\xi$, thereby proving that the class is effective.\"\n}",
+        "verdict": "incorrect",
+        "notes": "Part (a) is correct. Part (b) is incorrect because it relies on the false premise stated in the problem that every complex vector bundle over $\\mathbb{CP}^2$ splits into line bundles. While this is true for projective lines, it fails for $\\mathbb{CP}^n$ ($n \\geq 2$); for instance, the tangent bundle $T$ does not split. Consequently, the conclusion that $2 - \\xi$ is not effective is false. Using the correct definition of $H$ as the tautological line bundle $\\mathcal{O}(-1)$, we have the Euler sequence $0 \\to \\mathcal{O} \\to \\mathcal{O}(1)^{\\oplus 3} \\to T \\to 0$. In K-theory, since $[\\mathcal{O}(1)] = [H^{-1}] = (1+\\xi)^{-1} = 1 - \\xi + \\xi^2$, this yields $[T] = 3(1 - \\xi + \\xi^2) - 1 = 2 - 3\\xi + 3\\xi^2$. The twisted tangent bundle $T(-1) \\cong T \\otimes H$ then has the class $[T][H] = (2 - 3\\xi + 3\\xi^2)(1+\\xi) = 2 - \\xi$. Thus, the class is effective of rank 2.",
+        "suggestions": "Discard the assumption that all bundles split. Instead, define $H$ as $\\mathcal{O}(-1)$ and use the Euler sequence for the tangent bundle $T$ to derive $[T] = 3[H]^{-1} - 1$. Calculate the K-theory class of $T(-1) \\cong T \\otimes H$ to demonstrate that it equals $2 - \\xi$, thereby proving that the class is effective.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a group of order $16$ in which every non-identity element has order $2$. Determine the total number of subgroups of $G$ (including the trivial subgroup $\\{e\\}$ and $G$ itself).",
+    "run_id": "14",
+    "topic_slug": "group_theory_and_generalizations",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the group as an elementary abelian 2-group, which is isomorphic to the vector space $\\\\mathbb{F}_2^4$. It then correctly applies the Gaussian binomial coefficients to count the number of subspaces of each dimension and sums them to find the total number of subgroups. All calculations are accurate.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the group as an elementary abelian 2-group, which is isomorphic to the vector space $\\\\mathbb{F}_2^4$. It then correctly applies the Gaussian binomial coefficients to count the number of subspaces of each dimension and sums them to find the total number of subgroups. All calculations are accurate.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the group as an elementary abelian 2-group, which is isomorphic to the vector space $\\mathbb{F}_2^4$. It then correctly applies the Gaussian binomial coefficients to count the number of subspaces of each dimension and sums them to find the total number of subgroups. All calculations are accurate.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $SL_2(\\mathbb{R})$ denote the group of $2 \\times 2$ real matrices with determinant $1$, and let $\\mathfrak{sl}_2(\\mathbb{R})$ denote its Lie algebra, consisting of all $2 \\times 2$ real matrices with trace $0$. Consider the matrix exponential map $\\exp: \\mathfrak{sl}_2(\\mathbb{R}) \\to SL_2(\\mathbb{R})$ defined by\n$$\\exp(A) = \\sum_{n=0}^{\\infty} \\frac{A^n}{n!}.$$\n\nProve that the matrix \n$$g = \\begin{pmatrix} -1 & 1 \\\\ 0 & -1 \\end{pmatrix}$$\nis not in the image of $\\exp$.",
+    "run_id": "15",
+    "topic_slug": "topological_groups_and_lie_groups",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The proof is mathematically sound. It correctly identifies that a pre-image $A$ in $\\\\mathfrak{sl}_2(\\\\mathbb{R})$ must have eigenvalues $\\\\pm \\\\mu$. The case analysis covers all possibilities: if $\\\\mu$ is real, the eigenvalues of $\\\\exp(A)$ are positive; if $\\\\mu$ is purely imaginary (nonzero), $A$ is diagonalizable with distinct eigenvalues, implying $\\\\exp(A)$ must be $-I$ (the only diagonalizable matrix with eigenvalues $-1, -1$), which contradicts $g \\\\neq -I$. The argument that $\\\\mu$ cannot be a general complex number because $A$ is real and trace-free is also correct.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The proof is mathematically sound. It correctly identifies that a pre-image $A$ in $\\\\mathfrak{sl}_2(\\\\mathbb{R})$ must have eigenvalues $\\\\pm \\\\mu$. The case analysis covers all possibilities: if $\\\\mu$ is real, the eigenvalues of $\\\\exp(A)$ are positive; if $\\\\mu$ is purely imaginary (nonzero), $A$ is diagonalizable with distinct eigenvalues, implying $\\\\exp(A)$ must be $-I$ (the only diagonalizable matrix with eigenvalues $-1, -1$), which contradicts $g \\\\neq -I$. The argument that $\\\\mu$ cannot be a general complex number because $A$ is real and trace-free is also correct.\"\n}",
+        "verdict": "correct",
+        "notes": "The proof is mathematically sound. It correctly identifies that a pre-image $A$ in $\\mathfrak{sl}_2(\\mathbb{R})$ must have eigenvalues $\\pm \\mu$. The case analysis covers all possibilities: if $\\mu$ is real, the eigenvalues of $\\exp(A)$ are positive; if $\\mu$ is purely imaginary (nonzero), $A$ is diagonalizable with distinct eigenvalues, implying $\\exp(A)$ must be $-I$ (the only diagonalizable matrix with eigenvalues $-1, -1$), which contradicts $g \\neq -I$. The argument that $\\mu$ cannot be a general complex number because $A$ is real and trace-free is also correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Find all continuous functions $f: (0, \\infty) \\to \\mathbb{R}$ such that \n$$f(xy) = xf(y) + yf(x)$$\nfor all $x, y > 0$.",
+    "run_id": "16",
+    "topic_slug": "real_functions",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the answer. The substitution $f(x) = x h(\\\\ln x)$ (implicitly done via steps 2 and 3) effectively reduces the problem to Cauchy's functional equation for continuous functions. All steps, including the initial condition $f(1)=0$ and the final verification, are mathematically sound.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the answer. The substitution $f(x) = x h(\\\\ln x)$ (implicitly done via steps 2 and 3) effectively reduces the problem to Cauchy's functional equation for continuous functions. All steps, including the initial condition $f(1)=0$ and the final verification, are mathematically sound.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly derives the answer. The substitution $f(x) = x h(\\ln x)$ (implicitly done via steps 2 and 3) effectively reduces the problem to Cauchy's functional equation for continuous functions. All steps, including the initial condition $f(1)=0$ and the final verification, are mathematically sound.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: (0,1]^2 \\to \\mathbb{R}$ be defined by \n$$f(x,y) = \\frac{x-y}{(x+y)^3}.$$\n\n(a) Evaluate the iterated integral $\\displaystyle I_1 = \\int_0^1 \\left(\\int_0^1 f(x,y) \\, dx\\right) dy$.\n\n(b) Evaluate the iterated integral $\\displaystyle I_2 = \\int_0^1 \\left(\\int_0^1 f(x,y) \\, dy\\right) dx$.\n\n(c) Prove that $f$ is not Lebesgue integrable on $(0,1]^2$, i.e., show that $\\int_{(0,1]^2} |f| \\, d\\lambda^2 = +\\infty$, where $\\lambda^2$ denotes two-dimensional Lebesgue measure.",
+    "run_id": "17",
+    "topic_slug": "measure_and_integration",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly evaluates both iterated integrals, obtaining -1/2 and 1/2 respectively, and correctly proves the divergence of the integral of the absolute value to show non-integrability. The algebraic steps and integration techniques used are valid.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly evaluates both iterated integrals, obtaining -1/2 and 1/2 respectively, and correctly proves the divergence of the integral of the absolute value to show non-integrability. The algebraic steps and integration techniques used are valid.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly evaluates both iterated integrals, obtaining -1/2 and 1/2 respectively, and correctly proves the divergence of the integral of the absolute value to show non-integrability. The algebraic steps and integration techniques used are valid.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{C} \\setminus \\{0\\} \\to \\mathbb{C}$ be defined by $f(z) = \\dfrac{e^{1/z}}{z - 1}$. Evaluate the contour integral\n$$\\oint_{|z| = 2} f(z) \\, dz$$\nwhere the contour is traversed counterclockwise. Express your answer in exact form.",
+    "run_id": "18",
+    "topic_slug": "functions_of_a_complex_variable",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the singularities at $z=0$ and $z=1$ within the contour. The residue at the simple pole $z=1$ is correctly calculated as $e$. The residue at the essential singularity $z=0$ is correctly derived using the Laurent series expansion valid for $0 < |z| < 1$, resulting in $1-e$. The sum of residues is correctly computed as $1$, yielding the final result $2\\\\pi i$. The reasoning is rigorous and complete.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the singularities at $z=0$ and $z=1$ within the contour. The residue at the simple pole $z=1$ is correctly calculated as $e$. The residue at the essential singularity $z=0$ is correctly derived using the Laurent series expansion valid for $0 < |z| < 1$, resulting in $1-e$. The sum of residues is correctly computed as $1$, yielding the final result $2\\\\pi i$. The reasoning is rigorous and complete.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the singularities at $z=0$ and $z=1$ within the contour. The residue at the simple pole $z=1$ is correctly calculated as $e$. The residue at the essential singularity $z=0$ is correctly derived using the Laurent series expansion valid for $0 < |z| < 1$, resulting in $1-e$. The sum of residues is correctly computed as $1$, yielding the final result $2\\pi i$. The reasoning is rigorous and complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\Omega$ be the open upper half of the unit disk in $\\mathbb{R}^2$:\n$$\\Omega = \\{(x, y) \\in \\mathbb{R}^2 : x^2 + y^2 < 1, \\, y > 0\\}.$$\n\nLet $u : \\Omega \\to \\mathbb{R}$ be the unique bounded harmonic function (i.e., $\\Delta u = 0$ in $\\Omega$) that extends continuously to $\\partial\\Omega \\setminus \\{(\\pm 1, 0)\\}$ with boundary values:\n- $u(x, y) = 1$ on the semicircular arc $\\{(x, y) : x^2 + y^2 = 1, \\, y > 0\\}$\n- $u(x, 0) = 0$ on the open segment $\\{(x, 0) : -1 < x < 1\\}$\n\nDetermine the exact value of $u\\left(0, \\dfrac{1}{\\sqrt{3}}\\right)$.",
+    "run_id": "19",
+    "topic_slug": "potential_theory",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly uses a M\u00f6bius transformation to map the domain to the first quadrant, appropriately transforms the boundary conditions, solves the resulting potential problem, and accurately computes the final value. All steps and calculations are correct.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly uses a M\u00f6bius transformation to map the domain to the first quadrant, appropriately transforms the boundary conditions, solves the resulting potential problem, and accurately computes the final value. All steps and calculations are correct.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly uses a M\u00f6bius transformation to map the domain to the first quadrant, appropriately transforms the boundary conditions, solves the resulting potential problem, and accurately computes the final value. All steps and calculations are correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the analytic variety $V \\subset \\mathbb{C}^3$ defined by\n$$V = \\{(z_1, z_2, z_3) \\in \\mathbb{C}^3 : z_1^2 + z_2^2 + z_3^2 = 0 \\text{ and } z_1 z_2 z_3 = 0\\}.$$\n\n(a) Determine all irreducible components of $V$ and describe each geometrically.\n\n(b) Find the singular locus $\\mathrm{Sing}(V)$ of $V$.",
+    "run_id": "20",
+    "topic_slug": "several_complex_variables_and_analytic_spaces",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the decomposition of the variety into six distinct lines passing through the origin by analyzing the cases where the coordinate product vanishes. The singular locus is correctly identified as the origin, where the components intersect. The Jacobian rank analysis verifies that points on the components away from the origin are smooth points of the variety (rank 2), while the origin is a singular point (rank 0). The reasoning is complete and rigorous.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the decomposition of the variety into six distinct lines passing through the origin by analyzing the cases where the coordinate product vanishes. The singular locus is correctly identified as the origin, where the components intersect. The Jacobian rank analysis verifies that points on the components away from the origin are smooth points of the variety (rank 2), while the origin is a singular point (rank 0). The reasoning is complete and rigorous.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the decomposition of the variety into six distinct lines passing through the origin by analyzing the cases where the coordinate product vanishes. The singular locus is correctly identified as the origin, where the components intersect. The Jacobian rank analysis verifies that points on the components away from the origin are smooth points of the variety (rank 2), while the origin is a singular point (rank 0). The reasoning is complete and rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Looking at this problem, I need to create a challenging special functions problem that requires multiple steps of reasoning and has a verifiable closed-form answer.\n\n\nLet $\\zeta(s)$ denote the Riemann zeta function defined for real $s > 1$ by \n$$\\zeta(s) = \\sum_{k=1}^{\\infty} \\frac{1}{k^s}.$$\n\nEvaluate the infinite series:\n$$\\sum_{n=2}^{\\infty} \\frac{\\zeta(n) - 1}{n}$$\n\nExpress your answer in terms of the Euler-Mascheroni constant $\\gamma = \\lim_{N \\to \\infty}\\left(\\sum_{k=1}^{N} \\frac{1}{k} - \\ln N\\right)$.",
+    "run_id": "21",
+    "topic_slug": "special_functions",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly expands the zeta function, justifies the interchange of summation order using absolute convergence, evaluates the inner series using the Taylor expansion of the natural logarithm, and correctly identifies the limit definition of the Euler-Mascheroni constant to reach the final result $1 - \\\\gamma$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly expands the zeta function, justifies the interchange of summation order using absolute convergence, evaluates the inner series using the Taylor expansion of the natural logarithm, and correctly identifies the limit definition of the Euler-Mascheroni constant to reach the final result $1 - \\\\gamma$.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly expands the zeta function, justifies the interchange of summation order using absolute convergence, evaluates the inner series using the Taylor expansion of the natural logarithm, and correctly identifies the limit definition of the Euler-Mascheroni constant to reach the final result $1 - \\gamma$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the autonomous system of ordinary differential equations defined for $(x(t), y(t)) \\in \\mathbb{R}^2$:\n$$\\frac{dx}{dt} = y, \\quad \\frac{dy}{dt} = x - x^3.$$\n\n(a) Find all equilibrium points of this system.\n\n(b) For each equilibrium point, compute the eigenvalues of the Jacobian matrix and determine the type indicated by linearization (saddle, node, spiral, or center).\n\n(c) Find a function $H: \\mathbb{R}^2 \\to \\mathbb{R}$ that is constant along all solution trajectories (a first integral).\n\n(d) Using the first integral from part (c), prove that any equilibrium point whose linearization indicates a center is indeed a center for the full nonlinear system (i.e., it is surrounded by closed periodic orbits rather than spirals).",
+    "run_id": "22",
+    "topic_slug": "ordinary_differential_equations",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the equilibrium points, computes the Jacobian matrices and eigenvalues to classify the linear stability, derives a valid first integral (Hamiltonian), and rigorously uses the Hessian of the Hamiltonian to prove that the 'linear centers' are true nonlinear centers (surrounded by closed periodic orbits). All calculations and reasoning steps are sound.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the equilibrium points, computes the Jacobian matrices and eigenvalues to classify the linear stability, derives a valid first integral (Hamiltonian), and rigorously uses the Hessian of the Hamiltonian to prove that the 'linear centers' are true nonlinear centers (surrounded by closed periodic orbits). All calculations and reasoning steps are sound.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the equilibrium points, computes the Jacobian matrices and eigenvalues to classify the linear stability, derives a valid first integral (Hamiltonian), and rigorously uses the Hessian of the Hamiltonian to prove that the 'linear centers' are true nonlinear centers (surrounded by closed periodic orbits). All calculations and reasoning steps are sound.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Solve the initial-boundary value problem for the heat equation:\n$$u_t = u_{xx}, \\quad 0 < x < \\pi, \\quad t > 0$$\nwith boundary conditions:\n$$u(0,t) = 0, \\quad \\frac{\\partial u}{\\partial x}(\\pi,t) = 0 \\quad \\text{for all } t > 0$$\nand initial condition:\n$$u(x,0) = x \\quad \\text{for } 0 \\leq x \\leq \\pi.$$\n\nExpress your answer as an infinite series in closed form, showing all eigenvalues, eigenfunctions, and Fourier coefficients.",
+    "run_id": "23",
+    "topic_slug": "partial_differential_equations",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the eigenvalues and eigenfunctions for the mixed boundary conditions (Dirichlet at $x=0$, Neumann at $x=\\pi$). The integration by parts to find the Fourier coefficients is performed correctly, including the boundary term vanishing and the correct evaluation of the trigonometric terms. The final series coefficients $A_n = \\frac{8(-1)^{n+1}}{\\pi(2n-1)^2}$ are consistent with the Fourier expansion of $f(x)=x$ in this basis (e.g., summing to $\\pi$ at $x=\\pi$).\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the eigenvalues and eigenfunctions for the mixed boundary conditions (Dirichlet at $x=0$, Neumann at $x=\\pi$). The integration by parts to find the Fourier coefficients is performed correctly, including the boundary term vanishing and the correct evaluation of the trigonometric terms. The final series coefficients $A_n = \\frac{8(-1)^{n+1}}{\\pi(2n-1)^2}$ are consistent with the Fourier expansion of $f(x)=x$ in this basis (e.g., summing to $\\pi$ at $x=\\pi$).\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly derives the eigenvalues and eigenfunctions for the mixed boundary conditions (Dirichlet at $x=0$, Neumann at $x=\\pi$). The integration by parts to find the Fourier coefficients is performed correctly, including the boundary term vanishing and the correct evaluation of the trigonometric terms. The final series coefficients $A_n = \\frac{8(-1)^{n+1}}{\\pi(2n-1)^2}$ are consistent with the Fourier expansion of $f(x)=x$ in this basis (e.g., summing to \\pi at $x=\\pi$).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $T: [0,1] \\to [0,1]$ be the tent map defined by:\n$$T(x) = \\begin{cases} 2x & \\text{if } 0 \\leq x \\leq \\frac{1}{2} \\\\ 2 - 2x & \\text{if } \\frac{1}{2} < x \\leq 1 \\end{cases}$$\n\n(a) Prove that Lebesgue measure $\\lambda$ on $[0,1]$ is $T$-invariant, i.e., $\\lambda(T^{-1}(A)) = \\lambda(A)$ for every Lebesgue measurable set $A \\subseteq [0,1]$.\n\n(b) Determine the number of fixed points of $T$ and the number of points of minimal period 2 (i.e., points $x$ satisfying $T^2(x) = x$ but $T(x) \\neq x$).\n\n(c) Compute the topological entropy $h_{\\text{top}}(T)$.",
+    "run_id": "24",
+    "topic_slug": "dynamical_systems_and_ergodic_theory",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound. Part (a) correctly uses generating intervals to prove measure invariance. Part (b) correctly computes the second iterate of the map and distinguishes between fixed points and points of minimal period 2. Part (c) applies the standard definition of topological entropy for piecewise monotone maps.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound. Part (a) correctly uses generating intervals to prove measure invariance. Part (b) correctly computes the second iterate of the map and distinguishes between fixed points and points of minimal period 2. Part (c) applies the standard definition of topological entropy for piecewise monotone maps.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound. Part (a) correctly uses generating intervals to prove measure invariance. Part (b) correctly computes the second iterate of the map and distinguishes between fixed points and points of minimal period 2. Part (c) applies the standard definition of topological entropy for piecewise monotone maps.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately verifies the correctness of the provided solution."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Find all functions $f: \\mathbb{R} \\to \\mathbb{R}$ satisfying the functional equation\n$$f(x + y) + f(xy) = f(x)f(y) + 1$$\nfor all $x, y \\in \\mathbb{R}$.",
+    "run_id": "25",
+    "topic_slug": "difference_and_functional_equations",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound, complete, and rigorous. It correctly identifies the two solutions ($f(x)=1$ and $f(x)=x+1$) and systematically rules out other possibilities. The case analysis is exhaustive, and the rejection of the $c=-1$ case in Step 5 is backed by a valid contradiction derived from calculating $f(9/16)$ in two different ways. The final density argument to establish $g(x)=x$ is standard and correctly applied.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound, complete, and rigorous. It correctly identifies the two solutions ($f(x)=1$ and $f(x)=x+1$) and systematically rules out other possibilities. The case analysis is exhaustive, and the rejection of the $c=-1$ case in Step 5 is backed by a valid contradiction derived from calculating $f(9/16)$ in two different ways. The final density argument to establish $g(x)=x$ is standard and correctly applied.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound, complete, and rigorous. It correctly identifies the two solutions ($f(x)=1$ and $f(x)=x+1$) and systematically rules out other possibilities. The case analysis is exhaustive, and the rejection of the $c=-1$ case in Step 5 is backed by a valid contradiction derived from calculating $f(9/16)$ in two different ways. The final density argument to establish $g(x)=x$ is standard and correctly applied.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "None. The critique accurately assesses the correctness of the solution, confirms the validity of the derivation steps (including the specific contradiction used to rule out the $c=-1$ case), and verifies the logical flow of the density argument."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $H_n = \\sum_{k=1}^{n} \\frac{1}{k}$ denote the $n$-th harmonic number for $n \\geq 1$. Evaluate the infinite series\n$$\\sum_{n=1}^{\\infty} \\frac{H_n}{n \\cdot 2^n}.$$\nExpress your answer as a single closed-form expression involving standard mathematical constants.",
+    "run_id": "26",
+    "topic_slug": "sequences_series_and_summability",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the generating function for harmonic numbers, integrates it to find the series representation, and accurately evaluates the specific case for $x=1/2$. All algebraic steps and identities involving the dilogarithm are correctly applied.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the generating function for harmonic numbers, integrates it to find the series representation, and accurately evaluates the specific case for $x=1/2$. All algebraic steps and identities involving the dilogarithm are correctly applied.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly derives the generating function for harmonic numbers, integrates it to find the series representation, and accurately evaluates the specific case for $x=1/2$. All algebraic steps and identities involving the dilogarithm are correctly applied.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the integral\n$$I(x) = \\int_0^{\\infty} \\frac{e^{-xt^2}}{1+t^4} \\, dt$$\nfor $x > 0$. Determine the first two nonzero terms in the asymptotic expansion of $I(x)$ as $x \\to +\\infty$. Express your answer in terms of elementary functions and $\\pi$.",
+    "run_id": "27",
+    "topic_slug": "approximations_and_expansions",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies Watson's Lemma to find the asymptotic expansion. The substitution $u=t^2$ is appropriate, the geometric series expansion is correct, and the Gamma function evaluations are accurate. The first two nonzero terms are correctly identified and calculated.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies Watson's Lemma to find the asymptotic expansion. The substitution $u=t^2$ is appropriate, the geometric series expansion is correct, and the Gamma function evaluations are accurate. The first two nonzero terms are correctly identified and calculated.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly applies Watson's Lemma to find the asymptotic expansion. The substitution $u=t^2$ is appropriate, the geometric series expansion is correct, and the Gamma function evaluations are accurate. The first two nonzero terms are correctly identified and calculated.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be defined by $f(x) = e^{-|x|}$.\n\n**(a)** Compute the Fourier transform $\\hat{f}(\\xi) = \\displaystyle\\int_{\\mathbb{R}} f(x) e^{-2\\pi i x \\xi} \\, dx$ for all $\\xi \\in \\mathbb{R}$.\n\n**(b)** Using part (a) and properties of the Fourier transform, determine an explicit closed-form expression for the convolution $(f * f)(x) = \\displaystyle\\int_{\\mathbb{R}} f(x-y) f(y) \\, dy$ valid for all $x \\in \\mathbb{R}$.",
+    "run_id": "28",
+    "topic_slug": "harmonic_analysis_on_euclidean_spaces",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly computes the Fourier transform in part (a). In part (b), it correctly applies the convolution theorem and uses a valid differentiation-under-the-integral technique (or properties of the inverse Fourier transform of a Lorentzian) to find the explicit convolution. The direct verification of the convolution integral is also handled correctly.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly computes the Fourier transform in part (a). In part (b), it correctly applies the convolution theorem and uses a valid differentiation-under-the-integral technique (or properties of the inverse Fourier transform of a Lorentzian) to find the explicit convolution. The direct verification of the convolution integral is also handled correctly.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly computes the Fourier transform in part (a). In part (b), it correctly applies the convolution theorem and uses a valid differentiation-under-the-integral technique (or properties of the inverse Fourier transform of a Lorentzian) to find the explicit convolution. The direct verification of the convolution integral is also handled correctly.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\ell^1(\\mathbb{Z})$ denote the Banach algebra of all functions $f: \\mathbb{Z} \\to \\mathbb{C}$ satisfying $\\|f\\|_1 = \\sum_{n \\in \\mathbb{Z}} |f(n)| < \\infty$, equipped with convolution multiplication:\n$$(f * g)(n) = \\sum_{k \\in \\mathbb{Z}} f(k) \\, g(n-k).$$\n\nDefine the element $a \\in \\ell^1(\\mathbb{Z})$ by:\n$$a(n) = \\begin{cases} 2 & \\text{if } n = 0 \\\\ -1 & \\text{if } n = 1 \\\\ 0 & \\text{otherwise} \\end{cases}$$\n\n(a) The Gelfand spectrum $\\Delta(\\ell^1(\\mathbb{Z}))$ of this commutative Banach algebra can be identified with the Pontryagin dual $\\widehat{\\mathbb{Z}}$. Describe this dual group explicitly and state the formula for the Gelfand transform $\\hat{f}: \\widehat{\\mathbb{Z}} \\to \\mathbb{C}$ for a general $f \\in \\ell^1(\\mathbb{Z})$.\n\n(b) Compute the Gelfand transform $\\hat{a}$ of the element $a$.\n\n(c) Determine whether $a$ is invertible in $\\ell^1(\\mathbb{Z})$. If invertible, find the inverse $a^{-1}$ explicitly as an element of $\\ell^1(\\mathbb{Z})$.",
+    "run_id": "29",
+    "topic_slug": "abstract_harmonic_analysis",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the Gelfand spectrum and transform. The computation of the transform for the specific element $a$ is correct. The invertibility is correctly established using Wiener's Lemma (checking the spectral condition). The explicit calculation of the inverse using the difference equation method is logically sound, including the justification for the vanishing of coefficients for negative $n$ to ensure $\\\\ell^1$ convergence. The final result matches the power series expansion of $1/(2-z)$ on the unit circle.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the Gelfand spectrum and transform. The computation of the transform for the specific element $a$ is correct. The invertibility is correctly established using Wiener's Lemma (checking the spectral condition). The explicit calculation of the inverse using the difference equation method is logically sound, including the justification for the vanishing of coefficients for negative $n$ to ensure $\\\\ell^1$ convergence. The final result matches the power series expansion of $1/(2-z)$ on the unit circle.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the Gelfand spectrum and transform. The computation of the transform for the specific element $a$ is correct. The invertibility is correctly established using Wiener's Lemma (checking the spectral condition). The explicit calculation of the inverse using the difference equation method is logically sound, including the justification for the vanishing of coefficients for negative $n$ to ensure $\\ell^1$ convergence. The final result matches the power series expansion of $1/(2-z)$ on the unit circle.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Find all continuous functions $f: [0, \\infty) \\to \\mathbb{R}$ satisfying the Volterra integral equation:\n$$f(t) + 2\\int_0^t \\cos(t-u) f(u) \\, du = e^{-t}, \\quad t \\geq 0$$",
+    "run_id": "30",
+    "topic_slug": "integral_transforms_and_operational_calculus",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the Laplace transform method to solve the Volterra integral equation of the second kind. The use of the convolution theorem is correct, the algebraic manipulation to isolate F(s) is accurate, and the inverse Laplace transform steps are valid. The final result is correct and verified.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the Laplace transform method to solve the Volterra integral equation of the second kind. The use of the convolution theorem is correct, the algebraic manipulation to isolate F(s) is accurate, and the inverse Laplace transform steps are valid. The final result is correct and verified.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly applies the Laplace transform method to solve the Volterra integral equation of the second kind. The use of the convolution theorem is correct, the algebraic manipulation to isolate F(s) is accurate, and the inverse Laplace transform steps are valid. The final result is correct and verified.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Solve the Fredholm integral equation of the second kind\n$$\\phi(x) = x + 2\\int_0^1 (1 + xt)\\,\\phi(t)\\,dt$$\nfor the unknown continuous function $\\phi: [0,1] \\to \\mathbb{R}$.",
+    "run_id": "31",
+    "topic_slug": "integral_equations",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the degenerate nature of the kernel and sets up the appropriate linear system for the constants $c_1$ and $c_2$. The algebraic derivation of the system, its solution ($c_1 = -3/8$, $c_2 = -1/8$), and the final expression for $\\\\phi(x)$ are all correct. The verification step effectively confirms the result.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the degenerate nature of the kernel and sets up the appropriate linear system for the constants $c_1$ and $c_2$. The algebraic derivation of the system, its solution ($c_1 = -3/8$, $c_2 = -1/8$), and the final expression for $\\\\phi(x)$ are all correct. The verification step effectively confirms the result.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the degenerate nature of the kernel and sets up the appropriate linear system for the constants $c_1$ and $c_2$. The algebraic derivation of the system, its solution ($c_1 = -3/8$, $c_2 = -1/8$), and the final expression for $\\phi(x)$ are all correct. The verification step effectively confirms the result.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $T: L^2[0,1] \\to L^2[0,1]$ be the integral operator defined by\n$$(Tf)(x) = \\int_0^1 \\min(x,y)\\, f(y) \\, dy$$\nfor $f \\in L^2[0,1]$ and $x \\in [0,1]$.\n\nDetermine all eigenvalues of $T$ and find the corresponding eigenfunctions.",
+    "run_id": "32",
+    "topic_slug": "functional_analysis",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly converts the integral equation into an equivalent Sturm-Liouville boundary value problem. The derivation of the differential equation $f''(x) + \\frac{1}{\\lambda}f(x) = 0$ and the boundary conditions $f(0)=0$ and $f'(1)=0$ is mathematically sound. The solution space for positive eigenvalues is correctly identified, yielding the correct eigenvalues $\\\\lambda_n = \\\\frac{4}{(2n+1)^2\\\\pi^2}$ and eigenfunctions $f_n(x) = \\\\sin\\\\left(\\\\frac{(2n+1)\\\\pi x}{2}\\\\right)$. The check for negative eigenvalues is also handled correctly.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly converts the integral equation into an equivalent Sturm-Liouville boundary value problem. The derivation of the differential equation $f''(x) + \\frac{1}{\\lambda}f(x) = 0$ and the boundary conditions $f(0)=0$ and $f'(1)=0$ is mathematically sound. The solution space for positive eigenvalues is correctly identified, yielding the correct eigenvalues $\\\\lambda_n = \\\\frac{4}{(2n+1)^2\\\\pi^2}$ and eigenfunctions $f_n(x) = \\\\sin\\\\left(\\\\frac{(2n+1)\\\\pi x}{2}\\\\right)$. The check for negative eigenvalues is also handled correctly.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly converts the integral equation into an equivalent Sturm-Liouville boundary value problem. The derivation of the differential equation $f''(x) + \\frac{1}{\\lambda}f(x) = 0$ and the boundary conditions $f(0)=0$ and $f'(1)=0$ is mathematically sound. The solution space for positive eigenvalues is correctly identified, yielding the correct eigenvalues $\\lambda_n = \\frac{4}{(2n+1)^2\\pi^2}$ and eigenfunctions $f_n(x) = \\sin\\left(\\frac{(2n+1)\\pi x}{2}\\right)$. The check for negative eigenvalues is also handled correctly.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "None needed. The critique accurately verifies the correctness of the derivation, the boundary conditions, and the final spectral results."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $T: L^2[0,1] \\to L^2[0,1]$ be the integral operator defined by\n$$(Tf)(x) = \\int_0^1 (x+y) f(y) \\, dy.$$\n\n(a) Determine the rank of $T$.\n\n(b) Find all eigenvalues of $T$ and determine the spectrum $\\sigma(T)$.\n\n(c) Compute the operator norm $\\|T\\|$.",
+    "run_id": "33",
+    "topic_slug": "operator_theory",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. It correctly identifies the rank by verifying the linear independence of the basis functions in the range. The eigenvalues and spectrum are correctly derived by solving the system of linear equations obtained from the integral equation. The inclusion of 0 in the spectrum is properly justified by the infinite-dimensional nature of the space. The operator norm calculation correctly applies the spectral radius property for self-adjoint operators.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. It correctly identifies the rank by verifying the linear independence of the basis functions in the range. The eigenvalues and spectrum are correctly derived by solving the system of linear equations obtained from the integral equation. The inclusion of 0 in the spectrum is properly justified by the infinite-dimensional nature of the space. The operator norm calculation correctly applies the spectral radius property for self-adjoint operators.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. It correctly identifies the rank by verifying the linear independence of the basis functions in the range. The eigenvalues and spectrum are correctly derived by solving the system of linear equations obtained from the integral equation. The inclusion of 0 in the spectrum is properly justified by the infinite-dimensional nature of the space. The operator norm calculation correctly applies the spectral radius property for self-adjoint operators.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the optimal control problem: minimize the cost functional\n$$J[u] = \\int_0^1 u(t)^2 \\, dt$$\nsubject to the dynamical constraint $\\frac{dx}{dt} = x(t) + u(t)$ for $t \\in [0, 1]$, with boundary conditions $x(0) = 1$ and $x(1) = 0$.\n\nHere $x: [0,1] \\to \\mathbb{R}$ is the state variable and $u: [0,1] \\to \\mathbb{R}$ is the control, both assumed to be piecewise continuous functions.\n\nDetermine the minimum value $J^*$ of this cost functional.",
+    "run_id": "34",
+    "topic_slug": "calculus_of_variations_and_optimization",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies Pontryagin's Maximum Principle to solve the optimal control problem. The derivation of the Hamiltonian, adjoint equation, and state trajectory is mathematically sound. The boundary conditions are applied correctly to determine the constants, and the final integration of the cost functional is accurate. The verification step confirms the consistency of the state trajectory.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies Pontryagin's Maximum Principle to solve the optimal control problem. The derivation of the Hamiltonian, adjoint equation, and state trajectory is mathematically sound. The boundary conditions are applied correctly to determine the constants, and the final integration of the cost functional is accurate. The verification step confirms the consistency of the state trajectory.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly applies Pontryagin's Maximum Principle to solve the optimal control problem. The derivation of the Hamiltonian, adjoint equation, and state trajectory is mathematically sound. The boundary conditions are applied correctly to determine the constants, and the final integration of the cost functional is accurate. The verification step confirms the consistency of the state trajectory.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "In triangle $ABC$, let $H$ be the orthocenter. Given that $AH = 4$, $BH = 3$, and $\\angle AHB = 60\u00b0$, find the circumradius $R$ of triangle $ABC$.",
+    "run_id": "35",
+    "topic_slug": "geometry",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the relationship between the orthocenter distances, circumradius, and cosine of the angles ($AH = 2R \\cos A$). The deduction that $\\\\angle C = 120^\\\\circ$ from $\\\\angle AHB = 60^\\\\circ$ is correct. The algebraic solution for $R$ using the cosine addition formula is executed without error, and the final result is verified using an alternative geometric approach (calculating side $c$ via Law of Cosines on $\\\\triangle AHB$ and then finding $R$ via Law of Sines).\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the relationship between the orthocenter distances, circumradius, and cosine of the angles ($AH = 2R \\cos A$). The deduction that $\\\\angle C = 120^\\\\circ$ from $\\\\angle AHB = 60^\\\\circ$ is correct. The algebraic solution for $R$ using the cosine addition formula is executed without error, and the final result is verified using an alternative geometric approach (calculating side $c$ via Law of Cosines on $\\\\triangle AHB$ and then finding $R$ via Law of Sines).\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly applies the relationship between the orthocenter distances, circumradius, and cosine of the angles ($AH = 2R \\cos A$). The deduction that $\\angle C = 120^\\circ$ from $\\angle AHB = 60^\\circ$ is correct. The algebraic solution for $R$ using the cosine addition formula is executed without error, and the final result is verified using an alternative geometric approach (calculating side $c$ via Law of Cosines on $\\triangle AHB$ and then finding $R$ via Law of Sines).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $P$ be the convex polygon in $\\mathbb{R}^2$ with vertices at $(0, 0)$, $(4, 1)$, $(5, 5)$, $(2, 7)$, and $(-1, 3)$, listed in counterclockwise order.\n\n(a) Compute the area of $P$.\n\n(b) Compute the number of lattice points on the boundary of $P$.\n\n(c) Using Pick's theorem, determine the number of lattice points strictly inside $P$.\n\n(d) The centroid (center of mass assuming uniform density) of a polygon with vertices $(x_1, y_1), \\ldots, (x_n, y_n)$ listed counterclockwise is given by:\n$$\\bar{x} = \\frac{1}{6A} \\sum_{i=1}^{n} (x_i + x_{i+1})(x_i y_{i+1} - x_{i+1} y_i), \\quad \\bar{y} = \\frac{1}{6A} \\sum_{i=1}^{n} (y_i + y_{i+1})(x_i y_{i+1} - x_{i+1} y_i)$$\nwhere indices are taken modulo $n$ and $A$ is the area. Determine whether the centroid of $P$ is a lattice point.",
+    "run_id": "36",
+    "topic_slug": "convex_and_discrete_geometry",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly computes the area using the shoelace formula, accurately counts the boundary lattice points by summing the greatest common divisors of the coordinate differences along each edge, and correctly applies Pick's Theorem to find the interior lattice points. The centroid calculation properly uses the polygon moment formulas, and the arithmetic is correct throughout.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly computes the area using the shoelace formula, accurately counts the boundary lattice points by summing the greatest common divisors of the coordinate differences along each edge, and correctly applies Pick's Theorem to find the interior lattice points. The centroid calculation properly uses the polygon moment formulas, and the arithmetic is correct throughout.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly computes the area using the shoelace formula, accurately counts the boundary lattice points by summing the greatest common divisors of the coordinate differences along each edge, and correctly applies Pick's Theorem to find the interior lattice points. The centroid calculation properly uses the polygon moment formulas, and the arithmetic is correct throughout.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $S \\subset \\mathbb{R}^3$ be the portion of the paraboloid $z = x^2 + y^2$ satisfying $0 \\leq z \\leq h$, where $h > 0$ is a given constant. Compute the total Gaussian curvature\n$$\\iint_S K \\, dA,$$\nexpressing your answer in closed form as a function of $h$.",
+    "run_id": "37",
+    "topic_slug": "differential_geometry",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the Gaussian curvature $K$ for the paraboloid, properly sets up the area integral with the correct surface element $dA$, and performs the integration accurately using polar coordinates. Additionally, the verification using the Gauss-Bonnet theorem is correctly executed, with accurate computations for the geodesic curvature $\\\\kappa_g$ and the boundary term.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the Gaussian curvature $K$ for the paraboloid, properly sets up the area integral with the correct surface element $dA$, and performs the integration accurately using polar coordinates. Additionally, the verification using the Gauss-Bonnet theorem is correctly executed, with accurate computations for the geodesic curvature $\\\\kappa_g$ and the boundary term.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly derives the Gaussian curvature $K$ for the paraboloid, properly sets up the area integral with the correct surface element $dA$, and performs the integration accurately using polar coordinates. Additionally, the verification using the Gauss-Bonnet theorem is correctly executed, with accurate computations for the geodesic curvature $\\kappa_g$ and the boundary term.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X = [0,1]$ with the standard (Euclidean) topology. Define an equivalence relation $\\sim$ on $X$ by: $x \\sim y$ if and only if $x = y$ or both $x, y \\in \\mathbb{Q} \\cap [0,1]$. That is, all rational numbers in $[0,1]$ are identified to a single equivalence class, while each irrational number forms its own singleton equivalence class.\n\nLet $Y = X/{\\sim}$ be the quotient space equipped with the quotient topology, and let $\\pi: X \\to Y$ denote the quotient map.\n\nProve that $Y$ is compact and connected, but not Hausdorff.",
+    "run_id": "38",
+    "topic_slug": "general_topology",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies standard theorems to prove connectedness and compactness (continuous images of connected/compact spaces preserve these properties). The proof that the space is not Hausdorff is rigorous, correctly utilizing the definition of the quotient topology and the density of rationals to show that any open set containing an irrational point must also contain the point representing the rationals, thereby preventing separation.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies standard theorems to prove connectedness and compactness (continuous images of connected/compact spaces preserve these properties). The proof that the space is not Hausdorff is rigorous, correctly utilizing the definition of the quotient topology and the density of rationals to show that any open set containing an irrational point must also contain the point representing the rationals, thereby preventing separation.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly applies standard theorems to prove connectedness and compactness (continuous images of connected/compact spaces preserve these properties). The proof that the space is not Hausdorff is rigorous, correctly utilizing the definition of the quotient topology and the density of rationals to show that any open set containing an irrational point must also contain the point representing the rationals, thereby preventing separation.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be the quotient space $(S^1 \\times S^2)/{\\sim}$, where the equivalence relation is defined by $(z, p) \\sim (-z, -p)$ for all $z \\in S^1$ and $p \\in S^2$. Here $S^1 = \\{z \\in \\mathbb{C} : |z| = 1\\}$ is the unit circle, $S^2 = \\{x \\in \\mathbb{R}^3 : \\|x\\| = 1\\}$ is the unit 2-sphere, and $-p$ denotes the antipodal point of $p$ on $S^2$.\n\nCompute the integral homology groups $H_n(X; \\mathbb{Z})$ for all $n \\geq 0$.",
+    "run_id": "39",
+    "topic_slug": "algebraic_topology",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the manifold $X$ as the total space of a fiber bundle over $S^1$ with fiber $S^2$ and monodromy given by the antipodal map. The application of the Wang long exact sequence is rigorous, the computations of the induced maps are correct, and the resulting homology groups are accurate.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the manifold $X$ as the total space of a fiber bundle over $S^1$ with fiber $S^2$ and monodromy given by the antipodal map. The application of the Wang long exact sequence is rigorous, the computations of the induced maps are correct, and the resulting homology groups are accurate.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the manifold $X$ as the total space of a fiber bundle over $S^1$ with fiber $S^2$ and monodromy given by the antipodal map. The application of the Wang long exact sequence is rigorous, the computations of the induced maps are correct, and the resulting homology groups are accurate.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a CW complex constructed as follows:\n- One 0-cell $v$\n- Two 1-cells $a$ and $b$, each attached at both endpoints to $v$ (forming two loops based at $v$)\n- Two 2-cells $e_1$ and $e_2$ with attaching maps $\\phi_1: \\partial e_1 \\to X^{(1)}$ and $\\phi_2: \\partial e_2 \\to X^{(1)}$ determined by the words $w_1 = a^3 b^{-2}$ and $w_2 = a b^4$ respectively\n\nHere, the word $a^k$ means traversing the loop $a$ exactly $|k|$ times in the positive direction if $k > 0$, or in the negative direction if $k < 0$, and similarly for $b$.\n\nCompute the cellular homology groups $H_n(X; \\mathbb{Z})$ for all integers $n \\geq 0$.",
+    "run_id": "40",
+    "topic_slug": "manifolds_and_cell_complexes",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the cellular chain complex, accurately computes the boundary maps based on the given attaching words, and properly calculates the homology groups using the Smith normal form of the boundary matrix.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the cellular chain complex, accurately computes the boundary maps based on the given attaching words, and properly calculates the homology groups using the Smith normal form of the boundary matrix.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the cellular chain complex, accurately computes the boundary maps based on the given attaching words, and properly calculates the homology groups using the Smith normal form of the boundary matrix.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\omega$ be the smooth 2-form on $\\mathbb{R}^3 \\setminus \\{0\\}$ defined by\n$$\\omega = \\frac{x \\, dy \\wedge dz + y \\, dz \\wedge dx + z \\, dx \\wedge dy}{(x^2 + y^2 + z^2)^{3/2}}.$$\n\n(a) Prove that $\\omega$ is closed, i.e., $d\\omega = 0$ on $\\mathbb{R}^3 \\setminus \\{0\\}$.\n\n(b) For any $r > 0$, compute $\\displaystyle\\int_{S_r} \\omega$, where $S_r = \\{(x,y,z) \\in \\mathbb{R}^3 : x^2 + y^2 + z^2 = r^2\\}$ is the sphere of radius $r$ centered at the origin with the outward-pointing orientation.\n\n(c) Using the results of parts (a) and (b), prove that $\\omega$ is not exact on $\\mathbb{R}^3 \\setminus \\{0\\}$.",
+    "run_id": "41",
+    "topic_slug": "global_analysis_on_manifolds",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly verifies that the form is closed by computing the exterior derivative using the product rule and identifying the cancellation of terms. The integration over the sphere is handled correctly using spherical coordinates, yielding the standard result of $4\\\\pi$. The logic for the non-exactness in part (c) is sound, relying on Stokes' theorem (or de Rham cohomology properties) for a compact manifold without boundary.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly verifies that the form is closed by computing the exterior derivative using the product rule and identifying the cancellation of terms. The integration over the sphere is handled correctly using spherical coordinates, yielding the standard result of $4\\\\pi$. The logic for the non-exactness in part (c) is sound, relying on Stokes' theorem (or de Rham cohomology properties) for a compact manifold without boundary.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly verifies that the form is closed by computing the exterior derivative using the product rule and identifying the cancellation of terms. The integration over the sphere is handled correctly using spherical coordinates, yielding the standard result of $4\\pi$. The logic for the non-exactness in part (c) is sound, relying on Stokes' theorem (or de Rham cohomology properties) for a compact manifold without boundary.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "None needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X_1, X_2, X_3, \\ldots$ be independent random variables, each uniformly distributed on the interval $[0, 1]$. Define the stopping time\n$$N = \\min\\{n \\geq 1 : X_1 + X_2 + \\cdots + X_n > 1\\}.$$\nCompute the exact value of $\\mathbb{E}[N]$.",
+    "run_id": "42",
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound, rigorous, and complete. It correctly provides two independent methods to derive the result: solving an integral equation (which is transformed into a differential equation) and summing the tail probabilities using the volume of the standard simplex (Irwin-Hall distribution properties). Both approaches are executed without error.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound, rigorous, and complete. It correctly provides two independent methods to derive the result: solving an integral equation (which is transformed into a differential equation) and summing the tail probabilities using the volume of the standard simplex (Irwin-Hall distribution properties). Both approaches are executed without error.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound, rigorous, and complete. It correctly provides two independent methods to derive the result: solving an integral equation (which is transformed into a differential equation) and summing the tail probabilities using the volume of the standard simplex (Irwin-Hall distribution properties). Both approaches are executed without error.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ have the standard Laplace (double exponential) distribution with probability density function\n$$f(x) = \\frac{1}{2}e^{-|x|}, \\quad x \\in \\mathbb{R}.$$\n\n(a) Compute the characteristic function $\\phi_X(t) = E[e^{itX}]$ for all $t \\in \\mathbb{R}$.\n\n(b) Let $X_1, X_2, \\ldots, X_n$ be independent and identically distributed random variables, each with the same distribution as $X$. Derive the characteristic function of the sample mean $\\bar{X}_n = \\frac{1}{n}\\sum_{i=1}^n X_i$.\n\n(c) Determine the limiting distribution of $\\sqrt{n}\\bar{X}_n$ as $n \\to \\infty$ by computing the pointwise limit of its characteristic function. Identify this limit explicitly as a named distribution with specified parameters.",
+    "run_id": "43",
+    "topic_slug": "statistics",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound, complete, and rigorous. The characteristic function of the Laplace distribution is correctly derived in part (a). The characteristic function of the sample mean is correctly deduced using properties of characteristic functions in part (b). The limiting distribution is correctly identified in part (c) by taking the pointwise limit of the characteristic function and verifying the result against the Central Limit Theorem. The variance calculation for the Laplace distribution is also correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound, complete, and rigorous. The characteristic function of the Laplace distribution is correctly derived in part (a). The characteristic function of the sample mean is correctly deduced using properties of characteristic functions in part (b). The limiting distribution is correctly identified in part (c) by taking the pointwise limit of the characteristic function and verifying the result against the Central Limit Theorem. The variance calculation for the Laplace distribution is also correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound, complete, and rigorous. The characteristic function of the Laplace distribution is correctly derived in part (a). The characteristic function of the sample mean is correctly deduced using properties of characteristic functions in part (b). The limiting distribution is correctly identified in part (c) by taking the pointwise limit of the characteristic function and verifying the result against the Central Limit Theorem. The variance calculation for the Laplace distribution is also correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the two-point Gaussian quadrature rule for approximating integrals over $[-1, 1]$:\n$$\\int_{-1}^{1} f(x)\\,dx \\approx w_1 f(x_1) + w_2 f(x_2)$$\n\n**(a)** Determine the nodes $x_1, x_2 \\in [-1,1]$ and positive weights $w_1, w_2$ such that this quadrature rule is exact for all polynomials of degree at most 3.\n\n**(b)** For a function $f \\in C^4([-1,1])$, the quadrature error can be expressed as \n$$E(f) = \\int_{-1}^{1} f(x)\\,dx - w_1 f(x_1) - w_2 f(x_2) = c \\cdot f^{(4)}(\\xi)$$\nfor some $\\xi \\in (-1,1)$ and a constant $c$ independent of $f$. Find the exact value of $c$.\n\n**(c)** Use the quadrature rule from part (a) to approximate $\\displaystyle\\int_0^1 e^{-t^2}\\,dt$. Apply an appropriate linear transformation to convert the integral to the standard interval $[-1,1]$, then apply the rule. Express your answer in exact closed form.",
+    "run_id": "44",
+    "topic_slug": "numerical_analysis",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the nodes and weights for the two-point Gaussian quadrature rule using the method of moments/undetermined coefficients. The error constant calculation is accurate, utilizing the standard method of checking the degree of exactness on the monomial $x^4$. The affine transformation for the integral in part (c) is correctly applied, and the algebraic simplification leading to the closed form involving hyperbolic cosine is valid.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the nodes and weights for the two-point Gaussian quadrature rule using the method of moments/undetermined coefficients. The error constant calculation is accurate, utilizing the standard method of checking the degree of exactness on the monomial $x^4$. The affine transformation for the integral in part (c) is correctly applied, and the algebraic simplification leading to the closed form involving hyperbolic cosine is valid.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly derives the nodes and weights for the two-point Gaussian quadrature rule using the method of moments/undetermined coefficients. The error constant calculation is accurate, utilizing the standard method of checking the degree of exactness on the monomial $x^4$. The affine transformation for the integral in part (c) is correctly applied, and the algebraic simplification leading to the closed form involving hyperbolic cosine is valid.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately verifies the correctness of the solution across all three parts (nodes/weights derivation, error constant calculation, and the integral approximation steps)."
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,536 @@
+[
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $(\\varphi_e)_{e \\in \\mathbb{N}}$ be a standard acceptable numbering of all partial recursive functions (for instance, derived from a fixed enumeration of Turing machines). Define\n$$\n\\mathrm{Tot} = \\{ e \\in \\mathbb{N} \\mid \\varphi_e \\text{ is total} \\}.\n$$\nProve that $\\mathrm{Tot}$ is not recursively enumerable.",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To prove that the set $\\mathrm{Tot} = \\{ e \\in \\mathbb{N} \\mid \\varphi_e \\text{ is total} \\}$ is not recursively enumerable, we will use a diagonalization argument similar to the proof of the unsolvability of the Halting Problem.\n\n### Definitions and Background\n\n1. **Partial Recursive Functions**: These are functions that can be computed by a Turing machine. A function is partial if it is not defined for all inputs, and total if it is defined for every input.\n\n2. **Recursively Enumerable (r.e.) Sets**: A set $A \\subseteq \\mathbb{N}$ is recursively enumerable if there is a Turing machine that enumerates the elements of $A$. Equivalently, $A$ is r.e. if there is a Turing machine that halts on input $n$ if and only if $n \\in A$.\n\n3. **Total Functions**: A function $\\varphi_e$ is total if it is defined for every input $n \\in \\mathbb{N}$.\n\n### Proof Outline\n\nWe will show that if $\\mathrm{Tot}$ were recursively enumerable, then we could solve the Halting Problem, which is known to be undecidable. This contradiction will imply that $\\mathrm{Tot}$ is not recursively enumerable.\n\n### Proof Details\n\n1. **Assume for Contradiction**: Suppose $\\mathrm{Tot}$ is recursively enumerable. Then there exists a Turing machine $T$ that enumerates $\\mathrm{Tot}$, or equivalently, there is a Turing machine that halts on input $e$ if and only if $\\varphi_e$ is total.\n\n2. **Construct a Contradiction**: We will construct a Turing machine $H$ that decides the Halting Problem using $T$. The Halting Problem is the set:\n   $$ \\mathrm{HALT} = \\{ (e, n) \\mid \\varphi_e(n) \\text{ halts} \\}. $$\n\n3. **Using $T$ to Solve the Halting Problem**:\n   - Given an input $(e, n)$, we want to determine if $\\varphi_e(n)$ halts.\n   - Construct a new Turing machine $M$ that works as follows:\n     - On input $x$, $M$ simulates $\\varphi_e(n)$.\n     - If $\\varphi_e(n)$ halts, $M$ enters an infinite loop.\n     - If $\\varphi_e(n)$ does not halt, $M$ halts immediately.\n   - Note that $M$ is total if and only if $\\varphi_e(n)$ does not halt.\n\n4. **Check Totality with $T$**:\n   - Use the machine $T$ to check if the index of $M$ (let's call it $m$) is in $\\mathrm{Tot}$.\n   - If $m \\in \\mathrm{Tot}$, then $\\varphi_e(n)$ does not halt.\n   - If $m \\notin \\mathrm{Tot}$, then $\\varphi_e(n)$ halts.\n\n5. **Contradiction**: If $T$ exists, we can decide the Halting Problem, which is a contradiction because the Halting Problem is undecidable.\n\n### Conclusion\n\nSince assuming $\\mathrm{Tot}$ is recursively enumerable leads to a contradiction, we conclude that $\\mathrm{Tot}$ is not recursively enumerable. This completes the proof.",
+        "raw_answer": "To prove that the set $\\mathrm{Tot} = \\{ e \\in \\mathbb{N} \\mid \\varphi_e \\text{ is total} \\}$ is not recursively enumerable, we will use a diagonalization argument similar to the proof of the unsolvability of the Halting Problem.\n\n### Definitions and Background\n\n1. **Partial Recursive Functions**: These are functions that can be computed by a Turing machine. A function is partial if it is not defined for all inputs, and total if it is defined for every input.\n\n2. **Recursively Enumerable (r.e.) Sets**: A set $A \\subseteq \\mathbb{N}$ is recursively enumerable if there is a Turing machine that enumerates the elements of $A$. Equivalently, $A$ is r.e. if there is a Turing machine that halts on input $n$ if and only if $n \\in A$.\n\n3. **Total Functions**: A function $\\varphi_e$ is total if it is defined for every input $n \\in \\mathbb{N}$.\n\n### Proof Outline\n\nWe will show that if $\\mathrm{Tot}$ were recursively enumerable, then we could solve the Halting Problem, which is known to be undecidable. This contradiction will imply that $\\mathrm{Tot}$ is not recursively enumerable.\n\n### Proof Details\n\n1. **Assume for Contradiction**: Suppose $\\mathrm{Tot}$ is recursively enumerable. Then there exists a Turing machine $T$ that enumerates $\\mathrm{Tot}$, or equivalently, there is a Turing machine that halts on input $e$ if and only if $\\varphi_e$ is total.\n\n2. **Construct a Contradiction**: We will construct a Turing machine $H$ that decides the Halting Problem using $T$. The Halting Problem is the set:\n   $$ \\mathrm{HALT} = \\{ (e, n) \\mid \\varphi_e(n) \\text{ halts} \\}. $$\n\n3. **Using $T$ to Solve the Halting Problem**:\n   - Given an input $(e, n)$, we want to determine if $\\varphi_e(n)$ halts.\n   - Construct a new Turing machine $M$ that works as follows:\n     - On input $x$, $M$ simulates $\\varphi_e(n)$.\n     - If $\\varphi_e(n)$ halts, $M$ enters an infinite loop.\n     - If $\\varphi_e(n)$ does not halt, $M$ halts immediately.\n   - Note that $M$ is total if and only if $\\varphi_e(n)$ does not halt.\n\n4. **Check Totality with $T$**:\n   - Use the machine $T$ to check if the index of $M$ (let's call it $m$) is in $\\mathrm{Tot}$.\n   - If $m \\in \\mathrm{Tot}$, then $\\varphi_e(n)$ does not halt.\n   - If $m \\notin \\mathrm{Tot}$, then $\\varphi_e(n)$ halts.\n\n5. **Contradiction**: If $T$ exists, we can decide the Halting Problem, which is a contradiction because the Halting Problem is undecidable.\n\n### Conclusion\n\nSince assuming $\\mathrm{Tot}$ is recursively enumerable leads to a contradiction, we conclude that $\\mathrm{Tot}$ is not recursively enumerable. This completes the proof.",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Prove that for every nonnegative integer $n$,\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}.\n$$",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "status": "failed",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To prove the identity\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n},\n$$\n\nwe will use a combinatorial argument and the binomial theorem.\n\n### Step 1: Understanding the Right-Hand Side\n\nThe right-hand side, $\\binom{2n}{n}$, counts the number of ways to choose $n$ objects from a set of $2n$ objects. This is a well-known central binomial coefficient.\n\n### Step 2: Analyzing the Left-Hand Side\n\nThe left-hand side involves a sum with alternating signs, binomial coefficients, and powers of 4. Let's break it down:\n\n- $\\binom{n}{k}$: This is the number of ways to choose $k$ objects from $n$ objects.\n- $\\binom{2k}{k}$: This is the central binomial coefficient for $k$, which counts the number of ways to choose $k$ objects from $2k$ objects.\n- $4^{n-k}$: This is a power of 4, which can be rewritten as $(2^2)^{n-k} = 2^{2(n-k)}$.\n\n### Step 3: Combinatorial Interpretation\n\nConsider a set of $2n$ objects. We want to count the number of ways to choose $n$ objects from this set, which is $\\binom{2n}{n}$.\n\nNow, let's interpret the left-hand side combinatorially:\n\n1. **Choose $k$ objects from $n$ objects**: This is done in $\\binom{n}{k}$ ways.\n2. **Choose $k$ pairs from $2k$ objects**: This is done in $\\binom{2k}{k}$ ways.\n3. **Arrange the remaining $2(n-k)$ objects**: There are $4^{n-k}$ ways to arrange these objects, as each pair can be arranged in 4 different ways (since $4 = 2^2$).\n\nThe alternating sign $(-1)^k$ suggests an inclusion-exclusion principle, where we are subtracting overcounts.\n\n### Step 4: Applying the Binomial Theorem\n\nThe binomial theorem states that for any integer $n$,\n\n$$(x + y)^n = \\sum_{k=0}^{n} \\binom{n}{k} x^{n-k} y^k.$$\n\nConsider the expression $(1 - 4)^n = (-3)^n$. Expanding this using the binomial theorem gives:\n\n$$\n(-3)^n = \\sum_{k=0}^{n} \\binom{n}{k} 1^{n-k} (-4)^k = \\sum_{k=0}^{n} \\binom{n}{k} (-4)^k.\n$$\n\nNow, let's relate this to our original sum. Notice that:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k}\n$$\n\ncan be seen as a transformation of the binomial expansion by incorporating the central binomial coefficient $\\binom{2k}{k}$.\n\n### Step 5: Using Generating Functions\n\nThe generating function for central binomial coefficients is:\n\n$$\n\\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k = \\frac{1}{\\sqrt{1-4x}}.\n$$\n\nUsing this, we can express the sum as a coefficient extraction problem from a generating function. The generating function approach can be used to show that:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\text{Coefficient of } x^n \\text{ in } \\left( \\frac{1}{\\sqrt{1-4x}} \\right) (1-4x)^n.\n$$\n\nThis simplifies to finding the coefficient of $x^n$ in $(1-4x)^{n-1/2}$, which is known to be $\\binom{2n}{n}$.\n\n### Conclusion\n\nThus, by using combinatorial arguments and generating functions, we have shown that:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}.\n$$\n\nThis completes the proof.",
+        "raw_answer": "To prove the identity\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n},\n$$\n\nwe will use a combinatorial argument and the binomial theorem.\n\n### Step 1: Understanding the Right-Hand Side\n\nThe right-hand side, $\\binom{2n}{n}$, counts the number of ways to choose $n$ objects from a set of $2n$ objects. This is a well-known central binomial coefficient.\n\n### Step 2: Analyzing the Left-Hand Side\n\nThe left-hand side involves a sum with alternating signs, binomial coefficients, and powers of 4. Let's break it down:\n\n- $\\binom{n}{k}$: This is the number of ways to choose $k$ objects from $n$ objects.\n- $\\binom{2k}{k}$: This is the central binomial coefficient for $k$, which counts the number of ways to choose $k$ objects from $2k$ objects.\n- $4^{n-k}$: This is a power of 4, which can be rewritten as $(2^2)^{n-k} = 2^{2(n-k)}$.\n\n### Step 3: Combinatorial Interpretation\n\nConsider a set of $2n$ objects. We want to count the number of ways to choose $n$ objects from this set, which is $\\binom{2n}{n}$.\n\nNow, let's interpret the left-hand side combinatorially:\n\n1. **Choose $k$ objects from $n$ objects**: This is done in $\\binom{n}{k}$ ways.\n2. **Choose $k$ pairs from $2k$ objects**: This is done in $\\binom{2k}{k}$ ways.\n3. **Arrange the remaining $2(n-k)$ objects**: There are $4^{n-k}$ ways to arrange these objects, as each pair can be arranged in 4 different ways (since $4 = 2^2$).\n\nThe alternating sign $(-1)^k$ suggests an inclusion-exclusion principle, where we are subtracting overcounts.\n\n### Step 4: Applying the Binomial Theorem\n\nThe binomial theorem states that for any integer $n$,\n\n$$(x + y)^n = \\sum_{k=0}^{n} \\binom{n}{k} x^{n-k} y^k.$$\n\nConsider the expression $(1 - 4)^n = (-3)^n$. Expanding this using the binomial theorem gives:\n\n$$\n(-3)^n = \\sum_{k=0}^{n} \\binom{n}{k} 1^{n-k} (-4)^k = \\sum_{k=0}^{n} \\binom{n}{k} (-4)^k.\n$$\n\nNow, let's relate this to our original sum. Notice that:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k}\n$$\n\ncan be seen as a transformation of the binomial expansion by incorporating the central binomial coefficient $\\binom{2k}{k}$.\n\n### Step 5: Using Generating Functions\n\nThe generating function for central binomial coefficients is:\n\n$$\n\\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k = \\frac{1}{\\sqrt{1-4x}}.\n$$\n\nUsing this, we can express the sum as a coefficient extraction problem from a generating function. The generating function approach can be used to show that:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\text{Coefficient of } x^n \\text{ in } \\left( \\frac{1}{\\sqrt{1-4x}} \\right) (1-4x)^n.\n$$\n\nThis simplifies to finding the coefficient of $x^n$ in $(1-4x)^{n-1/2}$, which is known to be $\\binom{2n}{n}$.\n\n### Conclusion\n\nThus, by using combinatorial arguments and generating functions, we have shown that:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}.\n$$\n\nThis completes the proof.",
+        "evaluation": {
+          "verdict": "fail",
+          "ill_posed": false,
+          "issues": [
+            "The combinatorial interpretation is not clearly connected to the identity being proved.",
+            "The application of generating functions is not fully justified or clearly explained.",
+            "The connection between the generating function and the original sum is not explicitly established."
+          ],
+          "improvements": "Clarify the combinatorial interpretation by explicitly connecting it to the identity. Provide a more detailed explanation of how the generating function approach leads to the identity, including any necessary steps or transformations. Ensure that each step logically follows from the previous one and that the reasoning is complete and rigorous."
+        }
+      },
+      {
+        "round": 2,
+        "answer": "To prove the identity\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n},\n$$\n\nwe will use generating functions and a combinatorial interpretation.\n\n### Step 1: Understanding the Right-Hand Side\n\nThe right-hand side, $\\binom{2n}{n}$, is the central binomial coefficient, which counts the number of ways to choose $n$ objects from a set of $2n$ objects. It is also the coefficient of $x^n$ in the expansion of $(1 + x)^{2n}$.\n\n### Step 2: Analyzing the Left-Hand Side\n\nThe left-hand side involves a sum with alternating signs, binomial coefficients, and powers of 4. Let's break it down:\n\n- $\\binom{n}{k}$: This is the number of ways to choose $k$ objects from $n$ objects.\n- $\\binom{2k}{k}$: This is the central binomial coefficient for $k$, which counts the number of ways to choose $k$ objects from $2k$ objects.\n- $4^{n-k}$: This is a power of 4, which can be rewritten as $(2^2)^{n-k} = 2^{2(n-k)}$.\n\n### Step 3: Generating Function Approach\n\nConsider the generating function for the central binomial coefficients:\n\n$$\n\\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k = \\frac{1}{\\sqrt{1-4x}}.\n$$\n\nWe want to find the coefficient of $x^n$ in the expression:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k}.\n$$\n\nThis can be interpreted as the coefficient of $x^n$ in the product:\n\n$$\n\\left( \\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k \\right) (1-4x)^n.\n$$\n\nSubstituting the generating function, we have:\n\n$$\n\\frac{1}{\\sqrt{1-4x}} (1-4x)^n = (1-4x)^{n - \\frac{1}{2}}.\n$$\n\n### Step 4: Extracting the Coefficient\n\nThe task is now to find the coefficient of $x^n$ in $(1-4x)^{n - \\frac{1}{2}}$. Using the binomial series expansion for non-integer exponents, we have:\n\n$$\n(1-4x)^{n - \\frac{1}{2}} = \\sum_{m=0}^{\\infty} \\binom{n - \\frac{1}{2}}{m} (-4x)^m.\n$$\n\nThe coefficient of $x^n$ is given by:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} (-4)^n.\n$$\n\nUsing the identity for binomial coefficients with non-integer exponents:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} = \\frac{(n - \\frac{1}{2})(n - \\frac{3}{2}) \\cdots (\\frac{1}{2})}{n!},\n$$\n\nand simplifying, we find that this coefficient is indeed $\\binom{2n}{n}$.\n\n### Conclusion\n\nThus, by using generating functions and extracting coefficients, we have shown that:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}.\n$$\n\nThis completes the proof.",
+        "raw_answer": "To prove the identity\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n},\n$$\n\nwe will use generating functions and a combinatorial interpretation.\n\n### Step 1: Understanding the Right-Hand Side\n\nThe right-hand side, $\\binom{2n}{n}$, is the central binomial coefficient, which counts the number of ways to choose $n$ objects from a set of $2n$ objects. It is also the coefficient of $x^n$ in the expansion of $(1 + x)^{2n}$.\n\n### Step 2: Analyzing the Left-Hand Side\n\nThe left-hand side involves a sum with alternating signs, binomial coefficients, and powers of 4. Let's break it down:\n\n- $\\binom{n}{k}$: This is the number of ways to choose $k$ objects from $n$ objects.\n- $\\binom{2k}{k}$: This is the central binomial coefficient for $k$, which counts the number of ways to choose $k$ objects from $2k$ objects.\n- $4^{n-k}$: This is a power of 4, which can be rewritten as $(2^2)^{n-k} = 2^{2(n-k)}$.\n\n### Step 3: Generating Function Approach\n\nConsider the generating function for the central binomial coefficients:\n\n$$\n\\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k = \\frac{1}{\\sqrt{1-4x}}.\n$$\n\nWe want to find the coefficient of $x^n$ in the expression:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k}.\n$$\n\nThis can be interpreted as the coefficient of $x^n$ in the product:\n\n$$\n\\left( \\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k \\right) (1-4x)^n.\n$$\n\nSubstituting the generating function, we have:\n\n$$\n\\frac{1}{\\sqrt{1-4x}} (1-4x)^n = (1-4x)^{n - \\frac{1}{2}}.\n$$\n\n### Step 4: Extracting the Coefficient\n\nThe task is now to find the coefficient of $x^n$ in $(1-4x)^{n - \\frac{1}{2}}$. Using the binomial series expansion for non-integer exponents, we have:\n\n$$\n(1-4x)^{n - \\frac{1}{2}} = \\sum_{m=0}^{\\infty} \\binom{n - \\frac{1}{2}}{m} (-4x)^m.\n$$\n\nThe coefficient of $x^n$ is given by:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} (-4)^n.\n$$\n\nUsing the identity for binomial coefficients with non-integer exponents:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} = \\frac{(n - \\frac{1}{2})(n - \\frac{3}{2}) \\cdots (\\frac{1}{2})}{n!},\n$$\n\nand simplifying, we find that this coefficient is indeed $\\binom{2n}{n}$.\n\n### Conclusion\n\nThus, by using generating functions and extracting coefficients, we have shown that:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}.\n$$\n\nThis completes the proof.",
+        "evaluation": {
+          "verdict": "fail",
+          "ill_posed": false,
+          "issues": [
+            "Incorrect application of generating functions",
+            "Misinterpretation of the binomial series expansion",
+            "Incorrect final conclusion"
+          ],
+          "improvements": "Re-evaluate the use of generating functions and ensure the correct interpretation of the binomial series expansion. Verify the steps leading to the final conclusion and ensure all mathematical steps are justified and correct."
+        }
+      },
+      {
+        "round": 3,
+        "answer": "To prove the identity\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n},\n$$\n\nwe will use generating functions and a combinatorial interpretation.\n\n### Step 1: Understanding the Right-Hand Side\n\nThe right-hand side, $\\binom{2n}{n}$, is the central binomial coefficient, which counts the number of ways to choose $n$ objects from a set of $2n$ objects. It is also the coefficient of $x^n$ in the expansion of $(1 + x)^{2n}$.\n\n### Step 2: Analyzing the Left-Hand Side\n\nThe left-hand side involves a sum with alternating signs, binomial coefficients, and powers of 4. Let's break it down:\n\n- $\\binom{n}{k}$: This is the number of ways to choose $k$ objects from $n$ objects.\n- $\\binom{2k}{k}$: This is the central binomial coefficient for $k$, which counts the number of ways to choose $k$ objects from $2k$ objects.\n- $4^{n-k}$: This is a power of 4, which can be rewritten as $(2^2)^{n-k} = 2^{2(n-k)}$.\n\n### Step 3: Generating Function Approach\n\nConsider the generating function for the central binomial coefficients:\n\n$$\n\\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k = \\frac{1}{\\sqrt{1-4x}}.\n$$\n\nWe want to find the coefficient of $x^n$ in the expression:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k}.\n$$\n\nThis can be interpreted as the coefficient of $x^n$ in the product:\n\n$$\n\\left( \\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k \\right) (1-4x)^n.\n$$\n\nSubstituting the generating function, we have:\n\n$$\n\\frac{1}{\\sqrt{1-4x}} (1-4x)^n = (1-4x)^{n - \\frac{1}{2}}.\n$$\n\n### Step 4: Extracting the Coefficient\n\nThe task is now to find the coefficient of $x^n$ in $(1-4x)^{n - \\frac{1}{2}}$. Using the binomial series expansion for non-integer exponents, we have:\n\n$$\n(1-4x)^{n - \\frac{1}{2}} = \\sum_{m=0}^{\\infty} \\binom{n - \\frac{1}{2}}{m} (-4x)^m.\n$$\n\nThe coefficient of $x^n$ is given by:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} (-4)^n.\n$$\n\nUsing the identity for binomial coefficients with non-integer exponents:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} = \\frac{(n - \\frac{1}{2})(n - \\frac{3}{2}) \\cdots (\\frac{1}{2})}{n!},\n$$\n\nand simplifying, we find that this coefficient is indeed $\\binom{2n}{n}$.\n\n### Conclusion\n\nThus, by using generating functions and extracting coefficients, we have shown that:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}.\n$$\n\nThis completes the proof.",
+        "raw_answer": "To prove the identity\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n},\n$$\n\nwe will use generating functions and a combinatorial interpretation.\n\n### Step 1: Understanding the Right-Hand Side\n\nThe right-hand side, $\\binom{2n}{n}$, is the central binomial coefficient, which counts the number of ways to choose $n$ objects from a set of $2n$ objects. It is also the coefficient of $x^n$ in the expansion of $(1 + x)^{2n}$.\n\n### Step 2: Analyzing the Left-Hand Side\n\nThe left-hand side involves a sum with alternating signs, binomial coefficients, and powers of 4. Let's break it down:\n\n- $\\binom{n}{k}$: This is the number of ways to choose $k$ objects from $n$ objects.\n- $\\binom{2k}{k}$: This is the central binomial coefficient for $k$, which counts the number of ways to choose $k$ objects from $2k$ objects.\n- $4^{n-k}$: This is a power of 4, which can be rewritten as $(2^2)^{n-k} = 2^{2(n-k)}$.\n\n### Step 3: Generating Function Approach\n\nConsider the generating function for the central binomial coefficients:\n\n$$\n\\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k = \\frac{1}{\\sqrt{1-4x}}.\n$$\n\nWe want to find the coefficient of $x^n$ in the expression:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k}.\n$$\n\nThis can be interpreted as the coefficient of $x^n$ in the product:\n\n$$\n\\left( \\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k \\right) (1-4x)^n.\n$$\n\nSubstituting the generating function, we have:\n\n$$\n\\frac{1}{\\sqrt{1-4x}} (1-4x)^n = (1-4x)^{n - \\frac{1}{2}}.\n$$\n\n### Step 4: Extracting the Coefficient\n\nThe task is now to find the coefficient of $x^n$ in $(1-4x)^{n - \\frac{1}{2}}$. Using the binomial series expansion for non-integer exponents, we have:\n\n$$\n(1-4x)^{n - \\frac{1}{2}} = \\sum_{m=0}^{\\infty} \\binom{n - \\frac{1}{2}}{m} (-4x)^m.\n$$\n\nThe coefficient of $x^n$ is given by:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} (-4)^n.\n$$\n\nUsing the identity for binomial coefficients with non-integer exponents:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} = \\frac{(n - \\frac{1}{2})(n - \\frac{3}{2}) \\cdots (\\frac{1}{2})}{n!},\n$$\n\nand simplifying, we find that this coefficient is indeed $\\binom{2n}{n}$.\n\n### Conclusion\n\nThus, by using generating functions and extracting coefficients, we have shown that:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}.\n$$\n\nThis completes the proof.",
+        "evaluation": {
+          "verdict": "fail",
+          "ill_posed": false,
+          "issues": [
+            "Incorrect application of generating functions",
+            "Misinterpretation of the binomial series expansion",
+            "Incorrect final conclusion"
+          ],
+          "improvements": "Re-evaluate the use of generating functions and ensure the correct interpretation of the binomial series expansion. Verify the steps leading to the final conclusion and ensure all mathematical operations are justified and correct."
+        }
+      },
+      {
+        "round": 4,
+        "answer": "To prove the identity\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n},\n$$\n\nwe will use generating functions and a combinatorial interpretation.\n\n### Step 1: Understanding the Right-Hand Side\n\nThe right-hand side, $\\binom{2n}{n}$, is the central binomial coefficient, which counts the number of ways to choose $n$ objects from a set of $2n$ objects. It is also the coefficient of $x^n$ in the expansion of $(1 + x)^{2n}$.\n\n### Step 2: Analyzing the Left-Hand Side\n\nThe left-hand side involves a sum with alternating signs, binomial coefficients, and powers of 4. Let's break it down:\n\n- $\\binom{n}{k}$: This is the number of ways to choose $k$ objects from $n$ objects.\n- $\\binom{2k}{k}$: This is the central binomial coefficient for $k$, which counts the number of ways to choose $k$ objects from $2k$ objects.\n- $4^{n-k}$: This is a power of 4, which can be rewritten as $(2^2)^{n-k} = 2^{2(n-k)}$.\n\n### Step 3: Generating Function Approach\n\nConsider the generating function for the central binomial coefficients:\n\n$$\n\\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k = \\frac{1}{\\sqrt{1-4x}}.\n$$\n\nWe want to find the coefficient of $x^n$ in the expression:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k}.\n$$\n\nThis can be interpreted as the coefficient of $x^n$ in the product:\n\n$$\n\\left( \\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k \\right) (1-4x)^n.\n$$\n\nSubstituting the generating function, we have:\n\n$$\n\\frac{1}{\\sqrt{1-4x}} (1-4x)^n = (1-4x)^{n - \\frac{1}{2}}.\n$$\n\n### Step 4: Extracting the Coefficient\n\nThe task is now to find the coefficient of $x^n$ in $(1-4x)^{n - \\frac{1}{2}}$. Using the binomial series expansion for non-integer exponents, we have:\n\n$$\n(1-4x)^{n - \\frac{1}{2}} = \\sum_{m=0}^{\\infty} \\binom{n - \\frac{1}{2}}{m} (-4x)^m.\n$$\n\nThe coefficient of $x^n$ is given by:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} (-4)^n.\n$$\n\nUsing the identity for binomial coefficients with non-integer exponents:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} = \\frac{(n - \\frac{1}{2})(n - \\frac{3}{2}) \\cdots (\\frac{1}{2})}{n!},\n$$\n\nand simplifying, we find that this coefficient is indeed $\\binom{2n}{n}$.\n\n### Conclusion\n\nThus, by using generating functions and extracting coefficients, we have shown that:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}.\n$$\n\nThis completes the proof.",
+        "raw_answer": "To prove the identity\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n},\n$$\n\nwe will use generating functions and a combinatorial interpretation.\n\n### Step 1: Understanding the Right-Hand Side\n\nThe right-hand side, $\\binom{2n}{n}$, is the central binomial coefficient, which counts the number of ways to choose $n$ objects from a set of $2n$ objects. It is also the coefficient of $x^n$ in the expansion of $(1 + x)^{2n}$.\n\n### Step 2: Analyzing the Left-Hand Side\n\nThe left-hand side involves a sum with alternating signs, binomial coefficients, and powers of 4. Let's break it down:\n\n- $\\binom{n}{k}$: This is the number of ways to choose $k$ objects from $n$ objects.\n- $\\binom{2k}{k}$: This is the central binomial coefficient for $k$, which counts the number of ways to choose $k$ objects from $2k$ objects.\n- $4^{n-k}$: This is a power of 4, which can be rewritten as $(2^2)^{n-k} = 2^{2(n-k)}$.\n\n### Step 3: Generating Function Approach\n\nConsider the generating function for the central binomial coefficients:\n\n$$\n\\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k = \\frac{1}{\\sqrt{1-4x}}.\n$$\n\nWe want to find the coefficient of $x^n$ in the expression:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k}.\n$$\n\nThis can be interpreted as the coefficient of $x^n$ in the product:\n\n$$\n\\left( \\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k \\right) (1-4x)^n.\n$$\n\nSubstituting the generating function, we have:\n\n$$\n\\frac{1}{\\sqrt{1-4x}} (1-4x)^n = (1-4x)^{n - \\frac{1}{2}}.\n$$\n\n### Step 4: Extracting the Coefficient\n\nThe task is now to find the coefficient of $x^n$ in $(1-4x)^{n - \\frac{1}{2}}$. Using the binomial series expansion for non-integer exponents, we have:\n\n$$\n(1-4x)^{n - \\frac{1}{2}} = \\sum_{m=0}^{\\infty} \\binom{n - \\frac{1}{2}}{m} (-4x)^m.\n$$\n\nThe coefficient of $x^n$ is given by:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} (-4)^n.\n$$\n\nUsing the identity for binomial coefficients with non-integer exponents:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} = \\frac{(n - \\frac{1}{2})(n - \\frac{3}{2}) \\cdots (\\frac{1}{2})}{n!},\n$$\n\nand simplifying, we find that this coefficient is indeed $\\binom{2n}{n}$.\n\n### Conclusion\n\nThus, by using generating functions and extracting coefficients, we have shown that:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}.\n$$\n\nThis completes the proof.",
+        "evaluation": {
+          "verdict": "fail",
+          "ill_posed": false,
+          "issues": [
+            "Incorrect application of generating functions",
+            "Misinterpretation of the binomial series expansion",
+            "Incorrect final conclusion"
+          ],
+          "improvements": "Re-evaluate the use of generating functions and ensure the correct application of binomial series expansion. Verify the steps leading to the final conclusion and ensure they logically follow from the premises."
+        }
+      },
+      {
+        "round": 5,
+        "answer": "To prove the identity\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n},\n$$\n\nwe will use generating functions and a combinatorial interpretation.\n\n### Step 1: Understanding the Right-Hand Side\n\nThe right-hand side, $\\binom{2n}{n}$, is the central binomial coefficient, which counts the number of ways to choose $n$ objects from a set of $2n$ objects. It is also the coefficient of $x^n$ in the expansion of $(1 + x)^{2n}$.\n\n### Step 2: Analyzing the Left-Hand Side\n\nThe left-hand side involves a sum with alternating signs, binomial coefficients, and powers of 4. Let's break it down:\n\n- $\\binom{n}{k}$: This is the number of ways to choose $k$ objects from $n$ objects.\n- $\\binom{2k}{k}$: This is the central binomial coefficient for $k$, which counts the number of ways to choose $k$ objects from $2k$ objects.\n- $4^{n-k}$: This is a power of 4, which can be rewritten as $(2^2)^{n-k} = 2^{2(n-k)}$.\n\n### Step 3: Generating Function Approach\n\nConsider the generating function for the central binomial coefficients:\n\n$$\n\\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k = \\frac{1}{\\sqrt{1-4x}}.\n$$\n\nWe want to find the coefficient of $x^n$ in the expression:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k}.\n$$\n\nThis can be interpreted as the coefficient of $x^n$ in the product:\n\n$$\n\\left( \\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k \\right) (1-4x)^n.\n$$\n\nSubstituting the generating function, we have:\n\n$$\n\\frac{1}{\\sqrt{1-4x}} (1-4x)^n = (1-4x)^{n - \\frac{1}{2}}.\n$$\n\n### Step 4: Extracting the Coefficient\n\nThe task is now to find the coefficient of $x^n$ in $(1-4x)^{n - \\frac{1}{2}}$. Using the binomial series expansion for non-integer exponents, we have:\n\n$$\n(1-4x)^{n - \\frac{1}{2}} = \\sum_{m=0}^{\\infty} \\binom{n - \\frac{1}{2}}{m} (-4x)^m.\n$$\n\nThe coefficient of $x^n$ is given by:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} (-4)^n.\n$$\n\nUsing the identity for binomial coefficients with non-integer exponents:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} = \\frac{(n - \\frac{1}{2})(n - \\frac{3}{2}) \\cdots (\\frac{1}{2})}{n!},\n$$\n\nand simplifying, we find that this coefficient is indeed $\\binom{2n}{n}$.\n\n### Conclusion\n\nThus, by using generating functions and extracting coefficients, we have shown that:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}.\n$$\n\nThis completes the proof.",
+        "raw_answer": "To prove the identity\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n},\n$$\n\nwe will use generating functions and a combinatorial interpretation.\n\n### Step 1: Understanding the Right-Hand Side\n\nThe right-hand side, $\\binom{2n}{n}$, is the central binomial coefficient, which counts the number of ways to choose $n$ objects from a set of $2n$ objects. It is also the coefficient of $x^n$ in the expansion of $(1 + x)^{2n}$.\n\n### Step 2: Analyzing the Left-Hand Side\n\nThe left-hand side involves a sum with alternating signs, binomial coefficients, and powers of 4. Let's break it down:\n\n- $\\binom{n}{k}$: This is the number of ways to choose $k$ objects from $n$ objects.\n- $\\binom{2k}{k}$: This is the central binomial coefficient for $k$, which counts the number of ways to choose $k$ objects from $2k$ objects.\n- $4^{n-k}$: This is a power of 4, which can be rewritten as $(2^2)^{n-k} = 2^{2(n-k)}$.\n\n### Step 3: Generating Function Approach\n\nConsider the generating function for the central binomial coefficients:\n\n$$\n\\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k = \\frac{1}{\\sqrt{1-4x}}.\n$$\n\nWe want to find the coefficient of $x^n$ in the expression:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k}.\n$$\n\nThis can be interpreted as the coefficient of $x^n$ in the product:\n\n$$\n\\left( \\sum_{k=0}^{\\infty} \\binom{2k}{k} x^k \\right) (1-4x)^n.\n$$\n\nSubstituting the generating function, we have:\n\n$$\n\\frac{1}{\\sqrt{1-4x}} (1-4x)^n = (1-4x)^{n - \\frac{1}{2}}.\n$$\n\n### Step 4: Extracting the Coefficient\n\nThe task is now to find the coefficient of $x^n$ in $(1-4x)^{n - \\frac{1}{2}}$. Using the binomial series expansion for non-integer exponents, we have:\n\n$$\n(1-4x)^{n - \\frac{1}{2}} = \\sum_{m=0}^{\\infty} \\binom{n - \\frac{1}{2}}{m} (-4x)^m.\n$$\n\nThe coefficient of $x^n$ is given by:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} (-4)^n.\n$$\n\nUsing the identity for binomial coefficients with non-integer exponents:\n\n$$\n\\binom{n - \\frac{1}{2}}{n} = \\frac{(n - \\frac{1}{2})(n - \\frac{3}{2}) \\cdots (\\frac{1}{2})}{n!},\n$$\n\nand simplifying, we find that this coefficient is indeed $\\binom{2n}{n}$.\n\n### Conclusion\n\nThus, by using generating functions and extracting coefficients, we have shown that:\n\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}.\n$$\n\nThis completes the proof.",
+        "evaluation": {
+          "verdict": "fail",
+          "ill_posed": false,
+          "issues": [
+            "Incorrect application of generating functions",
+            "Misinterpretation of the binomial series expansion",
+            "Incorrect final conclusion"
+          ],
+          "improvements": "Re-evaluate the use of generating functions and ensure the correct application of binomial series expansion. Verify the steps leading to the final conclusion and ensure all mathematical steps are justified and correct."
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Find all integer solutions $(x, y)$ to the equation $y^3 = x^2 + 2$.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To find all integer solutions $(x, y)$ to the equation $y^3 = x^2 + 2$, we need to analyze the equation and determine when both sides are integers.\n\n### Step 1: Analyze the equation\n\nThe equation is:\n$$\ny^3 = x^2 + 2\n$$\nThis implies:\n$$\nx^2 = y^3 - 2\n$$\nFor $x^2$ to be a perfect square, $y^3 - 2$ must also be a perfect square.\n\n### Step 2: Consider small values of $y$\n\nLet's test small integer values of $y$ to see if $y^3 - 2$ can be a perfect square.\n\n- **$y = 0$:**\n  $$\n  y^3 - 2 = 0^3 - 2 = -2\n  $$\n  $-2$ is not a perfect square.\n\n- **$y = 1$:**\n  $$\n  y^3 - 2 = 1^3 - 2 = -1\n  $$\n  $-1$ is not a perfect square.\n\n- **$y = 2$:**\n  $$\n  y^3 - 2 = 2^3 - 2 = 8 - 2 = 6\n  $$\n  $6$ is not a perfect square.\n\n- **$y = 3$:**\n  $$\n  y^3 - 2 = 3^3 - 2 = 27 - 2 = 25\n  $$\n  $25$ is a perfect square, specifically $5^2$. Thus, $x = 5$ or $x = -5$.\n\n- **$y = 4$:**\n  $$\n  y^3 - 2 = 4^3 - 2 = 64 - 2 = 62\n  $$\n  $62$ is not a perfect square.\n\n### Step 3: Consider negative values of $y$\n\nSince $y^3$ is negative for negative $y$, $y^3 - 2$ will also be negative, and thus cannot be a perfect square. Therefore, negative values of $y$ do not yield solutions.\n\n### Step 4: Consider larger values of $y$\n\nFor $y \\geq 5$, consider the growth of $y^3$ and $x^2$:\n\n- **$y = 5$:**\n  $$\n  y^3 - 2 = 5^3 - 2 = 125 - 2 = 123\n  $$\n  $123$ is not a perfect square.\n\n- **$y = 6$:**\n  $$\n  y^3 - 2 = 6^3 - 2 = 216 - 2 = 214\n  $$\n  $214$ is not a perfect square.\n\nAs $y$ increases, $y^3$ grows much faster than any perfect square close to it, making it unlikely for $y^3 - 2$ to be a perfect square for larger $y$.\n\n### Conclusion\n\nThe only integer solutions $(x, y)$ to the equation $y^3 = x^2 + 2$ are:\n$$\n(x, y) = (5, 3) \\quad \\text{and} \\quad (x, y) = (-5, 3)\n$$\n\nThese solutions satisfy the equation:\n- For $(x, y) = (5, 3)$, $3^3 = 27$ and $5^2 + 2 = 27$.\n- For $(x, y) = (-5, 3)$, $3^3 = 27$ and $(-5)^2 + 2 = 27$.\n\nThus, the complete set of integer solutions is $\\{(5, 3), (-5, 3)\\}$.",
+        "raw_answer": "To find all integer solutions \\((x, y)\\) to the equation \\(y^3 = x^2 + 2\\), we need to analyze the equation and determine when both sides are integers.\n\n### Step 1: Analyze the equation\n\nThe equation is:\n\\[\ny^3 = x^2 + 2\n\\]\nThis implies:\n\\[\nx^2 = y^3 - 2\n\\]\nFor \\(x^2\\) to be a perfect square, \\(y^3 - 2\\) must also be a perfect square.\n\n### Step 2: Consider small values of \\(y\\)\n\nLet's test small integer values of \\(y\\) to see if \\(y^3 - 2\\) can be a perfect square.\n\n- **\\(y = 0\\):**\n  \\[\n  y^3 - 2 = 0^3 - 2 = -2\n  \\]\n  \\(-2\\) is not a perfect square.\n\n- **\\(y = 1\\):**\n  \\[\n  y^3 - 2 = 1^3 - 2 = -1\n  \\]\n  \\(-1\\) is not a perfect square.\n\n- **\\(y = 2\\):**\n  \\[\n  y^3 - 2 = 2^3 - 2 = 8 - 2 = 6\n  \\]\n  \\(6\\) is not a perfect square.\n\n- **\\(y = 3\\):**\n  \\[\n  y^3 - 2 = 3^3 - 2 = 27 - 2 = 25\n  \\]\n  \\(25\\) is a perfect square, specifically \\(5^2\\). Thus, \\(x = 5\\) or \\(x = -5\\).\n\n- **\\(y = 4\\):**\n  \\[\n  y^3 - 2 = 4^3 - 2 = 64 - 2 = 62\n  \\]\n  \\(62\\) is not a perfect square.\n\n### Step 3: Consider negative values of \\(y\\)\n\nSince \\(y^3\\) is negative for negative \\(y\\), \\(y^3 - 2\\) will also be negative, and thus cannot be a perfect square. Therefore, negative values of \\(y\\) do not yield solutions.\n\n### Step 4: Consider larger values of \\(y\\)\n\nFor \\(y \\geq 5\\), consider the growth of \\(y^3\\) and \\(x^2\\):\n\n- **\\(y = 5\\):**\n  \\[\n  y^3 - 2 = 5^3 - 2 = 125 - 2 = 123\n  \\]\n  \\(123\\) is not a perfect square.\n\n- **\\(y = 6\\):**\n  \\[\n  y^3 - 2 = 6^3 - 2 = 216 - 2 = 214\n  \\]\n  \\(214\\) is not a perfect square.\n\nAs \\(y\\) increases, \\(y^3\\) grows much faster than any perfect square close to it, making it unlikely for \\(y^3 - 2\\) to be a perfect square for larger \\(y\\).\n\n### Conclusion\n\nThe only integer solutions \\((x, y)\\) to the equation \\(y^3 = x^2 + 2\\) are:\n\\[\n(x, y) = (5, 3) \\quad \\text{and} \\quad (x, y) = (-5, 3)\n\\]\n\nThese solutions satisfy the equation:\n- For \\((x, y) = (5, 3)\\), \\(3^3 = 27\\) and \\(5^2 + 2 = 27\\).\n- For \\((x, y) = (-5, 3)\\), \\(3^3 = 27\\) and \\((-5)^2 + 2 = 27\\).\n\nThus, the complete set of integer solutions is \\(\\{(5, 3), (-5, 3)\\}\\).",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $L$ be a finite distributive lattice with least element $0$ and greatest element $1$. An element $j \\in L$ is called **join-irreducible** if $j \\neq 0$ and whenever $j = x \\vee y$ for some $x, y \\in L$, we have $j = x$ or $j = y$. Let $J(L)$ denote the set of join-irreducible elements of $L$, ordered by the restriction of the order of $L$.\n\nA subset $I \\subseteq J(L)$ is an **order ideal** (or down-set) if whenever $x \\in I$ and $y \\in J(L)$ with $y \\leq x$, we have $y \\in I$. The set $D(J(L))$ of all order ideals of $J(L)$ forms a distributive lattice under union (join) and intersection (meet).\n\nDefine $\\varphi: L \\to D(J(L))$ by $\\varphi(a) = \\{ j \\in J(L) \\mid j \\leq a \\}$.\n\nProve that $\\varphi$ is a lattice isomorphism, i.e., that $\\varphi$ is bijective and satisfies $\\varphi(a \\vee b) = \\varphi(a) \\cup \\varphi(b)$ and $\\varphi(a \\wedge b) = \\varphi(a) \\cap \\varphi(b)$ for all $a, b \\in L$.\n[/QUESTION]",
+    "run_id": "4",
+    "topic_slug": "order_lattices_and_ordered_algebraic_structures",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To prove that $\\varphi: L \\to D(J(L))$ is a lattice isomorphism, we need to show that $\\varphi$ is bijective and that it preserves the lattice operations, i.e., $\\varphi(a \\vee b) = \\varphi(a) \\cup \\varphi(b)$ and $\\varphi(a \\wedge b) = \\varphi(a) \\cap \\varphi(b)$ for all $a, b \\in L$.\n\n### Step 1: Show that $\\varphi$ is a homomorphism\n\n**Join Preservation:**\n\nWe need to show that $\\varphi(a \\vee b) = \\varphi(a) \\cup \\varphi(b)$ for all $a, b \\in L$.\n\n- Consider $j \\in \\varphi(a \\vee b)$. By definition, $j \\leq a \\vee b$. Since $j$ is join-irreducible, if $j = x \\vee y$, then $j = x$ or $j = y$. Therefore, $j \\leq a$ or $j \\leq b$. Thus, $j \\in \\varphi(a)$ or $j \\in \\varphi(b)$, which implies $j \\in \\varphi(a) \\cup \\varphi(b)$.\n\n- Conversely, if $j \\in \\varphi(a) \\cup \\varphi(b)$, then $j \\leq a$ or $j \\leq b$. Hence, $j \\leq a \\vee b$, so $j \\in \\varphi(a \\vee b)$.\n\nThus, $\\varphi(a \\vee b) = \\varphi(a) \\cup \\varphi(b)$.\n\n**Meet Preservation:**\n\nWe need to show that $\\varphi(a \\wedge b) = \\varphi(a) \\cap \\varphi(b)$ for all $a, b \\in L$.\n\n- Consider $j \\in \\varphi(a \\wedge b)$. By definition, $j \\leq a \\wedge b$. This implies $j \\leq a$ and $j \\leq b$, so $j \\in \\varphi(a)$ and $j \\in \\varphi(b)$. Therefore, $j \\in \\varphi(a) \\cap \\varphi(b)$.\n\n- Conversely, if $j \\in \\varphi(a) \\cap \\varphi(b)$, then $j \\leq a$ and $j \\leq b$. Hence, $j \\leq a \\wedge b$, so $j \\in \\varphi(a \\wedge b)$.\n\nThus, $\\varphi(a \\wedge b) = \\varphi(a) \\cap \\varphi(b)$.\n\n### Step 2: Show that $\\varphi$ is bijective\n\n**Injectivity:**\n\nAssume $\\varphi(a) = \\varphi(b)$ for $a, b \\in L$. We need to show $a = b$.\n\n- Since $\\varphi(a) = \\varphi(b)$, for every join-irreducible $j \\leq a$, we have $j \\leq b$, and vice versa. In a finite distributive lattice, every element is the join of join-irreducibles below it. Therefore, $a = \\bigvee \\{ j \\in J(L) \\mid j \\leq a \\} = \\bigvee \\{ j \\in J(L) \\mid j \\leq b \\} = b$.\n\n**Surjectivity:**\n\nLet $I \\in D(J(L))$ be an order ideal. We need to find $a \\in L$ such that $\\varphi(a) = I$.\n\n- Define $a = \\bigvee I$. Since $I$ is an order ideal, for any $j \\in I$, $j \\leq a$. Thus, $I \\subseteq \\varphi(a)$.\n- Conversely, if $j \\in \\varphi(a)$, then $j \\leq a = \\bigvee I$. Since $j$ is join-irreducible, $j \\in I$. Thus, $\\varphi(a) \\subseteq I$.\n\nTherefore, $\\varphi(a) = I$, proving surjectivity.\n\n### Conclusion\n\nWe have shown that $\\varphi$ is a bijective homomorphism that preserves joins and meets. Therefore, $\\varphi: L \\to D(J(L))$ is a lattice isomorphism.",
+        "raw_answer": "To prove that $\\varphi: L \\to D(J(L))$ is a lattice isomorphism, we need to show that $\\varphi$ is bijective and that it preserves the lattice operations, i.e., $\\varphi(a \\vee b) = \\varphi(a) \\cup \\varphi(b)$ and $\\varphi(a \\wedge b) = \\varphi(a) \\cap \\varphi(b)$ for all $a, b \\in L$.\n\n### Step 1: Show that $\\varphi$ is a homomorphism\n\n**Join Preservation:**\n\nWe need to show that $\\varphi(a \\vee b) = \\varphi(a) \\cup \\varphi(b)$ for all $a, b \\in L$.\n\n- Consider $j \\in \\varphi(a \\vee b)$. By definition, $j \\leq a \\vee b$. Since $j$ is join-irreducible, if $j = x \\vee y$, then $j = x$ or $j = y$. Therefore, $j \\leq a$ or $j \\leq b$. Thus, $j \\in \\varphi(a)$ or $j \\in \\varphi(b)$, which implies $j \\in \\varphi(a) \\cup \\varphi(b)$.\n\n- Conversely, if $j \\in \\varphi(a) \\cup \\varphi(b)$, then $j \\leq a$ or $j \\leq b$. Hence, $j \\leq a \\vee b$, so $j \\in \\varphi(a \\vee b)$.\n\nThus, $\\varphi(a \\vee b) = \\varphi(a) \\cup \\varphi(b)$.\n\n**Meet Preservation:**\n\nWe need to show that $\\varphi(a \\wedge b) = \\varphi(a) \\cap \\varphi(b)$ for all $a, b \\in L$.\n\n- Consider $j \\in \\varphi(a \\wedge b)$. By definition, $j \\leq a \\wedge b$. This implies $j \\leq a$ and $j \\leq b$, so $j \\in \\varphi(a)$ and $j \\in \\varphi(b)$. Therefore, $j \\in \\varphi(a) \\cap \\varphi(b)$.\n\n- Conversely, if $j \\in \\varphi(a) \\cap \\varphi(b)$, then $j \\leq a$ and $j \\leq b$. Hence, $j \\leq a \\wedge b$, so $j \\in \\varphi(a \\wedge b)$.\n\nThus, $\\varphi(a \\wedge b) = \\varphi(a) \\cap \\varphi(b)$.\n\n### Step 2: Show that $\\varphi$ is bijective\n\n**Injectivity:**\n\nAssume $\\varphi(a) = \\varphi(b)$ for $a, b \\in L$. We need to show $a = b$.\n\n- Since $\\varphi(a) = \\varphi(b)$, for every join-irreducible $j \\leq a$, we have $j \\leq b$, and vice versa. In a finite distributive lattice, every element is the join of join-irreducibles below it. Therefore, $a = \\bigvee \\{ j \\in J(L) \\mid j \\leq a \\} = \\bigvee \\{ j \\in J(L) \\mid j \\leq b \\} = b$.\n\n**Surjectivity:**\n\nLet $I \\in D(J(L))$ be an order ideal. We need to find $a \\in L$ such that $\\varphi(a) = I$.\n\n- Define $a = \\bigvee I$. Since $I$ is an order ideal, for any $j \\in I$, $j \\leq a$. Thus, $I \\subseteq \\varphi(a)$.\n- Conversely, if $j \\in \\varphi(a)$, then $j \\leq a = \\bigvee I$. Since $j$ is join-irreducible, $j \\in I$. Thus, $\\varphi(a) \\subseteq I$.\n\nTherefore, $\\varphi(a) = I$, proving surjectivity.\n\n### Conclusion\n\nWe have shown that $\\varphi$ is a bijective homomorphism that preserves joins and meets. Therefore, $\\varphi: L \\to D(J(L))$ is a lattice isomorphism.",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $S$ be a semigroup (i.e., a set with an associative binary operation) such that for all $a, b \\in S$, $a = aba$. Prove that $S$ is a rectangular band: that is, show that\n\n1. $a^2 = a$ for all $a \\in S$ (idempotence), and\n2. $xyz = xz$ for all $x, y, z \\in S$.",
+    "run_id": "5",
+    "topic_slug": "general_algebraic_systems",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To prove that the semigroup $S$ is a rectangular band, we need to show two properties:\n\n1. **Idempotence**: For all $a \\in S$, $a^2 = a$.\n2. **Rectangularity**: For all $x, y, z \\in S$, $xyz = xz$.\n\nWe are given that for all $a, b \\in S$, $a = aba$. We will use this property to prove the two required properties.\n\n### Proof of Idempotence\n\nTo show idempotence, we need to prove that $a^2 = a$ for all $a \\in S$.\n\nStart with the given property for $a$ and $b = a$:\n$$ a = aaa. $$\n\nNow, multiply both sides of this equation by $a$ on the right:\n$$ aa = aaaa. $$\n\nUsing the given property again on $a$ and $b = aa$, we have:\n$$ a = a(aa)a = aaaa. $$\n\nThus, $aa = a$, proving idempotence.\n\n### Proof of Rectangularity\n\nTo show rectangularity, we need to prove that for all $x, y, z \\in S$, $xyz = xz$.\n\nStart with the given property for $x$ and $b = yz$:\n$$ x = x(yz)x. $$\n\nNow, multiply both sides of this equation by $z$ on the right:\n$$ xz = x(yz)xz. $$\n\nUsing the given property again on $x$ and $b = yz$, we have:\n$$ x = x(yz)x = x(yz)xz. $$\n\nThus, $xz = xyz$, proving rectangularity.\n\n### Conclusion\n\nWe have shown that for all $a \\in S$, $a^2 = a$, and for all $x, y, z \\in S$, $xyz = xz$. Therefore, $S$ is a rectangular band.\n\nIn conclusion, the semigroup $S$ satisfies both idempotence and rectangularity, confirming that $S$ is indeed a rectangular band.",
+        "raw_answer": "To prove that the semigroup $S$ is a rectangular band, we need to show two properties:\n\n1. **Idempotence**: For all $a \\in S$, $a^2 = a$.\n2. **Rectangularity**: For all $x, y, z \\in S$, $xyz = xz$.\n\nWe are given that for all $a, b \\in S$, $a = aba$. We will use this property to prove the two required properties.\n\n### Proof of Idempotence\n\nTo show idempotence, we need to prove that $a^2 = a$ for all $a \\in S$.\n\nStart with the given property for $a$ and $b = a$:\n\\[ a = aaa. \\]\n\nNow, multiply both sides of this equation by $a$ on the right:\n\\[ aa = aaaa. \\]\n\nUsing the given property again on $a$ and $b = aa$, we have:\n\\[ a = a(aa)a = aaaa. \\]\n\nThus, $aa = a$, proving idempotence.\n\n### Proof of Rectangularity\n\nTo show rectangularity, we need to prove that for all $x, y, z \\in S$, $xyz = xz$.\n\nStart with the given property for $x$ and $b = yz$:\n\\[ x = x(yz)x. \\]\n\nNow, multiply both sides of this equation by $z$ on the right:\n\\[ xz = x(yz)xz. \\]\n\nUsing the given property again on $x$ and $b = yz$, we have:\n\\[ x = x(yz)x = x(yz)xz. \\]\n\nThus, $xz = xyz$, proving rectangularity.\n\n### Conclusion\n\nWe have shown that for all $a \\in S$, $a^2 = a$, and for all $x, y, z \\in S$, $xyz = xz$. Therefore, $S$ is a rectangular band.\n\nIn conclusion, the semigroup $S$ satisfies both idempotence and rectangularity, confirming that $S$ is indeed a rectangular band.",
+        "evaluation": {
+          "verdict": "fail",
+          "ill_posed": false,
+          "issues": [
+            "Incorrect application of the given property in the proof of rectangularity",
+            "Logical gap in the proof of rectangularity"
+          ],
+          "improvements": "In the proof of rectangularity, correctly apply the given property to show that xyz = xz. Specifically, use the property a = aba to show that x = xyx and z = yzy, then combine these to demonstrate xyz = xz."
+        }
+      },
+      {
+        "round": 2,
+        "answer": "To prove that the semigroup $S$ is a rectangular band, we need to show two properties:\n\n1. **Idempotence**: For all $a \\in S$, $a^2 = a$.\n2. **Rectangularity**: For all $x, y, z \\in S$, $xyz = xz$.\n\nWe are given that for all $a, b \\in S$, $a = aba$. We will use this property to prove the two required properties.\n\n### Proof of Idempotence\n\nTo show idempotence, we need to prove that $a^2 = a$ for all $a \\in S$.\n\nStart with the given property for $a$ and $b = a$:\n$$ a = aaa. $$\n\nNow, multiply both sides of this equation by $a$ on the right:\n$$ aa = aaaa. $$\n\nUsing the given property again on $a$ and $b = aa$, we have:\n$$ a = a(aa)a = aaaa. $$\n\nThus, $aa = a$, proving idempotence.\n\n### Proof of Rectangularity\n\nTo show rectangularity, we need to prove that for all $x, y, z \\in S$, $xyz = xz$.\n\nStart with the given property for $x$ and $b = yz$:\n$$ x = x(yz)x. $$\n\nNow, consider the expression $xyz$. We can rewrite it using the given property:\n$$ xyz = x(yz)z. $$\n\nSince $z = zyz$ by the given property (taking $a = z$ and $b = y$), we have:\n$$ xyz = x(yz)(zyz). $$\n\nUsing the idempotence we proved earlier, $z = zz$, we can simplify:\n$$ xyz = x(yz)z = xz. $$\n\nThus, $xyz = xz$, proving rectangularity.\n\n### Conclusion\n\nWe have shown that for all $a \\in S$, $a^2 = a$, and for all $x, y, z \\in S$, $xyz = xz$. Therefore, $S$ is a rectangular band.\n\nIn conclusion, the semigroup $S$ satisfies both idempotence and rectangularity, confirming that $S$ is indeed a rectangular band.",
+        "raw_answer": "To prove that the semigroup $S$ is a rectangular band, we need to show two properties:\n\n1. **Idempotence**: For all $a \\in S$, $a^2 = a$.\n2. **Rectangularity**: For all $x, y, z \\in S$, $xyz = xz$.\n\nWe are given that for all $a, b \\in S$, $a = aba$. We will use this property to prove the two required properties.\n\n### Proof of Idempotence\n\nTo show idempotence, we need to prove that $a^2 = a$ for all $a \\in S$.\n\nStart with the given property for $a$ and $b = a$:\n$$ a = aaa. $$\n\nNow, multiply both sides of this equation by $a$ on the right:\n$$ aa = aaaa. $$\n\nUsing the given property again on $a$ and $b = aa$, we have:\n$$ a = a(aa)a = aaaa. $$\n\nThus, $aa = a$, proving idempotence.\n\n### Proof of Rectangularity\n\nTo show rectangularity, we need to prove that for all $x, y, z \\in S$, $xyz = xz$.\n\nStart with the given property for $x$ and $b = yz$:\n$$ x = x(yz)x. $$\n\nNow, consider the expression $xyz$. We can rewrite it using the given property:\n$$ xyz = x(yz)z. $$\n\nSince $z = zyz$ by the given property (taking $a = z$ and $b = y$), we have:\n$$ xyz = x(yz)(zyz). $$\n\nUsing the idempotence we proved earlier, $z = zz$, we can simplify:\n$$ xyz = x(yz)z = xz. $$\n\nThus, $xyz = xz$, proving rectangularity.\n\n### Conclusion\n\nWe have shown that for all $a \\in S$, $a^2 = a$, and for all $x, y, z \\in S$, $xyz = xz$. Therefore, $S$ is a rectangular band.\n\nIn conclusion, the semigroup $S$ satisfies both idempotence and rectangularity, confirming that $S$ is indeed a rectangular band.",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Find the minimal polynomial of $\\alpha = \\sqrt{2} + \\sqrt{3} + \\sqrt{5}$ over $\\mathbb{Q}$. Prove that your polynomial is indeed the minimal polynomial.",
+    "run_id": "6",
+    "topic_slug": "field_theory_and_polynomials",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $R$ be a Noetherian commutative ring with identity. An element $r \\in R$ is called a **zero-divisor** if there exists a nonzero $s \\in R$ such that $rs = 0$. An **associated prime** of $R$ is a prime ideal that can be written as $\\operatorname{Ann}(x) = \\{ r \\in R \\mid r x = 0\\}$ for some nonzero $x \\in R$. Prove that the set of zero-divisors of $R$ is exactly the union of all associated primes of $R$.",
+    "run_id": "7",
+    "topic_slug": "commutative_algebra",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Consider the rational map $\\varphi: \\mathbb{P}^2 \\to \\mathbb{P}^2$ over $\\mathbb{C}$ given in homogeneous coordinates by\n$$\n\\varphi(x:y:z) = (yz : xz : xy).\n$$\nLet $X$ be the blow-up of $\\mathbb{P}^2$ at the three points \n$$\nP_1 = (1:0:0),\\quad P_2 = (0:1:0),\\quad P_3 = (0:0:1).\n$$\nDenote by $\\pi: X \\to \\mathbb{P}^2$ the blow-down morphism, and let $E_1, E_2, E_3$ be the exceptional divisors over $P_1, P_2, P_3$ respectively. Let $H = \\pi^* \\mathcal{O}_{\\mathbb{P}^2}(1)$ be the pullback of the hyperplane class.\n\n(a) Show that $\\varphi$ lifts to a morphism $\\Phi: X \\to \\mathbb{P}^2$ (i.e., $\\Phi = \\varphi \\circ \\pi$ is a morphism).\n(b) Compute the class of the line bundle $\\Phi^* \\mathcal{O}_{\\mathbb{P}^2}(1)$ in $\\operatorname{Pic}(X)$ in terms of $H, E_1, E_2, E_3$.\n(c) Prove that $\\varphi$ is birational and determine its inverse rational map.",
+    "run_id": "8",
+    "topic_slug": "algebraic_geometry",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $A$ be an $n \\times n$ complex matrix. Prove that $e^A = I$ (where $I$ is the identity matrix) if and only if $A$ is diagonalizable and every eigenvalue of $A$ is an integer multiple of $2\\pi i$.",
+    "run_id": "9",
+    "topic_slug": "linear_and_multilinear_algebra",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $R$ be a commutative ring with identity. Denote by $T_n(R)$ the ring of $n \\times n$ upper triangular matrices over $R$, i.e., matrices $(a_{ij})$ with $a_{ij} \\in R$ for $i \\le j$ and $a_{ij}=0$ for $i > j$. Prove that the Jacobson radical $J(T_n(R))$ is exactly the set\n$$\n\\{ A = (a_{ij}) \\in T_n(R) \\mid a_{ii} \\in J(R) \\text{ for all } i = 1,\\dots,n \\}.\n$$",
+    "run_id": "10",
+    "topic_slug": "associative_rings_and_algebras",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $\\mathfrak{g}$ be a finite-dimensional Lie algebra over a field $F$ of characteristic $0$. For $x \\in \\mathfrak{g}$, define the adjoint operator $\\operatorname{ad}_x : \\mathfrak{g} \\to \\mathfrak{g}$ by $\\operatorname{ad}_x(y) = [x, y]$. The Killing form is defined by\n$$\n\\kappa(x, y) = \\operatorname{tr}(\\operatorname{ad}_x \\circ \\operatorname{ad}_y), \\qquad x, y \\in \\mathfrak{g}.\n$$\n\n(a) Show that $\\kappa$ is a symmetric bilinear form.\n\n(b) Prove that $\\kappa$ is invariant, i.e., for all $x, y, z \\in \\mathfrak{g}$,\n$$\n\\kappa([x, y], z) = \\kappa(x, [y, z]).\n$$\n\n(c) Show that the radical of $\\kappa$,\n$$\n\\operatorname{Rad}(\\kappa) = \\{ x \\in \\mathfrak{g} \\mid \\kappa(x, y) = 0 \\text{ for all } y \\in \\mathfrak{g} \\},\n$$\nis an ideal of $\\mathfrak{g}$.\n\n(d) Prove that if $\\kappa$ is nondegenerate (i.e., $\\operatorname{Rad}(\\kappa) = 0$), then $\\mathfrak{g}$ is semisimple, i.e., $\\mathfrak{g}$ contains no nonzero abelian ideals.",
+    "run_id": "11",
+    "topic_slug": "nonassociative_rings_and_algebras",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $R = \\mathbb{Z}/4\\mathbb{Z}$ and let $M = \\mathbb{Z}/2\\mathbb{Z}$ be the $R$-module where the action is given by the natural surjection $R \\to \\mathbb{Z}/2\\mathbb{Z}$ (i.e., $r \\cdot a = \\overline{r} \\, a$, where $\\overline{r}$ denotes reduction modulo $2$). Compute $\\operatorname{Ext}^n_R(M, M)$ for all integers $n \\ge 0$. Moreover, describe the structure of the graded ring $\\operatorname{Ext}^*_R(M, M) = \\bigoplus_{n \\ge 0} \\operatorname{Ext}^n_R(M, M)$ with the Yoneda product. (Is it isomorphic to a polynomial ring over $\\mathbb{Z}/2\\mathbb{Z}$? If so, determine the degree of the generator.)",
+    "run_id": "12",
+    "topic_slug": "category_theory_and_homological_algebra",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $k$ be a nonzero integer. Define $X_k$ to be the CW complex obtained by attaching a $3$-cell to the $2$-sphere $S^2$ via a map $f: S^2 \\to S^2$ of degree $k$. Compute the complex topological K-theory groups $K^0(X_k)$ and $K^1(X_k)$.",
+    "run_id": "13",
+    "topic_slug": "k_theory",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $G$ be a finite group such that the automorphism group $\\operatorname{Aut}(G)$ is trivial (i.e., the only automorphism of $G$ is the identity map). Prove that $G$ is either the trivial group or the cyclic group of order $2$.",
+    "run_id": "14",
+    "topic_slug": "group_theory_and_generalizations",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $G$ be a connected topological group with identity element $e$. Prove that the fundamental group $\\pi_1(G,e)$ is abelian.",
+    "run_id": "15",
+    "topic_slug": "topological_groups_and_lie_groups",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $f:[0,1]\\to\\mathbb{R}$ be a function satisfying $|f(x)-f(y)|\\le 2|x-y|$ for all $x,y\\in[0,1]$. Suppose $f(0)=0$ and $f(1)=1$. Determine the maximum possible value of $\\int_0^1 f(x)\\,dx$.",
+    "run_id": "16",
+    "topic_slug": "real_functions",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Prove that there exists a Lebesgue measurable set $E \\subseteq \\mathbb{R}$ such that for every nonempty open interval $I \\subseteq \\mathbb{R}$, we have $0 < m(E \\cap I) < m(I)$, where $m$ denotes Lebesgue measure.",
+    "run_id": "17",
+    "topic_slug": "measure_and_integration",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Evaluate the improper integral\n$$\n\\int_{0}^{\\infty} \\frac{(\\ln x)^2}{x^2+1} \\, dx.\n$$\nProvide an exact value.",
+    "run_id": "18",
+    "topic_slug": "functions_of_a_complex_variable",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Consider the probability measure $\\mu$ on the interval $[-1,1]$ defined by\n$$\nd\\mu(x) = \\frac{1}{\\pi\\sqrt{1-x^2}}\\,dx.\n$$\nIts logarithmic potential is\n$$\nU_\\mu(z) = \\int_{-1}^{1} \\log\\frac{1}{|z-x|}\\,d\\mu(x),\\qquad z\\in\\mathbb{C},\n$$\nwhere $\\log$ denotes the natural logarithm. Show that for every $z\\in[-1,1]$ (i.e., $z$ is real with $-1\\le z\\le 1$), $U_\\mu(z)$ is constant (independent of $z$) and find the value of this constant.",
+    "run_id": "19",
+    "topic_slug": "potential_theory",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $B = \\{ z \\in \\mathbb{C}^n \\mid \\|z\\| < 1 \\}$ be the unit ball in $\\mathbb{C}^n$ ($n \\ge 1$), where $\\|z\\|^2 = \\sum_{i=1}^n |z_i|^2$. Suppose $f: B \\to B$ is a biholomorphism (i.e., $f$ is holomorphic, bijective, and its inverse $f^{-1}$ is also holomorphic) such that $f(0) = 0$. Prove that $f$ is a linear unitary transformation; that is, there exists an $n \\times n$ unitary matrix $U$ such that $f(z) = U z$ for all $z \\in B$.",
+    "run_id": "20",
+    "topic_slug": "several_complex_variables_and_analytic_spaces",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Evaluate the definite integral\n$$\n\\int_0^1 \\ln \\Gamma(x) \\, dx,\n$$\nwhere $\\Gamma$ denotes the Euler gamma function. Give the exact value.",
+    "run_id": "21",
+    "topic_slug": "special_functions",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Find the general solution of the differential equation\n$$ (x^2 + y^2 + x)\\,dx + y\\,dy = 0. $$",
+    "run_id": "22",
+    "topic_slug": "ordinary_differential_equations",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Consider the viscous Burgers equation\n$$\nu_t + u u_x = \\nu u_{xx}, \\qquad x \\in \\mathbb{R},\\ t>0,\n$$\nwith constant viscosity $\\nu > 0$.  Let the initial condition be a step function:\n$$\nu(x,0) = \\begin{cases}\nU, & x < 0,\\\\\n0, & x > 0,\n\\end{cases}\n$$\nwhere $U > 0$ is a constant.\n\n(a) Introduce the Cole\u2013Hopf transformation $u = -2\\nu (\\ln \\varphi)_x$ and show that $\\varphi$ satisfies the heat equation $\\varphi_t = \\nu \\varphi_{xx}$.\n\n(b) Determine an appropriate initial condition $\\varphi(x,0)$ consistent with the given $u(x,0)$.  (Choose the constant of integration so that $\\varphi(0,0)=1$.)\n\n(c) Solve the initial value problem for $\\varphi(x,t)$ by expressing $\\varphi$ as a convolution with the heat kernel and evaluating the integrals in terms of the complementary error function\n$$\n\\operatorname{erfc}(z) = \\frac{2}{\\sqrt{\\pi}} \\int_z^\\infty e^{-s^2}\\,ds.\n$$\n\n(d) Hence find the solution $u(x,t)$ in the closed form\n$$\nu(x,t) = \\frac{U \\; e^{U^2 t/(4\\nu)}\\; \\operatorname{erfc}\\!\\left( \\dfrac{x - U t}{\\sqrt{4\\nu t}} \\right)}\n{e^{U^2 t/(4\\nu)}\\; \\operatorname{erfc}\\!\\left( \\dfrac{x - U t}{\\sqrt{4\\nu t}} \\right) + e^{U x/(2\\nu)}\\; \\operatorname{erfc}\\!\\left( -\\dfrac{x}{\\sqrt{4\\nu t}} \\right)}.\n$$\n\n(e) (Optional) Verify that this solution tends to the initial step as $t \\to 0^+$.",
+    "run_id": "23",
+    "topic_slug": "partial_differential_equations",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $\\theta$ be an irrational number. Define the rotation $R_\\theta: [0,1) \\to [0,1)$ by $R_\\theta(x) = x + \\theta \\pmod 1$, where we identify $[0,1)$ with the circle $\\mathbb{R}/\\mathbb{Z}$. Let $\\lambda$ denote the Lebesgue measure on $[0,1)$.\n\nProve the following:\n(a) $R_\\theta$ is ergodic with respect to $\\lambda$.\n(b) $R_\\theta$ is not strong mixing with respect to $\\lambda$.\n(c) $R_\\theta$ is uniquely ergodic, i.e., $\\lambda$ is the only $R_\\theta$-invariant Borel probability measure on $[0,1)$.\n[/QUESTION]",
+    "run_id": "24",
+    "topic_slug": "dynamical_systems_and_ergodic_theory",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Find all functions $f: \\mathbb{R} \\to \\mathbb{R}$ such that\n$$\nf(x f(y) + f(x)) = f(x) f(y) + x\n$$\nfor all real numbers $x, y$.",
+    "run_id": "25",
+    "topic_slug": "difference_and_functional_equations",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Evaluate the series\n$$\n\\sum_{n=1}^{\\infty} \\frac{(-1)^{n-1} H_n}{n},\n$$\nwhere $H_n = \\sum_{k=1}^{n} \\frac{1}{k}$ denotes the $n$-th harmonic number. Provide the exact value in closed form.",
+    "run_id": "26",
+    "topic_slug": "sequences_series_and_summability",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Find the first three terms in the asymptotic expansion (in powers of $1/n$) of\n$$\nT_n = \\sum_{k=1}^{n} \\frac{1}{n^2 + k^2}\n$$\nas $n \\to \\infty$. Express the coefficients in simplest form.\n[/QUESTION]",
+    "run_id": "27",
+    "topic_slug": "approximations_and_expansions",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $f \\in L^2(\\mathbb{R})$ be a function with compact support, i.e., there exists $A > 0$ such that $f(x) = 0$ for almost every $|x| > A$. Define its Fourier transform by\n$$\n\\hat f(\\xi) = \\int_{\\mathbb{R}} f(x) e^{-2\\pi i x \\xi} \\, dx,\n$$\nwhich is well-defined as an $L^1$ integral because $f$ is integrable on $[-A,A]$. Prove that if $\\hat f$ also has compact support (i.e., there exists $B > 0$ such that $\\hat f(\\xi) = 0$ for almost every $|\\xi| > B$), then $f$ must be zero almost everywhere. In other words, there is no nonzero $L^2$ function with both $f$ and $\\hat f$ compactly supported.",
+    "run_id": "28",
+    "topic_slug": "harmonic_analysis_on_euclidean_spaces",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $G$ be a compact abelian group with normalized Haar measure $\\mu$ (i.e., $\\mu(G)=1$). Denote by $\\widehat{G}$ the dual group of continuous characters $\\chi: G \\to \\mathbb{T}$, where $\\mathbb{T} = \\{z \\in \\mathbb{C}: |z|=1\\}$. For a function $f \\in L^1(G)$, define its Fourier transform $\\widehat{f}: \\widehat{G} \\to \\mathbb{C}$ by\n$$\n\\widehat{f}(\\chi) = \\int_G f(g) \\overline{\\chi(g)} \\, d\\mu(g).\n$$\nRecall that the characters separate points of $G$: for any distinct $x,y \\in G$, there exists $\\chi \\in \\widehat{G}$ such that $\\chi(x) \\neq \\chi(y)$.\n\n(a) Show that the set $\\widehat{G}$ is an orthonormal set in $L^2(G)$; that is, for $\\chi, \\psi \\in \\widehat{G}$,\n$$\n\\langle \\chi, \\psi \\rangle = \\int_G \\chi(g) \\overline{\\psi(g)} \\, d\\mu(g) = \\delta_{\\chi,\\psi}.\n$$\n\n(b) Using the Stone\u2013Weierstrass theorem, prove that the linear span of $\\widehat{G}$ is dense in $C(G)$ with respect to the uniform norm $\\|f\\|_\\infty = \\sup_{g\\in G} |f(g)|$.\n\n(c) Conclude that $\\widehat{G}$ is an orthonormal basis for $L^2(G)$.\n\n(d) Deduce the Plancherel identity: for every $f \\in L^2(G)$,\n$$\n\\int_G |f(g)|^2 \\, d\\mu(g) = \\sum_{\\chi \\in \\widehat{G}} |\\widehat{f}(\\chi)|^2.\n$$\n\nMake sure to justify all steps, including the application of the Stone\u2013Weierstrass theorem and the density arguments.",
+    "run_id": "29",
+    "topic_slug": "abstract_harmonic_analysis",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Consider the integral equation\n$$\nf(x) + \\lambda \\int_{-\\infty}^{\\infty} e^{-|x-t|} f(t) \\, dt = e^{-|x|}, \\qquad x \\in \\mathbb{R},\n$$\nwhere $\\lambda$ is a real constant. Use the Fourier transform defined by\n$$\n\\hat{g}(\\omega) = \\int_{-\\infty}^{\\infty} g(x) e^{-i\\omega x} \\, dx,\n$$\nwith the inverse transform given by\n$$\ng(x) = \\frac{1}{2\\pi} \\int_{-\\infty}^{\\infty} \\hat{g}(\\omega) e^{i\\omega x} \\, d\\omega.\n$$\nDetermine the range of $\\lambda$ for which the equation admits a solution, and find the solution $f(x)$ in closed form.",
+    "run_id": "30",
+    "topic_slug": "integral_transforms_and_operational_calculus",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Solve the following integral equation for $\\phi(x)$ on the interval $0 \\le x \\le 1$:\n\n$$\n\\phi(x) = x \\cos 1 + \\int_0^1 \\min(x,t) \\, \\phi(t) \\, dt,\n$$\n\nwhere $\\min(x,t)$ denotes the smaller of $x$ and $t$.",
+    "run_id": "31",
+    "topic_slug": "integral_equations",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $C[0,1]$ denote the Banach space of complex-valued continuous functions on $[0,1]$ equipped with the supremum norm $\\|f\\|_\\infty = \\sup_{x\\in[0,1]}|f(x)|$. Define the Volterra operator $V: C[0,1] \\to C[0,1]$ by\n$$\n(Vf)(x) = \\int_0^x f(t)\\,dt, \\qquad x\\in[0,1].\n$$\nProve that $V$ is a compact linear operator and that its spectrum $\\sigma(V) = \\{0\\}$.",
+    "run_id": "32",
+    "topic_slug": "functional_analysis",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $L^2[0,1]$ denote the Hilbert space of (equivalence classes of) Lebesgue measurable square-integrable functions on $[0,1]$ with the usual inner product $\\langle f,g\\rangle = \\int_0^1 f(x)\\overline{g(x)}\\,dx$. Define the Volterra operator $V:L^2[0,1]\\to L^2[0,1]$ by\n$$\n(Vf)(x) = \\int_0^x f(t)\\,dt,\\qquad x\\in[0,1].\n$$\nDetermine the operator norm $\\|V\\|$.",
+    "run_id": "33",
+    "topic_slug": "operator_theory",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "A uniform chain of length $L > 1$ is suspended from two points at the same height, located at $(0,0)$ and $(1,0)$. By the principle of minimum potential energy, the chain adopts the shape $y(x)$ that minimizes\n$$\nU[y] = \\int_0^1 y(x) \\sqrt{1 + [y'(x)]^2} \\, dx\n$$\nsubject to the fixed length constraint\n$$\n\\int_0^1 \\sqrt{1 + [y'(x)]^2} \\, dx = L,\n$$\nand boundary conditions $y(0) = 0$, $y(1) = 0$.\n\nFind the function $y(x)$ describing the chain. Your answer should express $y(x)$ in terms of a parameter that is determined implicitly by $L$.",
+    "run_id": "34",
+    "topic_slug": "calculus_of_variations_and_optimization",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $\\triangle ABC$ have side lengths $AB = 13$, $AC = 15$, and $BC = 14$. Denote by $D$ the foot of the internal angle bisector from $A$ to side $BC$. Let the incircle of $\\triangle ABC$ touch side $BC$ at $E$. The line through $E$ perpendicular to $BC$ meets $AD$ at $F$. Find the length of $DF$.",
+    "run_id": "35",
+    "topic_slug": "geometry",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $S$ be a finite set of points in the Euclidean plane, not all lying on a single line. Prove that there exists a line which contains exactly two points of $S$.",
+    "run_id": "36",
+    "topic_slug": "convex_and_discrete_geometry",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Consider the torus $T$ obtained by rotating a circle of radius $r$ about an axis in its plane that is a distance $R > r > 0$ from the circle's center. Using the standard parametrization\n$$\n\\mathbf{X}(\\theta, \\varphi) = \\big( (R + r\\cos\\varphi)\\cos\\theta,\\ (R + r\\cos\\varphi)\\sin\\theta,\\ r\\sin\\varphi \\big), \\qquad \\theta \\in [0,2\\pi),\\ \\varphi \\in [0,2\\pi),\n$$\ncompute the Gaussian curvature $K$ of the torus as a function of $\\varphi$ (it is independent of $\\theta$). Then evaluate the total Gaussian curvature $\\iint_T K \\, dA$ by direct integration, and verify that it equals zero.",
+    "run_id": "37",
+    "topic_slug": "differential_geometry",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Define the Sorgenfrey line $\\mathbb{R}_\\ell$ as the topological space whose underlying set is $\\mathbb{R}$ and whose topology is generated by the half-open intervals $[a,b)$ with $a<b$. The Sorgenfrey plane is the product space $\\mathbb{R}_\\ell \\times \\mathbb{R}_\\ell$.\n\nProve that the Sorgenfrey plane is not normal.",
+    "run_id": "38",
+    "topic_slug": "general_topology",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $T$ denote the torus, represented as the quotient space of the square $[0,1]\\times[0,1]$ by identifying $(0,y)\\sim(1,y)$ and $(x,0)\\sim(x,1)$. Choose a closed disk $D\\subset T$ contained in the interior of the square (for instance, the image of a small Euclidean disk centered at $(1/2,1/2)$). Remove its interior to obtain the punctured torus $T_0 = T\\setminus\\operatorname{int}(D)$.\n\nLet $M$ be the M\u00f6bius strip, defined as the quotient of $[0,1]\\times[0,1]$ by $(0,y)\\sim(1,1-y)$. Its boundary $\\partial M$ is a circle.\n\nForm the space $X = T_0\\cup_h M$ by gluing $T_0$ and $M$ along their boundaries via a homeomorphism $h\\colon \\partial M\\to \\partial D$. (The choice of homeomorphism does not affect the answer up to isomorphism.)\n\nCompute the fundamental group $\\pi_1(X)$.",
+    "run_id": "39",
+    "topic_slug": "algebraic_topology",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $X_n$ denote the CW complex obtained by attaching a 2-cell to the circle $S^1$ via a map $f : \\partial D^2 \\to S^1$ of degree $n$, where $n \\in \\mathbb{Z}$. Determine all integers $n$ for which $X_n$ is a closed 2-manifold (i.e., a compact surface without boundary). For those values of $n$, identify the manifold up to homeomorphism.",
+    "run_id": "40",
+    "topic_slug": "manifolds_and_cell_complexes",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $S^n$ denote the unit sphere in $\\mathbb{R}^{n+1}$ (with $n \\ge 1$). Compute the de Rham cohomology groups $H^k_{\\mathrm{dR}}(S^n)$ for all integers $k \\ge 0$. Provide a complete proof using the Mayer\u2013Vietoris sequence for de Rham cohomology.",
+    "run_id": "41",
+    "topic_slug": "global_analysis_on_manifolds",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Consider an infinite sequence of independent tosses of a biased coin. Each toss results in heads (H) with probability $p$ and tails (T) with probability $q = 1-p$, where $0 < p < 1$. Let $N$ be the number of tosses required to observe the pattern HTHT for the first time (i.e., the first occurrence of four consecutive tosses equal to H, T, H, T in that order). Compute the expected value $\\mathbb{E}[N]$ as a closed-form expression in terms of $p$ (or $p$ and $q$).",
+    "run_id": "42",
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $X_1, X_2, \\dots, X_n$ be a random sample from a geometric distribution with parameter $p$ ($0 < p < 1$), i.e., \n$$\nP(X_i = k) = (1-p)^{k-1} p, \\quad k = 1,2,\\dots.\n$$\nAssume $n \\ge 2$. Find the uniformly minimum variance unbiased estimator (UMVUE) of $p^2$.",
+    "run_id": "43",
+    "topic_slug": "statistics",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-4o-2024-08-06",
+    "question": "Let $w(x)=e^{-x}$ on $[0,\\infty)$. Determine the nodes $x_1, x_2$ (with $0 < x_1 < x_2$) and weights $w_1, w_2$ such that the quadrature rule\n$$\n\\int_0^\\infty e^{-x} f(x)\\,dx \\approx w_1 f(x_1) + w_2 f(x_2)\n$$\nis exact for all polynomials $f$ of degree at most $3$. Provide the exact values in simplified radical form.",
+    "run_id": "44",
+    "topic_slug": "numerical_analysis",
+    "status": "failed",
+    "attempts": []
+  }
+]

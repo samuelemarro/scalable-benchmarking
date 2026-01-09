@@ -1,0 +1,458 @@
+[
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $(\\varphi_e)_{e \\in \\mathbb{N}}$ be a standard acceptable numbering of all partial recursive functions (for instance, derived from a fixed enumeration of Turing machines). Define\n$$\n\\mathrm{Tot} = \\{ e \\in \\mathbb{N} \\mid \\varphi_e \\text{ is total} \\}.\n$$\nProve that $\\mathrm{Tot}$ is not recursively enumerable.",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "Let $(\\varphi_e)_{e\\in\\mathbb N}$ be a fixed acceptable numbering of the partial recursive (partial computable) functions $\\mathbb N\\rightharpoonup \\mathbb N$. Define\n$$\n\\mathrm{Tot}=\\{e\\in\\mathbb N:\\varphi_e\\text{ is total}\\}.\n$$\nWe prove that $\\mathrm{Tot}$ is not recursively enumerable (r.e.).\n\n---\n\n## 1. A non-r.e. set: $\\overline{K}$\n\nDefine the diagonal halting set\n$$\nK=\\{x\\in\\mathbb N : \\varphi_x(x)\\downarrow\\}.\n$$\nIt is standard that $K$ is r.e.: on input $x$, simulate $\\varphi_x(x)$; if it halts, accept. Hence $K\\in\\Sigma^0_1$.\n\n### Lemma 1: $K$ is not decidable.\n**Proof.** Suppose $K$ were decidable, with total computable characteristic procedure $D(x)\\in\\{0,1\\}$ such that $D(x)=1 \\iff x\\in K$. Define a partial computable function $\\psi$ by\n$$\n\\psi(x)=\n\\begin{cases}\n\\uparrow & \\text{if } D(x)=1,\\\\\n0 & \\text{if } D(x)=0.\n\\end{cases}\n$$\nThen $\\psi$ is partial computable, hence $\\psi=\\varphi_e$ for some $e$. Evaluate at $e$:\n- If $D(e)=1$, then $e\\in K$, so $\\varphi_e(e)\\downarrow$; but by the definition of $\\psi$, $\\varphi_e(e)=\\psi(e)\\uparrow$, contradiction.\n- If $D(e)=0$, then $e\\notin K$, so $\\varphi_e(e)\\uparrow$; but $\\varphi_e(e)=\\psi(e)=0\\downarrow$, contradiction.\n\nThus no such decider $D$ exists; $K$ is not decidable. $\\square$\n\n### Corollary 2: $\\overline{K}=\\mathbb N\\setminus K$ is not r.e.\n**Proof.** If both $K$ and $\\overline K$ were r.e., then $K$ would be decidable: given $x$, dovetail the enumerations (or semidecision procedures) for $K$ and $\\overline K$ until one accepts; exactly one must, so the process halts and decides membership. This contradicts Lemma 1. Hence $\\overline K$ is not r.e. $\\square$\n\n---\n\n## 2. Many-one reduction $\\overline{K} \\le_m \\mathrm{Tot}$\n\nWe construct a total computable function $f$ such that for all $x$,\n$$\nx\\in\\overline{K}\\ \\Longleftrightarrow\\ f(x)\\in\\mathrm{Tot}.\n$$\nFix $x$. Define a partial function $g_x:\\mathbb N\\rightharpoonup\\mathbb N$ by the following algorithm on input $y$:\n\n1. Simulate the computation of $\\varphi_x(x)$ for exactly $y$ steps.\n2. If the simulation halts within those $y$ steps, then **loop forever** (i.e. diverge).\n3. Otherwise output $0$.\n\nFormally,\n$$\ng_x(y)=\n\\begin{cases}\n\\uparrow & \\text{if } \\varphi_x(x)\\text{ halts within }\\le y\\text{ steps},\\\\\n0 & \\text{otherwise}.\n\\end{cases}\n$$\nBecause \u201chalts within $\\le y$ steps\u201d is a decidable property of the bounded simulation, the above describes a partial computable function uniformly in $(x,y)$. Hence the two-argument partial function\n$$\n\\psi(x,y)=g_x(y)\n$$\nis partial recursive.\n\nSince the numbering is acceptable, it satisfies the $s\\text{-}m\\text{-}n$ theorem: there exists a total computable function $f:\\mathbb N\\to\\mathbb N$ such that for all $x,y$,\n$$\n\\varphi_{f(x)}(y)=\\psi(x,y)=g_x(y).\n$$\n\n### Lemma 3: $\\varphi_{f(x)}$ is total iff $\\varphi_x(x)\\uparrow$.\n**Proof.**\n- If $\\varphi_x(x)\\uparrow$, then for every $y$, the bounded simulation for $y$ steps does not halt, so $g_x(y)=0$. Hence $\\varphi_{f(x)}(y)=0$ for all $y$, so $\\varphi_{f(x)}$ is total.\n- If $\\varphi_x(x)\\downarrow$, let $t$ be the (finite) number of steps until it halts. Then for every $y\\ge t$, the bounded simulation halts within $y$ steps, so $g_x(y)\\uparrow$. Thus $\\varphi_{f(x)}$ is undefined on infinitely many inputs, hence not total.\n\nTherefore $\\varphi_{f(x)}$ is total exactly when $\\varphi_x(x)$ diverges, i.e. $x\\in\\overline K$. $\\square$\n\nSo we have the desired many-one reduction:\n$$\nx\\in\\overline K\\ \\Longleftrightarrow\\ f(x)\\in\\mathrm{Tot}.\n$$\n\n---\n\n## 3. Conclude $\\mathrm{Tot}$ is not r.e.\n\nWe use a standard closure property.\n\n### Lemma 4: If $A$ is r.e. and $f$ is total computable, then $f^{-1}(A)=\\{x: f(x)\\in A\\}$ is r.e.\n**Proof.** On input $x$, compute $f(x)$. Then run an r.e. enumeration (or semidecision procedure) for $A$ until it outputs (accepts) $f(x)$; accept $x$ when that happens. If $f(x)\\in A$ this eventually happens; otherwise it runs forever. Thus $f^{-1}(A)$ is r.e. $\\square$\n\nNow suppose, toward a contradiction, that $\\mathrm{Tot}$ were r.e. Then by Lemma 4, since $f$ is total computable,\n$$\nf^{-1}(\\mathrm{Tot})=\\{x: f(x)\\in \\mathrm{Tot}\\}\n$$\nwould be r.e. But by Lemma 3 this set equals $\\overline K$, which is not r.e. by Corollary 2. Contradiction.\n\nHence $\\mathrm{Tot}$ is **not** recursively enumerable. $\\blacksquare$",
+        "raw_answer": "Let \\((\\varphi_e)_{e\\in\\mathbb N}\\) be a fixed acceptable numbering of the partial recursive (partial computable) functions \\(\\mathbb N\\rightharpoonup \\mathbb N\\). Define\n\\[\n\\mathrm{Tot}=\\{e\\in\\mathbb N:\\varphi_e\\text{ is total}\\}.\n\\]\nWe prove that \\(\\mathrm{Tot}\\) is not recursively enumerable (r.e.).\n\n---\n\n## 1. A non-r.e. set: \\(\\overline{K}\\)\n\nDefine the diagonal halting set\n\\[\nK=\\{x\\in\\mathbb N : \\varphi_x(x)\\downarrow\\}.\n\\]\nIt is standard that \\(K\\) is r.e.: on input \\(x\\), simulate \\(\\varphi_x(x)\\); if it halts, accept. Hence \\(K\\in\\Sigma^0_1\\).\n\n### Lemma 1: \\(K\\) is not decidable.\n**Proof.** Suppose \\(K\\) were decidable, with total computable characteristic procedure \\(D(x)\\in\\{0,1\\}\\) such that \\(D(x)=1 \\iff x\\in K\\). Define a partial computable function \\(\\psi\\) by\n\\[\n\\psi(x)=\n\\begin{cases}\n\\uparrow & \\text{if } D(x)=1,\\\\\n0 & \\text{if } D(x)=0.\n\\end{cases}\n\\]\nThen \\(\\psi\\) is partial computable, hence \\(\\psi=\\varphi_e\\) for some \\(e\\). Evaluate at \\(e\\):\n- If \\(D(e)=1\\), then \\(e\\in K\\), so \\(\\varphi_e(e)\\downarrow\\); but by the definition of \\(\\psi\\), \\(\\varphi_e(e)=\\psi(e)\\uparrow\\), contradiction.\n- If \\(D(e)=0\\), then \\(e\\notin K\\), so \\(\\varphi_e(e)\\uparrow\\); but \\(\\varphi_e(e)=\\psi(e)=0\\downarrow\\), contradiction.\n\nThus no such decider \\(D\\) exists; \\(K\\) is not decidable. \\(\\square\\)\n\n### Corollary 2: \\(\\overline{K}=\\mathbb N\\setminus K\\) is not r.e.\n**Proof.** If both \\(K\\) and \\(\\overline K\\) were r.e., then \\(K\\) would be decidable: given \\(x\\), dovetail the enumerations (or semidecision procedures) for \\(K\\) and \\(\\overline K\\) until one accepts; exactly one must, so the process halts and decides membership. This contradicts Lemma 1. Hence \\(\\overline K\\) is not r.e. \\(\\square\\)\n\n---\n\n## 2. Many-one reduction \\(\\overline{K} \\le_m \\mathrm{Tot}\\)\n\nWe construct a total computable function \\(f\\) such that for all \\(x\\),\n\\[\nx\\in\\overline{K}\\ \\Longleftrightarrow\\ f(x)\\in\\mathrm{Tot}.\n\\]\nFix \\(x\\). Define a partial function \\(g_x:\\mathbb N\\rightharpoonup\\mathbb N\\) by the following algorithm on input \\(y\\):\n\n1. Simulate the computation of \\(\\varphi_x(x)\\) for exactly \\(y\\) steps.\n2. If the simulation halts within those \\(y\\) steps, then **loop forever** (i.e. diverge).\n3. Otherwise output \\(0\\).\n\nFormally,\n\\[\ng_x(y)=\n\\begin{cases}\n\\uparrow & \\text{if } \\varphi_x(x)\\text{ halts within }\\le y\\text{ steps},\\\\\n0 & \\text{otherwise}.\n\\end{cases}\n\\]\nBecause \u201chalts within \\(\\le y\\) steps\u201d is a decidable property of the bounded simulation, the above describes a partial computable function uniformly in \\((x,y)\\). Hence the two-argument partial function\n\\[\n\\psi(x,y)=g_x(y)\n\\]\nis partial recursive.\n\nSince the numbering is acceptable, it satisfies the \\(s\\text{-}m\\text{-}n\\) theorem: there exists a total computable function \\(f:\\mathbb N\\to\\mathbb N\\) such that for all \\(x,y\\),\n\\[\n\\varphi_{f(x)}(y)=\\psi(x,y)=g_x(y).\n\\]\n\n### Lemma 3: \\(\\varphi_{f(x)}\\) is total iff \\(\\varphi_x(x)\\uparrow\\).\n**Proof.**\n- If \\(\\varphi_x(x)\\uparrow\\), then for every \\(y\\), the bounded simulation for \\(y\\) steps does not halt, so \\(g_x(y)=0\\). Hence \\(\\varphi_{f(x)}(y)=0\\) for all \\(y\\), so \\(\\varphi_{f(x)}\\) is total.\n- If \\(\\varphi_x(x)\\downarrow\\), let \\(t\\) be the (finite) number of steps until it halts. Then for every \\(y\\ge t\\), the bounded simulation halts within \\(y\\) steps, so \\(g_x(y)\\uparrow\\). Thus \\(\\varphi_{f(x)}\\) is undefined on infinitely many inputs, hence not total.\n\nTherefore \\(\\varphi_{f(x)}\\) is total exactly when \\(\\varphi_x(x)\\) diverges, i.e. \\(x\\in\\overline K\\). \\(\\square\\)\n\nSo we have the desired many-one reduction:\n\\[\nx\\in\\overline K\\ \\Longleftrightarrow\\ f(x)\\in\\mathrm{Tot}.\n\\]\n\n---\n\n## 3. Conclude \\(\\mathrm{Tot}\\) is not r.e.\n\nWe use a standard closure property.\n\n### Lemma 4: If \\(A\\) is r.e. and \\(f\\) is total computable, then \\(f^{-1}(A)=\\{x: f(x)\\in A\\}\\) is r.e.\n**Proof.** On input \\(x\\), compute \\(f(x)\\). Then run an r.e. enumeration (or semidecision procedure) for \\(A\\) until it outputs (accepts) \\(f(x)\\); accept \\(x\\) when that happens. If \\(f(x)\\in A\\) this eventually happens; otherwise it runs forever. Thus \\(f^{-1}(A)\\) is r.e. \\(\\square\\)\n\nNow suppose, toward a contradiction, that \\(\\mathrm{Tot}\\) were r.e. Then by Lemma 4, since \\(f\\) is total computable,\n\\[\nf^{-1}(\\mathrm{Tot})=\\{x: f(x)\\in \\mathrm{Tot}\\}\n\\]\nwould be r.e. But by Lemma 3 this set equals \\(\\overline K\\), which is not r.e. by Corollary 2. Contradiction.\n\nHence \\(\\mathrm{Tot}\\) is **not** recursively enumerable. \\(\\blacksquare\\)",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Prove that for every nonnegative integer $n$,\n$$\n\\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}.\n$$",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "Let\n$$\nS_n:=\\sum_{k=0}^{n}(-1)^k\\binom{n}{k}\\binom{2k}{k}4^{\\,n-k}\\qquad(n\\ge 0).\n$$\nDivide by $4^n$:\n$$\n\\frac{S_n}{4^n}=\\sum_{k=0}^{n}(-1)^k\\binom{n}{k}\\frac{\\binom{2k}{k}}{4^k}.\n$$\nDefine\n$$\nd_k:=\\frac{\\binom{2k}{k}}{4^k}\\qquad(k\\ge 0),\n$$\nso that\n$$\n\\frac{S_n}{4^n}=c_n:=\\sum_{k=0}^n(-1)^k\\binom{n}{k}d_k.\n$$\nWe will prove $c_n=d_n$ for all $n$, which then implies $S_n=4^n d_n=\\binom{2n}{n}$.\n\n---\n\n## 1) Generating function for $d_k$\n\nUsing the binomial series $(1-x)^{-\\frac12}=\\sum_{k\\ge 0}\\binom{-\\frac12}{k}(-x)^k$ and the identity\n$$\n\\binom{-\\frac12}{k}(-1)^k=\\frac{(2k)!}{4^k(k!)^2}=\\frac{\\binom{2k}{k}}{4^k},\n$$\nwe get the formal power series identity\n$$\n\\sum_{k\\ge 0} d_k x^k=\\sum_{k\\ge 0}\\frac{\\binom{2k}{k}}{4^k}x^k=(1-x)^{-\\frac12}.\n$$\nDenote this generating function by\n$$\nD(x):=\\sum_{k\\ge 0} d_k x^k=(1-x)^{-\\frac12}.\n$$\n\n---\n\n## 2) Generating function for $c_n$\n\nLet\n$$\nC(x):=\\sum_{n\\ge 0} c_n x^n.\n$$\nThen, as formal power series,\n$$\n\\begin{aligned}\nC(x)\n&=\\sum_{n\\ge 0}\\left(\\sum_{k=0}^n(-1)^k\\binom{n}{k}d_k\\right)x^n\\\\\n&=\\sum_{k\\ge 0} d_k(-1)^k \\sum_{n\\ge k}\\binom{n}{k}x^n.\n\\end{aligned}\n$$\nWe use the standard identity (valid as a formal power series; also analytically for $|x|<1$):\n$$\n\\sum_{n\\ge k}\\binom{n}{k}x^n=\\frac{x^k}{(1-x)^{k+1}}.\n$$\n(Indeed, $\\sum_{n\\ge k}\\binom{n}{k}x^{n-k}=\\sum_{m\\ge 0}\\binom{m+k}{k}x^m=(1-x)^{-(k+1)}$.)\n\nHence\n$$\n\\begin{aligned}\nC(x)\n&=\\sum_{k\\ge 0} d_k(-1)^k\\frac{x^k}{(1-x)^{k+1}}\n=\\frac1{1-x}\\sum_{k\\ge 0} d_k\\left(\\frac{-x}{1-x}\\right)^k\\\\\n&=\\frac1{1-x}\\,D\\!\\left(\\frac{-x}{1-x}\\right).\n\\end{aligned}\n$$\nNow substitute $D(u)=(1-u)^{-1/2}$:\n$$\n\\begin{aligned}\nC(x)\n&=\\frac1{1-x}\\left(1-\\frac{-x}{1-x}\\right)^{-1/2}\n=\\frac1{1-x}\\left(1+\\frac{x}{1-x}\\right)^{-1/2}\\\\\n&=\\frac1{1-x}\\left(\\frac{1}{1-x}\\right)^{-1/2}\n=(1-x)^{-1/2}.\n\\end{aligned}\n$$\nTherefore\n$$\nC(x)=(1-x)^{-1/2}=D(x).\n$$\nSince two formal power series are equal iff their coefficients are equal, we conclude\n$$\nc_n=d_n\\qquad\\text{for all }n\\ge 0.\n$$\n\n---\n\n## 3) Finish\n\nThus\n$$\n\\frac{S_n}{4^n}=c_n=d_n=\\frac{\\binom{2n}{n}}{4^n},\n$$\nso multiplying by $4^n$ gives\n$$\nS_n=\\binom{2n}{n}.\n$$\n\n$$\n\\boxed{\\displaystyle \\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}\\quad\\text{for all }n\\ge 0.}\n$$",
+        "raw_answer": "Let\n\\[\nS_n:=\\sum_{k=0}^{n}(-1)^k\\binom{n}{k}\\binom{2k}{k}4^{\\,n-k}\\qquad(n\\ge 0).\n\\]\nDivide by \\(4^n\\):\n\\[\n\\frac{S_n}{4^n}=\\sum_{k=0}^{n}(-1)^k\\binom{n}{k}\\frac{\\binom{2k}{k}}{4^k}.\n\\]\nDefine\n\\[\nd_k:=\\frac{\\binom{2k}{k}}{4^k}\\qquad(k\\ge 0),\n\\]\nso that\n\\[\n\\frac{S_n}{4^n}=c_n:=\\sum_{k=0}^n(-1)^k\\binom{n}{k}d_k.\n\\]\nWe will prove \\(c_n=d_n\\) for all \\(n\\), which then implies \\(S_n=4^n d_n=\\binom{2n}{n}\\).\n\n---\n\n## 1) Generating function for \\(d_k\\)\n\nUsing the binomial series \\((1-x)^{-\\frac12}=\\sum_{k\\ge 0}\\binom{-\\frac12}{k}(-x)^k\\) and the identity\n\\[\n\\binom{-\\frac12}{k}(-1)^k=\\frac{(2k)!}{4^k(k!)^2}=\\frac{\\binom{2k}{k}}{4^k},\n\\]\nwe get the formal power series identity\n\\[\n\\sum_{k\\ge 0} d_k x^k=\\sum_{k\\ge 0}\\frac{\\binom{2k}{k}}{4^k}x^k=(1-x)^{-\\frac12}.\n\\]\nDenote this generating function by\n\\[\nD(x):=\\sum_{k\\ge 0} d_k x^k=(1-x)^{-\\frac12}.\n\\]\n\n---\n\n## 2) Generating function for \\(c_n\\)\n\nLet\n\\[\nC(x):=\\sum_{n\\ge 0} c_n x^n.\n\\]\nThen, as formal power series,\n\\[\n\\begin{aligned}\nC(x)\n&=\\sum_{n\\ge 0}\\left(\\sum_{k=0}^n(-1)^k\\binom{n}{k}d_k\\right)x^n\\\\\n&=\\sum_{k\\ge 0} d_k(-1)^k \\sum_{n\\ge k}\\binom{n}{k}x^n.\n\\end{aligned}\n\\]\nWe use the standard identity (valid as a formal power series; also analytically for \\(|x|<1\\)):\n\\[\n\\sum_{n\\ge k}\\binom{n}{k}x^n=\\frac{x^k}{(1-x)^{k+1}}.\n\\]\n(Indeed, \\(\\sum_{n\\ge k}\\binom{n}{k}x^{n-k}=\\sum_{m\\ge 0}\\binom{m+k}{k}x^m=(1-x)^{-(k+1)}\\).)\n\nHence\n\\[\n\\begin{aligned}\nC(x)\n&=\\sum_{k\\ge 0} d_k(-1)^k\\frac{x^k}{(1-x)^{k+1}}\n=\\frac1{1-x}\\sum_{k\\ge 0} d_k\\left(\\frac{-x}{1-x}\\right)^k\\\\\n&=\\frac1{1-x}\\,D\\!\\left(\\frac{-x}{1-x}\\right).\n\\end{aligned}\n\\]\nNow substitute \\(D(u)=(1-u)^{-1/2}\\):\n\\[\n\\begin{aligned}\nC(x)\n&=\\frac1{1-x}\\left(1-\\frac{-x}{1-x}\\right)^{-1/2}\n=\\frac1{1-x}\\left(1+\\frac{x}{1-x}\\right)^{-1/2}\\\\\n&=\\frac1{1-x}\\left(\\frac{1}{1-x}\\right)^{-1/2}\n=(1-x)^{-1/2}.\n\\end{aligned}\n\\]\nTherefore\n\\[\nC(x)=(1-x)^{-1/2}=D(x).\n\\]\nSince two formal power series are equal iff their coefficients are equal, we conclude\n\\[\nc_n=d_n\\qquad\\text{for all }n\\ge 0.\n\\]\n\n---\n\n## 3) Finish\n\nThus\n\\[\n\\frac{S_n}{4^n}=c_n=d_n=\\frac{\\binom{2n}{n}}{4^n},\n\\]\nso multiplying by \\(4^n\\) gives\n\\[\nS_n=\\binom{2n}{n}.\n\\]\n\n\\[\n\\boxed{\\displaystyle \\sum_{k=0}^{n} (-1)^{k} \\binom{n}{k} \\binom{2k}{k} 4^{n-k} = \\binom{2n}{n}\\quad\\text{for all }n\\ge 0.}\n\\]",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Find all integer solutions $(x, y)$ to the equation $y^3 = x^2 + 2$.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "We solve\n$$\ny^3=x^2+2,\\qquad x,y\\in\\mathbb Z.\n$$\n\n### 1) Basic restrictions (sign and parity)\n\nSince $x^2+2>0$, we have $y^3>0$, hence\n$$\ny\\ge 1.\n$$\n\nConsider the equation modulo $2$:\n$$\ny^3\\equiv x^2 \\pmod 2 \\implies y\\equiv x \\pmod 2.\n$$\nIf $x$ were even, then $y$ would be even, so $y^3\\equiv 0\\pmod 4$, but $x^2+2\\equiv 0+2\\equiv 2\\pmod 4$, contradiction. Therefore\n$$\nx\\ \\text{is odd, hence }y\\ \\text{is odd}.\n$$\n\n### 2) Work in $\\mathbb Z[\\sqrt{-2}]$ and show coprimality\n\nLet\n$$\nR=\\mathbb Z[\\sqrt{-2}],\\qquad N(a+b\\sqrt{-2})=a^2+2b^2.\n$$\nThis norm is multiplicative. Moreover, $R$ is a Euclidean domain with respect to $N$: indeed, under the embedding $a+b\\sqrt{-2}\\mapsto a+bi\\sqrt2\\in\\mathbb C$, the norm is $|a+bi\\sqrt2|^2$, and for any $\\alpha,\\beta\\in R$ with $\\beta\\ne 0$, choosing $q\\in R$ to be the nearest lattice point to $\\alpha/\\beta$ gives $N(\\alpha-\\beta q)<N(\\beta)$. Hence $R$ is a UFD.\n\nIn $R$,\n$$\n(x+\\sqrt{-2})(x-\\sqrt{-2})=x^2+2=y^3.\n$$\nLet $d$ be a common divisor of $x+\\sqrt{-2}$ and $x-\\sqrt{-2}$ in $R$. Then $d$ divides their difference:\n$$\n(x+\\sqrt{-2})-(x-\\sqrt{-2})=2\\sqrt{-2}.\n$$\nIn the UFD $R$, any nonunit divisor of $2\\sqrt{-2}$ is divisible by $\\sqrt{-2}$ (since $2\\sqrt{-2}=-(\\sqrt{-2})^3$ and $N(\\sqrt{-2})=2$, so $\\sqrt{-2}$ is irreducible). Thus, if $d$ is a nonunit, then $\\sqrt{-2}\\mid d$, hence $\\sqrt{-2}\\mid (x+\\sqrt{-2})$, which implies $\\sqrt{-2}\\mid x$ (subtract $\\sqrt{-2}$), forcing $x$ even as noted in the analysis below:\nif $\\sqrt{-2}\\mid x$, then $x=(a+b\\sqrt{-2})\\sqrt{-2}=a\\sqrt{-2}-2b$, so $a=0$ and $x=-2b$ is even.\nThis contradicts that $x$ is odd. Therefore\n$$\n\\gcd(x+\\sqrt{-2},\\,x-\\sqrt{-2})=1 \\quad \\text{in }R.\n$$\n\n### 3) Coprime factors whose product is a cube are cubes\n\nIn a UFD, if $\\gcd(A,B)=1$ and $AB$ is a cube, then $A$ and $B$ are each a unit times a cube: in prime factorizations, primes dividing $A$ do not divide $B$, so their exponents in $AB$ being multiples of $3$ forces their exponents in $A$ to be multiples of $3$.\n\nApply this to $A=x+\\sqrt{-2}$, $B=x-\\sqrt{-2}$. Since $AB=y^3$ is a cube in $R$, there exist $a,b\\in\\mathbb Z$ and a unit $u\\in R^\\times=\\{\\pm 1\\}$ such that\n$$\nx+\\sqrt{-2}=u\\,(a+b\\sqrt{-2})^3.\n$$\nTaking norms,\n$$\ny^3=N(x+\\sqrt{-2})=N(u)\\,N(a+b\\sqrt{-2})^3=(a^2+2b^2)^3.\n$$\nSince $y\\ge 1$, we get\n$$\ny=a^2+2b^2.\n$$\n\n### 4) Expand the cube and compare coefficients\n\nCompute:\n$$\n(a+b\\sqrt{-2})^3\n= (a^3-6ab^2) + (3a^2b-2b^3)\\sqrt{-2}.\n$$\nThus\n$$\nx+\\sqrt{-2}\n= u\\bigl((a^3-6ab^2) + (3a^2b-2b^3)\\sqrt{-2}\\bigr).\n$$\nComparing the $\\sqrt{-2}$-coefficients gives\n$$\n1 = u(3a^2b-2b^3)=u\\,b(3a^2-2b^2),\n$$\nso\n$$\nb(3a^2-2b^2)=\\pm 1.\n$$\nHence $b=\\pm 1$. With $b^2=1$, the equation becomes\n$$\n3a^2-2=\\pm 1.\n$$\nIf $3a^2-2=1$, then $3a^2=3$ so $a^2=1$ and $a=\\pm 1$.\nIf $3a^2-2=-1$, then $3a^2=1$, impossible in integers.\nTherefore\n$$\na=\\pm 1,\\qquad b=\\pm 1.\n$$\nThen\n$$\ny=a^2+2b^2=1+2=3.\n$$\nAlso, since $x=u(a^3-6ab^2)=u(a^3-6a)=u\\,a(a^2-6)=u\\,a(-5)$, with $u=\\pm 1$ and $a=\\pm 1$, we get\n$$\nx=\\pm 5.\n$$\n\n### 5) Verification\n\nFor $y=3$, $y^3=27$, and $x^2+2=25+2=27$ when $x=\\pm 5$. Both work.\n\n### Conclusion\n\nThe integer solutions to $y^3=x^2+2$ are\n$$\n(x,y)=(5,3)\\quad\\text{and}\\quad(x,y)=(-5,3).\n$$",
+        "raw_answer": "We solve\n\\[\ny^3=x^2+2,\\qquad x,y\\in\\mathbb Z.\n\\]\n\n### 1) Basic restrictions (sign and parity)\n\nSince \\(x^2+2>0\\), we have \\(y^3>0\\), hence\n\\[\ny\\ge 1.\n\\]\n\nConsider the equation modulo \\(2\\):\n\\[\ny^3\\equiv x^2 \\pmod 2 \\implies y\\equiv x \\pmod 2.\n\\]\nIf \\(x\\) were even, then \\(y\\) would be even, so \\(y^3\\equiv 0\\pmod 4\\), but \\(x^2+2\\equiv 0+2\\equiv 2\\pmod 4\\), contradiction. Therefore\n\\[\nx\\ \\text{is odd, hence }y\\ \\text{is odd}.\n\\]\n\n### 2) Work in \\(\\mathbb Z[\\sqrt{-2}]\\) and show coprimality\n\nLet\n\\[\nR=\\mathbb Z[\\sqrt{-2}],\\qquad N(a+b\\sqrt{-2})=a^2+2b^2.\n\\]\nThis norm is multiplicative. Moreover, \\(R\\) is a Euclidean domain with respect to \\(N\\): indeed, under the embedding \\(a+b\\sqrt{-2}\\mapsto a+bi\\sqrt2\\in\\mathbb C\\), the norm is \\(|a+bi\\sqrt2|^2\\), and for any \\(\\alpha,\\beta\\in R\\) with \\(\\beta\\ne 0\\), choosing \\(q\\in R\\) to be the nearest lattice point to \\(\\alpha/\\beta\\) gives \\(N(\\alpha-\\beta q)<N(\\beta)\\). Hence \\(R\\) is a UFD.\n\nIn \\(R\\),\n\\[\n(x+\\sqrt{-2})(x-\\sqrt{-2})=x^2+2=y^3.\n\\]\nLet \\(d\\) be a common divisor of \\(x+\\sqrt{-2}\\) and \\(x-\\sqrt{-2}\\) in \\(R\\). Then \\(d\\) divides their difference:\n\\[\n(x+\\sqrt{-2})-(x-\\sqrt{-2})=2\\sqrt{-2}.\n\\]\nIn the UFD \\(R\\), any nonunit divisor of \\(2\\sqrt{-2}\\) is divisible by \\(\\sqrt{-2}\\) (since \\(2\\sqrt{-2}=-(\\sqrt{-2})^3\\) and \\(N(\\sqrt{-2})=2\\), so \\(\\sqrt{-2}\\) is irreducible). Thus, if \\(d\\) is a nonunit, then \\(\\sqrt{-2}\\mid d\\), hence \\(\\sqrt{-2}\\mid (x+\\sqrt{-2})\\), which implies \\(\\sqrt{-2}\\mid x\\) (subtract \\(\\sqrt{-2}\\)), forcing \\(x\\) even as noted in the analysis below:\nif \\(\\sqrt{-2}\\mid x\\), then \\(x=(a+b\\sqrt{-2})\\sqrt{-2}=a\\sqrt{-2}-2b\\), so \\(a=0\\) and \\(x=-2b\\) is even.\nThis contradicts that \\(x\\) is odd. Therefore\n\\[\n\\gcd(x+\\sqrt{-2},\\,x-\\sqrt{-2})=1 \\quad \\text{in }R.\n\\]\n\n### 3) Coprime factors whose product is a cube are cubes\n\nIn a UFD, if \\(\\gcd(A,B)=1\\) and \\(AB\\) is a cube, then \\(A\\) and \\(B\\) are each a unit times a cube: in prime factorizations, primes dividing \\(A\\) do not divide \\(B\\), so their exponents in \\(AB\\) being multiples of \\(3\\) forces their exponents in \\(A\\) to be multiples of \\(3\\).\n\nApply this to \\(A=x+\\sqrt{-2}\\), \\(B=x-\\sqrt{-2}\\). Since \\(AB=y^3\\) is a cube in \\(R\\), there exist \\(a,b\\in\\mathbb Z\\) and a unit \\(u\\in R^\\times=\\{\\pm 1\\}\\) such that\n\\[\nx+\\sqrt{-2}=u\\,(a+b\\sqrt{-2})^3.\n\\]\nTaking norms,\n\\[\ny^3=N(x+\\sqrt{-2})=N(u)\\,N(a+b\\sqrt{-2})^3=(a^2+2b^2)^3.\n\\]\nSince \\(y\\ge 1\\), we get\n\\[\ny=a^2+2b^2.\n\\]\n\n### 4) Expand the cube and compare coefficients\n\nCompute:\n\\[\n(a+b\\sqrt{-2})^3\n= (a^3-6ab^2) + (3a^2b-2b^3)\\sqrt{-2}.\n\\]\nThus\n\\[\nx+\\sqrt{-2}\n= u\\bigl((a^3-6ab^2) + (3a^2b-2b^3)\\sqrt{-2}\\bigr).\n\\]\nComparing the \\(\\sqrt{-2}\\)-coefficients gives\n\\[\n1 = u(3a^2b-2b^3)=u\\,b(3a^2-2b^2),\n\\]\nso\n\\[\nb(3a^2-2b^2)=\\pm 1.\n\\]\nHence \\(b=\\pm 1\\). With \\(b^2=1\\), the equation becomes\n\\[\n3a^2-2=\\pm 1.\n\\]\nIf \\(3a^2-2=1\\), then \\(3a^2=3\\) so \\(a^2=1\\) and \\(a=\\pm 1\\).\nIf \\(3a^2-2=-1\\), then \\(3a^2=1\\), impossible in integers.\nTherefore\n\\[\na=\\pm 1,\\qquad b=\\pm 1.\n\\]\nThen\n\\[\ny=a^2+2b^2=1+2=3.\n\\]\nAlso, since \\(x=u(a^3-6ab^2)=u(a^3-6a)=u\\,a(a^2-6)=u\\,a(-5)\\), with \\(u=\\pm 1\\) and \\(a=\\pm 1\\), we get\n\\[\nx=\\pm 5.\n\\]\n\n### 5) Verification\n\nFor \\(y=3\\), \\(y^3=27\\), and \\(x^2+2=25+2=27\\) when \\(x=\\pm 5\\). Both work.\n\n### Conclusion\n\nThe integer solutions to \\(y^3=x^2+2\\) are\n\\[\n(x,y)=(5,3)\\quad\\text{and}\\quad(x,y)=(-5,3).\n\\]",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $L$ be a finite distributive lattice with least element $0$ and greatest element $1$. An element $j \\in L$ is called **join-irreducible** if $j \\neq 0$ and whenever $j = x \\vee y$ for some $x, y \\in L$, we have $j = x$ or $j = y$. Let $J(L)$ denote the set of join-irreducible elements of $L$, ordered by the restriction of the order of $L$.\n\nA subset $I \\subseteq J(L)$ is an **order ideal** (or down-set) if whenever $x \\in I$ and $y \\in J(L)$ with $y \\leq x$, we have $y \\in I$. The set $D(J(L))$ of all order ideals of $J(L)$ forms a distributive lattice under union (join) and intersection (meet).\n\nDefine $\\varphi: L \\to D(J(L))$ by $\\varphi(a) = \\{ j \\in J(L) \\mid j \\leq a \\}$.\n\nProve that $\\varphi$ is a lattice isomorphism, i.e., that $\\varphi$ is bijective and satisfies $\\varphi(a \\vee b) = \\varphi(a) \\cup \\varphi(b)$ and $\\varphi(a \\wedge b) = \\varphi(a) \\cap \\varphi(b)$ for all $a, b \\in L$.\n[/QUESTION]",
+    "run_id": "4",
+    "topic_slug": "order_lattices_and_ordered_algebraic_structures",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "We prove (this is the finite case of Birkhoff\u2019s representation theorem) that\n$$\n\\varphi:L\\to D(J(L)),\\qquad \\varphi(a)=\\{j\\in J(L): j\\le a\\}\n$$\nis a lattice isomorphism.\n\n---\n\n## 1) $\\varphi(a)$ is an order ideal of $J(L)$\n\nFix $a\\in L$. If $x\\in \\varphi(a)$, then $x\\in J(L)$ and $x\\le a$. If $y\\in J(L)$ and $y\\le x$, then $y\\le x\\le a$, hence $y\\in \\varphi(a)$. Thus $\\varphi(a)$ is downward closed in $J(L)$, i.e. an order ideal. So $\\varphi$ is well-defined as a map into $D(J(L))$.\n\n---\n\n## 2) Join-irreducible $\\Rightarrow$ join-prime in a distributive lattice\n\nWe use the standard fact:\n\n**Lemma 2.1.** If $L$ is distributive and $j\\in L$ is join-irreducible, then for all $x,y\\in L$,\n$$\nj\\le x\\vee y \\implies (j\\le x)\\ \\text{or}\\ (j\\le y).\n$$\n*Proof.* Assume $j\\le x\\vee y$. Then\n$$\nj = j\\wedge (x\\vee y) = (j\\wedge x)\\vee (j\\wedge y)\n$$\nby distributivity. Since $j$ is join-irreducible and $j=(j\\wedge x)\\vee (j\\wedge y)$, we must have\n$j=j\\wedge x$ or $j=j\\wedge y$. In the first case $j\\le x$; in the second $j\\le y$. \u220e\n\nBy induction, Lemma 2.1 extends to finite joins: if $j\\in J(L)$ and $j\\le \\bigvee_{t\\in T} a_t$ for a finite set $T$, then $j\\le a_{t_0}$ for some $t_0\\in T$.\n\n---\n\n## 3) $\\varphi$ preserves $\\vee$ and $\\wedge$\n\n### Meet\nFor any $a,b\\in L$,\n$$\n\\varphi(a\\wedge b)\n= \\{j\\in J(L): j\\le a\\wedge b\\}\n= \\{j\\in J(L): (j\\le a\\ \\text{and}\\ j\\le b)\\}\n= \\varphi(a)\\cap \\varphi(b).\n$$\n\n### Join\nFirst, $\\varphi(a)\\cup\\varphi(b)\\subseteq \\varphi(a\\vee b)$ is immediate: if $j\\le a$ or $j\\le b$, then $j\\le a\\vee b$.\n\nConversely, if $j\\in \\varphi(a\\vee b)$, then $j\\in J(L)$ and $j\\le a\\vee b$. By Lemma 2.1 (join-primality of join-irreducibles in distributive lattices), $j\\le a$ or $j\\le b$, so $j\\in \\varphi(a)\\cup\\varphi(b)$. Hence\n$$\n\\varphi(a\\vee b)=\\varphi(a)\\cup\\varphi(b).\n$$\n\nSo $\\varphi$ is a lattice homomorphism.\n\n---\n\n## 4) Every element is the join of the join-irreducibles below it\n\nFor $a\\in L$, write\n$$\nJ_a := \\{j\\in J(L): j\\le a\\}=\\varphi(a).\n$$\n\n**Lemma 4.1.** For every $a\\in L$,\n$$\na = \\bigvee J_a,\n$$\nwhere by convention $\\bigvee \\varnothing = 0$.\n\n*Proof.* If $a=0$, then $J_a=\\varnothing$ and $\\bigvee J_a=0=a$.\n\nAssume $a\\ne 0$. Because $L$ is finite, among all elements $x\\neq 0$ for which $x\\neq \\bigvee J_x$, choose one minimal in the order and call it $a$. This $a$ is not join-irreducible (otherwise $J_a$ contains $a$ and then $\\bigvee J_a\\ge a$, forcing equality). Thus $a=x\\vee y$ for some $x,y<a$. By minimality of $a$, we have\n$$\nx=\\bigvee J_x,\\qquad y=\\bigvee J_y.\n$$\nTherefore\n$$\na=x\\vee y = \\left(\\bigvee J_x\\right)\\vee\\left(\\bigvee J_y\\right)=\\bigvee (J_x\\cup J_y).\n$$\nBut $J_x\\cup J_y\\subseteq J_a$ since $J_x,J_y\\subseteq \\{j:j\\le a\\}=J_a$. Hence $\\bigvee (J_x\\cup J_y)\\le \\bigvee J_a\\le a$. Combined with $a=\\bigvee(J_x\\cup J_y)$, we get $a=\\bigvee J_a$, contradicting the choice of $a$. \u220e\n\n---\n\n## 5) $\\varphi$ is injective\n\nIf $\\varphi(a)=\\varphi(b)$, then $J_a=J_b$. By Lemma 4.1,\n$$\na=\\bigvee J_a=\\bigvee J_b=b.\n$$\nSo $\\varphi$ is injective.\n\n---\n\n## 6) $\\varphi$ is surjective\n\nLet $I\\in D(J(L))$ be any order ideal (down-set) of $J(L)$. Since $L$ is finite, $I$ is finite. Define\n$$\na:=\\bigvee I \\in L,\n$$\nwith $\\bigvee \\varnothing=0$.\n\nWe claim $\\varphi(a)=I$.\n\n- If $j\\in I$, then $j\\le \\bigvee I=a$, so $j\\in \\varphi(a)$. Thus $I\\subseteq \\varphi(a)$.\n\n- Conversely, let $j\\in \\varphi(a)$. Then $j\\in J(L)$ and $j\\le a=\\bigvee I$. Using the finite-join extension of Lemma 2.1 (join-primality), there exists $i\\in I$ such that $j\\le i$. Since $I$ is a down-set in $J(L)$ and $i\\in I$ with $j\\le i$, it follows that $j\\in I$. Hence $\\varphi(a)\\subseteq I$.\n\nTherefore $\\varphi(a)=I$, proving surjectivity.\n\n---\n\n## Conclusion\n\n$\\varphi$ is a bijective lattice homomorphism satisfying, for all $a,b\\in L$,\n$$\n\\varphi(a\\vee b)=\\varphi(a)\\cup\\varphi(b),\\qquad\n\\varphi(a\\wedge b)=\\varphi(a)\\cap\\varphi(b).\n$$\nHence $\\varphi:L\\to D(J(L))$ is a lattice isomorphism. \u220e",
+        "raw_answer": "We prove (this is the finite case of Birkhoff\u2019s representation theorem) that\n\\[\n\\varphi:L\\to D(J(L)),\\qquad \\varphi(a)=\\{j\\in J(L): j\\le a\\}\n\\]\nis a lattice isomorphism.\n\n---\n\n## 1) \\(\\varphi(a)\\) is an order ideal of \\(J(L)\\)\n\nFix \\(a\\in L\\). If \\(x\\in \\varphi(a)\\), then \\(x\\in J(L)\\) and \\(x\\le a\\). If \\(y\\in J(L)\\) and \\(y\\le x\\), then \\(y\\le x\\le a\\), hence \\(y\\in \\varphi(a)\\). Thus \\(\\varphi(a)\\) is downward closed in \\(J(L)\\), i.e. an order ideal. So \\(\\varphi\\) is well-defined as a map into \\(D(J(L))\\).\n\n---\n\n## 2) Join-irreducible \\(\\Rightarrow\\) join-prime in a distributive lattice\n\nWe use the standard fact:\n\n**Lemma 2.1.** If \\(L\\) is distributive and \\(j\\in L\\) is join-irreducible, then for all \\(x,y\\in L\\),\n\\[\nj\\le x\\vee y \\implies (j\\le x)\\ \\text{or}\\ (j\\le y).\n\\]\n*Proof.* Assume \\(j\\le x\\vee y\\). Then\n\\[\nj = j\\wedge (x\\vee y) = (j\\wedge x)\\vee (j\\wedge y)\n\\]\nby distributivity. Since \\(j\\) is join-irreducible and \\(j=(j\\wedge x)\\vee (j\\wedge y)\\), we must have\n\\(j=j\\wedge x\\) or \\(j=j\\wedge y\\). In the first case \\(j\\le x\\); in the second \\(j\\le y\\). \u220e\n\nBy induction, Lemma 2.1 extends to finite joins: if \\(j\\in J(L)\\) and \\(j\\le \\bigvee_{t\\in T} a_t\\) for a finite set \\(T\\), then \\(j\\le a_{t_0}\\) for some \\(t_0\\in T\\).\n\n---\n\n## 3) \\(\\varphi\\) preserves \\(\\vee\\) and \\(\\wedge\\)\n\n### Meet\nFor any \\(a,b\\in L\\),\n\\[\n\\varphi(a\\wedge b)\n= \\{j\\in J(L): j\\le a\\wedge b\\}\n= \\{j\\in J(L): (j\\le a\\ \\text{and}\\ j\\le b)\\}\n= \\varphi(a)\\cap \\varphi(b).\n\\]\n\n### Join\nFirst, \\(\\varphi(a)\\cup\\varphi(b)\\subseteq \\varphi(a\\vee b)\\) is immediate: if \\(j\\le a\\) or \\(j\\le b\\), then \\(j\\le a\\vee b\\).\n\nConversely, if \\(j\\in \\varphi(a\\vee b)\\), then \\(j\\in J(L)\\) and \\(j\\le a\\vee b\\). By Lemma 2.1 (join-primality of join-irreducibles in distributive lattices), \\(j\\le a\\) or \\(j\\le b\\), so \\(j\\in \\varphi(a)\\cup\\varphi(b)\\). Hence\n\\[\n\\varphi(a\\vee b)=\\varphi(a)\\cup\\varphi(b).\n\\]\n\nSo \\(\\varphi\\) is a lattice homomorphism.\n\n---\n\n## 4) Every element is the join of the join-irreducibles below it\n\nFor \\(a\\in L\\), write\n\\[\nJ_a := \\{j\\in J(L): j\\le a\\}=\\varphi(a).\n\\]\n\n**Lemma 4.1.** For every \\(a\\in L\\),\n\\[\na = \\bigvee J_a,\n\\]\nwhere by convention \\(\\bigvee \\varnothing = 0\\).\n\n*Proof.* If \\(a=0\\), then \\(J_a=\\varnothing\\) and \\(\\bigvee J_a=0=a\\).\n\nAssume \\(a\\ne 0\\). Because \\(L\\) is finite, among all elements \\(x\\neq 0\\) for which \\(x\\neq \\bigvee J_x\\), choose one minimal in the order and call it \\(a\\). This \\(a\\) is not join-irreducible (otherwise \\(J_a\\) contains \\(a\\) and then \\(\\bigvee J_a\\ge a\\), forcing equality). Thus \\(a=x\\vee y\\) for some \\(x,y<a\\). By minimality of \\(a\\), we have\n\\[\nx=\\bigvee J_x,\\qquad y=\\bigvee J_y.\n\\]\nTherefore\n\\[\na=x\\vee y = \\left(\\bigvee J_x\\right)\\vee\\left(\\bigvee J_y\\right)=\\bigvee (J_x\\cup J_y).\n\\]\nBut \\(J_x\\cup J_y\\subseteq J_a\\) since \\(J_x,J_y\\subseteq \\{j:j\\le a\\}=J_a\\). Hence \\(\\bigvee (J_x\\cup J_y)\\le \\bigvee J_a\\le a\\). Combined with \\(a=\\bigvee(J_x\\cup J_y)\\), we get \\(a=\\bigvee J_a\\), contradicting the choice of \\(a\\). \u220e\n\n---\n\n## 5) \\(\\varphi\\) is injective\n\nIf \\(\\varphi(a)=\\varphi(b)\\), then \\(J_a=J_b\\). By Lemma 4.1,\n\\[\na=\\bigvee J_a=\\bigvee J_b=b.\n\\]\nSo \\(\\varphi\\) is injective.\n\n---\n\n## 6) \\(\\varphi\\) is surjective\n\nLet \\(I\\in D(J(L))\\) be any order ideal (down-set) of \\(J(L)\\). Since \\(L\\) is finite, \\(I\\) is finite. Define\n\\[\na:=\\bigvee I \\in L,\n\\]\nwith \\(\\bigvee \\varnothing=0\\).\n\nWe claim \\(\\varphi(a)=I\\).\n\n- If \\(j\\in I\\), then \\(j\\le \\bigvee I=a\\), so \\(j\\in \\varphi(a)\\). Thus \\(I\\subseteq \\varphi(a)\\).\n\n- Conversely, let \\(j\\in \\varphi(a)\\). Then \\(j\\in J(L)\\) and \\(j\\le a=\\bigvee I\\). Using the finite-join extension of Lemma 2.1 (join-primality), there exists \\(i\\in I\\) such that \\(j\\le i\\). Since \\(I\\) is a down-set in \\(J(L)\\) and \\(i\\in I\\) with \\(j\\le i\\), it follows that \\(j\\in I\\). Hence \\(\\varphi(a)\\subseteq I\\).\n\nTherefore \\(\\varphi(a)=I\\), proving surjectivity.\n\n---\n\n## Conclusion\n\n\\(\\varphi\\) is a bijective lattice homomorphism satisfying, for all \\(a,b\\in L\\),\n\\[\n\\varphi(a\\vee b)=\\varphi(a)\\cup\\varphi(b),\\qquad\n\\varphi(a\\wedge b)=\\varphi(a)\\cap\\varphi(b).\n\\]\nHence \\(\\varphi:L\\to D(J(L))\\) is a lattice isomorphism. \u220e",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $S$ be a semigroup (i.e., a set with an associative binary operation) such that for all $a, b \\in S$, $a = aba$. Prove that $S$ is a rectangular band: that is, show that\n\n1. $a^2 = a$ for all $a \\in S$ (idempotence), and\n2. $xyz = xz$ for all $x, y, z \\in S$.",
+    "run_id": "5",
+    "topic_slug": "general_algebraic_systems",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "Let $S$ be a semigroup (associative binary operation, written multiplicatively) satisfying\n\n$$\n(\\forall a,b\\in S)\\qquad a=aba. \\tag{*}\n$$\n\nWe prove:\n\n1. $a^2=a$ for all $a\\in S$;\n2. $xyz=xz$ for all $x,y,z\\in S$.\n\n---\n\n## 1) Idempotence: $a^2=a$\n\nFix $a\\in S$.\n\n- Apply $(*)$ with $b=a$:\n  $$\n  a=aaa=a^3. \\tag{1}\n  $$\n- Apply $(*)$ with $b=a^2$ (note $a^2\\in S$ by closure):\n  $$\n  a=a(a^2)a=a^4. \\tag{2}\n  $$\n- Left-multiply (1) by $a$ and use associativity:\n  $$\n  a\\cdot a = a\\cdot a^3 \\;\\Longrightarrow\\; a^2 = a^4. \\tag{3}\n  $$\n\nCombining (2) and (3) gives\n$$\na^2=a^4=a,\n$$\nso $a^2=a$. Since $a$ was arbitrary, every element of $S$ is idempotent.\n\n---\n\n## 2) Rectangular law: $xyz=xz$\n\nFix $x,y,z\\in S$.\n\n- Apply $(*)$ with $a=z$ and $b=x$:\n  $$\n  z=zxz. \\tag{4}\n  $$\n  Hence, using associativity,\n  $$\n  xyz = xy\\,z = xy\\,(zxz) = xyzxz. \\tag{5}\n  $$\n\n- Apply $(*)$ with $a=x$ and $b=yz$ (note $yz\\in S$):\n  $$\n  x = x(yz)x = xyzx. \\tag{6}\n  $$\n  Right-multiply (6) by $z$ and use associativity:\n  $$\n  xz = (xyzx)z = xyzxz. \\tag{7}\n  $$\n\nFrom (5) and (7), both $xyz$ and $xz$ equal $xyzxz$. Therefore,\n$$\nxyz = xz.\n$$\n\n---\n\n## Conclusion\n\nWe have shown that for all $a\\in S$, $a^2=a$, and for all $x,y,z\\in S$, $xyz=xz$. Hence $S$ is a **rectangular band**.",
+        "raw_answer": "Let \\(S\\) be a semigroup (associative binary operation, written multiplicatively) satisfying\n\n\\[\n(\\forall a,b\\in S)\\qquad a=aba. \\tag{*}\n\\]\n\nWe prove:\n\n1. \\(a^2=a\\) for all \\(a\\in S\\);\n2. \\(xyz=xz\\) for all \\(x,y,z\\in S\\).\n\n---\n\n## 1) Idempotence: \\(a^2=a\\)\n\nFix \\(a\\in S\\).\n\n- Apply \\((*)\\) with \\(b=a\\):\n  \\[\n  a=aaa=a^3. \\tag{1}\n  \\]\n- Apply \\((*)\\) with \\(b=a^2\\) (note \\(a^2\\in S\\) by closure):\n  \\[\n  a=a(a^2)a=a^4. \\tag{2}\n  \\]\n- Left-multiply (1) by \\(a\\) and use associativity:\n  \\[\n  a\\cdot a = a\\cdot a^3 \\;\\Longrightarrow\\; a^2 = a^4. \\tag{3}\n  \\]\n\nCombining (2) and (3) gives\n\\[\na^2=a^4=a,\n\\]\nso \\(a^2=a\\). Since \\(a\\) was arbitrary, every element of \\(S\\) is idempotent.\n\n---\n\n## 2) Rectangular law: \\(xyz=xz\\)\n\nFix \\(x,y,z\\in S\\).\n\n- Apply \\((*)\\) with \\(a=z\\) and \\(b=x\\):\n  \\[\n  z=zxz. \\tag{4}\n  \\]\n  Hence, using associativity,\n  \\[\n  xyz = xy\\,z = xy\\,(zxz) = xyzxz. \\tag{5}\n  \\]\n\n- Apply \\((*)\\) with \\(a=x\\) and \\(b=yz\\) (note \\(yz\\in S\\)):\n  \\[\n  x = x(yz)x = xyzx. \\tag{6}\n  \\]\n  Right-multiply (6) by \\(z\\) and use associativity:\n  \\[\n  xz = (xyzx)z = xyzxz. \\tag{7}\n  \\]\n\nFrom (5) and (7), both \\(xyz\\) and \\(xz\\) equal \\(xyzxz\\). Therefore,\n\\[\nxyz = xz.\n\\]\n\n---\n\n## Conclusion\n\nWe have shown that for all \\(a\\in S\\), \\(a^2=a\\), and for all \\(x,y,z\\in S\\), \\(xyz=xz\\). Hence \\(S\\) is a **rectangular band**.",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Find the minimal polynomial of $\\alpha = \\sqrt{2} + \\sqrt{3} + \\sqrt{5}$ over $\\mathbb{Q}$. Prove that your polynomial is indeed the minimal polynomial.",
+    "run_id": "6",
+    "topic_slug": "field_theory_and_polynomials",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $R$ be a Noetherian commutative ring with identity. An element $r \\in R$ is called a **zero-divisor** if there exists a nonzero $s \\in R$ such that $rs = 0$. An **associated prime** of $R$ is a prime ideal that can be written as $\\operatorname{Ann}(x) = \\{ r \\in R \\mid r x = 0\\}$ for some nonzero $x \\in R$. Prove that the set of zero-divisors of $R$ is exactly the union of all associated primes of $R$.",
+    "run_id": "7",
+    "topic_slug": "commutative_algebra",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Consider the rational map $\\varphi: \\mathbb{P}^2 \\to \\mathbb{P}^2$ over $\\mathbb{C}$ given in homogeneous coordinates by\n$$\n\\varphi(x:y:z) = (yz : xz : xy).\n$$\nLet $X$ be the blow-up of $\\mathbb{P}^2$ at the three points \n$$\nP_1 = (1:0:0),\\quad P_2 = (0:1:0),\\quad P_3 = (0:0:1).\n$$\nDenote by $\\pi: X \\to \\mathbb{P}^2$ the blow-down morphism, and let $E_1, E_2, E_3$ be the exceptional divisors over $P_1, P_2, P_3$ respectively. Let $H = \\pi^* \\mathcal{O}_{\\mathbb{P}^2}(1)$ be the pullback of the hyperplane class.\n\n(a) Show that $\\varphi$ lifts to a morphism $\\Phi: X \\to \\mathbb{P}^2$ (i.e., $\\Phi = \\varphi \\circ \\pi$ is a morphism).\n(b) Compute the class of the line bundle $\\Phi^* \\mathcal{O}_{\\mathbb{P}^2}(1)$ in $\\operatorname{Pic}(X)$ in terms of $H, E_1, E_2, E_3$.\n(c) Prove that $\\varphi$ is birational and determine its inverse rational map.",
+    "run_id": "8",
+    "topic_slug": "algebraic_geometry",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $A$ be an $n \\times n$ complex matrix. Prove that $e^A = I$ (where $I$ is the identity matrix) if and only if $A$ is diagonalizable and every eigenvalue of $A$ is an integer multiple of $2\\pi i$.",
+    "run_id": "9",
+    "topic_slug": "linear_and_multilinear_algebra",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $R$ be a commutative ring with identity. Denote by $T_n(R)$ the ring of $n \\times n$ upper triangular matrices over $R$, i.e., matrices $(a_{ij})$ with $a_{ij} \\in R$ for $i \\le j$ and $a_{ij}=0$ for $i > j$. Prove that the Jacobson radical $J(T_n(R))$ is exactly the set\n$$\n\\{ A = (a_{ij}) \\in T_n(R) \\mid a_{ii} \\in J(R) \\text{ for all } i = 1,\\dots,n \\}.\n$$",
+    "run_id": "10",
+    "topic_slug": "associative_rings_and_algebras",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $\\mathfrak{g}$ be a finite-dimensional Lie algebra over a field $F$ of characteristic $0$. For $x \\in \\mathfrak{g}$, define the adjoint operator $\\operatorname{ad}_x : \\mathfrak{g} \\to \\mathfrak{g}$ by $\\operatorname{ad}_x(y) = [x, y]$. The Killing form is defined by\n$$\n\\kappa(x, y) = \\operatorname{tr}(\\operatorname{ad}_x \\circ \\operatorname{ad}_y), \\qquad x, y \\in \\mathfrak{g}.\n$$\n\n(a) Show that $\\kappa$ is a symmetric bilinear form.\n\n(b) Prove that $\\kappa$ is invariant, i.e., for all $x, y, z \\in \\mathfrak{g}$,\n$$\n\\kappa([x, y], z) = \\kappa(x, [y, z]).\n$$\n\n(c) Show that the radical of $\\kappa$,\n$$\n\\operatorname{Rad}(\\kappa) = \\{ x \\in \\mathfrak{g} \\mid \\kappa(x, y) = 0 \\text{ for all } y \\in \\mathfrak{g} \\},\n$$\nis an ideal of $\\mathfrak{g}$.\n\n(d) Prove that if $\\kappa$ is nondegenerate (i.e., $\\operatorname{Rad}(\\kappa) = 0$), then $\\mathfrak{g}$ is semisimple, i.e., $\\mathfrak{g}$ contains no nonzero abelian ideals.",
+    "run_id": "11",
+    "topic_slug": "nonassociative_rings_and_algebras",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $R = \\mathbb{Z}/4\\mathbb{Z}$ and let $M = \\mathbb{Z}/2\\mathbb{Z}$ be the $R$-module where the action is given by the natural surjection $R \\to \\mathbb{Z}/2\\mathbb{Z}$ (i.e., $r \\cdot a = \\overline{r} \\, a$, where $\\overline{r}$ denotes reduction modulo $2$). Compute $\\operatorname{Ext}^n_R(M, M)$ for all integers $n \\ge 0$. Moreover, describe the structure of the graded ring $\\operatorname{Ext}^*_R(M, M) = \\bigoplus_{n \\ge 0} \\operatorname{Ext}^n_R(M, M)$ with the Yoneda product. (Is it isomorphic to a polynomial ring over $\\mathbb{Z}/2\\mathbb{Z}$? If so, determine the degree of the generator.)",
+    "run_id": "12",
+    "topic_slug": "category_theory_and_homological_algebra",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $k$ be a nonzero integer. Define $X_k$ to be the CW complex obtained by attaching a $3$-cell to the $2$-sphere $S^2$ via a map $f: S^2 \\to S^2$ of degree $k$. Compute the complex topological K-theory groups $K^0(X_k)$ and $K^1(X_k)$.",
+    "run_id": "13",
+    "topic_slug": "k_theory",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $G$ be a finite group such that the automorphism group $\\operatorname{Aut}(G)$ is trivial (i.e., the only automorphism of $G$ is the identity map). Prove that $G$ is either the trivial group or the cyclic group of order $2$.",
+    "run_id": "14",
+    "topic_slug": "group_theory_and_generalizations",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $G$ be a connected topological group with identity element $e$. Prove that the fundamental group $\\pi_1(G,e)$ is abelian.",
+    "run_id": "15",
+    "topic_slug": "topological_groups_and_lie_groups",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $f:[0,1]\\to\\mathbb{R}$ be a function satisfying $|f(x)-f(y)|\\le 2|x-y|$ for all $x,y\\in[0,1]$. Suppose $f(0)=0$ and $f(1)=1$. Determine the maximum possible value of $\\int_0^1 f(x)\\,dx$.",
+    "run_id": "16",
+    "topic_slug": "real_functions",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Prove that there exists a Lebesgue measurable set $E \\subseteq \\mathbb{R}$ such that for every nonempty open interval $I \\subseteq \\mathbb{R}$, we have $0 < m(E \\cap I) < m(I)$, where $m$ denotes Lebesgue measure.",
+    "run_id": "17",
+    "topic_slug": "measure_and_integration",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Evaluate the improper integral\n$$\n\\int_{0}^{\\infty} \\frac{(\\ln x)^2}{x^2+1} \\, dx.\n$$\nProvide an exact value.",
+    "run_id": "18",
+    "topic_slug": "functions_of_a_complex_variable",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Consider the probability measure $\\mu$ on the interval $[-1,1]$ defined by\n$$\nd\\mu(x) = \\frac{1}{\\pi\\sqrt{1-x^2}}\\,dx.\n$$\nIts logarithmic potential is\n$$\nU_\\mu(z) = \\int_{-1}^{1} \\log\\frac{1}{|z-x|}\\,d\\mu(x),\\qquad z\\in\\mathbb{C},\n$$\nwhere $\\log$ denotes the natural logarithm. Show that for every $z\\in[-1,1]$ (i.e., $z$ is real with $-1\\le z\\le 1$), $U_\\mu(z)$ is constant (independent of $z$) and find the value of this constant.",
+    "run_id": "19",
+    "topic_slug": "potential_theory",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $B = \\{ z \\in \\mathbb{C}^n \\mid \\|z\\| < 1 \\}$ be the unit ball in $\\mathbb{C}^n$ ($n \\ge 1$), where $\\|z\\|^2 = \\sum_{i=1}^n |z_i|^2$. Suppose $f: B \\to B$ is a biholomorphism (i.e., $f$ is holomorphic, bijective, and its inverse $f^{-1}$ is also holomorphic) such that $f(0) = 0$. Prove that $f$ is a linear unitary transformation; that is, there exists an $n \\times n$ unitary matrix $U$ such that $f(z) = U z$ for all $z \\in B$.",
+    "run_id": "20",
+    "topic_slug": "several_complex_variables_and_analytic_spaces",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Evaluate the definite integral\n$$\n\\int_0^1 \\ln \\Gamma(x) \\, dx,\n$$\nwhere $\\Gamma$ denotes the Euler gamma function. Give the exact value.",
+    "run_id": "21",
+    "topic_slug": "special_functions",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Find the general solution of the differential equation\n$$ (x^2 + y^2 + x)\\,dx + y\\,dy = 0. $$",
+    "run_id": "22",
+    "topic_slug": "ordinary_differential_equations",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Consider the viscous Burgers equation\n$$\nu_t + u u_x = \\nu u_{xx}, \\qquad x \\in \\mathbb{R},\\ t>0,\n$$\nwith constant viscosity $\\nu > 0$.  Let the initial condition be a step function:\n$$\nu(x,0) = \\begin{cases}\nU, & x < 0,\\\\\n0, & x > 0,\n\\end{cases}\n$$\nwhere $U > 0$ is a constant.\n\n(a) Introduce the Cole\u2013Hopf transformation $u = -2\\nu (\\ln \\varphi)_x$ and show that $\\varphi$ satisfies the heat equation $\\varphi_t = \\nu \\varphi_{xx}$.\n\n(b) Determine an appropriate initial condition $\\varphi(x,0)$ consistent with the given $u(x,0)$.  (Choose the constant of integration so that $\\varphi(0,0)=1$.)\n\n(c) Solve the initial value problem for $\\varphi(x,t)$ by expressing $\\varphi$ as a convolution with the heat kernel and evaluating the integrals in terms of the complementary error function\n$$\n\\operatorname{erfc}(z) = \\frac{2}{\\sqrt{\\pi}} \\int_z^\\infty e^{-s^2}\\,ds.\n$$\n\n(d) Hence find the solution $u(x,t)$ in the closed form\n$$\nu(x,t) = \\frac{U \\; e^{U^2 t/(4\\nu)}\\; \\operatorname{erfc}\\!\\left( \\dfrac{x - U t}{\\sqrt{4\\nu t}} \\right)}\n{e^{U^2 t/(4\\nu)}\\; \\operatorname{erfc}\\!\\left( \\dfrac{x - U t}{\\sqrt{4\\nu t}} \\right) + e^{U x/(2\\nu)}\\; \\operatorname{erfc}\\!\\left( -\\dfrac{x}{\\sqrt{4\\nu t}} \\right)}.\n$$\n\n(e) (Optional) Verify that this solution tends to the initial step as $t \\to 0^+$.",
+    "run_id": "23",
+    "topic_slug": "partial_differential_equations",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $\\theta$ be an irrational number. Define the rotation $R_\\theta: [0,1) \\to [0,1)$ by $R_\\theta(x) = x + \\theta \\pmod 1$, where we identify $[0,1)$ with the circle $\\mathbb{R}/\\mathbb{Z}$. Let $\\lambda$ denote the Lebesgue measure on $[0,1)$.\n\nProve the following:\n(a) $R_\\theta$ is ergodic with respect to $\\lambda$.\n(b) $R_\\theta$ is not strong mixing with respect to $\\lambda$.\n(c) $R_\\theta$ is uniquely ergodic, i.e., $\\lambda$ is the only $R_\\theta$-invariant Borel probability measure on $[0,1)$.\n[/QUESTION]",
+    "run_id": "24",
+    "topic_slug": "dynamical_systems_and_ergodic_theory",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Find all functions $f: \\mathbb{R} \\to \\mathbb{R}$ such that\n$$\nf(x f(y) + f(x)) = f(x) f(y) + x\n$$\nfor all real numbers $x, y$.",
+    "run_id": "25",
+    "topic_slug": "difference_and_functional_equations",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Evaluate the series\n$$\n\\sum_{n=1}^{\\infty} \\frac{(-1)^{n-1} H_n}{n},\n$$\nwhere $H_n = \\sum_{k=1}^{n} \\frac{1}{k}$ denotes the $n$-th harmonic number. Provide the exact value in closed form.",
+    "run_id": "26",
+    "topic_slug": "sequences_series_and_summability",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Find the first three terms in the asymptotic expansion (in powers of $1/n$) of\n$$\nT_n = \\sum_{k=1}^{n} \\frac{1}{n^2 + k^2}\n$$\nas $n \\to \\infty$. Express the coefficients in simplest form.\n[/QUESTION]",
+    "run_id": "27",
+    "topic_slug": "approximations_and_expansions",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $f \\in L^2(\\mathbb{R})$ be a function with compact support, i.e., there exists $A > 0$ such that $f(x) = 0$ for almost every $|x| > A$. Define its Fourier transform by\n$$\n\\hat f(\\xi) = \\int_{\\mathbb{R}} f(x) e^{-2\\pi i x \\xi} \\, dx,\n$$\nwhich is well-defined as an $L^1$ integral because $f$ is integrable on $[-A,A]$. Prove that if $\\hat f$ also has compact support (i.e., there exists $B > 0$ such that $\\hat f(\\xi) = 0$ for almost every $|\\xi| > B$), then $f$ must be zero almost everywhere. In other words, there is no nonzero $L^2$ function with both $f$ and $\\hat f$ compactly supported.",
+    "run_id": "28",
+    "topic_slug": "harmonic_analysis_on_euclidean_spaces",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $G$ be a compact abelian group with normalized Haar measure $\\mu$ (i.e., $\\mu(G)=1$). Denote by $\\widehat{G}$ the dual group of continuous characters $\\chi: G \\to \\mathbb{T}$, where $\\mathbb{T} = \\{z \\in \\mathbb{C}: |z|=1\\}$. For a function $f \\in L^1(G)$, define its Fourier transform $\\widehat{f}: \\widehat{G} \\to \\mathbb{C}$ by\n$$\n\\widehat{f}(\\chi) = \\int_G f(g) \\overline{\\chi(g)} \\, d\\mu(g).\n$$\nRecall that the characters separate points of $G$: for any distinct $x,y \\in G$, there exists $\\chi \\in \\widehat{G}$ such that $\\chi(x) \\neq \\chi(y)$.\n\n(a) Show that the set $\\widehat{G}$ is an orthonormal set in $L^2(G)$; that is, for $\\chi, \\psi \\in \\widehat{G}$,\n$$\n\\langle \\chi, \\psi \\rangle = \\int_G \\chi(g) \\overline{\\psi(g)} \\, d\\mu(g) = \\delta_{\\chi,\\psi}.\n$$\n\n(b) Using the Stone\u2013Weierstrass theorem, prove that the linear span of $\\widehat{G}$ is dense in $C(G)$ with respect to the uniform norm $\\|f\\|_\\infty = \\sup_{g\\in G} |f(g)|$.\n\n(c) Conclude that $\\widehat{G}$ is an orthonormal basis for $L^2(G)$.\n\n(d) Deduce the Plancherel identity: for every $f \\in L^2(G)$,\n$$\n\\int_G |f(g)|^2 \\, d\\mu(g) = \\sum_{\\chi \\in \\widehat{G}} |\\widehat{f}(\\chi)|^2.\n$$\n\nMake sure to justify all steps, including the application of the Stone\u2013Weierstrass theorem and the density arguments.",
+    "run_id": "29",
+    "topic_slug": "abstract_harmonic_analysis",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Consider the integral equation\n$$\nf(x) + \\lambda \\int_{-\\infty}^{\\infty} e^{-|x-t|} f(t) \\, dt = e^{-|x|}, \\qquad x \\in \\mathbb{R},\n$$\nwhere $\\lambda$ is a real constant. Use the Fourier transform defined by\n$$\n\\hat{g}(\\omega) = \\int_{-\\infty}^{\\infty} g(x) e^{-i\\omega x} \\, dx,\n$$\nwith the inverse transform given by\n$$\ng(x) = \\frac{1}{2\\pi} \\int_{-\\infty}^{\\infty} \\hat{g}(\\omega) e^{i\\omega x} \\, d\\omega.\n$$\nDetermine the range of $\\lambda$ for which the equation admits a solution, and find the solution $f(x)$ in closed form.",
+    "run_id": "30",
+    "topic_slug": "integral_transforms_and_operational_calculus",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Solve the following integral equation for $\\phi(x)$ on the interval $0 \\le x \\le 1$:\n\n$$\n\\phi(x) = x \\cos 1 + \\int_0^1 \\min(x,t) \\, \\phi(t) \\, dt,\n$$\n\nwhere $\\min(x,t)$ denotes the smaller of $x$ and $t$.",
+    "run_id": "31",
+    "topic_slug": "integral_equations",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $C[0,1]$ denote the Banach space of complex-valued continuous functions on $[0,1]$ equipped with the supremum norm $\\|f\\|_\\infty = \\sup_{x\\in[0,1]}|f(x)|$. Define the Volterra operator $V: C[0,1] \\to C[0,1]$ by\n$$\n(Vf)(x) = \\int_0^x f(t)\\,dt, \\qquad x\\in[0,1].\n$$\nProve that $V$ is a compact linear operator and that its spectrum $\\sigma(V) = \\{0\\}$.",
+    "run_id": "32",
+    "topic_slug": "functional_analysis",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $L^2[0,1]$ denote the Hilbert space of (equivalence classes of) Lebesgue measurable square-integrable functions on $[0,1]$ with the usual inner product $\\langle f,g\\rangle = \\int_0^1 f(x)\\overline{g(x)}\\,dx$. Define the Volterra operator $V:L^2[0,1]\\to L^2[0,1]$ by\n$$\n(Vf)(x) = \\int_0^x f(t)\\,dt,\\qquad x\\in[0,1].\n$$\nDetermine the operator norm $\\|V\\|$.",
+    "run_id": "33",
+    "topic_slug": "operator_theory",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "A uniform chain of length $L > 1$ is suspended from two points at the same height, located at $(0,0)$ and $(1,0)$. By the principle of minimum potential energy, the chain adopts the shape $y(x)$ that minimizes\n$$\nU[y] = \\int_0^1 y(x) \\sqrt{1 + [y'(x)]^2} \\, dx\n$$\nsubject to the fixed length constraint\n$$\n\\int_0^1 \\sqrt{1 + [y'(x)]^2} \\, dx = L,\n$$\nand boundary conditions $y(0) = 0$, $y(1) = 0$.\n\nFind the function $y(x)$ describing the chain. Your answer should express $y(x)$ in terms of a parameter that is determined implicitly by $L$.",
+    "run_id": "34",
+    "topic_slug": "calculus_of_variations_and_optimization",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $\\triangle ABC$ have side lengths $AB = 13$, $AC = 15$, and $BC = 14$. Denote by $D$ the foot of the internal angle bisector from $A$ to side $BC$. Let the incircle of $\\triangle ABC$ touch side $BC$ at $E$. The line through $E$ perpendicular to $BC$ meets $AD$ at $F$. Find the length of $DF$.",
+    "run_id": "35",
+    "topic_slug": "geometry",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $S$ be a finite set of points in the Euclidean plane, not all lying on a single line. Prove that there exists a line which contains exactly two points of $S$.",
+    "run_id": "36",
+    "topic_slug": "convex_and_discrete_geometry",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Consider the torus $T$ obtained by rotating a circle of radius $r$ about an axis in its plane that is a distance $R > r > 0$ from the circle's center. Using the standard parametrization\n$$\n\\mathbf{X}(\\theta, \\varphi) = \\big( (R + r\\cos\\varphi)\\cos\\theta,\\ (R + r\\cos\\varphi)\\sin\\theta,\\ r\\sin\\varphi \\big), \\qquad \\theta \\in [0,2\\pi),\\ \\varphi \\in [0,2\\pi),\n$$\ncompute the Gaussian curvature $K$ of the torus as a function of $\\varphi$ (it is independent of $\\theta$). Then evaluate the total Gaussian curvature $\\iint_T K \\, dA$ by direct integration, and verify that it equals zero.",
+    "run_id": "37",
+    "topic_slug": "differential_geometry",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Define the Sorgenfrey line $\\mathbb{R}_\\ell$ as the topological space whose underlying set is $\\mathbb{R}$ and whose topology is generated by the half-open intervals $[a,b)$ with $a<b$. The Sorgenfrey plane is the product space $\\mathbb{R}_\\ell \\times \\mathbb{R}_\\ell$.\n\nProve that the Sorgenfrey plane is not normal.",
+    "run_id": "38",
+    "topic_slug": "general_topology",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $T$ denote the torus, represented as the quotient space of the square $[0,1]\\times[0,1]$ by identifying $(0,y)\\sim(1,y)$ and $(x,0)\\sim(x,1)$. Choose a closed disk $D\\subset T$ contained in the interior of the square (for instance, the image of a small Euclidean disk centered at $(1/2,1/2)$). Remove its interior to obtain the punctured torus $T_0 = T\\setminus\\operatorname{int}(D)$.\n\nLet $M$ be the M\u00f6bius strip, defined as the quotient of $[0,1]\\times[0,1]$ by $(0,y)\\sim(1,1-y)$. Its boundary $\\partial M$ is a circle.\n\nForm the space $X = T_0\\cup_h M$ by gluing $T_0$ and $M$ along their boundaries via a homeomorphism $h\\colon \\partial M\\to \\partial D$. (The choice of homeomorphism does not affect the answer up to isomorphism.)\n\nCompute the fundamental group $\\pi_1(X)$.",
+    "run_id": "39",
+    "topic_slug": "algebraic_topology",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $X_n$ denote the CW complex obtained by attaching a 2-cell to the circle $S^1$ via a map $f : \\partial D^2 \\to S^1$ of degree $n$, where $n \\in \\mathbb{Z}$. Determine all integers $n$ for which $X_n$ is a closed 2-manifold (i.e., a compact surface without boundary). For those values of $n$, identify the manifold up to homeomorphism.",
+    "run_id": "40",
+    "topic_slug": "manifolds_and_cell_complexes",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $S^n$ denote the unit sphere in $\\mathbb{R}^{n+1}$ (with $n \\ge 1$). Compute the de Rham cohomology groups $H^k_{\\mathrm{dR}}(S^n)$ for all integers $k \\ge 0$. Provide a complete proof using the Mayer\u2013Vietoris sequence for de Rham cohomology.",
+    "run_id": "41",
+    "topic_slug": "global_analysis_on_manifolds",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Consider an infinite sequence of independent tosses of a biased coin. Each toss results in heads (H) with probability $p$ and tails (T) with probability $q = 1-p$, where $0 < p < 1$. Let $N$ be the number of tosses required to observe the pattern HTHT for the first time (i.e., the first occurrence of four consecutive tosses equal to H, T, H, T in that order). Compute the expected value $\\mathbb{E}[N]$ as a closed-form expression in terms of $p$ (or $p$ and $q$).",
+    "run_id": "42",
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $X_1, X_2, \\dots, X_n$ be a random sample from a geometric distribution with parameter $p$ ($0 < p < 1$), i.e., \n$$\nP(X_i = k) = (1-p)^{k-1} p, \\quad k = 1,2,\\dots.\n$$\nAssume $n \\ge 2$. Find the uniformly minimum variance unbiased estimator (UMVUE) of $p^2$.",
+    "run_id": "43",
+    "topic_slug": "statistics",
+    "status": "failed",
+    "attempts": []
+  },
+  {
+    "question_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $w(x)=e^{-x}$ on $[0,\\infty)$. Determine the nodes $x_1, x_2$ (with $0 < x_1 < x_2$) and weights $w_1, w_2$ such that the quadrature rule\n$$\n\\int_0^\\infty e^{-x} f(x)\\,dx \\approx w_1 f(x_1) + w_2 f(x_2)\n$$\nis exact for all polynomials $f$ of degree at most $3$. Provide the exact values in simplified radical form.",
+    "run_id": "44",
+    "topic_slug": "numerical_analysis",
+    "status": "failed",
+    "attempts": []
+  }
+]
