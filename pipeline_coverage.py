@@ -58,13 +58,6 @@ def _pick_entry(entries_by_run: Dict[str, object], run_id: str):
     return entries_by_run.get(run_id)
 
 
-def _entry_key_for_benchmark(entry: Optional[BenchmarkEntry]):
-    if not entry:
-        return None
-    question = _final_question(entry)
-    return entry_key(entry.run_id, entry.topic_slug, question)
-
-
 def _entry_key_for_answer(entry: Optional[AnswerEntry]):
     if not entry:
         return None
@@ -96,6 +89,120 @@ def _task_id(prefix: str, run_id: Optional[str], topic_slug: Optional[str], ques
         digest = hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
         return f"{prefix}/{topic_slug}/{digest}"
     return f"{prefix}/unknown"
+
+
+def _expected_illposed_by_pair(answers_dir: Path, allowed_slugs: Set[str]) -> Dict[Tuple[str, str], int]:
+    expected: Dict[Tuple[str, str], int] = {}
+    for q_dir in answers_dir.glob("*"):
+        q_slug = q_dir.name
+        if allowed_slugs and q_slug not in allowed_slugs:
+            continue
+        for answer_file in q_dir.glob("*.json"):
+            a_slug = answer_file.stem
+            entries = load_answer_entries(answer_file)
+            keys: Set[Tuple[Optional[str], Optional[str], Optional[str]]] = set()
+            for entry in entries:
+                if entry and entry.status == STATUS_ILL_POSED:
+                    key = _entry_key_for_answer(entry)
+                    if key:
+                        keys.add(key)
+            if keys:
+                expected[(q_slug, a_slug)] = len(keys)
+    return expected
+
+
+def _expected_critique_debates_by_pair(
+    critiques_dir: Path,
+    answers_dir: Path,
+    benchmark_dir: Path,
+    critique_modes: Sequence[str],
+    allowed_slugs: Set[str],
+    expected_runs_by_slug: Dict[str, Set[str]],
+    assume_missing_critiques: bool,
+) -> Dict[Tuple[str, str, str, str], int]:
+    expected: Dict[Tuple[str, str, str, str], int] = {}
+    for mode in critique_modes:
+        mode_dir = critiques_dir / mode
+        if not mode_dir.exists():
+            continue
+        for q_dir in mode_dir.glob("*"):
+            q_slug = q_dir.name
+            if allowed_slugs and q_slug not in allowed_slugs:
+                continue
+            benchmark_entries = load_benchmark_entries(benchmark_dir / f"{q_slug}.json")
+            expected_runs = expected_runs_by_slug.get(q_slug, set())
+            for crit_file in q_dir.glob("*.json"):
+                parts = crit_file.stem.split("__")
+                if len(parts) != 2:
+                    continue
+                critic_slug, answer_slug = parts
+                answers = _load_answer_records(
+                    answers_dir,
+                    q_slug,
+                    answer_slug,
+                    benchmark_entries,
+                )
+                answer_by_run = _entries_by_run(answers)
+                critiques = load_critique_entries(crit_file)
+                key = (mode, q_slug, critic_slug, answer_slug)
+                if assume_missing_critiques:
+                    expected_for_file = 0
+                    for run_id in expected_runs:
+                        answer_entry = answer_by_run.get(run_id)
+                        if answer_entry and answer_entry.status == STATUS_FAILED:
+                            continue
+                        expected_for_file += 1
+                    correct_count = 0
+                    for crit_entry in critiques:
+                        if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
+                            continue
+                        verdict = _final_critique_verdict(crit_entry)
+                        if verdict == CRITIQUE_VERDICT_CORRECT:
+                            correct_count += 1
+                    expected[key] = max(0, expected_for_file - correct_count)
+                else:
+                    answer_map = _map_by_key(answers, _entry_key_for_answer)
+                    count = 0
+                    for crit_entry in critiques:
+                        if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
+                            continue
+                        verdict = _final_critique_verdict(crit_entry)
+                        if verdict in {None, CRITIQUE_VERDICT_UNKNOWN, CRITIQUE_VERDICT_CORRECT}:
+                            continue
+                        entry_key_value = _entry_key_for_critique(crit_entry)
+                        if not entry_key_value or entry_key_value not in answer_map:
+                            continue
+                        count += 1
+                    expected[key] = count
+    return expected
+
+
+def _expected_eval_count(
+    registry,
+    judge_specs: Sequence[ModelSpec],
+    illposed_counts: Dict[Tuple[str, str], int],
+    critique_counts: Dict[Tuple[str, str, str, str], int],
+) -> Tuple[int, int]:
+    judge_names = [spec.name for spec in judge_specs]
+    expected = 0
+    expected_tasks = 0
+    for (q_slug, a_slug), count in illposed_counts.items():
+        if not count:
+            continue
+        alice_model = registry.resolve_model_name(a_slug)
+        bob_model = registry.resolve_model_name(q_slug)
+        participants = {alice_model, bob_model}
+        expected += count * sum(1 for judge in judge_names if judge not in participants)
+        expected_tasks += count
+    for (_mode, _q_slug, critic_slug, answer_slug), count in critique_counts.items():
+        if not count:
+            continue
+        alice_model = registry.resolve_model_name(critic_slug)
+        bob_model = registry.resolve_model_name(answer_slug)
+        participants = {alice_model, bob_model}
+        expected += count * sum(1 for judge in judge_names if judge not in participants)
+        expected_tasks += count
+    return expected, expected_tasks
 
 
 def _format_ratio(numerator: int, denominator: int) -> str:
@@ -160,28 +267,29 @@ def _count_question_stats(
     run_ids: Sequence[str],
 ) -> Tuple[Counter, int, Dict[str, Set[str]]]:
     counts: Counter = Counter()
-    success_runs_by_slug: Dict[str, Set[str]] = {}
+    expected_runs_by_slug: Dict[str, Set[str]] = {}
     for spec in benchmark_specs:
         q_slug = spec.slug
         entries = load_benchmark_entries(benchmark_dir / f"{q_slug}.json")
         entries_by_run = _entries_by_run(entries)
-        success_runs: Set[str] = set()
+        expected_runs: Set[str] = set()
         for run_id in run_ids:
             entry = _pick_entry(entries_by_run, run_id)
             if entry:
                 counts["generated"] += 1
                 if entry.status == STATUS_SUCCEEDED:
                     counts["succeeded"] += 1
-                    success_runs.add(run_id)
+                    expected_runs.add(run_id)
                 elif entry.status == STATUS_ILL_POSED:
                     counts["ill_posed"] += 1
                 elif entry.status == STATUS_FAILED:
                     counts["failed"] += 1
             else:
                 counts["missing"] += 1
-        success_runs_by_slug[q_slug] = success_runs
+                expected_runs.add(run_id)
+        expected_runs_by_slug[q_slug] = expected_runs
     expected = len(run_ids) * len(benchmark_specs)
-    return counts, expected, success_runs_by_slug
+    return counts, expected, expected_runs_by_slug
 
 
 def _count_answer_stats(
@@ -189,25 +297,25 @@ def _count_answer_stats(
     answer_specs: Sequence[ModelSpec],
     benchmark_specs: Sequence[ModelSpec],
     run_ids: Sequence[str],
-    success_runs_by_slug: Dict[str, Set[str]],
+    expected_runs_by_slug: Dict[str, Set[str]],
     allow_self_answering: bool,
 ) -> Tuple[Counter, int]:
     counts: Counter = Counter()
     expected = 0
     for q_spec in benchmark_specs:
         q_slug = q_spec.slug
-        success_runs = success_runs_by_slug.get(q_slug, set())
+        expected_runs = expected_runs_by_slug.get(q_slug, set())
         eligible_answers = [
             spec for spec in answer_specs
             if allow_self_answering or spec.slug != q_slug
         ]
-        expected += len(success_runs) * len(eligible_answers)
+        expected += len(expected_runs) * len(eligible_answers)
         for answer_spec in eligible_answers:
             answer_path = answers_dir / q_slug / f"{answer_spec.slug}.json"
             entries = load_answer_entries(answer_path) if answer_path.exists() else []
             entries_by_run = _entries_by_run(entries)
             for run_id in run_ids:
-                if run_id not in success_runs:
+                if run_id not in expected_runs:
                     continue
                 entry = _pick_entry(entries_by_run, run_id)
                 if entry:
@@ -233,6 +341,7 @@ def _expected_critiques_for_question(
     registry,
     limit: Optional[int],
     custom_pairs: Sequence[Tuple[str, str, str]],
+    expected_runs: Set[str],
 ) -> int:
     q_slug = question_model.slug
     question_author_answers = _load_answer_records(
@@ -241,8 +350,7 @@ def _expected_critiques_for_question(
         q_slug,
         benchmark_entries,
     )
-    benchmark_map = _map_by_key(benchmark_entries, _entry_key_for_benchmark)
-    question_author_map = _map_by_key(question_author_answers, _entry_key_for_answer)
+    answer_by_run = _entries_by_run(question_author_answers)
 
     def has_budget(current: int) -> bool:
         return limit is None or current < limit
@@ -266,14 +374,12 @@ def _expected_critiques_for_question(
                 answer_slug,
                 benchmark_entries,
             )
-            answer_map = _map_by_key(answer_records, _entry_key_for_answer)
-            for key, answer_entry in answer_map.items():
+            answer_by_run = _entries_by_run(answer_records)
+            for run_id in expected_runs:
                 if not has_budget(count):
                     return count
-                question_entry = benchmark_map.get(key)
-                if not question_entry or not _final_question(question_entry):
-                    continue
-                if not answer_entry or answer_entry.status == STATUS_FAILED:
+                answer_entry = answer_by_run.get(run_id)
+                if answer_entry and answer_entry.status == STATUS_FAILED:
                     continue
                 count += 1
         return count
@@ -286,13 +392,11 @@ def _expected_critiques_for_question(
             critic_spec = registry.models.get(critic_model)
             if not critic_spec or "critique" not in critic_spec.roles:
                 continue
-            for key, answer_entry in question_author_map.items():
+            for run_id in expected_runs:
                 if not has_budget(count):
                     return count
-                if not answer_entry or answer_entry.status == STATUS_FAILED:
-                    continue
-                question_entry = benchmark_map.get(key)
-                if not question_entry or not _final_question(question_entry):
+                answer_entry = answer_by_run.get(run_id)
+                if answer_entry and answer_entry.status == STATUS_FAILED:
                     continue
                 count += 1
         return count
@@ -312,19 +416,14 @@ def _expected_critiques_for_question(
         if answer_spec.name == question_model.name and not answer_records:
             answer_records = question_author_answers
 
-        answer_map = _map_by_key(answer_records, _entry_key_for_answer)
-        for key, answer_entry in answer_map.items():
+        answer_by_run = _entries_by_run(answer_records)
+        for run_id in expected_runs:
             if not has_budget(count):
                 return count
-            question_author_entry = question_author_map.get(key)
-            if not question_author_entry or not answer_entry:
-                continue
             if mode == "evaluator" and answer_spec.name == question_model.name:
                 continue
-            if answer_entry.status == STATUS_FAILED:
-                continue
-            question_entry = benchmark_map.get(key)
-            if not question_entry or not _final_question(question_entry):
+            answer_entry = answer_by_run.get(run_id)
+            if answer_entry and answer_entry.status == STATUS_FAILED:
                 continue
             count += 1
 
@@ -342,6 +441,7 @@ def _count_critique_stats(
     registry,
     limit: Optional[int],
     custom_pairs: Sequence[Tuple[str, str, str]],
+    expected_runs_by_slug: Dict[str, Set[str]],
 ) -> Tuple[Dict[str, Counter], Dict[str, int]]:
     allowed_slugs = {spec.slug for spec in benchmark_specs}
     expected_by_mode: Dict[str, int] = {}
@@ -362,6 +462,7 @@ def _count_critique_stats(
                 registry,
                 limit,
                 custom_pairs,
+                expected_runs_by_slug.get(spec.slug, set()),
             )
         expected_by_mode[mode] = expected
 
@@ -394,6 +495,8 @@ def _count_debate_stats(
     benchmark_dir: Path,
     critique_modes: Sequence[str],
     benchmark_specs: Sequence[ModelSpec],
+    expected_critiques_by_mode: Dict[str, int],
+    assume_missing_critiques: bool,
 ) -> Tuple[Counter, Counter, Dict[str, int], Dict[str, int]]:
     actual_illposed = Counter()
     actual_critique_by_mode: Counter = Counter()
@@ -421,36 +524,54 @@ def _count_debate_stats(
 
     for mode in critique_modes:
         expected = 0
-        mode_dir = critiques_dir / mode
-        if mode_dir.exists():
-            for q_dir in mode_dir.glob("*"):
-                q_slug = q_dir.name
-                if allowed_slugs and q_slug not in allowed_slugs:
-                    continue
-                benchmark_entries = load_benchmark_entries(benchmark_dir / f"{q_slug}.json")
-                for crit_file in q_dir.glob("*.json"):
-                    parts = crit_file.stem.split("__")
-                    if len(parts) != 2:
+        if assume_missing_critiques:
+            correct_count = 0
+            mode_dir = critiques_dir / mode
+            if mode_dir.exists():
+                for q_dir in mode_dir.glob("*"):
+                    q_slug = q_dir.name
+                    if allowed_slugs and q_slug not in allowed_slugs:
                         continue
-                    _critic_slug, answer_slug = parts
-                    answers = _load_answer_records(
-                        answers_dir,
-                        q_slug,
-                        answer_slug,
-                        benchmark_entries,
-                    )
-                    critiques = load_critique_entries(crit_file)
-                    answer_map = _map_by_key(answers, _entry_key_for_answer)
-                    for crit_entry in critiques:
-                        if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
+                    for crit_file in q_dir.glob("*.json"):
+                        critiques = load_critique_entries(crit_file)
+                        for crit_entry in critiques:
+                            if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
+                                continue
+                            verdict = _final_critique_verdict(crit_entry)
+                            if verdict == CRITIQUE_VERDICT_CORRECT:
+                                correct_count += 1
+            expected = max(0, expected_critiques_by_mode.get(mode, 0) - correct_count)
+        else:
+            mode_dir = critiques_dir / mode
+            if mode_dir.exists():
+                for q_dir in mode_dir.glob("*"):
+                    q_slug = q_dir.name
+                    if allowed_slugs and q_slug not in allowed_slugs:
+                        continue
+                    benchmark_entries = load_benchmark_entries(benchmark_dir / f"{q_slug}.json")
+                    for crit_file in q_dir.glob("*.json"):
+                        parts = crit_file.stem.split("__")
+                        if len(parts) != 2:
                             continue
-                        verdict = _final_critique_verdict(crit_entry)
-                        if verdict in {None, CRITIQUE_VERDICT_UNKNOWN, CRITIQUE_VERDICT_CORRECT}:
-                            continue
-                        key = _entry_key_for_critique(crit_entry)
-                        if not key or key not in answer_map:
-                            continue
-                        expected += 1
+                        _critic_slug, answer_slug = parts
+                        answers = _load_answer_records(
+                            answers_dir,
+                            q_slug,
+                            answer_slug,
+                            benchmark_entries,
+                        )
+                        critiques = load_critique_entries(crit_file)
+                        answer_map = _map_by_key(answers, _entry_key_for_answer)
+                        for crit_entry in critiques:
+                            if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
+                                continue
+                            verdict = _final_critique_verdict(crit_entry)
+                            if verdict in {None, CRITIQUE_VERDICT_UNKNOWN, CRITIQUE_VERDICT_CORRECT}:
+                                continue
+                            key = _entry_key_for_critique(crit_entry)
+                            if not key or key not in answer_map:
+                                continue
+                            expected += 1
         expected_critique_by_mode[mode] = expected
 
         debate_mode_dir = debates_dir / "critiques" / mode
@@ -610,6 +731,11 @@ def main() -> int:
     parser.add_argument("--allow-self-answering", action="store_true")
     parser.add_argument("--allow-no-debate", action="store_true")
     parser.add_argument("--force-correct-critiques", action="store_true")
+    parser.add_argument(
+        "--no-assume-missing",
+        action="store_true",
+        help="Do not assume missing critiques/debates/evaluations will eventually be generated.",
+    )
     parser.add_argument("--benchmark-models", nargs="*")
     parser.add_argument("--answer-models", nargs="*")
     parser.add_argument("--critique-models", nargs="*")
@@ -628,7 +754,7 @@ def main() -> int:
 
     custom_pairs = _parse_custom_map(args.custom_map)
 
-    question_counts, question_expected, success_runs_by_slug = _count_question_stats(
+    question_counts, question_expected, expected_runs_by_slug = _count_question_stats(
         args.benchmark_dir,
         benchmark_specs,
         run_ids,
@@ -638,7 +764,7 @@ def main() -> int:
         answer_specs,
         benchmark_specs,
         run_ids,
-        success_runs_by_slug,
+        expected_runs_by_slug,
         args.allow_self_answering,
     )
     critique_counts_by_mode, critique_expected_by_mode = _count_critique_stats(
@@ -652,7 +778,10 @@ def main() -> int:
         registry,
         args.limit,
         custom_pairs,
+        expected_runs_by_slug,
     )
+    assume_missing = not args.no_assume_missing
+
     actual_illposed, actual_critique_by_mode, expected_illposed, expected_critique_by_mode = _count_debate_stats(
         args.debates_dir,
         args.critiques_dir,
@@ -660,6 +789,8 @@ def main() -> int:
         args.benchmark_dir,
         args.critique_modes,
         benchmark_specs,
+        critique_expected_by_mode,
+        assume_missing,
     )
     judging_tasks = _collect_judging_tasks(
         args.debates_dir,
@@ -671,11 +802,31 @@ def main() -> int:
         args.allow_no_debate,
         args.force_correct_critiques,
     )
-    eval_actual, eval_expected = _count_automated_evaluations(
+    eval_actual, eval_expected_actual = _count_automated_evaluations(
         args.automated_dir,
         judging_tasks,
         judge_specs,
     )
+    if assume_missing:
+        illposed_expected_by_pair = _expected_illposed_by_pair(args.answers_dir, {spec.slug for spec in benchmark_specs})
+        critique_expected_by_pair = _expected_critique_debates_by_pair(
+            args.critiques_dir,
+            args.answers_dir,
+            args.benchmark_dir,
+            args.critique_modes,
+            {spec.slug for spec in benchmark_specs},
+            expected_runs_by_slug,
+            assume_missing,
+        )
+        eval_expected, expected_task_count = _expected_eval_count(
+            registry,
+            judge_specs,
+            illposed_expected_by_pair,
+            critique_expected_by_pair,
+        )
+    else:
+        eval_expected = eval_expected_actual
+        expected_task_count = len(judging_tasks)
 
     print("Pipeline coverage:")
     print(f"- Runs: {len(run_ids)}")
@@ -724,7 +875,10 @@ def main() -> int:
 
     print("\nAutomated evaluations:")
     print(f"- Decisions: {_format_ratio(eval_actual, eval_expected)}")
-    print(f"- Unique tasks: {len(judging_tasks)}")
+    if assume_missing and expected_task_count != len(judging_tasks):
+        print(f"- Tasks: expected={expected_task_count} actual={len(judging_tasks)}")
+    else:
+        print(f"- Tasks: {len(judging_tasks)}")
     return 0
 
 

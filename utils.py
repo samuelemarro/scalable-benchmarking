@@ -2,13 +2,27 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 
 from model_api import query_llm_single
 from data_models import AnswerAttempt, AnswerEntry, BenchmarkEntry
 
 logger = logging.getLogger(__name__)
+
+EntryKey = Tuple[Optional[str], Optional[str], Optional[str]]
+
+
+def entry_key(run_id: Optional[str], topic_slug: Optional[str], question: Optional[str]) -> Optional[EntryKey]:
+    if run_id is None and topic_slug is None and not question:
+        return None
+    return (str(run_id) if run_id is not None else None, topic_slug, question)
+
+
+def entry_key_from_entry(entry: Any) -> Optional[EntryKey]:
+    if not entry:
+        return None
+    return entry_key(getattr(entry, "run_id", None), getattr(entry, "topic_slug", None), getattr(entry, "question", None))
 
 
 def setup_logging(level: str = "INFO") -> None:
