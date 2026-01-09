@@ -1,4 +1,5 @@
 import argparse
+import hashlib
 import json
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -13,6 +14,16 @@ from data_models import (
     load_human_evaluation_entries,
     save_human_evaluation_entries,
 )
+from utils import entry_key
+
+
+def _task_id(prefix: str, run_id: Optional[str], topic_slug: Optional[str], question: Optional[str]) -> str:
+    if run_id:
+        return f"{prefix}/{run_id}"
+    if topic_slug and question:
+        digest = hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
+        return f"{prefix}/{topic_slug}/{digest}"
+    return f"{prefix}/unknown"
 
 
 def list_illposed(answers_dir: Path, debates_dir: Path) -> List[Dict]:
@@ -24,13 +35,28 @@ def list_illposed(answers_dir: Path, debates_dir: Path) -> List[Dict]:
             records = load_answer_entries(answer_file)
             debate_file = debates_dir / "illposed" / q_slug / f"{a_slug}.json"
             debates = load_debate_entries(debate_file)
+            debate_map: Dict = {}
+            for debate in debates:
+                if not debate:
+                    continue
+                key = entry_key(debate.run_id, debate.topic_slug, debate.question)
+                if key and key not in debate_map:
+                    debate_map[key] = debate
             for idx, rec in enumerate(records):
                 if not rec or rec.status != STATUS_ILL_POSED:
                     continue
-                debate_history = debates[idx] if idx < len(debates) else None
+                key = entry_key(rec.run_id, rec.topic_slug, rec.question)
+                debate_history = debate_map.get(key)
+                prefix = f"illposed/{q_slug}/{a_slug}"
+                item_key = _task_id(
+                    prefix,
+                    rec.run_id or (debate_history.run_id if debate_history else None),
+                    rec.topic_slug or (debate_history.topic_slug if debate_history else None),
+                    rec.question or (debate_history.question if debate_history else None),
+                )
                 items.append(
                     {
-                        "key": f"{q_slug}/{a_slug}/{idx}",
+                        "key": item_key,
                         "question": rec.question,
                         "claim": rec.ill_posed_claim,
                         "debate": debate_history.model_dump(exclude_none=True) if debate_history else {},
@@ -53,15 +79,30 @@ def list_critiques(critiques_dir: Path, debates_dir: Path) -> List[Dict]:
                 critiques = load_critique_entries(crit_file)
                 debate_file = debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                 debates = load_debate_entries(debate_file)
+                debate_map: Dict = {}
+                for debate in debates:
+                    if not debate:
+                        continue
+                    key = entry_key(debate.run_id, debate.topic_slug, debate.question)
+                    if key and key not in debate_map:
+                        debate_map[key] = debate
                 for idx, crit in enumerate(critiques):
                     if not crit or crit.status != STATUS_SUCCEEDED:
                         continue
                     attempts = crit.attempts or []
                     last_attempt = attempts[-1] if attempts else None
-                    debate_history = debates[idx] if idx < len(debates) else None
+                    key = entry_key(crit.run_id, crit.topic_slug, crit.question)
+                    debate_history = debate_map.get(key)
+                    prefix = f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}"
+                    item_key = _task_id(
+                        prefix,
+                        crit.run_id or (debate_history.run_id if debate_history else None),
+                        crit.topic_slug or (debate_history.topic_slug if debate_history else None),
+                        crit.question or (debate_history.question if debate_history else None),
+                    )
                     items.append(
                         {
-                            "key": f"{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}",
+                            "key": item_key,
                             "question": crit.question,
                             "critique": last_attempt.raw_critique if last_attempt else None,
                             "verdict": last_attempt.verdict if last_attempt else None,

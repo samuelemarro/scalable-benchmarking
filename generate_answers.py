@@ -26,7 +26,7 @@ from data_models import (
     load_benchmark_entries,
     save_answer_entries,
 )
-from utils import clean_math, setup_logging
+from utils import clean_math, entry_key, setup_logging
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +69,16 @@ def prepare_batch(
 ) -> List[Tuple[int, Dict, str]]:
     if question_model == answer_model and not allow_self_answering:
         return []
+    existing_by_key: Dict = {}
+    for rec in existing:
+        if not rec:
+            continue
+        key = entry_key(rec.run_id, rec.topic_slug, rec.question)
+        if not key:
+            continue
+        prior = existing_by_key.get(key)
+        if not prior or (prior.status != STATUS_SUCCEEDED and rec.status == STATUS_SUCCEEDED):
+            existing_by_key[key] = rec
     batch = []
     for idx, entry in enumerate(benchmark_entries):
         if limit is not None and len(batch) >= limit:
@@ -80,12 +90,12 @@ def prepare_batch(
         question_text = final_question(entry)
         if not question_text:
             continue
-        if idx < len(existing):
-            prior = existing[idx]
-            if prior and prior.status == STATUS_SUCCEEDED:
-                continue
-            if prior and prior.status in {STATUS_FAILED, STATUS_ILL_POSED} and not rerun_failures:
-                continue
+        key = entry_key(entry.run_id, entry.topic_slug, question_text)
+        prior = existing_by_key.get(key) if key else None
+        if prior and prior.status == STATUS_SUCCEEDED:
+            continue
+        if prior and prior.status in {STATUS_FAILED, STATUS_ILL_POSED} and not rerun_failures:
+            continue
         batch.append((idx, entry, question_text))
     return batch
 
@@ -235,11 +245,19 @@ def main():
                         overrides,
                     )
                     existing_records = load_answer_entries(out)
-                    # Ensure list length
-                    if len(existing_records) < len(b_entries):
-                        existing_records.extend([None for _ in range(len(b_entries) - len(existing_records))])
+                    index_by_key: Dict = {}
+                    for rec_idx, rec in enumerate(existing_records):
+                        if not rec:
+                            continue
+                        key = entry_key(rec.run_id, rec.topic_slug, rec.question)
+                        if key and key not in index_by_key:
+                            index_by_key[key] = rec_idx
                     for idx, record in outputs:
-                        existing_records[idx] = record
+                        key = entry_key(record.run_id, record.topic_slug, record.question)
+                        if key and key in index_by_key:
+                            existing_records[index_by_key[key]] = record
+                        else:
+                            existing_records.append(record)
                     save_answer_entries(out, existing_records)
                     return qm, am.name, len(outputs)
 

@@ -1,4 +1,5 @@
 import argparse
+import hashlib
 import logging
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -16,7 +17,7 @@ from prompt_library import (
     load_judgment_critique_guidance,
     load_question_guidance,
 )
-from utils import safe_load_json, setup_logging, benchmark_answers_from_entries
+from utils import benchmark_answers_from_entries, entry_key, safe_load_json, setup_logging
 from constants import (
     CRITIQUE_VERDICT_CORRECT,
     CRITIQUE_VERDICT_UNKNOWN,
@@ -54,6 +55,51 @@ def load_decisions(path: Path) -> Dict[str, AutomatedEvaluation]:
 
 def save_decisions(path: Path, decisions: Dict[str, AutomatedEvaluation]):
     save_evaluation_entries(path, EvaluationFile(decisions=list(decisions.values())))
+
+
+def build_entry_map(entries):
+    mapped = {}
+    for entry in entries:
+        if not entry:
+            continue
+        key = entry_key(entry.run_id, entry.topic_slug, entry.question)
+        if not key or key in mapped:
+            continue
+        mapped[key] = entry
+    return mapped
+
+
+def task_key(task: JudgingTask):
+    return (
+        task.type,
+        task.mode,
+        task.question_model,
+        task.answer_model,
+        task.critic_model,
+        task.run_id,
+        task.topic_slug,
+    )
+
+
+def decision_key(decision: AutomatedEvaluation):
+    return (
+        decision.type,
+        decision.mode,
+        decision.question_model,
+        decision.answer_model,
+        decision.critic_model,
+        decision.run_id,
+        decision.topic_slug,
+    )
+
+
+def task_id(prefix: str, run_id: Optional[str], topic_slug: Optional[str], question: Optional[str]) -> str:
+    if run_id:
+        return f"{prefix}/{run_id}"
+    if topic_slug and question:
+        digest = hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
+        return f"{prefix}/{topic_slug}/{digest}"
+    return f"{prefix}/unknown"
 
 
 def final_answer(entry: AnswerEntry) -> Optional[str]:
@@ -146,17 +192,20 @@ def gather_illposed_tasks(
             q_slug,
             fallback_answers,
         )
-        max_len = max(len(debates), len(answers))
-        for idx in range(max_len):
-            debate = debates[idx] if idx < len(debates) else None
-            answer_record = answers[idx] if idx < len(answers) else None
+        debate_map = build_entry_map(debates)
+        answer_map = build_entry_map(answers)
+        fallback_map = build_entry_map(fallback_answers)
+        keys = set(debate_map) | set(answer_map) | set(fallback_map)
+        for key in keys:
+            debate = debate_map.get(key)
+            answer_record = answer_map.get(key)
             status = answer_record.status if answer_record else None
             if status and status != STATUS_ILL_POSED:
                 continue
             question = (debate.question if debate else "") or (answer_record.question if answer_record else "")
             answer_text = final_answer(answer_record) if answer_record else ""
             if not answer_text:
-                fallback_record = fallback_answers[idx] if idx < len(fallback_answers) else None
+                fallback_record = fallback_map.get(key)
                 answer_text = final_answer(fallback_record) if fallback_record else ""
                 if not question and fallback_record:
                     question = fallback_record.question
@@ -164,13 +213,19 @@ def gather_illposed_tasks(
             if not question and not answer_text and not history:
                 continue
             if not history and not allow_no_debate:
-                logger.warning(f"Skipping illposed/{q_slug}/{a_slug}/{idx}: no debate history (use --allow-no-debate to override)")
+                run_id = key[0] if key else None
+                logger.warning(
+                    f"Skipping illposed/{q_slug}/{a_slug}/{run_id}: no debate history (use --allow-no-debate to override)"
+                )
                 continue
             alice_model = registry.resolve_model_name((debate.alice_model if debate else None) or a_slug)
             bob_model = registry.resolve_model_name((debate.bob_model if debate else None) or q_slug)
+            run_id = (debate.run_id if debate else None) or (answer_record.run_id if answer_record else None)
+            topic_slug = (debate.topic_slug if debate else None) or (answer_record.topic_slug if answer_record else None)
+            prefix = f"illposed/{q_slug}/{a_slug}"
             tasks.append(
                 JudgingTask(
-                    id=f"illposed/{q_slug}/{a_slug}/{idx}",
+                    id=task_id(prefix, run_id, topic_slug, question),
                     type="illposed",
                     question=question,
                     answer=answer_text,
@@ -179,8 +234,8 @@ def gather_illposed_tasks(
                     answer_model=a_slug,
                     alice_model=alice_model,
                     bob_model=bob_model,
-                    run_id=(debate.run_id if debate else None) or (answer_record.run_id if answer_record else None),
-                    topic_slug=(debate.topic_slug if debate else None) or (answer_record.topic_slug if answer_record else None),
+                    run_id=run_id,
+                    topic_slug=topic_slug,
                 )
             )
     return tasks
@@ -235,38 +290,51 @@ def gather_critique_tasks(
                 debates = load_debate_entries(
                     debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                 )
-                for idx, crit_entry in enumerate(critiques):
+                critique_map = build_entry_map(critiques)
+                answer_map = build_entry_map(answers)
+                debate_map = build_entry_map(debates)
+                fallback_map = build_entry_map(fallback_answers)
+                for key, crit_entry in critique_map.items():
                     if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
                         continue
                     attempts = crit_entry.attempts or []
                     last_attempt = attempts[-1] if attempts else None
                     if not last_attempt or last_attempt.verdict in {None, CRITIQUE_VERDICT_UNKNOWN}:
-                        logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: no valid final verdict")
+                        run_id = key[0] if key else None
+                        logger.warning(
+                            f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{run_id}: no valid final verdict"
+                        )
                         continue
                     if last_attempt and last_attempt.verdict == CRITIQUE_VERDICT_CORRECT and not include_correct:
                         continue
-                    debate = debates[idx] if idx < len(debates) else None
+                    debate = debate_map.get(key)
                     question = (debate.question if debate else "") or crit_entry.question
-                    answer_record = answers[idx] if idx < len(answers) else None
+                    answer_record = answer_map.get(key)
                     answer_text = final_answer(answer_record) if answer_record else ""
                     if not answer_text:
-                        fallback_record = fallback_answers[idx] if idx < len(fallback_answers) else None
+                        fallback_record = fallback_map.get(key)
                         answer_text = final_answer(fallback_record) if fallback_record else ""
                         if not question and fallback_record:
                             question = fallback_record.question
-                    context = f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}"
+                    context = f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{key[0] if key else 'unknown'}"
                     critique_text = last_critique_text(crit_entry, context)
                     history = debate.history if debate else []
                     if not question and not critique_text and not history:
                         continue
                     if not history and not allow_no_debate:
-                        logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: no debate history (use --allow-no-debate to override)")
+                        run_id = key[0] if key else None
+                        logger.warning(
+                            f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{run_id}: no debate history (use --allow-no-debate to override)"
+                        )
                         continue
                     alice_model = registry.resolve_model_name((debate.alice_model if debate else None) or critic_slug)
                     bob_model = registry.resolve_model_name((debate.bob_model if debate else None) or answer_slug)
+                    run_id = (debate.run_id if debate else None) or crit_entry.run_id
+                    topic_slug = (debate.topic_slug if debate else None) or crit_entry.topic_slug
+                    prefix = f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}"
                     tasks.append(
                         JudgingTask(
-                            id=f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}",
+                            id=task_id(prefix, run_id, topic_slug, question),
                             type="critique",
                             mode=mode,
                             question=question,
@@ -278,8 +346,8 @@ def gather_critique_tasks(
                             critic_model=critic_slug,
                             alice_model=alice_model,
                             bob_model=bob_model,
-                            run_id=(debate.run_id if debate else None) or crit_entry.run_id,
-                            topic_slug=(debate.topic_slug if debate else None) or crit_entry.topic_slug,
+                            run_id=run_id,
+                            topic_slug=topic_slug,
                         )
                     )
     return tasks
@@ -560,9 +628,11 @@ def main():
     def process_judge(spec: ModelSpec, tasks_for_judge: List[JudgingTask]) -> int:
         out_path = args.output_dir / f"{spec.slug}.json"
         decisions = load_decisions(out_path)
+        decisions_by_key = {decision_key(decision): decision for decision in decisions.values() if decision_key(decision)}
         pending = []
         for task in tasks_for_judge:
-            if not args.overwrite and task.id in decisions:
+            key = task_key(task)
+            if not args.overwrite and (task.id in decisions or (key and key in decisions_by_key)):
                 continue
             pending.append(task)
             if args.limit is not None and len(pending) >= args.limit:
@@ -592,6 +662,9 @@ def main():
             for task, response in zip(batch, responses):
                 decision = parse_judgment(response, task, spec.slug)
                 decisions[task.id] = decision
+                key = task_key(task)
+                if key:
+                    decisions_by_key[key] = decision
             processed += len(batch)
             logger.info(f"{spec.pretty}: processed {len(batch)} evaluations")
         if processed:

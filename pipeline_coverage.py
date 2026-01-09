@@ -1,4 +1,5 @@
 import argparse
+import hashlib
 import json
 from collections import Counter
 from pathlib import Path
@@ -22,7 +23,7 @@ from data_models import (
     load_evaluation_entries,
 )
 from model_config import ModelSpec, _slugify, load_registry
-from utils import benchmark_answers_from_entries
+from utils import benchmark_answers_from_entries, entry_key
 
 
 def _load_runs(path: Path, limit: Optional[int]) -> List[str]:
@@ -53,13 +54,48 @@ def _entries_by_run(entries: Sequence[Optional[Union[BenchmarkEntry, AnswerEntry
     return mapping
 
 
-def _pick_entry(entries: Sequence[Optional[Union[BenchmarkEntry, AnswerEntry]]], entries_by_run: Dict[str, object], run_idx: int, run_id: str):
-    entry = entries_by_run.get(run_id)
-    if entry is not None:
-        return entry
-    if run_idx < len(entries):
-        return entries[run_idx]
-    return None
+def _pick_entry(entries_by_run: Dict[str, object], run_id: str):
+    return entries_by_run.get(run_id)
+
+
+def _entry_key_for_benchmark(entry: Optional[BenchmarkEntry]):
+    if not entry:
+        return None
+    question = _final_question(entry)
+    return entry_key(entry.run_id, entry.topic_slug, question)
+
+
+def _entry_key_for_answer(entry: Optional[AnswerEntry]):
+    if not entry:
+        return None
+    return entry_key(entry.run_id, entry.topic_slug, entry.question)
+
+
+def _entry_key_for_critique(entry: Optional[CritiqueEntry]):
+    if not entry:
+        return None
+    return entry_key(entry.run_id, entry.topic_slug, entry.question)
+
+
+def _map_by_key(entries: Sequence[Optional[object]], key_fn) -> Dict[Tuple[Optional[str], Optional[str], Optional[str]], object]:
+    mapping: Dict[Tuple[Optional[str], Optional[str], Optional[str]], object] = {}
+    for entry in entries:
+        if not entry:
+            continue
+        key = key_fn(entry)
+        if not key or key in mapping:
+            continue
+        mapping[key] = entry
+    return mapping
+
+
+def _task_id(prefix: str, run_id: Optional[str], topic_slug: Optional[str], question: Optional[str]) -> str:
+    if run_id:
+        return f"{prefix}/{run_id}"
+    if topic_slug and question:
+        digest = hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
+        return f"{prefix}/{topic_slug}/{digest}"
+    return f"{prefix}/unknown"
 
 
 def _format_ratio(numerator: int, denominator: int) -> str:
@@ -130,8 +166,8 @@ def _count_question_stats(
         entries = load_benchmark_entries(benchmark_dir / f"{q_slug}.json")
         entries_by_run = _entries_by_run(entries)
         success_runs: Set[str] = set()
-        for run_idx, run_id in enumerate(run_ids):
-            entry = _pick_entry(entries, entries_by_run, run_idx, run_id)
+        for run_id in run_ids:
+            entry = _pick_entry(entries_by_run, run_id)
             if entry:
                 counts["generated"] += 1
                 if entry.status == STATUS_SUCCEEDED:
@@ -170,10 +206,10 @@ def _count_answer_stats(
             answer_path = answers_dir / q_slug / f"{answer_spec.slug}.json"
             entries = load_answer_entries(answer_path) if answer_path.exists() else []
             entries_by_run = _entries_by_run(entries)
-            for run_idx, run_id in enumerate(run_ids):
+            for run_id in run_ids:
                 if run_id not in success_runs:
                     continue
-                entry = _pick_entry(entries, entries_by_run, run_idx, run_id)
+                entry = _pick_entry(entries_by_run, run_id)
                 if entry:
                     counts["generated"] += 1
                     if entry.status == STATUS_SUCCEEDED:
@@ -205,6 +241,8 @@ def _expected_critiques_for_question(
         q_slug,
         benchmark_entries,
     )
+    benchmark_map = _map_by_key(benchmark_entries, _entry_key_for_benchmark)
+    question_author_map = _map_by_key(question_author_answers, _entry_key_for_answer)
 
     def has_budget(current: int) -> bool:
         return limit is None or current < limit
@@ -228,10 +266,11 @@ def _expected_critiques_for_question(
                 answer_slug,
                 benchmark_entries,
             )
-            for idx, answer_entry in enumerate(answer_records):
+            answer_map = _map_by_key(answer_records, _entry_key_for_answer)
+            for key, answer_entry in answer_map.items():
                 if not has_budget(count):
                     return count
-                question_entry = benchmark_entries[idx] if idx < len(benchmark_entries) else None
+                question_entry = benchmark_map.get(key)
                 if not question_entry or not _final_question(question_entry):
                     continue
                 if not answer_entry or answer_entry.status == STATUS_FAILED:
@@ -247,12 +286,12 @@ def _expected_critiques_for_question(
             critic_spec = registry.models.get(critic_model)
             if not critic_spec or "critique" not in critic_spec.roles:
                 continue
-            for idx, answer_entry in enumerate(question_author_answers):
+            for key, answer_entry in question_author_map.items():
                 if not has_budget(count):
                     return count
                 if not answer_entry or answer_entry.status == STATUS_FAILED:
                     continue
-                question_entry = benchmark_entries[idx] if idx < len(benchmark_entries) else None
+                question_entry = benchmark_map.get(key)
                 if not question_entry or not _final_question(question_entry):
                     continue
                 count += 1
@@ -273,17 +312,18 @@ def _expected_critiques_for_question(
         if answer_spec.name == question_model.name and not answer_records:
             answer_records = question_author_answers
 
-        for idx, answer_entry in enumerate(answer_records):
+        answer_map = _map_by_key(answer_records, _entry_key_for_answer)
+        for key, answer_entry in answer_map.items():
             if not has_budget(count):
                 return count
-            question_author_entry = question_author_answers[idx] if idx < len(question_author_answers) else None
+            question_author_entry = question_author_map.get(key)
             if not question_author_entry or not answer_entry:
                 continue
             if mode == "evaluator" and answer_spec.name == question_model.name:
                 continue
             if answer_entry.status == STATUS_FAILED:
                 continue
-            question_entry = benchmark_entries[idx] if idx < len(benchmark_entries) else None
+            question_entry = benchmark_map.get(key)
             if not question_entry or not _final_question(question_entry):
                 continue
             count += 1
@@ -367,9 +407,13 @@ def _count_debate_stats(
             continue
         for answer_file in q_dir.glob("*.json"):
             entries = load_answer_entries(answer_file)
-            expected_illposed["expected"] += sum(
-                1 for entry in entries if entry and entry.status == STATUS_ILL_POSED
-            )
+            seen_keys: Set[Tuple[Optional[str], Optional[str], Optional[str]]] = set()
+            for entry in entries:
+                if entry and entry.status == STATUS_ILL_POSED:
+                    key = _entry_key_for_answer(entry)
+                    if key:
+                        seen_keys.add(key)
+            expected_illposed["expected"] += len(seen_keys)
 
     for debate_file in (debates_dir / "illposed").glob("*/*.json"):
         entries = load_debate_entries(debate_file)
@@ -396,13 +440,15 @@ def _count_debate_stats(
                         benchmark_entries,
                     )
                     critiques = load_critique_entries(crit_file)
-                    for idx, crit_entry in enumerate(critiques):
+                    answer_map = _map_by_key(answers, _entry_key_for_answer)
+                    for crit_entry in critiques:
                         if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
                             continue
                         verdict = _final_critique_verdict(crit_entry)
                         if verdict in {None, CRITIQUE_VERDICT_UNKNOWN, CRITIQUE_VERDICT_CORRECT}:
                             continue
-                        if idx >= len(answers) or not answers[idx]:
+                        key = _entry_key_for_critique(crit_entry)
+                        if not key or key not in answer_map:
                             continue
                         expected += 1
         expected_critique_by_mode[mode] = expected
@@ -442,10 +488,12 @@ def _collect_judging_tasks(
             benchmark_entries,
         )
         debates = load_debate_entries(debate_file)
-        max_len = max(len(debates), len(answers))
-        for idx in range(max_len):
-            debate = debates[idx] if idx < len(debates) else None
-            answer_entry = answers[idx] if idx < len(answers) else None
+        debate_map = _map_by_key(debates, _entry_key_for_answer)
+        answer_map = _map_by_key(answers, _entry_key_for_answer)
+        keys = set(debate_map) | set(answer_map)
+        for key in keys:
+            debate = debate_map.get(key)
+            answer_entry = answer_map.get(key)
             status = answer_entry.status if answer_entry else None
             if status and status != STATUS_ILL_POSED:
                 continue
@@ -456,7 +504,11 @@ def _collect_judging_tasks(
                 continue
             alice_model = registry.resolve_model_name((debate.alice_model if debate else None) or a_slug)
             bob_model = registry.resolve_model_name((debate.bob_model if debate else None) or q_slug)
-            task_id = f"illposed/{q_slug}/{a_slug}/{idx}"
+            question = (debate.question if debate else None) or (answer_entry.question if answer_entry else None)
+            run_id = (debate.run_id if debate else None) or (answer_entry.run_id if answer_entry else None)
+            topic_slug = (debate.topic_slug if debate else None) or (answer_entry.topic_slug if answer_entry else None)
+            prefix = f"illposed/{q_slug}/{a_slug}"
+            task_id = _task_id(prefix, run_id, topic_slug, question)
             tasks[task_id] = (alice_model, bob_model)
 
     for mode in critique_modes:
@@ -473,7 +525,8 @@ def _collect_judging_tasks(
                 critiques = load_critique_entries(crit_file)
                 debate_file = debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                 debates = load_debate_entries(debate_file)
-                for idx, crit_entry in enumerate(critiques):
+                debate_map = _map_by_key(debates, _entry_key_for_critique)
+                for crit_entry in critiques:
                     if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
                         continue
                     verdict = _final_critique_verdict(crit_entry)
@@ -481,7 +534,8 @@ def _collect_judging_tasks(
                         continue
                     if verdict == CRITIQUE_VERDICT_CORRECT and not force_correct_critiques:
                         continue
-                    debate = debates[idx] if idx < len(debates) else None
+                    key = _entry_key_for_critique(crit_entry)
+                    debate = debate_map.get(key)
                     history = debate.history if debate else []
                     if not history and not allow_no_debate:
                         continue
@@ -489,7 +543,11 @@ def _collect_judging_tasks(
                         continue
                     alice_model = registry.resolve_model_name((debate.alice_model if debate else None) or critic_slug)
                     bob_model = registry.resolve_model_name((debate.bob_model if debate else None) or answer_slug)
-                    task_id = f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}"
+                    question = (debate.question if debate else None) or crit_entry.question
+                    run_id = (debate.run_id if debate else None) or crit_entry.run_id
+                    topic_slug = (debate.topic_slug if debate else None) or crit_entry.topic_slug
+                    prefix = f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}"
+                    task_id = _task_id(prefix, run_id, topic_slug, question)
                     tasks[task_id] = (alice_model, bob_model)
 
     return tasks
@@ -502,8 +560,10 @@ def _count_automated_evaluations(
 ) -> Tuple[int, int]:
     judge_names = [spec.name for spec in judge_specs]
     expected = 0
-    for alice_model, bob_model in tasks.values():
+    participants_by_task = {}
+    for task_id, (alice_model, bob_model) in tasks.items():
         participants = {alice_model, bob_model}
+        participants_by_task[task_id] = participants
         expected += sum(1 for judge in judge_names if judge not in participants)
 
     actual = 0
@@ -511,8 +571,12 @@ def _count_automated_evaluations(
     for eval_file in automated_dir.glob("*.json"):
         payload = load_evaluation_entries(eval_file)
         for decision in payload.decisions:
-            if decision.id in task_ids:
-                actual += 1
+            if decision.id not in task_ids:
+                continue
+            participants = participants_by_task.get(decision.id, set())
+            if decision.judge_model and decision.judge_model in participants:
+                continue
+            actual += 1
     return actual, expected
 
 

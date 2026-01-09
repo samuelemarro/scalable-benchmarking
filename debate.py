@@ -1,7 +1,7 @@
 import argparse
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 from dotenv import load_dotenv
 from tqdm import tqdm
@@ -33,6 +33,27 @@ from data_models import (
 logger = logging.getLogger(__name__)
 
 load_dotenv()
+
+
+def debate_key(
+    run_id: Optional[str],
+    topic_slug: Optional[str],
+    question: Optional[str],
+) -> Optional[Tuple[Optional[str], Optional[str], Optional[str]]]:
+    if run_id is None and topic_slug is None and not question:
+        return None
+    return (str(run_id) if run_id is not None else None, topic_slug, question)
+
+
+def collect_debate_keys(entries: List[Optional[DebateEntry]]) -> Set[Tuple[Optional[str], Optional[str], Optional[str]]]:
+    keys: Set[Tuple[Optional[str], Optional[str], Optional[str]]] = set()
+    for entry in entries:
+        if not entry:
+            continue
+        key = debate_key(entry.run_id, entry.topic_slug, entry.question)
+        if key:
+            keys.add(key)
+    return keys
 
 
 def final_answer(entry: AnswerEntry) -> Optional[str]:
@@ -284,7 +305,11 @@ def main():
                         continue
                     debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
                     existing = load_debate_entries(debate_path)
+                    existing_keys = collect_debate_keys(existing)
                     if len(existing) > idx and existing[idx]:
+                        continue
+                    key = debate_key(rec.run_id, rec.topic_slug, rec.question)
+                    if key and key in existing_keys:
                         continue
                     total_tasks += 1
                 if args.limit is not None and total_tasks >= args.limit:
@@ -314,6 +339,7 @@ def main():
                 # Load debate file once per answer_file instead of per record
                 debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
                 existing = load_debate_entries(debate_path)
+                existing_keys = collect_debate_keys(existing)
 
                 for idx, rec in enumerate(records):
                     if args.limit is not None and debates >= args.limit:
@@ -325,6 +351,9 @@ def main():
                     claim_summary = format_illposed_claim(claim, context)
 
                     if len(existing) > idx and existing[idx]:
+                        continue
+                    key = debate_key(rec.run_id, rec.topic_slug, rec.question)
+                    if key and key in existing_keys:
                         continue
 
                     try:
@@ -354,6 +383,8 @@ def main():
                             history=history,
                         )
                         save_debate_entries(debate_path, existing)
+                        if key:
+                            existing_keys.add(key)
                         debates += 1
                         pbar.update(1)
                     except Exception as e:
@@ -409,7 +440,11 @@ def main():
                             continue
                         debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                         existing = load_debate_entries(debate_path)
+                        existing_keys = collect_debate_keys(existing)
                         if len(existing) > idx and existing[idx]:
+                            continue
+                        key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
+                        if key and key in existing_keys:
                             continue
                         total_tasks += 1
                     if args.limit is not None and total_tasks >= args.limit:
@@ -449,6 +484,7 @@ def main():
                     # Load debate file once per critique file instead of per record
                     debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                     existing = load_debate_entries(debate_path)
+                    existing_keys = collect_debate_keys(existing)
 
                     for idx, crit_entry in enumerate(critiques):
                         if args.limit is not None and debates >= args.limit:
@@ -466,6 +502,9 @@ def main():
                         answer_entry = answers[idx]
 
                         if len(existing) > idx and existing[idx]:
+                            continue
+                        key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
+                        if key and key in existing_keys:
                             continue
                         if not answer_entry:
                             continue
@@ -503,6 +542,8 @@ def main():
                                 history=history,
                             )
                             save_debate_entries(debate_path, existing)
+                            if key:
+                                existing_keys.add(key)
                             debates += 1
                             pbar.update(1)
                         except Exception as e:

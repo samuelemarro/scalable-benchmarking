@@ -16,7 +16,7 @@ from prompt_library import (
     load_critique_guidance,
 )
 from self_improvement import self_improve_critiques
-from utils import safe_load_json, clean_math, setup_logging, benchmark_answers_from_entries
+from utils import benchmark_answers_from_entries, clean_math, entry_key, safe_load_json, setup_logging
 from model_api import query_llm_batch, query_llm_single
 from constants import (
     CRITIQUE_VERDICT_UNKNOWN,
@@ -49,7 +49,7 @@ class CritiqueJob:
     run_id: Optional[str]
     topic_slug: Optional[str]
     output_path: Path
-    record_idx: int
+    record_key: Tuple[Optional[str], Optional[str], Optional[str]]
 
 
 def final_question(entry: BenchmarkEntry) -> Optional[str]:
@@ -136,10 +136,18 @@ def _batched_query(model: str, prompts: List[str], disable_batch: bool, temperat
     return query_llm_batch(model, prompts, temperature=temperature, reasoning=reasoning)
 
 
-def pick_answer_record(answer_store: List[Optional[AnswerEntry]], idx: int) -> Optional[AnswerEntry]:
-    if idx >= len(answer_store):
-        return None
-    return answer_store[idx]
+def build_entry_map(entries: List[Optional[AnswerEntry]]) -> Dict[Tuple[Optional[str], Optional[str], Optional[str]], AnswerEntry]:
+    mapped: Dict[Tuple[Optional[str], Optional[str], Optional[str]], AnswerEntry] = {}
+    for entry in entries:
+        if not entry:
+            continue
+        key = entry_key(entry.run_id, entry.topic_slug, entry.question)
+        if not key:
+            continue
+        existing = mapped.get(key)
+        if not existing or (existing.status != STATUS_SUCCEEDED and entry.status == STATUS_SUCCEEDED):
+            mapped[key] = entry
+    return mapped
 
 
 def load_answer_records(
@@ -170,7 +178,7 @@ def prepare_pairs(
     limit: Optional[int],
     benchmark_entries: List[Optional[BenchmarkEntry]],
     critic_names: Optional[Set[str]],
-) -> List[Tuple[int, str, str]]:
+) -> List[Tuple[Tuple[Optional[str], Optional[str], Optional[str]], str, str]]:
     pairs = []
     critic_name_set = set(critic_names or [])
     q_slug = _slugify(question_model)
@@ -180,6 +188,7 @@ def prepare_pairs(
         question_model,
         benchmark_entries,
     )
+    question_author_map = build_entry_map(question_author_answers)
 
     if mode == "contradictor":
         critic_list = sorted(critic_name_set) if critic_name_set else answer_models
@@ -187,12 +196,12 @@ def prepare_pairs(
         for critic_model in critic_list:
             if critic_model == question_model:
                 continue
-            for idx, author_entry in enumerate(question_author_answers):
+            for key, author_entry in question_author_map.items():
                 if limit is not None and len(pairs) >= limit:
                     break
                 if not author_entry:
                     continue
-                pairs.append((idx, critic_model, question_model))
+                pairs.append((key, critic_model, question_model))
         return pairs
 
     if mode == "evaluator" and critic_name_set and question_model not in critic_name_set:
@@ -207,21 +216,21 @@ def prepare_pairs(
         if answer_model == question_model and not answer_records:
             answer_records = question_author_answers
 
-        for idx, _ in enumerate(answer_records):
+        answer_map = build_entry_map(answer_records)
+        for key, target_entry in answer_map.items():
             if limit is not None and len(pairs) >= limit:
                 break
-            question_author_entry = pick_answer_record(question_author_answers, idx)
-            target_entry = pick_answer_record(answer_records, idx)
+            question_author_entry = question_author_map.get(key)
             if not question_author_entry or not target_entry:
                 continue
             if mode == "evaluator":
                 if answer_model == question_model:
                     continue
                 critic = question_model
-                pairs.append((idx, critic, answer_model))
+                pairs.append((key, critic, answer_model))
             elif mode in {"all", "custom"}:
                 critic = answer_model
-                pairs.append((idx, critic, target_entry.answer_model))
+                pairs.append((key, critic, target_entry.answer_model))
     return pairs
 
 
@@ -357,7 +366,7 @@ def main():
         benchmark_entries = load_benchmark_entries(bench_path)
         answer_models = [spec.name for spec in registry.models.values() if "answer" in spec.roles]
 
-        pairs: List[Tuple[int, str, str]] = []
+        pairs: List[Tuple[Tuple[Optional[str], Optional[str], Optional[str]], str, str]] = []
         if args.mode == "custom":
             for question_author, answerer, critic in custom_pairs:
                 if question_author != question_model:
@@ -370,10 +379,11 @@ def main():
                     answerer,
                     benchmark_entries,
                 )
-                for idx, rec in enumerate(answer_records):
+                answer_map = build_entry_map(answer_records)
+                for key, rec in answer_map.items():
                     if args.limit is not None and len(pairs) >= args.limit:
                         break
-                    pairs.append((idx, critic, answerer))
+                    pairs.append((key, critic, answerer))
         else:
             pairs = prepare_pairs(
                 args.mode,
@@ -389,8 +399,18 @@ def main():
             continue
 
         jobs_by_critic: Dict[str, Dict] = {}
+        benchmark_question_map: Dict[Tuple[Optional[str], Optional[str], Optional[str]], str] = {}
+        for entry in benchmark_entries:
+            if not entry:
+                continue
+            question_text = final_question(entry)
+            if not question_text:
+                continue
+            key = entry_key(entry.run_id, entry.topic_slug, question_text)
+            if key and key not in benchmark_question_map:
+                benchmark_question_map[key] = question_text
 
-        for idx, critic_model, answer_author in pairs:
+        for key, critic_model, answer_author in pairs:
             critic_spec = registry.models.get(critic_model)
             if not critic_spec or "critique" not in critic_spec.roles:
                 continue
@@ -402,24 +422,22 @@ def main():
                 answer_author,
                 benchmark_entries,
             )
-            if idx >= len(answer_records):
-                continue
-            answer_entry = answer_records[idx]
+            answer_map = build_entry_map(answer_records)
+            answer_entry = answer_map.get(key)
             if not answer_entry or answer_entry.status == STATUS_FAILED:
-                logger.info(f"Skipping critique for failed answer {question_model}-{answer_author}-{idx}")
+                run_id = key[0] if key else None
+                logger.info(f"Skipping critique for failed answer {question_model}-{answer_author}-{run_id}")
                 continue
-            question_entry = benchmark_entries[idx]
-            if not question_entry:
-                continue
-            question_text = final_question(question_entry)
+            question_text = answer_entry.question or benchmark_question_map.get(key)
             if not question_text:
+                run_id = key[0] if key else None
+                logger.warning(f"Skipping critique for missing question {question_model}-{answer_author}-{run_id}")
                 continue
             output_path = args.output_dir / args.mode / q_slug / f"{critic_slug}__{a_slug}.json"
             existing = load_critique_entries(output_path)
-            if len(existing) <= idx:
-                existing.extend([None for _ in range(idx - len(existing) + 1)])
-
-            if existing[idx] and existing[idx].status == STATUS_SUCCEEDED:
+            existing_map = build_entry_map(existing)
+            prior = existing_map.get(key)
+            if prior and prior.status == STATUS_SUCCEEDED:
                 continue
 
             answer_text = final_answer(answer_entry) or ""
@@ -428,10 +446,10 @@ def main():
                 answer_text=answer_text,
                 answer_author=answer_author,
                 question_author=question_model,
-                run_id=question_entry.run_id,
-                topic_slug=question_entry.topic_slug,
+                run_id=answer_entry.run_id,
+                topic_slug=answer_entry.topic_slug,
                 output_path=output_path,
-                record_idx=idx,
+                record_key=key,
             )
             bucket = jobs_by_critic.setdefault(critic_spec.name, {"spec": critic_spec, "jobs": []})
             bucket["jobs"].append(job)
@@ -452,15 +470,20 @@ def main():
                 )
                 for job, attempts in zip(jobs, attempts_list):
                     records = load_critique_entries(job.output_path)
-                    if len(records) <= job.record_idx:
-                        records.extend([None for _ in range(job.record_idx - len(records) + 1)])
+                    index_by_key: Dict[Tuple[Optional[str], Optional[str], Optional[str]], int] = {}
+                    for rec_idx, rec in enumerate(records):
+                        if not rec:
+                            continue
+                        rec_key = entry_key(rec.run_id, rec.topic_slug, rec.question)
+                        if rec_key and rec_key not in index_by_key:
+                            index_by_key[rec_key] = rec_idx
                     final_verdict = attempts[-1].verdict if attempts else None
                     status = (
                         STATUS_SUCCEEDED
                         if final_verdict and final_verdict != CRITIQUE_VERDICT_UNKNOWN
                         else STATUS_FAILED
                     )
-                    records[job.record_idx] = CritiqueEntry(
+                    record = CritiqueEntry(
                         question=job.question,
                         run_id=job.run_id,
                         topic_slug=job.topic_slug,
@@ -470,8 +493,12 @@ def main():
                         status=status,
                         attempts=attempts,
                     )
+                    if job.record_key and job.record_key in index_by_key:
+                        records[index_by_key[job.record_key]] = record
+                    else:
+                        records.append(record)
                     save_critique_entries(job.output_path, records)
-                    logger.info(f"Critique done by {spec.name} for question #{job.record_idx}")
+                    logger.info(f"Critique done by {spec.name} for run {job.run_id}")
 
             for critic_name, payload in jobs_by_critic.items():
                 spec: ModelSpec = payload["spec"]

@@ -1,4 +1,5 @@
 import argparse
+import hashlib
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -18,6 +19,16 @@ from data_models import (
     load_human_evaluation_entries,
     save_human_evaluation_entries,
 )
+from utils import benchmark_answers_from_entries, entry_key
+
+
+def _task_id(prefix: str, run_id: Optional[str], topic_slug: Optional[str], question: Optional[str]) -> str:
+    if run_id:
+        return f"{prefix}/{run_id}"
+    if topic_slug and question:
+        digest = hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
+        return f"{prefix}/{topic_slug}/{digest}"
+    return f"{prefix}/unknown"
 
 
 def final_answer(entry: AnswerEntry) -> Optional[str]:
@@ -27,19 +38,18 @@ def final_answer(entry: AnswerEntry) -> Optional[str]:
     return attempts[-1].answer
 
 
-def benchmark_answer_for_index(benchmark_dir: Path, q_slug: str, idx: int) -> Optional[str]:
+def benchmark_answer_map(benchmark_dir: Path, q_slug: str) -> Dict:
     bench_path = benchmark_dir / f"{q_slug}.json"
     entries = load_benchmark_entries(bench_path)
-    if idx >= len(entries) or not entries[idx]:
-        return None
-    entry = entries[idx]
-    generations = entry.generation_rounds or []
-    if not generations:
-        return None
-    refinements = generations[-1].refinement_rounds or []
-    if not refinements:
-        return None
-    return refinements[-1].answer
+    answers = benchmark_answers_from_entries(q_slug, entries)
+    mapping: Dict = {}
+    for entry in answers:
+        if not entry:
+            continue
+        key = entry_key(entry.run_id, entry.topic_slug, entry.question)
+        if key and key not in mapping:
+            mapping[key] = final_answer(entry) or ""
+    return mapping
 
 
 def gather_illposed(debates_dir: Path, answers_dir: Path, benchmark_dir: Path, registry) -> List[JudgingTask]:
@@ -51,24 +61,43 @@ def gather_illposed(debates_dir: Path, answers_dir: Path, benchmark_dir: Path, r
         answer_model = registry.display_name_for_slug(a_slug)
         debates = load_debate_entries(debate_file)
         answers = load_answer_entries(answers_dir / q_slug / f"{a_slug}.json")
-        max_len = max(len(debates), len(answers))
-        for idx in range(max_len):
-            debate = debates[idx] if idx < len(debates) else None
+        benchmark_answers = benchmark_answer_map(benchmark_dir, q_slug)
+        debate_map: Dict = {}
+        for debate in debates:
+            if not debate:
+                continue
+            key = entry_key(debate.run_id, debate.topic_slug, debate.question)
+            if key and key not in debate_map:
+                debate_map[key] = debate
+        answer_map: Dict = {}
+        for answer in answers:
+            if not answer:
+                continue
+            key = entry_key(answer.run_id, answer.topic_slug, answer.question)
+            if key and key not in answer_map:
+                answer_map[key] = answer
+        keys = set(debate_map) | set(answer_map) | set(benchmark_answers)
+        for key in keys:
+            debate = debate_map.get(key)
             question = debate.question if debate else ""
-            answer_record = answers[idx] if idx < len(answers) else None
+            answer_record = answer_map.get(key)
             answer_text = final_answer(answer_record) if answer_record else ""
             if not answer_text:
-                answer_text = benchmark_answer_for_index(benchmark_dir, q_slug, idx) or ""
+                answer_text = benchmark_answers.get(key, "")
+            run_id = (debate.run_id if debate else None) or (answer_record.run_id if answer_record else None)
+            topic_slug = (debate.topic_slug if debate else None) or (answer_record.topic_slug if answer_record else None)
+            prefix = f"illposed/{q_slug}/{a_slug}"
+            item_id = _task_id(prefix, run_id, topic_slug, question or (answer_record.question if answer_record else None))
             items.append(
                 JudgingTask(
-                    id=f"illposed/{q_slug}/{a_slug}/{idx}",
+                    id=item_id,
                     type="illposed",
                     question_model=question_model,
                     answer_model=answer_model,
                     critic_model=answer_model,
-                    run_id=debate.run_id if debate else None,
-                    topic_slug=debate.topic_slug if debate else None,
-                    question=question,
+                    run_id=run_id,
+                    topic_slug=topic_slug,
+                    question=question or (answer_record.question if answer_record else ""),
                     answer=answer_text,
                     debate_history=debate.history if debate else [],
                 )
@@ -91,30 +120,50 @@ def gather_critiques(debates_dir: Path, critiques_dir: Path, answers_dir: Path, 
                 critiques = load_critique_entries(crit_file)
                 answers = load_answer_entries(answers_dir / q_slug / f"{answer_slug}.json")
                 debates = load_debate_entries(debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json")
+                benchmark_answers = benchmark_answer_map(benchmark_dir, q_slug)
+                debate_map: Dict = {}
+                for debate in debates:
+                    if not debate:
+                        continue
+                    key = entry_key(debate.run_id, debate.topic_slug, debate.question)
+                    if key and key not in debate_map:
+                        debate_map[key] = debate
+                answer_map: Dict = {}
+                for answer in answers:
+                    if not answer:
+                        continue
+                    key = entry_key(answer.run_id, answer.topic_slug, answer.question)
+                    if key and key not in answer_map:
+                        answer_map[key] = answer
 
-                max_len = len(critiques)
-                for idx in range(max_len):
-                    critique_entry = critiques[idx]
-                    debate = debates[idx] if idx < len(debates) else None
-                    question = (debate.question if debate else "") or (critique_entry.question if critique_entry else "")
-                    answer_record = answers[idx] if idx < len(answers) else None
-                    answer_text = final_answer(answer_record) if answer_record else ""
-                    if not answer_text:
-                        answer_text = benchmark_answer_for_index(benchmark_dir, q_slug, idx) or ""
-                    critique_attempts = critique_entry.attempts if critique_entry else []
+                for critique_entry in critiques:
+                    if not critique_entry:
+                        continue
+                    critique_attempts = critique_entry.attempts or []
                     if critique_attempts and critique_attempts[-1].verdict == CRITIQUE_VERDICT_CORRECT:
                         continue
+                    key = entry_key(critique_entry.run_id, critique_entry.topic_slug, critique_entry.question)
+                    debate = debate_map.get(key)
+                    question = (debate.question if debate else "") or critique_entry.question
+                    answer_record = answer_map.get(key)
+                    answer_text = final_answer(answer_record) if answer_record else ""
+                    if not answer_text:
+                        answer_text = benchmark_answers.get(key, "")
                     critique_text = critique_attempts[-1].raw_critique if critique_attempts else ""
+                    run_id = (debate.run_id if debate else None) or critique_entry.run_id
+                    topic_slug = (debate.topic_slug if debate else None) or critique_entry.topic_slug
+                    prefix = f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}"
+                    item_id = _task_id(prefix, run_id, topic_slug, question)
                     items.append(
                         JudgingTask(
-                            id=f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}",
+                            id=item_id,
                             type="critique",
                             mode=mode,
                             question_model=question_model,
                             answer_model=answer_model,
                             critic_model=critic_model,
-                            run_id=(debate.run_id if debate else None) or (critique_entry.run_id if critique_entry else None),
-                            topic_slug=(debate.topic_slug if debate else None) or (critique_entry.topic_slug if critique_entry else None),
+                            run_id=run_id,
+                            topic_slug=topic_slug,
                             question=question,
                             answer=answer_text,
                             critique=critique_text,

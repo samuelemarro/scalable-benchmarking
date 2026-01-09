@@ -1,5 +1,6 @@
 from collections import Counter, defaultdict
 from pathlib import Path
+import hashlib
 import logging
 
 from typing import Dict, List, Optional, Tuple
@@ -32,6 +33,15 @@ def count_human_labels(evaluations_dir: Path):
     return label_counts
 
 
+def _task_id(prefix: str, run_id: Optional[str], topic_slug: Optional[str], question: Optional[str]) -> str:
+    if run_id:
+        return f"{prefix}/{run_id}"
+    if topic_slug and question:
+        digest = hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
+        return f"{prefix}/{topic_slug}/{digest}"
+    return f"{prefix}/unknown"
+
+
 def count_items(path: Path, kind: str):
     counts = 0
     if kind == "questions":
@@ -59,14 +69,20 @@ def collect_claim_ids(critiques_dir: Path, debates_dir: Path):
             for crit_file in q_dir.glob("*.json"):
                 q_slug = q_dir.name
                 crit_ids = load_critique_entries(crit_file)
-                for idx, _ in enumerate(crit_ids):
-                    claim_ids.add(f"critique/{mode_dir.name}/{q_slug}/{crit_file.stem}/{idx}")
+                for entry in crit_ids:
+                    if not entry:
+                        continue
+                    prefix = f"critique/{mode_dir.name}/{q_slug}/{crit_file.stem}"
+                    claim_ids.add(_task_id(prefix, entry.run_id, entry.topic_slug, entry.question))
     for debate_file in (debates_dir / "illposed").glob("*/*.json"):
         q_slug = debate_file.parent.name
         a_slug = debate_file.stem
         debates = load_debate_entries(debate_file)
-        for idx, _ in enumerate(debates):
-            claim_ids.add(f"illposed/{q_slug}/{a_slug}/{idx}")
+        for entry in debates:
+            if not entry:
+                continue
+            prefix = f"illposed/{q_slug}/{a_slug}"
+            claim_ids.add(_task_id(prefix, entry.run_id, entry.topic_slug, entry.question))
     return claim_ids
 
 
@@ -123,11 +139,11 @@ def _critique_target_key(claim_id: str) -> Optional[str]:
         return None
     q_slug = parts[-3]
     critic_and_answer = parts[-2]
-    idx = parts[-1]
+    token = parts[-1]
     if "__" not in critic_and_answer:
         return None
     _, answer_slug = critic_and_answer.split("__", 1)
-    return f"critique/{q_slug}/{answer_slug}/{idx}"
+    return f"critique/{q_slug}/{answer_slug}/{token}"
 
 
 def _illposed_target_key(claim_id: str) -> Optional[str]:
@@ -135,8 +151,8 @@ def _illposed_target_key(claim_id: str) -> Optional[str]:
     if len(parts) < 4:
         return None
     q_slug = parts[-3]
-    idx = parts[-1]
-    return f"illposed/{q_slug}/{idx}"
+    token = parts[-1]
+    return f"illposed/{q_slug}/{token}"
 
 
 def count_inter_judge_disagreements(auto_eval_dir: Path) -> Tuple[int, int]:
@@ -190,7 +206,9 @@ def build_critique_verdict_map(critiques_dir: Path) -> Dict[str, Dict]:
             for crit_file in q_dir.glob("*.json"):
                 q_slug = q_dir.name
                 entries = load_critique_entries(crit_file)
-                for idx, entry in enumerate(entries):
+                for entry in entries:
+                    if not entry:
+                        continue
                     attempts = entry.attempts if entry else None
                     verdict = attempts[-1].verdict if attempts else None
                     # Extract answer author and question author from entry
@@ -198,7 +216,8 @@ def build_critique_verdict_map(critiques_dir: Path) -> Dict[str, Dict]:
                     question_author = entry.question_author if entry else None
                     critic_model_name = entry.critic if entry else None
 
-                    cid = f"critique/{mode_dir.name}/{q_slug}/{crit_file.stem}/{idx}"
+                    prefix = f"critique/{mode_dir.name}/{q_slug}/{crit_file.stem}"
+                    cid = _task_id(prefix, entry.run_id, entry.topic_slug, entry.question)
                     critique_verdict_map[cid] = {
                         "verdict": verdict,
                         "answer_author": answer_author,
