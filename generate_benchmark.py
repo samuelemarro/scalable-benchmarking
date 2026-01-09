@@ -26,7 +26,7 @@ from data_models import (
     load_benchmark_entries,
     save_benchmark_entries,
 )
-from utils import clean_math, setup_logging
+from utils import _load_parsing_config, clean_math, setup_logging
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +55,37 @@ def load_runs(path: Path, topic_info: Dict[str, Dict]) -> List[Dict]:
     return runs
 
 
-def parse_question_answer(text: str) -> Tuple[str, str]:
+def _format_question_answer_with_llm(text: str) -> Optional[str]:
+    cfg = _load_parsing_config()
+    if not cfg:
+        logger.warning("No parsing config found; cannot add [QUESTION]/[ANSWER] tags.")
+        return None
+    model = cfg.get("model")
+    if not model:
+        logger.warning("No model specified in parsing config; cannot add [QUESTION]/[ANSWER] tags.")
+        return None
+    temperature = cfg.get("temperature")
+    reasoning = cfg.get("reasoning")
+    prompt = (
+        "You are a strict formatter. The input should contain a math problem and its solution but may be missing "
+        "the [QUESTION] and [ANSWER] tags. Return the same content with those tags inserted. Do not change any "
+        "wording, math, or formatting; only add the tags and minimal newlines. If no explicit boundary is present, "
+        "treat the first paragraph as the question and the rest as the answer. Output only the tagged text."
+    )
+    try:
+        return query_llm_single(
+            model,
+            text,
+            prompt=prompt,
+            temperature=temperature,
+            reasoning=reasoning,
+        )
+    except Exception:
+        logger.exception("Failed to add [QUESTION] and [ANSWER] tags with LLM.")
+        return None
+
+
+def _parse_tagged_question_answer(text: str) -> Optional[Tuple[str, str]]:
     if "[QUESTION]" in text and "[ANSWER]" in text:
         question, answer = text.split("[ANSWER]", 1)
         question = question.replace("[QUESTION]", "").strip()
@@ -63,6 +93,19 @@ def parse_question_answer(text: str) -> Tuple[str, str]:
         if not question:
             raise ValueError("Parsed question is empty")
         return question, answer
+    return None
+
+
+def parse_question_answer(text: str) -> Tuple[str, str]:
+    parsed = _parse_tagged_question_answer(text)
+    if parsed:
+        return parsed
+    logger.warning("Response missing required [QUESTION] and [ANSWER] tags; attempting LLM tag repair.")
+    repaired = _format_question_answer_with_llm(text)
+    if repaired:
+        parsed = _parse_tagged_question_answer(repaired)
+        if parsed:
+            return parsed
     raise ValueError("Response missing required [QUESTION] and [ANSWER] tags")
 
 
