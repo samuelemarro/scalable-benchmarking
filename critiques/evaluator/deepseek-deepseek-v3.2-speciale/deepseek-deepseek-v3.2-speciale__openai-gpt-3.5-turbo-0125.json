@@ -94,5 +94,804 @@
         }
       }
     ]
+  },
+  {
+    "question": "Find the minimal polynomial of $\\alpha = \\sqrt{2} + \\sqrt{3} + \\sqrt{5}$ over $\\mathbb{Q}$. Prove that your polynomial is indeed the minimal polynomial.",
+    "run_id": "6",
+    "topic_slug": "field_theory_and_polynomials",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer's polynomial $f(x) = x^6 - 18x^5 + 101x^4 - 210x^3 + 135x^2 - 2430\\\\sqrt{2}$ is not in $\\\\mathbb{Q}[x]$ because it contains $\\\\sqrt{2}$, violating the requirement that the minimal polynomial have rational coefficients. The derivation is flawed: only four factors are multiplied, missing the necessary eight conjugates to eliminate all radicals. The expansion is incorrect and does not lead to the claimed polynomial. The irreducibility argument uses Eisenstein on a polynomial with irrational coefficients, which is invalid. Moreover, the minimal polynomial of $\\\\sqrt{2}+\\\\sqrt{3}+\\\\sqrt{5}$ over $\\\\mathbb{Q}$ is known to have degree 8, not 6.\",\n  \"suggestions\": \"To correctly find the minimal polynomial, consider the field extension $\\\\mathbb{Q}(\\\\sqrt{2},\\\\sqrt{3},\\\\sqrt{5})$ and compute the product over all eight Galois conjugates $x - (\\\\pm\\\\sqrt{2}\\\\pm\\\\sqrt{3}\\\\pm\\\\sqrt{5})$. The resulting polynomial will have integer coefficients and degree 8. Show irreducibility, e.g., by proving that the degree of $\\\\alpha$ over $\\\\mathbb{Q}$ is 8.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer's polynomial $f(x) = x^6 - 18x^5 + 101x^4 - 210x^3 + 135x^2 - 2430\\\\sqrt{2}$ is not in $\\\\mathbb{Q}[x]$ because it contains $\\\\sqrt{2}$, violating the requirement that the minimal polynomial have rational coefficients. The derivation is flawed: only four factors are multiplied, missing the necessary eight conjugates to eliminate all radicals. The expansion is incorrect and does not lead to the claimed polynomial. The irreducibility argument uses Eisenstein on a polynomial with irrational coefficients, which is invalid. Moreover, the minimal polynomial of $\\\\sqrt{2}+\\\\sqrt{3}+\\\\sqrt{5}$ over $\\\\mathbb{Q}$ is known to have degree 8, not 6.\",\n  \"suggestions\": \"To correctly find the minimal polynomial, consider the field extension $\\\\mathbb{Q}(\\\\sqrt{2},\\\\sqrt{3},\\\\sqrt{5})$ and compute the product over all eight Galois conjugates $x - (\\\\pm\\\\sqrt{2}\\\\pm\\\\sqrt{3}\\\\pm\\\\sqrt{5})$. The resulting polynomial will have integer coefficients and degree 8. Show irreducibility, e.g., by proving that the degree of $\\\\alpha$ over $\\\\mathbb{Q}$ is 8.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer's polynomial $f(x) = x^6 - 18x^5 + 101x^4 - 210x^3 + 135x^2 - 2430\\sqrt{2}$ is not in $\\mathbb{Q}[x]$ because it contains $\\sqrt{2}$, violating the requirement that the minimal polynomial have rational coefficients. The derivation is flawed: only four factors are multiplied, missing the necessary eight conjugates to eliminate all radicals. The expansion is incorrect and does not lead to the claimed polynomial. The irreducibility argument uses Eisenstein on a polynomial with irrational coefficients, which is invalid. Moreover, the minimal polynomial of $\\sqrt{2}+\\sqrt{3}+\\sqrt{5}$ over $\\mathbb{Q}$ is known to have degree 8, not 6.",
+        "suggestions": "To correctly find the minimal polynomial, consider the field extension $\\mathbb{Q}(\\sqrt{2},\\sqrt{3},\\sqrt{5})$ and compute the product over all eight Galois conjugates $x - (\\pm\\sqrt{2}\\pm\\sqrt{3}\\pm\\sqrt{5})$. The resulting polynomial will have integer coefficients and degree 8. Show irreducibility, e.g., by proving that the degree of $\\alpha$ over $\\mathbb{Q}$ is 8.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a commutative ring with identity. Denote by $T_n(R)$ the ring of $n \\times n$ upper triangular matrices over $R$, i.e., matrices $(a_{ij})$ with $a_{ij} \\in R$ for $i \\le j$ and $a_{ij}=0$ for $i > j$. Prove that the Jacobson radical $J(T_n(R))$ is exactly the set\n$$\n\\{ A = (a_{ij}) \\in T_n(R) \\mid a_{ii} \\in J(R) \\text{ for all } i = 1,\\dots,n \\}.\n$$",
+    "run_id": "10",
+    "topic_slug": "associative_rings_and_algebras",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors. In Part 1, the condition for A to be in the Jacobson radical is misstated: it requires invertibility of 1 - AB for all B \u2208 T_n(R), not only those B with 1 - B invertible. Moreover, the claim that an upper triangular matrix with diagonal entries in J(R) is nilpotent is false in general (J(R) may contain non-nilpotent elements). In Part 2, the reasoning is flawed: the definition is misapplied, and the matrix equations are incorrectly written (e.g., (1 - AC)C = 1 and the subsequent entrywise equation). Thus the proof fails.\",\n  \"suggestions\": \"A correct proof would use the characterization of the Jacobson radical via invertibility of 1 - A X for all X, and show the equivalence by considering elementary matrices or using the fact that the radical of a triangular matrix ring consists of matrices with diagonal entries in the radical of the base ring. One approach: show that the projection onto diagonal entries induces a ring homomorphism T_n(R) \u2192 R^n, and use properties of radicals under surjective homomorphisms and the kernel consisting of strictly upper triangular matrices (which are nilpotent and thus contained in the radical).\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors. In Part 1, the condition for A to be in the Jacobson radical is misstated: it requires invertibility of 1 - AB for all B \u2208 T_n(R), not only those B with 1 - B invertible. Moreover, the claim that an upper triangular matrix with diagonal entries in J(R) is nilpotent is false in general (J(R) may contain non-nilpotent elements). In Part 2, the reasoning is flawed: the definition is misapplied, and the matrix equations are incorrectly written (e.g., (1 - AC)C = 1 and the subsequent entrywise equation). Thus the proof fails.\",\n  \"suggestions\": \"A correct proof would use the characterization of the Jacobson radical via invertibility of 1 - A X for all X, and show the equivalence by considering elementary matrices or using the fact that the radical of a triangular matrix ring consists of matrices with diagonal entries in the radical of the base ring. One approach: show that the projection onto diagonal entries induces a ring homomorphism T_n(R) \u2192 R^n, and use properties of radicals under surjective homomorphisms and the kernel consisting of strictly upper triangular matrices (which are nilpotent and thus contained in the radical).\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains multiple mathematical errors. In Part 1, the condition for A to be in the Jacobson radical is misstated: it requires invertibility of 1 - AB for all B \u2208 T_n(R), not only those B with 1 - B invertible. Moreover, the claim that an upper triangular matrix with diagonal entries in J(R) is nilpotent is false in general (J(R) may contain non-nilpotent elements). In Part 2, the reasoning is flawed: the definition is misapplied, and the matrix equations are incorrectly written (e.g., (1 - AC)C = 1 and the subsequent entrywise equation). Thus the proof fails.",
+        "suggestions": "A correct proof would use the characterization of the Jacobson radical via invertibility of 1 - A X for all X, and show the equivalence by considering elementary matrices or using the fact that the radical of a triangular matrix ring consists of matrices with diagonal entries in the radical of the base ring. One approach: show that the projection onto diagonal entries induces a ring homomorphism T_n(R) \u2192 R^n, and use properties of radicals under surjective homomorphisms and the kernel consisting of strictly upper triangular matrices (which are nilpotent and thus contained in the radical).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a connected topological group with identity element $e$. Prove that the fundamental group $\\pi_1(G,e)$ is abelian.",
+    "run_id": "15",
+    "topic_slug": "topological_groups_and_lie_groups",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer claims that the loop $[\\\\alpha][\\\\beta][\\\\alpha]^{-1}[\\\\beta]^{-1}$ is trivial because 'Since $G$ is a topological group, the product $\\\\alpha\\\\ast\\\\beta\\\\ast\\\\alpha^{-1}\\\\ast\\\\beta^{-1}$ is a loop at $e$. Therefore, $[\\\\alpha][\\\\beta][\\\\alpha]^{-1}[\\\\beta]^{-1}$ represents the trivial element in $\\\\pi_1(G,e)$.' This reasoning is invalid: being a loop does not imply it is nullhomotopic. The conclusion that the commutator is trivial is not justified; indeed, the statement to be proved is equivalent to that commutator being trivial, but the answer provides no argument for why the topological group structure forces this. Hence the proof is incorrect.\",\n  \"suggestions\": \"A correct proof would use the Eckmann-Hilton argument: define a second operation on loops via pointwise multiplication using the group structure, show that it induces a group structure on $\\\\pi_1(G,e)$ that shares the same identity as concatenation, and then deduce that both operations are commutative. Alternatively, one can show that the fundamental group of an H-space is abelian.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer claims that the loop $[\\\\alpha][\\\\beta][\\\\alpha]^{-1}[\\\\beta]^{-1}$ is trivial because 'Since $G$ is a topological group, the product $\\\\alpha\\\\ast\\\\beta\\\\ast\\\\alpha^{-1}\\\\ast\\\\beta^{-1}$ is a loop at $e$. Therefore, $[\\\\alpha][\\\\beta][\\\\alpha]^{-1}[\\\\beta]^{-1}$ represents the trivial element in $\\\\pi_1(G,e)$.' This reasoning is invalid: being a loop does not imply it is nullhomotopic. The conclusion that the commutator is trivial is not justified; indeed, the statement to be proved is equivalent to that commutator being trivial, but the answer provides no argument for why the topological group structure forces this. Hence the proof is incorrect.\",\n  \"suggestions\": \"A correct proof would use the Eckmann-Hilton argument: define a second operation on loops via pointwise multiplication using the group structure, show that it induces a group structure on $\\\\pi_1(G,e)$ that shares the same identity as concatenation, and then deduce that both operations are commutative. Alternatively, one can show that the fundamental group of an H-space is abelian.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer claims that the loop $[\\alpha][\\beta][\\alpha]^{-1}[\\beta]^{-1}$ is trivial because 'Since $G$ is a topological group, the product $\\alpha\\ast\\beta\\ast\\alpha^{-1}\\ast\\beta^{-1}$ is a loop at $e$. Therefore, $[\\alpha][\\beta][\\alpha]^{-1}[\\beta]^{-1}$ represents the trivial element in $\\pi_1(G,e)$.' This reasoning is invalid: being a loop does not imply it is nullhomotopic. The conclusion that the commutator is trivial is not justified; indeed, the statement to be proved is equivalent to that commutator being trivial, but the answer provides no argument for why the topological group structure forces this. Hence the proof is incorrect.",
+        "suggestions": "A correct proof would use the Eckmann-Hilton argument: define a second operation on loops via pointwise multiplication using the group structure, show that it induces a group structure on $\\pi_1(G,e)$ that shares the same identity as concatenation, and then deduce that both operations are commutative. Alternatively, one can show that the fundamental group of an H-space is abelian.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $A$ be an $n \\times n$ complex matrix. Prove that $e^A = I$ (where $I$ is the identity matrix) if and only if $A$ is diagonalizable and every eigenvalue of $A$ is an integer multiple of $2\\pi i$.",
+    "run_id": "9",
+    "topic_slug": "linear_and_multilinear_algebra",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The necessity direction lacks justification for the claim that $A$ must be diagonalizable. The answer states: 'By the properties of the matrix exponential, we know that $A$ must be diagonalizable' without proof. This is a crucial part of the equivalence. The sufficiency direction is correct, but without proving diagonalizability, the proof is incomplete. Additionally, the eigenvalue condition is correctly identified but could be more rigorously derived (e.g., using eigenvectors).\",\n  \"suggestions\": \"To fix, prove that $e^A = I$ implies $A$ is diagonalizable. One approach: use Jordan decomposition; if $A$ had a nontrivial Jordan block, then $e^A$ would not equal $I$. Also, explicitly show that if $Av = \\\\lambda v$, then $e^A v = e^{\\\\lambda} v = v$, so $e^{\\\\lambda}=1$, hence $\\\\lambda = 2\\\\pi i k$ for some integer $k$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The necessity direction lacks justification for the claim that $A$ must be diagonalizable. The answer states: 'By the properties of the matrix exponential, we know that $A$ must be diagonalizable' without proof. This is a crucial part of the equivalence. The sufficiency direction is correct, but without proving diagonalizability, the proof is incomplete. Additionally, the eigenvalue condition is correctly identified but could be more rigorously derived (e.g., using eigenvectors).\",\n  \"suggestions\": \"To fix, prove that $e^A = I$ implies $A$ is diagonalizable. One approach: use Jordan decomposition; if $A$ had a nontrivial Jordan block, then $e^A$ would not equal $I$. Also, explicitly show that if $Av = \\\\lambda v$, then $e^A v = e^{\\\\lambda} v = v$, so $e^{\\\\lambda}=1$, hence $\\\\lambda = 2\\\\pi i k$ for some integer $k$.\"\n}",
+        "verdict": "insufficient",
+        "notes": "The necessity direction lacks justification for the claim that $A$ must be diagonalizable. The answer states: 'By the properties of the matrix exponential, we know that $A$ must be diagonalizable' without proof. This is a crucial part of the equivalence. The sufficiency direction is correct, but without proving diagonalizability, the proof is incomplete. Additionally, the eigenvalue condition is correctly identified but could be more rigorously derived (e.g., using eigenvectors).",
+        "suggestions": "To fix, prove that $e^A = I$ implies $A$ is diagonalizable. One approach: use Jordan decomposition; if $A$ had a nontrivial Jordan block, then $e^A$ would not equal $I$. Also, explicitly show that if $Av = \\lambda v$, then $e^A v = e^{\\lambda} v = v$, so $e^{\\lambda}=1$, hence $\\lambda = 2\\pi i k$ for some integer $k$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a Noetherian commutative ring with identity. An element $r \\in R$ is called a **zero-divisor** if there exists a nonzero $s \\in R$ such that $rs = 0$. An **associated prime** of $R$ is a prime ideal that can be written as $\\operatorname{Ann}(x) = \\{ r \\in R \\mid r x = 0\\}$ for some nonzero $x \\in R$. Prove that the set of zero-divisors of $R$ is exactly the union of all associated primes of $R$.",
+    "run_id": "7",
+    "topic_slug": "commutative_algebra",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The first inclusion argument contains mathematical errors. Specifically, the claim that the ideal I = { r \u2208 R | r z = 0 } is nonzero because z \u2208 I is false (z \u2208 I would require z^2 = 0, which is not given). Also, the step 'By the Noetherian property of R, there exists a maximal element P \u2208 AP(R) such that I \u2286 P' is unjustified and does not correctly construct an associated prime containing z. The second inclusion is correct, but the overall proof fails due to the flawed reasoning in the first part.\",\n  \"suggestions\": \"To prove Z(R) \u2286 \u222aP, let z be a zero-divisor, so \u2203 s \u2260 0 with z s = 0. Consider the set of ideals { Ann(b) | b \u2260 0, z b = 0 }. Since R is Noetherian, this set has a maximal element Ann(x). Show that Ann(x) is prime (standard lemma) and thus an associated prime. Since z x = 0, we have z \u2208 Ann(x), so z \u2208 \u222aP.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The first inclusion argument contains mathematical errors. Specifically, the claim that the ideal I = { r \u2208 R | r z = 0 } is nonzero because z \u2208 I is false (z \u2208 I would require z^2 = 0, which is not given). Also, the step 'By the Noetherian property of R, there exists a maximal element P \u2208 AP(R) such that I \u2286 P' is unjustified and does not correctly construct an associated prime containing z. The second inclusion is correct, but the overall proof fails due to the flawed reasoning in the first part.\",\n  \"suggestions\": \"To prove Z(R) \u2286 \u222aP, let z be a zero-divisor, so \u2203 s \u2260 0 with z s = 0. Consider the set of ideals { Ann(b) | b \u2260 0, z b = 0 }. Since R is Noetherian, this set has a maximal element Ann(x). Show that Ann(x) is prime (standard lemma) and thus an associated prime. Since z x = 0, we have z \u2208 Ann(x), so z \u2208 \u222aP.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The first inclusion argument contains mathematical errors. Specifically, the claim that the ideal I = { r \u2208 R | r z = 0 } is nonzero because z \u2208 I is false (z \u2208 I would require z^2 = 0, which is not given). Also, the step 'By the Noetherian property of R, there exists a maximal element P \u2208 AP(R) such that I \u2286 P' is unjustified and does not correctly construct an associated prime containing z. The second inclusion is correct, but the overall proof fails due to the flawed reasoning in the first part.",
+        "suggestions": "To prove Z(R) \u2286 \u222aP, let z be a zero-divisor, so \u2203 s \u2260 0 with z s = 0. Consider the set of ideals { Ann(b) | b \u2260 0, z b = 0 }. Since R is Noetherian, this set has a maximal element Ann(x). Show that Ann(x) is prime (standard lemma) and thus an associated prime. Since z x = 0, we have z \u2208 Ann(x), so z \u2208 \u222aP.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique correctly identifies the mathematical errors, provides specific evidence, and gives a valid suggestion. It is accurate and well-justified."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathfrak{g}$ be a finite-dimensional Lie algebra over a field $F$ of characteristic $0$. For $x \\in \\mathfrak{g}$, define the adjoint operator $\\operatorname{ad}_x : \\mathfrak{g} \\to \\mathfrak{g}$ by $\\operatorname{ad}_x(y) = [x, y]$. The Killing form is defined by\n$$\n\\kappa(x, y) = \\operatorname{tr}(\\operatorname{ad}_x \\circ \\operatorname{ad}_y), \\qquad x, y \\in \\mathfrak{g}.\n$$\n\n(a) Show that $\\kappa$ is a symmetric bilinear form.\n\n(b) Prove that $\\kappa$ is invariant, i.e., for all $x, y, z \\in \\mathfrak{g}$,\n$$\n\\kappa([x, y], z) = \\kappa(x, [y, z]).\n$$\n\n(c) Show that the radical of $\\kappa$,\n$$\n\\operatorname{Rad}(\\kappa) = \\{ x \\in \\mathfrak{g} \\mid \\kappa(x, y) = 0 \\text{ for all } y \\in \\mathfrak{g} \\},\n$$\nis an ideal of $\\mathfrak{g}$.\n\n(d) Prove that if $\\kappa$ is nondegenerate (i.e., $\\operatorname{Rad}(\\kappa) = 0$), then $\\mathfrak{g}$ is semisimple, i.e., $\\mathfrak{g}$ contains no nonzero abelian ideals.",
+    "run_id": "11",
+    "topic_slug": "nonassociative_rings_and_algebras",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer for parts (a)-(c) is correct, but part (d) contains a logical error. The argument states: 'By the invariance property of \u03ba, we have: \u03ba([a, a], g) = \u03ba(0, g) = 0. However, since a is nonzero and abelian, [a, a] = 0 implies that a is contained in Rad(\u03ba), contradicting the assumption that Rad(\u03ba) = 0.' The step from [a,a]=0 to a\u2286Rad(\u03ba) is unjustified; it does not show that \u03ba(x,y)=0 for all x\u2208a and y\u2208g. This invalidates the proof. A correct proof would use that for an abelian ideal, ad_x\u2218ad_y is nilpotent, forcing \u03ba(x,y)=0.\",\n  \"suggestions\": \"To correct part (d), show that if a is a nonzero abelian ideal, then for any x\u2208a and y\u2208g, the operator ad_x\u2218ad_y is nilpotent (since (ad_x\u2218ad_y)^2=0), hence its trace \u03ba(x,y)=0. Thus a\u2286Rad(\u03ba), contradicting nondegeneracy.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer for parts (a)-(c) is correct, but part (d) contains a logical error. The argument states: 'By the invariance property of \u03ba, we have: \u03ba([a, a], g) = \u03ba(0, g) = 0. However, since a is nonzero and abelian, [a, a] = 0 implies that a is contained in Rad(\u03ba), contradicting the assumption that Rad(\u03ba) = 0.' The step from [a,a]=0 to a\u2286Rad(\u03ba) is unjustified; it does not show that \u03ba(x,y)=0 for all x\u2208a and y\u2208g. This invalidates the proof. A correct proof would use that for an abelian ideal, ad_x\u2218ad_y is nilpotent, forcing \u03ba(x,y)=0.\",\n  \"suggestions\": \"To correct part (d), show that if a is a nonzero abelian ideal, then for any x\u2208a and y\u2208g, the operator ad_x\u2218ad_y is nilpotent (since (ad_x\u2218ad_y)^2=0), hence its trace \u03ba(x,y)=0. Thus a\u2286Rad(\u03ba), contradicting nondegeneracy.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer for parts (a)-(c) is correct, but part (d) contains a logical error. The argument states: 'By the invariance property of \u03ba, we have: \u03ba([a, a], g) = \u03ba(0, g) = 0. However, since a is nonzero and abelian, [a, a] = 0 implies that a is contained in Rad(\u03ba), contradicting the assumption that Rad(\u03ba) = 0.' The step from [a,a]=0 to a\u2286Rad(\u03ba) is unjustified; it does not show that \u03ba(x,y)=0 for all x\u2208a and y\u2208g. This invalidates the proof. A correct proof would use that for an abelian ideal, ad_x\u2218ad_y is nilpotent, forcing \u03ba(x,y)=0.",
+        "suggestions": "To correct part (d), show that if a is a nonzero abelian ideal, then for any x\u2208a and y\u2208g, the operator ad_x\u2218ad_y is nilpotent (since (ad_x\u2218ad_y)^2=0), hence its trace \u03ba(x,y)=0. Thus a\u2286Rad(\u03ba), contradicting nondegeneracy.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $B = \\{ z \\in \\mathbb{C}^n \\mid \\|z\\| < 1 \\}$ be the unit ball in $\\mathbb{C}^n$ ($n \\ge 1$), where $\\|z\\|^2 = \\sum_{i=1}^n |z_i|^2$. Suppose $f: B \\to B$ is a biholomorphism (i.e., $f$ is holomorphic, bijective, and its inverse $f^{-1}$ is also holomorphic) such that $f(0) = 0$. Prove that $f$ is a linear unitary transformation; that is, there exists an $n \\times n$ unitary matrix $U$ such that $f(z) = U z$ for all $z \\in B$.",
+    "run_id": "20",
+    "topic_slug": "several_complex_variables_and_analytic_spaces",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors. It treats the vector-valued function $f:\\\\mathbb{C}^n\\\\to\\\\mathbb{C}^n$ as a scalar power series $f(z)=\\\\sum a_k z^k$, which is invalid for $n>1$. The composition and coefficient matching are performed as if $f$ were scalar, ignoring the multi-index structure. The definition of $U$ as a diagonal matrix with entries $a_1,\\\\dots,a_n$ is pulled from nowhere; there is no justification that the derivative $Df(0)$ is diagonal or that its entries have modulus 1. The claim that $U$ is unitary because $U^*U=I$ is unsupported and circular. Moreover, the proof fails to use the essential hypothesis that $f$ maps the unit ball onto itself; without this, one cannot conclude linearity or unitarity (e.g., there exist local biholomorphisms fixing 0 that are not linear). Thus the reasoning is fundamentally flawed.\",\n  \"suggestions\": \"A correct proof would use the Schwarz lemma for the unit ball: for any $v\\\\in\\\\mathbb{C}^n$ with $\\\\|v\\\\|=1$, consider the holomorphic function $\\\\lambda\\\\mapsto f(\\\\lambda v)/\\\\lambda$ on the unit disk, apply the one-dimensional Schwarz lemma to show $\\\\|f(z)\\\\|\\\\le\\\\|z\\\\|$, and then use the biholomorphic property to obtain equality and deduce that $f$ is linear. Then show that the derivative at 0 is a unitary matrix using the preservation of the unit ball.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors. It treats the vector-valued function $f:\\\\mathbb{C}^n\\\\to\\\\mathbb{C}^n$ as a scalar power series $f(z)=\\\\sum a_k z^k$, which is invalid for $n>1$. The composition and coefficient matching are performed as if $f$ were scalar, ignoring the multi-index structure. The definition of $U$ as a diagonal matrix with entries $a_1,\\\\dots,a_n$ is pulled from nowhere; there is no justification that the derivative $Df(0)$ is diagonal or that its entries have modulus 1. The claim that $U$ is unitary because $U^*U=I$ is unsupported and circular. Moreover, the proof fails to use the essential hypothesis that $f$ maps the unit ball onto itself; without this, one cannot conclude linearity or unitarity (e.g., there exist local biholomorphisms fixing 0 that are not linear). Thus the reasoning is fundamentally flawed.\",\n  \"suggestions\": \"A correct proof would use the Schwarz lemma for the unit ball: for any $v\\\\in\\\\mathbb{C}^n$ with $\\\\|v\\\\|=1$, consider the holomorphic function $\\\\lambda\\\\mapsto f(\\\\lambda v)/\\\\lambda$ on the unit disk, apply the one-dimensional Schwarz lemma to show $\\\\|f(z)\\\\|\\\\le\\\\|z\\\\|$, and then use the biholomorphic property to obtain equality and deduce that $f$ is linear. Then show that the derivative at 0 is a unitary matrix using the preservation of the unit ball.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains multiple mathematical errors. It treats the vector-valued function $f:\\mathbb{C}^n\\to\\mathbb{C}^n$ as a scalar power series $f(z)=\\sum a_k z^k$, which is invalid for $n>1$. The composition and coefficient matching are performed as if $f$ were scalar, ignoring the multi-index structure. The definition of $U$ as a diagonal matrix with entries $a_1,\\dots,a_n$ is pulled from nowhere; there is no justification that the derivative $Df(0)$ is diagonal or that its entries have modulus 1. The claim that $U$ is unitary because $U^*U=I$ is unsupported and circular. Moreover, the proof fails to use the essential hypothesis that $f$ maps the unit ball onto itself; without this, one cannot conclude linearity or unitarity (e.g., there exist local biholomorphisms fixing 0 that are not linear). Thus the reasoning is fundamentally flawed.",
+        "suggestions": "A correct proof would use the Schwarz lemma for the unit ball: for any $v\\in\\mathbb{C}^n$ with $\\|v\\|=1$, consider the holomorphic function $\\lambda\\mapsto f(\\lambda v)/\\lambda$ on the unit disk, apply the one-dimensional Schwarz lemma to show $\\|f(z)\\|\\le\\|z\\|$, and then use the biholomorphic property to obtain equality and deduce that $f$ is linear. Then show that the derivative at 0 is a unitary matrix using the preservation of the unit ball.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the rational map $\\varphi: \\mathbb{P}^2 \\to \\mathbb{P}^2$ over $\\mathbb{C}$ given in homogeneous coordinates by\n$$\n\\varphi(x:y:z) = (yz : xz : xy).\n$$\nLet $X$ be the blow-up of $\\mathbb{P}^2$ at the three points \n$$\nP_1 = (1:0:0),\\quad P_2 = (0:1:0),\\quad P_3 = (0:0:1).\n$$\nDenote by $\\pi: X \\to \\mathbb{P}^2$ the blow-down morphism, and let $E_1, E_2, E_3$ be the exceptional divisors over $P_1, P_2, P_3$ respectively. Let $H = \\pi^* \\mathcal{O}_{\\mathbb{P}^2}(1)$ be the pullback of the hyperplane class.\n\n(a) Show that $\\varphi$ lifts to a morphism $\\Phi: X \\to \\mathbb{P}^2$ (i.e., $\\Phi = \\varphi \\circ \\pi$ is a morphism).\n(b) Compute the class of the line bundle $\\Phi^* \\mathcal{O}_{\\mathbb{P}^2}(1)$ in $\\operatorname{Pic}(X)$ in terms of $H, E_1, E_2, E_3$.\n(c) Prove that $\\varphi$ is birational and determine its inverse rational map.",
+    "run_id": "8",
+    "topic_slug": "algebraic_geometry",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (a) incorrectly claims \\$\\\\varphi(1:0:0) = (0:0:0)\\$ and that this is a point on \\$E_1\\$; but \\$\\\\varphi\\$ is undefined at \\$P_1\\$ because \\$(0:0:0)\\$ is not a point in \\$\\\\mathbb{P}^2\\$. The argument does not show that \\$\\\\Phi\\$ is a morphism on the exceptional divisors. Part (b) contains multiple errors: the equality \\$\\\\Phi^*\\\\mathcal{O}_{\\\\mathbb{P}^2}(1) = \\\\pi^*\\\\varphi^*\\\\mathcal{O}_{\\\\mathbb{P}^2}(1)\\$ is invalid because \\$\\\\varphi\\$ is not a morphism; also \\$\\\\pi^*\\\\mathcal{O}_{\\\\mathbb{P}^2}(1) = H\\$ by definition, not \\$H - E_1 - E_2 - E_3\\$. The correct class is \\$2H - E_1 - E_2 - E_3\\$. Part (c) lacks proper justification: dominance is merely asserted, and the inverse map is given without verification that composition yields identity. Therefore the answer is mathematically incorrect.\",\n  \"suggestions\": \"For (a), show that on charts of the blow-up, the map extends regularly. For (b), compute \\$\\\\Phi^*\\\\mathcal{O}_{\\\\mathbb{P}^2}(1)\\$ by pulling back a hyperplane section: a hyperplane in the target corresponds to a divisor in the source given by a linear combination of the sections \\$yz, xz, xy\\$, which is a conic through the three points, so its class is \\$2H - E_1 - E_2 - E_3\\$. For (c), prove birationality by exhibiting an explicit rational inverse (the same map) and checking that \\$\\\\varphi\\\\circ\\\\varphi = \\\\mathrm{id}\\$ on a dense open set.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (a) incorrectly claims \\\\(\\\\varphi(1:0:0) = (0:0:0)\\\\) and that this is a point on \\\\(E_1\\\\); but \\\\(\\\\varphi\\\\) is undefined at \\\\(P_1\\\\) because \\\\((0:0:0)\\\\) is not a point in \\\\(\\\\mathbb{P}^2\\\\). The argument does not show that \\\\(\\\\Phi\\\\) is a morphism on the exceptional divisors. Part (b) contains multiple errors: the equality \\\\(\\\\Phi^*\\\\mathcal{O}_{\\\\mathbb{P}^2}(1) = \\\\pi^*\\\\varphi^*\\\\mathcal{O}_{\\\\mathbb{P}^2}(1)\\\\) is invalid because \\\\(\\\\varphi\\\\) is not a morphism; also \\\\(\\\\pi^*\\\\mathcal{O}_{\\\\mathbb{P}^2}(1) = H\\\\) by definition, not \\\\(H - E_1 - E_2 - E_3\\\\). The correct class is \\\\(2H - E_1 - E_2 - E_3\\\\). Part (c) lacks proper justification: dominance is merely asserted, and the inverse map is given without verification that composition yields identity. Therefore the answer is mathematically incorrect.\",\n  \"suggestions\": \"For (a), show that on charts of the blow-up, the map extends regularly. For (b), compute \\\\(\\\\Phi^*\\\\mathcal{O}_{\\\\mathbb{P}^2}(1)\\\\) by pulling back a hyperplane section: a hyperplane in the target corresponds to a divisor in the source given by a linear combination of the sections \\\\(yz, xz, xy\\\\), which is a conic through the three points, so its class is \\\\(2H - E_1 - E_2 - E_3\\\\). For (c), prove birationality by exhibiting an explicit rational inverse (the same map) and checking that \\\\(\\\\varphi\\\\circ\\\\varphi = \\\\mathrm{id}\\\\) on a dense open set.\"\n}",
+        "verdict": "incorrect",
+        "notes": "Part (a) incorrectly claims $\\varphi(1:0:0) = (0:0:0)$ and that this is a point on $E_1$; but $\\varphi$ is undefined at $P_1$ because $(0:0:0)$ is not a point in $\\mathbb{P}^2$. The argument does not show that $\\Phi$ is a morphism on the exceptional divisors. Part (b) contains multiple errors: the equality $\\Phi^*\\mathcal{O}_{\\mathbb{P}^2}(1) = \\pi^*\\varphi^*\\mathcal{O}_{\\mathbb{P}^2}(1)$ is invalid because $\\varphi$ is not a morphism; also $\\pi^*\\mathcal{O}_{\\mathbb{P}^2}(1) = H$ by definition, not $H - E_1 - E_2 - E_3$. The correct class is $2H - E_1 - E_2 - E_3$. Part (c) lacks proper justification: dominance is merely asserted, and the inverse map is given without verification that composition yields identity. Therefore the answer is mathematically incorrect.",
+        "suggestions": "For (a), show that on charts of the blow-up, the map extends regularly. For (b), compute $\\Phi^*\\mathcal{O}_{\\mathbb{P}^2}(1)$ by pulling back a hyperplane section: a hyperplane in the target corresponds to a divisor in the source given by a linear combination of the sections $yz, xz, xy$, which is a conic through the three points, so its class is $2H - E_1 - E_2 - E_3$. For (c), prove birationality by exhibiting an explicit rational inverse (the same map) and checking that $\\varphi\\circ\\varphi = \\mathrm{id}$ on a dense open set.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $S$ be a finite set of points in the Euclidean plane, not all lying on a single line. Prove that there exists a line which contains exactly two points of $S$.",
+    "run_id": "36",
+    "topic_slug": "convex_and_discrete_geometry",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof contains a logical error: it claims that if a third point lies on line AB, then the line contains infinitely many points, contradicting the finiteness of S. However, the line always contains infinitely many points; S being finite is not contradicted by the line containing three points. The argument fails to prove the existence of a line with exactly two points.\",\n  \"suggestions\": \"A correct proof requires a more careful extremal argument, e.g., consider a point and a line with minimal nonzero distance, or use the Sylvester\u2013Gallai theorem's classic proof. The given reasoning is invalid.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof contains a logical error: it claims that if a third point lies on line AB, then the line contains infinitely many points, contradicting the finiteness of S. However, the line always contains infinitely many points; S being finite is not contradicted by the line containing three points. The argument fails to prove the existence of a line with exactly two points.\",\n  \"suggestions\": \"A correct proof requires a more careful extremal argument, e.g., consider a point and a line with minimal nonzero distance, or use the Sylvester\u2013Gallai theorem's classic proof. The given reasoning is invalid.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The proof contains a logical error: it claims that if a third point lies on line AB, then the line contains infinitely many points, contradicting the finiteness of S. However, the line always contains infinitely many points; S being finite is not contradicted by the line containing three points. The argument fails to prove the existence of a line with exactly two points.",
+        "suggestions": "A correct proof requires a more careful extremal argument, e.g., consider a point and a line with minimal nonzero distance, or use the Sylvester\u2013Gallai theorem's classic proof. The given reasoning is invalid.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate; no improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the integral equation\n$$\nf(x) + \\lambda \\int_{-\\infty}^{\\infty} e^{-|x-t|} f(t) \\, dt = e^{-|x|}, \\qquad x \\in \\mathbb{R},\n$$\nwhere $\\lambda$ is a real constant. Use the Fourier transform defined by\n$$\n\\hat{g}(\\omega) = \\int_{-\\infty}^{\\infty} g(x) e^{-i\\omega x} \\, dx,\n$$\nwith the inverse transform given by\n$$\ng(x) = \\frac{1}{2\\pi} \\int_{-\\infty}^{\\infty} \\hat{g}(\\omega) e^{i\\omega x} \\, d\\omega.\n$$\nDetermine the range of $\\lambda$ for which the equation admits a solution, and find the solution $f(x)$ in closed form.",
+    "run_id": "30",
+    "topic_slug": "integral_transforms_and_operational_calculus",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a critical algebraic error: after taking Fourier transforms, the equation becomes $\\\\hat{f}(\\\\omega) + \\\\frac{2\\\\lambda}{1+\\\\omega^2}\\\\hat{f}(\\\\omega) = \\\\frac{2}{1+\\\\omega^2}$. The step 'Solving for $\\\\hat{f}(\\\\omega)$, we have $\\\\hat{f}(\\\\omega) (1 + 2\\\\lambda) = 2$' is incorrect because it ignores the $1+\\\\omega^2$ denominator. The correct simplification yields $\\\\hat{f}(\\\\omega) = \\\\frac{2}{\\\\omega^2 + 1 + 2\\\\lambda}$. Consequently, the analysis of poles and the range of $\\\\lambda$ is wrong; the correct condition for existence is $1+2\\\\lambda > 0$, i.e., $\\\\lambda > -1/2$. The final expression for $f(x)$ is also incorrect.\",\n  \"suggestions\": \"Re-solve the algebraic equation properly: $\\\\hat{f}(\\\\omega)\\\\left(1 + \\\\frac{2\\\\lambda}{1+\\\\omega^2}\\\\right) = \\\\frac{2}{1+\\\\omega^2}$ \u21d2 multiply both sides by $1+\\\\omega^2$: $\\\\hat{f}(\\\\omega)\\\\left((1+\\\\omega^2) + 2\\\\lambda\\\\right) = 2$ \u21d2 $\\\\hat{f}(\\\\omega) = \\\\frac{2}{\\\\omega^2 + 1 + 2\\\\lambda}$. Then invert using known Fourier transform: $f(x) = \\\\frac{1}{\\\\sqrt{1+2\\\\lambda}} e^{-\\\\sqrt{1+2\\\\lambda}\\\\,|x|}$ for $\\\\lambda > -1/2$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a critical algebraic error: after taking Fourier transforms, the equation becomes $\\\\hat{f}(\\\\omega) + \\\\frac{2\\\\lambda}{1+\\\\omega^2}\\\\hat{f}(\\\\omega) = \\\\frac{2}{1+\\\\omega^2}$. The step 'Solving for $\\\\hat{f}(\\\\omega)$, we have $\\\\hat{f}(\\\\omega) (1 + 2\\\\lambda) = 2$' is incorrect because it ignores the $1+\\\\omega^2$ denominator. The correct simplification yields $\\\\hat{f}(\\\\omega) = \\\\frac{2}{\\\\omega^2 + 1 + 2\\\\lambda}$. Consequently, the analysis of poles and the range of $\\\\lambda$ is wrong; the correct condition for existence is $1+2\\\\lambda > 0$, i.e., $\\\\lambda > -1/2$. The final expression for $f(x)$ is also incorrect.\",\n  \"suggestions\": \"Re-solve the algebraic equation properly: $\\\\hat{f}(\\\\omega)\\\\left(1 + \\\\frac{2\\\\lambda}{1+\\\\omega^2}\\\\right) = \\\\frac{2}{1+\\\\omega^2}$ \u21d2 multiply both sides by $1+\\\\omega^2$: $\\\\hat{f}(\\\\omega)\\\\left((1+\\\\omega^2) + 2\\\\lambda\\\\right) = 2$ \u21d2 $\\\\hat{f}(\\\\omega) = \\\\frac{2}{\\\\omega^2 + 1 + 2\\\\lambda}$. Then invert using known Fourier transform: $f(x) = \\\\frac{1}{\\\\sqrt{1+2\\\\lambda}} e^{-\\\\sqrt{1+2\\\\lambda}\\\\,|x|}$ for $\\\\lambda > -1/2$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains a critical algebraic error: after taking Fourier transforms, the equation becomes $\\hat{f}(\\omega) + \\frac{2\\lambda}{1+\\omega^2}\\hat{f}(\\omega) = \\frac{2}{1+\\omega^2}$. The step 'Solving for $\\hat{f}(\\omega)$, we have $\\hat{f}(\\omega) (1 + 2\\lambda) = 2$' is incorrect because it ignores the $1+\\omega^2$ denominator. The correct simplification yields $\\hat{f}(\\omega) = \\frac{2}{\\omega^2 + 1 + 2\\lambda}$. Consequently, the analysis of poles and the range of $\\lambda$ is wrong; the correct condition for existence is $1+2\\lambda > 0$, i.e., $\\lambda > -1/2$. The final expression for $f(x)$ is also incorrect.",
+        "suggestions": "Re-solve the algebraic equation properly: $\\hat{f}(\\omega)\\left(1 + \\frac{2\\lambda}{1+\\omega^2}\\right) = \\frac{2}{1+\\omega^2}$ \u21d2 multiply both sides by $1+\\omega^2$: $\\hat{f}(\\omega)\\left((1+\\omega^2) + 2\\lambda\\right) = 2$ \u21d2 $\\hat{f}(\\omega) = \\frac{2}{\\omega^2 + 1 + 2\\lambda}$. Then invert using known Fourier transform: $f(x) = \\frac{1}{\\sqrt{1+2\\lambda}} e^{-\\sqrt{1+2\\lambda}\\,|x|}$ for $\\lambda > -1/2$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f \\in L^2(\\mathbb{R})$ be a function with compact support, i.e., there exists $A > 0$ such that $f(x) = 0$ for almost every $|x| > A$. Define its Fourier transform by\n$$\n\\hat f(\\xi) = \\int_{\\mathbb{R}} f(x) e^{-2\\pi i x \\xi} \\, dx,\n$$\nwhich is well-defined as an $L^1$ integral because $f$ is integrable on $[-A,A]$. Prove that if $\\hat f$ also has compact support (i.e., there exists $B > 0$ such that $\\hat f(\\xi) = 0$ for almost every $|\\xi| > B$), then $f$ must be zero almost everywhere. In other words, there is no nonzero $L^2$ function with both $f$ and $\\hat f$ compactly supported.",
+    "run_id": "28",
+    "topic_slug": "harmonic_analysis_on_euclidean_spaces",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors. (1) It incorrectly claims that the Gaussian's Fourier transform \\$\\\\hat{g_\\\\epsilon}(\\\\xi)=e^{-\\\\pi\\\\epsilon\\\\xi^2}\\$ has compact support; it does not. (2) The inference that because \\$f*g_\\\\epsilon\\\\to f\\$ in \\$L^2\\$, then \\$\\\\hat f\\\\in L^1\\$ is unjustified and not generally true. (3) The statement 'a function with compact support cannot be in \\$L^1(\\\\mathbb{R})\\$ unless it is identically zero' is false; many compactly supported functions are integrable. The reasoning does not establish the desired conclusion.\",\n  \"suggestions\": \"A correct proof might use analyticity: if \\$f\\$ has compact support, then \\$\\\\hat f\\$ extends to an entire function of exponential type. If additionally \\$\\\\hat f\\$ has compact support on \\$\\\\mathbb{R}\\$, then as an entire function vanishing on an interval, it must be identically zero, hence \\$f=0\\$ a.e. Alternatively, use the uncertainty principle or the fact that the Fourier transform of a compactly supported \\$L^2\\$ function is real-analytic, so if it vanishes on an open set it must be zero.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors. (1) It incorrectly claims that the Gaussian's Fourier transform \\\\(\\\\hat{g_\\\\epsilon}(\\\\xi)=e^{-\\\\pi\\\\epsilon\\\\xi^2}\\\\) has compact support; it does not. (2) The inference that because \\\\(f*g_\\\\epsilon\\\\to f\\\\) in \\\\(L^2\\\\), then \\\\(\\\\hat f\\\\in L^1\\\\) is unjustified and not generally true. (3) The statement 'a function with compact support cannot be in \\\\(L^1(\\\\mathbb{R})\\\\) unless it is identically zero' is false; many compactly supported functions are integrable. The reasoning does not establish the desired conclusion.\",\n  \"suggestions\": \"A correct proof might use analyticity: if \\\\(f\\\\) has compact support, then \\\\(\\\\hat f\\\\) extends to an entire function of exponential type. If additionally \\\\(\\\\hat f\\\\) has compact support on \\\\(\\\\mathbb{R}\\\\), then as an entire function vanishing on an interval, it must be identically zero, hence \\\\(f=0\\\\) a.e. Alternatively, use the uncertainty principle or the fact that the Fourier transform of a compactly supported \\\\(L^2\\\\) function is real-analytic, so if it vanishes on an open set it must be zero.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains multiple mathematical errors. (1) It incorrectly claims that the Gaussian's Fourier transform \\$\\\\hat{g_\\\\epsilon}(\\\\xi)=e^{-\\\\pi\\\\epsilon\\\\xi^2}\\$ has compact support; it does not. (2) The inference that because \\$f*g_\\\\epsilon\\\\to f\\$ in \\$L^2\\$, then \\$\\\\hat f\\\\in L^1\\$ is unjustified and not generally true. (3) The statement 'a function with compact support cannot be in \\$L^1(\\\\mathbb{R})\\$ unless it is identically zero' is false; many compactly supported functions are integrable. The reasoning does not establish the desired conclusion.",
+        "suggestions": "A correct proof might use analyticity: if \\$f\\$ has compact support, then \\$\\\\hat f\\$ extends to an entire function of exponential type. If additionally \\$\\\\hat f\\$ has compact support on \\$\\mathbb{R}\\$, then as an entire function vanishing on an interval, it must be identically zero, hence \\$f=0\\$ a.e. Alternatively, use the uncertainty principle or the fact that the Fourier transform of a compactly supported \\$L^2\\$ function is real-analytic, so if it vanishes on an open set it must be zero.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Define the Sorgenfrey line $\\mathbb{R}_\\ell$ as the topological space whose underlying set is $\\mathbb{R}$ and whose topology is generated by the half-open intervals $[a,b)$ with $a<b$. The Sorgenfrey plane is the product space $\\mathbb{R}_\\ell \\times \\mathbb{R}_\\ell$.\n\nProve that the Sorgenfrey plane is not normal.",
+    "run_id": "38",
+    "topic_slug": "general_topology",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer claims 'The Sorgenfrey line is known to be not normal', which is false. In fact, the Sorgenfrey line is normal (it is regular and Lindel\u00f6f, hence normal). Therefore, the argument that the subspace A is not normal fails, and the proof is invalid.\",\n  \"suggestions\": \"A correct proof must use a different method. For example, consider the antidiagonal D = {(x, -x) : x \u2208 \u211d} and show it is closed and discrete. Then apply Jones' Lemma: if X is normal and separable, then 2^{|D|} \u2264 2^{\u21350}, but |D| = 2^{\u21350} leads to contradiction. Alternatively, directly construct two disjoint closed sets that cannot be separated.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer claims 'The Sorgenfrey line is known to be not normal', which is false. In fact, the Sorgenfrey line is normal (it is regular and Lindel\u00f6f, hence normal). Therefore, the argument that the subspace A is not normal fails, and the proof is invalid.\",\n  \"suggestions\": \"A correct proof must use a different method. For example, consider the antidiagonal D = {(x, -x) : x \u2208 \u211d} and show it is closed and discrete. Then apply Jones' Lemma: if X is normal and separable, then 2^{|D|} \u2264 2^{\u21350}, but |D| = 2^{\u21350} leads to contradiction. Alternatively, directly construct two disjoint closed sets that cannot be separated.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer claims 'The Sorgenfrey line is known to be not normal', which is false. In fact, the Sorgenfrey line is normal (it is regular and Lindel\u00f6f, hence normal). Therefore, the argument that the subspace A is not normal fails, and the proof is invalid.",
+        "suggestions": "A correct proof must use a different method. For example, consider the antidiagonal D = {(x, -x) : x \u2208 \u211d} and show it is closed and discrete. Then apply Jones' Lemma: if X is normal and separable, then 2^{|D|} \u2264 2^{\u21350}, but |D| = 2^{\u21350} leads to contradiction. Alternatively, directly construct two disjoint closed sets that cannot be separated.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a finite group such that the automorphism group $\\operatorname{Aut}(G)$ is trivial (i.e., the only automorphism of $G$ is the identity map). Prove that $G$ is either the trivial group or the cyclic group of order $2$.",
+    "run_id": "14",
+    "topic_slug": "group_theory_and_generalizations",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains several mathematical errors. (1) The statement 'there is always at least one non-trivial automorphism for any non-trivial group' is false (counterexample: $C_2$). The correct argument is that if $G$ were non-abelian, conjugation by a non-central element gives a non-trivial inner automorphism, forcing $G$ to be abelian. (2) The decomposition of finite abelian groups as a direct product of cyclic groups of prime power order with distinct primes is incorrect; primes may repeat (e.g., $C_2 \\\\times C_2$). (3) The claim that $\\\\operatorname{Aut}(G)$ trivial implies each cyclic factor has trivial automorphism neglects automorphisms that permute isomorphic factors; e.g., $C_2 \\\\times C_2$ has each factor $\\\\operatorname{Aut}(C_2)$ trivial but overall $\\\\operatorname{Aut}(C_2 \\\\times C_2) \\\\cong GL(2,2)$ is non-trivial. (4) The final assertion that a direct product of copies of $C_2$ is cyclic of order $2^n$ is false; such a product is elementary abelian and is cyclic only when $n=1$. Consequently, the proof does not establish that $G$ must be trivial or $C_2$.\",\n  \"suggestions\": \"A correct proof would: show $G$ is abelian (since non-abelian implies non-trivial inner automorphisms); then show $G$ is of exponent 2 (consider the inversion automorphism, which must be trivial, forcing every element to be its own inverse); then $G$ is an elementary abelian $2$-group, i.e., a vector space over $\\\\mathbb{F}_2$. If its dimension $>1$, there exist linear automorphisms (e.g., swapping basis vectors), so $\\\\operatorname{Aut}(G)$ is non-trivial. Hence dimension must be 1 or 0, giving $C_2$ or trivial group.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains several mathematical errors. (1) The statement 'there is always at least one non-trivial automorphism for any non-trivial group' is false (counterexample: $C_2$). The correct argument is that if $G$ were non-abelian, conjugation by a non-central element gives a non-trivial inner automorphism, forcing $G$ to be abelian. (2) The decomposition of finite abelian groups as a direct product of cyclic groups of prime power order with distinct primes is incorrect; primes may repeat (e.g., $C_2 \\\\times C_2$). (3) The claim that $\\\\operatorname{Aut}(G)$ trivial implies each cyclic factor has trivial automorphism neglects automorphisms that permute isomorphic factors; e.g., $C_2 \\\\times C_2$ has each factor $\\\\operatorname{Aut}(C_2)$ trivial but overall $\\\\operatorname{Aut}(C_2 \\\\times C_2) \\\\cong GL(2,2)$ is non-trivial. (4) The final assertion that a direct product of copies of $C_2$ is cyclic of order $2^n$ is false; such a product is elementary abelian and is cyclic only when $n=1$. Consequently, the proof does not establish that $G$ must be trivial or $C_2$.\",\n  \"suggestions\": \"A correct proof would: show $G$ is abelian (since non-abelian implies non-trivial inner automorphisms); then show $G$ is of exponent 2 (consider the inversion automorphism, which must be trivial, forcing every element to be its own inverse); then $G$ is an elementary abelian $2$-group, i.e., a vector space over $\\\\mathbb{F}_2$. If its dimension $>1$, there exist linear automorphisms (e.g., swapping basis vectors), so $\\\\operatorname{Aut}(G)$ is non-trivial. Hence dimension must be 1 or 0, giving $C_2$ or trivial group.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains several mathematical errors. (1) The statement 'there is always at least one non-trivial automorphism for any non-trivial group' is false (counterexample: $C_2$). The correct argument is that if $G$ were non-abelian, conjugation by a non-central element gives a non-trivial inner automorphism, forcing $G$ to be abelian. (2) The decomposition of finite abelian groups as a direct product of cyclic groups of prime power order with distinct primes is incorrect; primes may repeat (e.g., $C_2 \\times C_2$). (3) The claim that $\\operatorname{Aut}(G)$ trivial implies each cyclic factor has trivial automorphism neglects automorphisms that permute isomorphic factors; e.g., $C_2 \\times C_2$ has each factor $\\operatorname{Aut}(C_2)$ trivial but overall $\\operatorname{Aut}(C_2 \\times C_2) \\cong GL(2,2)$ is non-trivial. (4) The final assertion that a direct product of copies of $C_2$ is cyclic of order $2^n$ is false; such a product is elementary abelian and is cyclic only when $n=1$. Consequently, the proof does not establish that $G$ must be trivial or $C_2$.",
+        "suggestions": "A correct proof would: show $G$ is abelian (since non-abelian implies non-trivial inner automorphisms); then show $G$ is of exponent 2 (consider the inversion automorphism, which must be trivial, forcing every element to be its own inverse); then $G$ is an elementary abelian $2$-group, i.e., a vector space over $\\mathbb{F}_2$. If its dimension $>1$, there exist linear automorphisms (e.g., swapping basis vectors), so $\\operatorname{Aut}(G)$ is non-trivial. Hence dimension must be 1 or 0, giving $C_2$ or trivial group.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "A uniform chain of length $L > 1$ is suspended from two points at the same height, located at $(0,0)$ and $(1,0)$. By the principle of minimum potential energy, the chain adopts the shape $y(x)$ that minimizes\n$$\nU[y] = \\int_0^1 y(x) \\sqrt{1 + [y'(x)]^2} \\, dx\n$$\nsubject to the fixed length constraint\n$$\n\\int_0^1 \\sqrt{1 + [y'(x)]^2} \\, dx = L,\n$$\nand boundary conditions $y(0) = 0$, $y(1) = 0$.\n\nFind the function $y(x)$ describing the chain. Your answer should express $y(x)$ in terms of a parameter that is determined implicitly by $L$.",
+    "run_id": "34",
+    "topic_slug": "calculus_of_variations_and_optimization",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer only sets up the variational problem and writes the Euler-Lagrange equation but does not solve it to find y(x). It does not provide the function y(x) nor the parameter relation with L. The question explicitly asks to find the function y(x) in terms of a parameter determined implicitly by L. Since the answer stops before deriving the shape, it is meaningfully incomplete. The steps shown are correct as far as they go, but the final result is missing.\",\n  \"suggestions\": \"Complete the derivation: solve the Euler-Lagrange equation to obtain the catenary shape, apply boundary conditions and length constraint to express y(x) in terms of a parameter (e.g., the sag or tension). Provide the final expression for y(x) and the implicit equation linking the parameter to L.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer only sets up the variational problem and writes the Euler-Lagrange equation but does not solve it to find y(x). It does not provide the function y(x) nor the parameter relation with L. The question explicitly asks to find the function y(x) in terms of a parameter determined implicitly by L. Since the answer stops before deriving the shape, it is meaningfully incomplete. The steps shown are correct as far as they go, but the final result is missing.\",\n  \"suggestions\": \"Complete the derivation: solve the Euler-Lagrange equation to obtain the catenary shape, apply boundary conditions and length constraint to express y(x) in terms of a parameter (e.g., the sag or tension). Provide the final expression for y(x) and the implicit equation linking the parameter to L.\"\n}",
+        "verdict": "insufficient",
+        "notes": "The answer only sets up the variational problem and writes the Euler-Lagrange equation but does not solve it to find y(x). It does not provide the function y(x) nor the parameter relation with L. The question explicitly asks to find the function y(x) in terms of a parameter determined implicitly by L. Since the answer stops before deriving the shape, it is meaningfully incomplete. The steps shown are correct as far as they go, but the final result is missing.",
+        "suggestions": "Complete the derivation: solve the Euler-Lagrange equation to obtain the catenary shape, apply boundary conditions and length constraint to express y(x) in terms of a parameter (e.g., the sag or tension). Provide the final expression for y(x) and the implicit equation linking the parameter to L.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately identifies the answer as insufficient and provides clear reasoning. No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f:[0,1]\\to\\mathbb{R}$ be a function satisfying $|f(x)-f(y)|\\le 2|x-y|$ for all $x,y\\in[0,1]$. Suppose $f(0)=0$ and $f(1)=1$. Determine the maximum possible value of $\\int_0^1 f(x)\\,dx$.",
+    "run_id": "16",
+    "topic_slug": "real_functions",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly interprets the Lipschitz condition. The statement 'the function f(x) lies within a band of width 2 around the line segment connecting (0,0) and (1,1)' is not justified; the condition only bounds differences, not deviation from that line. Moreover, the 'upper boundary' is misidentified as 'the line segment connecting (0,0) and (1,1) with a slope of 2'\u2014such a line cannot have both endpoints (0,0) and (1,1) and slope 2. The computed area 1/2 corresponds to the area under y=x, which is not maximal. In fact, the maximum possible integral is 7/8, achieved by f(x)=2x for x\u22643/4 and f(x)=3-2x for x\u22653/4. Therefore, the answer is mathematically incorrect.\",\n  \"suggestions\": \"To correct, derive pointwise bounds from Lipschitz: f(x) \u2264 2x and f(x) \u2264 3-2x, so f(x) \u2264 min(2x, 3-2x). The integral is maximized by taking equality everywhere, which yields \u222b_0^1 min(2x, 3-2x) dx = 7/8.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly interprets the Lipschitz condition. The statement 'the function f(x) lies within a band of width 2 around the line segment connecting (0,0) and (1,1)' is not justified; the condition only bounds differences, not deviation from that line. Moreover, the 'upper boundary' is misidentified as 'the line segment connecting (0,0) and (1,1) with a slope of 2'\u2014such a line cannot have both endpoints (0,0) and (1,1) and slope 2. The computed area 1/2 corresponds to the area under y=x, which is not maximal. In fact, the maximum possible integral is 7/8, achieved by f(x)=2x for x\u22643/4 and f(x)=3-2x for x\u22653/4. Therefore, the answer is mathematically incorrect.\",\n  \"suggestions\": \"To correct, derive pointwise bounds from Lipschitz: f(x) \u2264 2x and f(x) \u2264 3-2x, so f(x) \u2264 min(2x, 3-2x). The integral is maximized by taking equality everywhere, which yields \u222b_0^1 min(2x, 3-2x) dx = 7/8.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly interprets the Lipschitz condition. The statement 'the function f(x) lies within a band of width 2 around the line segment connecting (0,0) and (1,1)' is not justified; the condition only bounds differences, not deviation from that line. Moreover, the 'upper boundary' is misidentified as 'the line segment connecting (0,0) and (1,1) with a slope of 2'\u2014such a line cannot have both endpoints (0,0) and (1,1) and slope 2. The computed area 1/2 corresponds to the area under y=x, which is not maximal. In fact, the maximum possible integral is 7/8, achieved by f(x)=2x for x\u22643/4 and f(x)=3-2x for x\u22653/4. Therefore, the answer is mathematically incorrect.",
+        "suggestions": "To correct, derive pointwise bounds from Lipschitz: f(x) \u2264 2x and f(x) \u2264 3-2x, so f(x) \u2264 min(2x, 3-2x). The integral is maximized by taking equality everywhere, which yields \u222b_0^1 min(2x, 3-2x) dx = 7/8.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a compact abelian group with normalized Haar measure $\\mu$ (i.e., $\\mu(G)=1$). Denote by $\\widehat{G}$ the dual group of continuous characters $\\chi: G \\to \\mathbb{T}$, where $\\mathbb{T} = \\{z \\in \\mathbb{C}: |z|=1\\}$. For a function $f \\in L^1(G)$, define its Fourier transform $\\widehat{f}: \\widehat{G} \\to \\mathbb{C}$ by\n$$\n\\widehat{f}(\\chi) = \\int_G f(g) \\overline{\\chi(g)} \\, d\\mu(g).\n$$\nRecall that the characters separate points of $G$: for any distinct $x,y \\in G$, there exists $\\chi \\in \\widehat{G}$ such that $\\chi(x) \\neq \\chi(y)$.\n\n(a) Show that the set $\\widehat{G}$ is an orthonormal set in $L^2(G)$; that is, for $\\chi, \\psi \\in \\widehat{G}$,\n$$\n\\langle \\chi, \\psi \\rangle = \\int_G \\chi(g) \\overline{\\psi(g)} \\, d\\mu(g) = \\delta_{\\chi,\\psi}.\n$$\n\n(b) Using the Stone\u2013Weierstrass theorem, prove that the linear span of $\\widehat{G}$ is dense in $C(G)$ with respect to the uniform norm $\\|f\\|_\\infty = \\sup_{g\\in G} |f(g)|$.\n\n(c) Conclude that $\\widehat{G}$ is an orthonormal basis for $L^2(G)$.\n\n(d) Deduce the Plancherel identity: for every $f \\in L^2(G)$,\n$$\n\\int_G |f(g)|^2 \\, d\\mu(g) = \\sum_{\\chi \\in \\widehat{G}} |\\widehat{f}(\\chi)|^2.\n$$\n\nMake sure to justify all steps, including the application of the Stone\u2013Weierstrass theorem and the density arguments.",
+    "run_id": "29",
+    "topic_slug": "abstract_harmonic_analysis",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (a) merely states the result without proof; no demonstration of orthonormality (e.g., using normalized Haar measure for \u03c7=\u03c8, and orthogonality for distinct characters). Part (b) misapplies Stone\u2013Weierstrass: fails to verify that the linear span of characters is a subalgebra (closed under multiplication) and self-adjoint (closed under complex conjugation). The representation of constant functions is incorrect (infinite sum instead of using the trivial character). Part (d) offers no deduction, only a claim. Overall, the answer contains significant gaps and errors.\",\n  \"suggestions\": \"In (a), compute \u222b\u03c7\\overline{\u03c7}=1 and for \u03c7\u2260\u03c8 use translation invariance to show integral zero. In (b), note that characters form a multiplicative group, so their linear span is an algebra; also conjugate of a character is its inverse, so algebra is self-adjoint. Constant functions are in the span via the trivial character. Then apply Stone\u2013Weierstrass. In (c), combine (a) and density to get orthonormal basis. In (d), use basis expansion: f = \u03a3\u27e8f,\u03c7\u27e9\u03c7 in L\u00b2, then Plancherel follows from Parseval.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (a) merely states the result without proof; no demonstration of orthonormality (e.g., using normalized Haar measure for \u03c7=\u03c8, and orthogonality for distinct characters). Part (b) misapplies Stone\u2013Weierstrass: fails to verify that the linear span of characters is a subalgebra (closed under multiplication) and self-adjoint (closed under complex conjugation). The representation of constant functions is incorrect (infinite sum instead of using the trivial character). Part (d) offers no deduction, only a claim. Overall, the answer contains significant gaps and errors.\",\n  \"suggestions\": \"In (a), compute \u222b\u03c7\\overline{\u03c7}=1 and for \u03c7\u2260\u03c8 use translation invariance to show integral zero. In (b), note that characters form a multiplicative group, so their linear span is an algebra; also conjugate of a character is its inverse, so algebra is self-adjoint. Constant functions are in the span via the trivial character. Then apply Stone\u2013Weierstrass. In (c), combine (a) and density to get orthonormal basis. In (d), use basis expansion: f = \u03a3\u27e8f,\u03c7\u27e9\u03c7 in L\u00b2, then Plancherel follows from Parseval.\"\n}",
+        "verdict": "incorrect",
+        "notes": "Part (a) merely states the result without proof; no demonstration of orthonormality (e.g., using normalized Haar measure for \u03c7=\u03c8, and orthogonality for distinct characters). Part (b) misapplies Stone\u2013Weierstrass: fails to verify that the linear span of characters is a subalgebra (closed under multiplication) and self-adjoint (closed under complex conjugation). The representation of constant functions is incorrect (infinite sum instead of using the trivial character). Part (d) offers no deduction, only a claim. Overall, the answer contains significant gaps and errors.",
+        "suggestions": "In (a), compute \u222b\u03c7\\overline{\u03c7}=1 and for \u03c7\u2260\u03c8 use translation invariance to show integral zero. In (b), note that characters form a multiplicative group, so their linear span is an algebra; also conjugate of a character is its inverse, so algebra is self-adjoint. Constant functions are in the span via the trivial character. Then apply Stone\u2013Weierstrass. In (c), combine (a) and density to get orthonormal basis. In (d), use basis expansion: f = \u03a3\u27e8f,\u03c7\u27e9\u03c7 in L\u00b2, then Plancherel follows from Parseval.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $w(x)=e^{-x}$ on $[0,\\infty)$. Determine the nodes $x_1, x_2$ (with $0 < x_1 < x_2$) and weights $w_1, w_2$ such that the quadrature rule\n$$\n\\int_0^\\infty e^{-x} f(x)\\,dx \\approx w_1 f(x_1) + w_2 f(x_2)\n$$\nis exact for all polynomials $f$ of degree at most $3$. Provide the exact values in simplified radical form.",
+    "run_id": "44",
+    "topic_slug": "numerical_analysis",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly sets up the moment equations but does not solve for the nodes and weights. The question asks to 'determine the nodes $x_1, x_2$ and weights $w_1, w_2$' and 'provide the exact values in simplified radical form.' The answer stops after writing the equations and stating that they will be solved, but no solution is given. Thus the answer is incomplete.\",\n  \"suggestions\": \"Solve the system of equations to find $x_1, x_2, w_1, w_2$. For example, one can treat it as a Gaussian quadrature problem: the nodes are the roots of the orthogonal polynomial of degree 2 with respect to the weight $e^{-x}$ on $[0,\\\\infty)$, which are $x = 2 \\\\pm \\\\sqrt{2}$. Then compute weights accordingly. Alternatively, solve the nonlinear system directly.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly sets up the moment equations but does not solve for the nodes and weights. The question asks to 'determine the nodes $x_1, x_2$ and weights $w_1, w_2$' and 'provide the exact values in simplified radical form.' The answer stops after writing the equations and stating that they will be solved, but no solution is given. Thus the answer is incomplete.\",\n  \"suggestions\": \"Solve the system of equations to find $x_1, x_2, w_1, w_2$. For example, one can treat it as a Gaussian quadrature problem: the nodes are the roots of the orthogonal polynomial of degree 2 with respect to the weight $e^{-x}$ on $[0,\\\\infty)$, which are $x = 2 \\\\pm \\\\sqrt{2}$. Then compute weights accordingly. Alternatively, solve the nonlinear system directly.\"\n}",
+        "verdict": "insufficient",
+        "notes": "The answer correctly sets up the moment equations but does not solve for the nodes and weights. The question asks to 'determine the nodes $x_1, x_2$ and weights $w_1, w_2$' and 'provide the exact values in simplified radical form.' The answer stops after writing the equations and stating that they will be solved, but no solution is given. Thus the answer is incomplete.",
+        "suggestions": "Solve the system of equations to find $x_1, x_2, w_1, w_2$. For example, one can treat it as a Gaussian quadrature problem: the nodes are the roots of the orthogonal polynomial of degree 2 with respect to the weight $e^{-x}$ on $[0,\\infty)$, which are $x = 2 \\pm \\sqrt{2}$. Then compute weights accordingly. Alternatively, solve the nonlinear system directly.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately identifies the answer as insufficient, provides evidence, and suggests a valid approach. No revisions needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Prove that there exists a Lebesgue measurable set $E \\subseteq \\mathbb{R}$ such that for every nonempty open interval $I \\subseteq \\mathbb{R}$, we have $0 < m(E \\cap I) < m(I)$, where $m$ denotes Lebesgue measure.",
+    "run_id": "17",
+    "topic_slug": "measure_and_integration",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains fundamental mathematical errors. It claims that the set of irrational numbers in $[0,1]$ has Lebesgue measure zero, which is false (its measure is $1$). Consequently, the deductions $m(E)=0$ and $m(E\\\\cap I)\\\\le m(E)=0$ are invalid. The lower bound $m(E\\\\cap I)\\\\ge 0$ is trivial and does not establish $0<m(E\\\\cap I)$. Moreover, for intervals $I$ disjoint from $[0,1]$, $E\\\\cap I=\\\\emptyset$, giving $m(E\\\\cap I)=0$, contradicting the required strict inequality. Thus the construction fails to satisfy the required property.\",\n  \"suggestions\": \"A correct proof must construct a measurable set $E$ such that both $E$ and its complement have positive measure in every nonempty open interval. One standard approach uses a transfinite construction or a Cantor\u2011type process to ensure $0<m(E\\\\cap I)<m(I)$ for all intervals with rational endpoints, then extends to all intervals by density.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains fundamental mathematical errors. It claims that the set of irrational numbers in $[0,1]$ has Lebesgue measure zero, which is false (its measure is $1$). Consequently, the deductions $m(E)=0$ and $m(E\\\\cap I)\\\\le m(E)=0$ are invalid. The lower bound $m(E\\\\cap I)\\\\ge 0$ is trivial and does not establish $0<m(E\\\\cap I)$. Moreover, for intervals $I$ disjoint from $[0,1]$, $E\\\\cap I=\\\\emptyset$, giving $m(E\\\\cap I)=0$, contradicting the required strict inequality. Thus the construction fails to satisfy the required property.\",\n  \"suggestions\": \"A correct proof must construct a measurable set $E$ such that both $E$ and its complement have positive measure in every nonempty open interval. One standard approach uses a transfinite construction or a Cantor\u2011type process to ensure $0<m(E\\\\cap I)<m(I)$ for all intervals with rational endpoints, then extends to all intervals by density.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains fundamental mathematical errors. It claims that the set of irrational numbers in $[0,1]$ has Lebesgue measure zero, which is false (its measure is $1$). Consequently, the deductions $m(E)=0$ and $m(E\\cap I)\\le m(E)=0$ are invalid. The lower bound $m(E\\cap I)\\ge 0$ is trivial and does not establish $0<m(E\\cap I)$. Moreover, for intervals $I$ disjoint from $[0,1]$, $E\\cap I=\\emptyset$, giving $m(E\\cap I)=0$, contradicting the required strict inequality. Thus the construction fails to satisfy the required property.",
+        "suggestions": "A correct proof must construct a measurable set $E$ such that both $E$ and its complement have positive measure in every nonempty open interval. One standard approach uses a transfinite construction or a Cantor\u2011type process to ensure $0<m(E\\cap I)<m(I)$ for all intervals with rational endpoints, then extends to all intervals by density.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $C[0,1]$ denote the Banach space of complex-valued continuous functions on $[0,1]$ equipped with the supremum norm $\\|f\\|_\\infty = \\sup_{x\\in[0,1]}|f(x)|$. Define the Volterra operator $V: C[0,1] \\to C[0,1]$ by\n$$\n(Vf)(x) = \\int_0^x f(t)\\,dt, \\qquad x\\in[0,1].\n$$\nProve that $V$ is a compact linear operator and that its spectrum $\\sigma(V) = \\{0\\}$.",
+    "run_id": "32",
+    "topic_slug": "functional_analysis",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The compactness proof is correct, but the spectrum part contains fundamental errors. The answer states: 'We seek to show that \u03bbI - V is not invertible for any \u03bb \u2260 0', which is the opposite of what is required (since \u03c3(V) = {0} means \u03bbI - V is invertible for \u03bb \u2260 0). The subsequent derivation is incorrect: from (\u03bbI - V)f = g, they incorrectly rewrite as f(x) = \u03bb f(x) - \u222b_0^x g(t) dt and then solve to f(x) = (1/\u03bb)\u222b_0^x g(t) dt. This misrepresents the equation and leads to an invalid conclusion. Therefore the answer does not prove \u03c3(V) = {0} and contains serious mathematical errors.\",\n  \"suggestions\": \"To correct, show that V is quasinilpotent (e.g., compute \u2225V^n\u2225 and show \u2225V^n\u2225^{1/n} \u2192 0) or directly solve (\u03bbI - V)f = g for \u03bb \u2260 0 using an integrating factor to demonstrate invertibility. Also note that 0 is always in the spectrum of a compact operator on an infinite-dimensional space.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The compactness proof is correct, but the spectrum part contains fundamental errors. The answer states: 'We seek to show that \u03bbI - V is not invertible for any \u03bb \u2260 0', which is the opposite of what is required (since \u03c3(V) = {0} means \u03bbI - V is invertible for \u03bb \u2260 0). The subsequent derivation is incorrect: from (\u03bbI - V)f = g, they incorrectly rewrite as f(x) = \u03bb f(x) - \u222b_0^x g(t) dt and then solve to f(x) = (1/\u03bb)\u222b_0^x g(t) dt. This misrepresents the equation and leads to an invalid conclusion. Therefore the answer does not prove \u03c3(V) = {0} and contains serious mathematical errors.\",\n  \"suggestions\": \"To correct, show that V is quasinilpotent (e.g., compute \u2225V^n\u2225 and show \u2225V^n\u2225^{1/n} \u2192 0) or directly solve (\u03bbI - V)f = g for \u03bb \u2260 0 using an integrating factor to demonstrate invertibility. Also note that 0 is always in the spectrum of a compact operator on an infinite-dimensional space.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The compactness proof is correct, but the spectrum part contains fundamental errors. The answer states: 'We seek to show that \u03bbI - V is not invertible for any \u03bb \u2260 0', which is the opposite of what is required (since \u03c3(V) = {0} means \u03bbI - V is invertible for \u03bb \u2260 0). The subsequent derivation is incorrect: from (\u03bbI - V)f = g, they incorrectly rewrite as f(x) = \u03bb f(x) - \u222b_0^x g(t) dt and then solve to f(x) = (1/\u03bb)\u222b_0^x g(t) dt. This misrepresents the equation and leads to an invalid conclusion. Therefore the answer does not prove \u03c3(V) = {0} and contains serious mathematical errors.",
+        "suggestions": "To correct, show that V is quasinilpotent (e.g., compute \u2225V^n\u2225 and show \u2225V^n\u2225^{1/n} \u2192 0) or directly solve (\u03bbI - V)f = g for \u03bb \u2260 0 using an integrating factor to demonstrate invertibility. Also note that 0 is always in the spectrum of a compact operator on an infinite-dimensional space.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately identifies the errors in the spectrum proof and correctly affirms the compactness proof. The suggestions are appropriate. No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Evaluate the improper integral\n$$\n\\int_{0}^{\\infty} \\frac{(\\ln x)^2}{x^2+1} \\, dx.\n$$\nProvide an exact value.",
+    "run_id": "18",
+    "topic_slug": "functions_of_a_complex_variable",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors. (1) After the substitution $u = \\\\ln x$, they incorrectly state '2I = $\\\\int_{-\\\\infty}^{\\\\infty} \\\\frac{u^2}{e^{2u}+1} e^u \\\\, du$' while earlier they defined $I$ as that same integral, leading to a factor mistake. (2) In the substitution $v = -u$, they erroneously simplify the denominator, claiming $\\\\int \\\\frac{u^2 e^u}{e^{2u}+1} du = \\\\int \\\\frac{v^2 e^{-v}}{1+e^{2v}} dv$, which is algebraically incorrect (the correct transformation yields $\\\\int \\\\frac{v^2 e^{v}}{e^{2v}+1} dv$). (3) Subsequent manipulations mix variables $u$ and $v$ as if they are independent, e.g., '4I = $\\\\int_{-\\\\infty}^{\\\\infty} \\\\frac{u^2 e^u + v^2 e^{-v}}{e^{2u}+1+e^{2v}+e^{2u}e^{2v}} du$', which is ill-defined. (4) The evaluation of the split integrals is unsupported and the final result $\\\\pi^2/8$ is incorrect; the known value is $\\\\pi^3/8$. Thus the reasoning is fundamentally flawed.\",\n  \"suggestions\": \"A correct approach: let $x = e^t$, then $I = \\\\int_{-\\\\infty}^{\\\\infty} \\\\frac{t^2 e^t}{e^{2t}+1} dt = \\\\int_{-\\\\infty}^{\\\\infty} \\\\frac{t^2}{2\\\\cosh t} dt = \\\\frac{1}{2} \\\\int_{-\\\\infty}^{\\\\infty} \\\\frac{t^2}{\\\\cosh t} dt$. Using known results (e.g., via contour integration or beta function), this evaluates to $\\\\pi^3/8$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors. (1) After the substitution $u = \\\\ln x$, they incorrectly state '2I = $\\\\int_{-\\\\infty}^{\\\\infty} \\\\frac{u^2}{e^{2u}+1} e^u \\\\, du$' while earlier they defined $I$ as that same integral, leading to a factor mistake. (2) In the substitution $v = -u$, they erroneously simplify the denominator, claiming $\\\\int \\\\frac{u^2 e^u}{e^{2u}+1} du = \\\\int \\\\frac{v^2 e^{-v}}{1+e^{2v}} dv$, which is algebraically incorrect (the correct transformation yields $\\\\int \\\\frac{v^2 e^{v}}{e^{2v}+1} dv$). (3) Subsequent manipulations mix variables $u$ and $v$ as if they are independent, e.g., '4I = $\\\\int_{-\\\\infty}^{\\\\infty} \\\\frac{u^2 e^u + v^2 e^{-v}}{e^{2u}+1+e^{2v}+e^{2u}e^{2v}} du$', which is ill-defined. (4) The evaluation of the split integrals is unsupported and the final result $\\\\pi^2/8$ is incorrect; the known value is $\\\\pi^3/8$. Thus the reasoning is fundamentally flawed.\",\n  \"suggestions\": \"A correct approach: let $x = e^t$, then $I = \\\\int_{-\\\\infty}^{\\\\infty} \\\\frac{t^2 e^t}{e^{2t}+1} dt = \\\\int_{-\\\\infty}^{\\\\infty} \\\\frac{t^2}{2\\\\cosh t} dt = \\\\frac{1}{2} \\\\int_{-\\\\infty}^{\\\\infty} \\\\frac{t^2}{\\\\cosh t} dt$. Using known results (e.g., via contour integration or beta function), this evaluates to $\\\\pi^3/8$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains multiple mathematical errors. (1) After the substitution $u = \\ln x$, they incorrectly state '2I = $\\int_{-\\infty}^{\\infty} \\frac{u^2}{e^{2u}+1} e^u \\, du$' while earlier they defined $I$ as that same integral, leading to a factor mistake. (2) In the substitution $v = -u$, they erroneously simplify the denominator, claiming $\\int \\frac{u^2 e^u}{e^{2u}+1} du = \\int \\frac{v^2 e^{-v}}{1+e^{2v}} dv$, which is algebraically incorrect (the correct transformation yields $\\int \\frac{v^2 e^{v}}{e^{2v}+1} dv$). (3) Subsequent manipulations mix variables $u$ and $v$ as if they are independent, e.g., '4I = $\\int_{-\\infty}^{\\infty} \\frac{u^2 e^u + v^2 e^{-v}}{e^{2u}+1+e^{2v}+e^{2u}e^{2v}} du$', which is ill-defined. (4) The evaluation of the split integrals is unsupported and the final result $\\pi^2/8$ is incorrect; the known value is $\\pi^3/8$. Thus the reasoning is fundamentally flawed.",
+        "suggestions": "A correct approach: let $x = e^t$, then $I = \\int_{-\\infty}^{\\infty} \\frac{t^2 e^t}{e^{2t}+1} dt = \\int_{-\\infty}^{\\infty} \\frac{t^2}{2\\cosh t} dt = \\frac{1}{2} \\int_{-\\infty}^{\\infty} \\frac{t^2}{\\cosh t} dt$. Using known results (e.g., via contour integration or beta function), this evaluates to $\\pi^3/8$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is thorough and accurate; no improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\theta$ be an irrational number. Define the rotation $R_\\theta: [0,1) \\to [0,1)$ by $R_\\theta(x) = x + \\theta \\pmod 1$, where we identify $[0,1)$ with the circle $\\mathbb{R}/\\mathbb{Z}$. Let $\\lambda$ denote the Lebesgue measure on $[0,1)$.\n\nProve the following:\n(a) $R_\\theta$ is ergodic with respect to $\\lambda$.\n(b) $R_\\theta$ is not strong mixing with respect to $\\lambda$.\n(c) $R_\\theta$ is uniquely ergodic, i.e., $\\lambda$ is the only $R_\\theta$-invariant Borel probability measure on $[0,1)$.\n[/QUESTION]",
+    "run_id": "24",
+    "topic_slug": "dynamical_systems_and_ergodic_theory",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors and gaps. (a) The ergodicity proof merely asserts the conclusion without justification ('the only set that is invariant under translations by \u03b8 is the null set or the whole interval') which is the statement to be proved; no reasoning is given. (b) The argument for non-mixing misinterprets the definition: strong mixing requires lim_{n\u2192\u221e} \u03bb(A \u2229 R_\u03b8^{-n} B) = \u03bb(A)\u03bb(B) for fixed A, B, not sequences A_n, B_n. The computation uses n=1 and incorrectly assumes R_\u03b8^{-1}(B) = [1/2-\u03b8,1) without handling wrap-around; even if corrected, it does not address the limit. (c) The unique ergodicity claim is false: 'Since R_\u03b8 is ergodic, \u03bc must be a multiple of \u03bb' is incorrect; ergodicity of \u03bb does not imply that any invariant measure is absolutely continuous w.r.t. \u03bb. The reasoning is invalid.\",\n  \"suggestions\": \"For (a), provide a proof using Fourier coefficients or approximation by intervals. For (b), show that for A = B = [0,1/2) (or using characters), \u03bb(A \u2229 R_\u03b8^{-n} B) does not converge to \u03bb(A)\u03bb(B) because the correlation oscillates. For (c), prove unique ergodicity via uniform convergence of Birkhoff averages for continuous functions, or by showing that any invariant measure must have the same Fourier coefficients as \u03bb.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors and gaps. (a) The ergodicity proof merely asserts the conclusion without justification ('the only set that is invariant under translations by \u03b8 is the null set or the whole interval') which is the statement to be proved; no reasoning is given. (b) The argument for non-mixing misinterprets the definition: strong mixing requires lim_{n\u2192\u221e} \u03bb(A \u2229 R_\u03b8^{-n} B) = \u03bb(A)\u03bb(B) for fixed A, B, not sequences A_n, B_n. The computation uses n=1 and incorrectly assumes R_\u03b8^{-1}(B) = [1/2-\u03b8,1) without handling wrap-around; even if corrected, it does not address the limit. (c) The unique ergodicity claim is false: 'Since R_\u03b8 is ergodic, \u03bc must be a multiple of \u03bb' is incorrect; ergodicity of \u03bb does not imply that any invariant measure is absolutely continuous w.r.t. \u03bb. The reasoning is invalid.\",\n  \"suggestions\": \"For (a), provide a proof using Fourier coefficients or approximation by intervals. For (b), show that for A = B = [0,1/2) (or using characters), \u03bb(A \u2229 R_\u03b8^{-n} B) does not converge to \u03bb(A)\u03bb(B) because the correlation oscillates. For (c), prove unique ergodicity via uniform convergence of Birkhoff averages for continuous functions, or by showing that any invariant measure must have the same Fourier coefficients as \u03bb.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains multiple mathematical errors and gaps. (a) The ergodicity proof merely asserts the conclusion without justification ('the only set that is invariant under translations by \u03b8 is the null set or the whole interval') which is the statement to be proved; no reasoning is given. (b) The argument for non-mixing misinterprets the definition: strong mixing requires lim_{n\u2192\u221e} \u03bb(A \u2229 R_\u03b8^{-n} B) = \u03bb(A)\u03bb(B) for fixed A, B, not sequences A_n, B_n. The computation uses n=1 and incorrectly assumes R_\u03b8^{-1}(B) = [1/2-\u03b8,1) without handling wrap-around; even if corrected, it does not address the limit. (c) The unique ergodicity claim is false: 'Since R_\u03b8 is ergodic, \u03bc must be a multiple of \u03bb' is incorrect; ergodicity of \u03bb does not imply that any invariant measure is absolutely continuous w.r.t. \u03bb. The reasoning is invalid.",
+        "suggestions": "For (a), provide a proof using Fourier coefficients or approximation by intervals. For (b), show that for A = B = [0,1/2) (or using characters), \u03bb(A \u2229 R_\u03b8^{-n} B) does not converge to \u03bb(A)\u03bb(B) because the correlation oscillates. For (c), prove unique ergodicity via uniform convergence of Birkhoff averages for continuous functions, or by showing that any invariant measure must have the same Fourier coefficients as \u03bb.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Evaluate the series\n$$\n\\sum_{n=1}^{\\infty} \\frac{(-1)^{n-1} H_n}{n},\n$$\nwhere $H_n = \\sum_{k=1}^{n} \\frac{1}{k}$ denotes the $n$-th harmonic number. Provide the exact value in closed form.",
+    "run_id": "26",
+    "topic_slug": "sequences_series_and_summability",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains mathematical errors. The claim that \\$\\\\sum_{n=1}^{\\\\infty} \\\\frac{(-1)^{n-1} \\\\ln n}{n} = \\\\ln 2\\$ is false; this series actually equals \\$\\\\frac{1}{2}(\\\\ln 2)^2 - \\\\gamma \\\\ln 2\\$. Moreover, the remainder term \\$O(1/n)\\$ yields a convergent series \\$\\\\sum \\\\frac{(-1)^{n-1} O(1/n)}{n}\\$ whose sum is not zero; ignoring it omits a finite contribution. Consequently, the final result \\$(1+\\\\gamma)\\\\ln 2\\$ is incorrect.\",\n  \"suggestions\": \"A correct evaluation, e.g., using generating functions or known identities, gives \\$\\\\sum_{n=1}^{\\\\infty} \\\\frac{(-1)^{n-1} H_n}{n} = \\\\frac{\\\\pi^2}{12} - \\\\frac{1}{2}(\\\\ln 2)^2\\$. The asymptotic expansion approach must account for the exact remainder sum, not just its convergence.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains mathematical errors. The claim that \\\\(\\\\sum_{n=1}^{\\\\infty} \\\\frac{(-1)^{n-1} \\\\ln n}{n} = \\\\ln 2\\\\) is false; this series actually equals \\\\(\\\\frac{1}{2}(\\\\ln 2)^2 - \\\\gamma \\\\ln 2\\\\). Moreover, the remainder term \\\\(O(1/n)\\\\) yields a convergent series \\\\(\\\\sum \\\\frac{(-1)^{n-1} O(1/n)}{n}\\\\) whose sum is not zero; ignoring it omits a finite contribution. Consequently, the final result \\\\((1+\\\\gamma)\\\\ln 2\\\\) is incorrect.\",\n  \"suggestions\": \"A correct evaluation, e.g., using generating functions or known identities, gives \\\\(\\\\sum_{n=1}^{\\\\infty} \\\\frac{(-1)^{n-1} H_n}{n} = \\\\frac{\\\\pi^2}{12} - \\\\frac{1}{2}(\\\\ln 2)^2\\\\). The asymptotic expansion approach must account for the exact remainder sum, not just its convergence.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains mathematical errors. The claim that \\$\\sum_{n=1}^{\\infty} \\frac{(-1)^{n-1} \\ln n}{n} = \\ln 2\\$ is false; this series actually equals \\$\\frac{1}{2}(\\ln 2)^2 - \\gamma \\ln 2\\$. Moreover, the remainder term \\$O(1/n)\\$ yields a convergent series \\$\\sum \\frac{(-1)^{n-1} O(1/n)}{n}\\$ whose sum is not zero; ignoring it omits a finite contribution. Consequently, the final result \\$(1+\\gamma)\\ln 2\\$ is incorrect.",
+        "suggestions": "A correct evaluation, e.g., using generating functions or known identities, gives \\$\\sum_{n=1}^{\\infty} \\frac{(-1)^{n-1} H_n}{n} = \\frac{\\pi^2}{12} - \\frac{1}{2}(\\ln 2)^2\\$. The asymptotic expansion approach must account for the exact remainder sum, not just its convergence.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $T$ denote the torus, represented as the quotient space of the square $[0,1]\\times[0,1]$ by identifying $(0,y)\\sim(1,y)$ and $(x,0)\\sim(x,1)$. Choose a closed disk $D\\subset T$ contained in the interior of the square (for instance, the image of a small Euclidean disk centered at $(1/2,1/2)$). Remove its interior to obtain the punctured torus $T_0 = T\\setminus\\operatorname{int}(D)$.\n\nLet $M$ be the M\u00f6bius strip, defined as the quotient of $[0,1]\\times[0,1]$ by $(0,y)\\sim(1,1-y)$. Its boundary $\\partial M$ is a circle.\n\nForm the space $X = T_0\\cup_h M$ by gluing $T_0$ and $M$ along their boundaries via a homeomorphism $h\\colon \\partial M\\to \\partial D$. (The choice of homeomorphism does not affect the answer up to isomorphism.)\n\nCompute the fundamental group $\\pi_1(X)$.",
+    "run_id": "39",
+    "topic_slug": "algebraic_topology",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a fundamental error: it claims \\u03c0\\u2081(T\\u2080) = \\u2124\\u00d7\\u2124, but the punctured torus has fundamental group free group on two generators (F\\u2082). Moreover, the induced maps from the boundary circle into T\\u2080 and M are not computed, so the final group is not determined. The answer only gives a generic Seifert\\u2013van Kampen description without completing the computation.\",\n  \"suggestions\": \"Correct \\u03c0\\u2081(T\\u2080) to F\\u2082 = \\u27e8a,b\\u27e9. Determine the inclusion maps: the boundary of the M\\u00f6bius strip includes as twice the generator of \\u03c0\\u2081(M) (c\\u00b2), and the boundary of the disk in T\\u2080 includes as the commutator [a,b] = aba\\u207b\\u00b9b\\u207b\\u00b9 (up to orientation). Then \\u03c0\\u2081(X) \\u2245 \\u27e8 a,b,c | aba\\u207b\\u00b9b\\u207b\\u00b9 = c\\u00b2 \\u27e9. Also ensure open sets for Seifert\\u2013van Kampen are chosen appropriately (thicken the intersection).\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a fundamental error: it claims \\u03c0\\u2081(T\\u2080) = \\u2124\\u00d7\\u2124, but the punctured torus has fundamental group free group on two generators (F\\u2082). Moreover, the induced maps from the boundary circle into T\\u2080 and M are not computed, so the final group is not determined. The answer only gives a generic Seifert\\u2013van Kampen description without completing the computation.\",\n  \"suggestions\": \"Correct \\u03c0\\u2081(T\\u2080) to F\\u2082 = \\u27e8a,b\\u27e9. Determine the inclusion maps: the boundary of the M\\u00f6bius strip includes as twice the generator of \\u03c0\\u2081(M) (c\\u00b2), and the boundary of the disk in T\\u2080 includes as the commutator [a,b] = aba\\u207b\\u00b9b\\u207b\\u00b9 (up to orientation). Then \\u03c0\\u2081(X) \\u2245 \\u27e8 a,b,c | aba\\u207b\\u00b9b\\u207b\\u00b9 = c\\u00b2 \\u27e9. Also ensure open sets for Seifert\\u2013van Kampen are chosen appropriately (thicken the intersection).\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains a fundamental error: it claims \u03c0\u2081(T\u2080) = \u2124\u00d7\u2124, but the punctured torus has fundamental group free group on two generators (F\u2082). Moreover, the induced maps from the boundary circle into T\u2080 and M are not computed, so the final group is not determined. The answer only gives a generic Seifert\u2013van Kampen description without completing the computation.",
+        "suggestions": "Correct \u03c0\u2081(T\u2080) to F\u2082 = \u27e8a,b\u27e9. Determine the inclusion maps: the boundary of the M\u00f6bius strip includes as twice the generator of \u03c0\u2081(M) (c\u00b2), and the boundary of the disk in T\u2080 includes as the commutator [a,b] = aba\u207b\u00b9b\u207b\u00b9 (up to orientation). Then \u03c0\u2081(X) \u2245 \u27e8 a,b,c | aba\u207b\u00b9b\u207b\u00b9 = c\u00b2 \u27e9. Also ensure open sets for Seifert\u2013van Kampen are chosen appropriately (thicken the intersection).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Solve the following integral equation for $\\phi(x)$ on the interval $0 \\le x \\le 1$:\n\n$$\n\\phi(x) = x \\cos 1 + \\int_0^1 \\min(x,t) \\, \\phi(t) \\, dt,\n$$\n\nwhere $\\min(x,t)$ denotes the smaller of $x$ and $t$.",
+    "run_id": "31",
+    "topic_slug": "integral_equations",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer fails to solve the integral equation; it only proves existence and uniqueness via Banach fixed-point theorem. Moreover, the contraction proof contains an error: the step '\u2264 \u222b_0^1 \u222b_0^1 min(x,t) |\u03c6\u2081(t)-\u03c6\u2082(t)| dt dx' incorrectly bounds the supremum norm by an integral over x, which is not generally valid. The correct bound uses sup_x \u222b_0^1 min(x,t) dt = 1/2. Additionally, the definition of F is ambiguous; it should be an operator mapping functions to functions. The answer does not provide an explicit expression for \u03c6(x), which is required.\",\n  \"suggestions\": \"To solve the equation, differentiate both sides twice to obtain a differential equation: \u03c6''(x) = \u03c6(x) with boundary conditions \u03c6(0)=0 and \u03c6'(1)=cos1. Solve to get \u03c6(x)=A e^x + B e^{-x} and determine constants. Alternatively, use iterative approximation starting from \u03c6\u2080=0, but the final explicit solution is needed.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer fails to solve the integral equation; it only proves existence and uniqueness via Banach fixed-point theorem. Moreover, the contraction proof contains an error: the step '\u2264 \u222b_0^1 \u222b_0^1 min(x,t) |\u03c6\u2081(t)-\u03c6\u2082(t)| dt dx' incorrectly bounds the supremum norm by an integral over x, which is not generally valid. The correct bound uses sup_x \u222b_0^1 min(x,t) dt = 1/2. Additionally, the definition of F is ambiguous; it should be an operator mapping functions to functions. The answer does not provide an explicit expression for \u03c6(x), which is required.\",\n  \"suggestions\": \"To solve the equation, differentiate both sides twice to obtain a differential equation: \u03c6''(x) = \u03c6(x) with boundary conditions \u03c6(0)=0 and \u03c6'(1)=cos1. Solve to get \u03c6(x)=A e^x + B e^{-x} and determine constants. Alternatively, use iterative approximation starting from \u03c6\u2080=0, but the final explicit solution is needed.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer fails to solve the integral equation; it only proves existence and uniqueness via Banach fixed-point theorem. Moreover, the contraction proof contains an error: the step '\u2264 \u222b_0^1 \u222b_0^1 min(x,t) |\u03c6\u2081(t)-\u03c6\u2082(t)| dt dx' incorrectly bounds the supremum norm by an integral over x, which is not generally valid. The correct bound uses sup_x \u222b_0^1 min(x,t) dt = 1/2. Additionally, the definition of F is ambiguous; it should be an operator mapping functions to functions. The answer does not provide an explicit expression for \u03c6(x), which is required.",
+        "suggestions": "To solve the equation, differentiate both sides twice to obtain a differential equation: \u03c6''(x) = \u03c6(x) with boundary conditions \u03c6(0)=0 and \u03c6'(1)=cos1. Solve to get \u03c6(x)=A e^x + B e^{-x} and determine constants. Alternatively, use iterative approximation starting from \u03c6\u2080=0, but the final explicit solution is needed.",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "The suggestion contains a sign error: the differential equation should be \u03c6'' + \u03c6 = 0, not \u03c6'' = \u03c6."
+          ],
+          "improvements": "Correct the suggestion to reflect the proper ODE: \u03c6'' + \u03c6 = 0 with boundary conditions \u03c6(0)=0, \u03c6'(1)=cos1, leading to \u03c6(x)=sin x."
+        }
+      },
+      {
+        "round": 2,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer does not solve the integral equation; it only attempts to prove existence and uniqueness via Banach fixed-point theorem, but the proof contains an error: the inequality $d(F(\\\\phi_1),F(\\\\phi_2)) \\\\le \\\\int_0^1\\\\int_0^1 \\\\min(x,t)\\\\,|\\\\phi_1(t)-\\\\phi_2(t)|\\\\,dt\\\\,dx$ is not a valid bound for the supremum norm. Moreover, even if existence/uniqueness were correctly established, the explicit solution $\\\\phi(x)$ is required. The correct approach is to differentiate twice to obtain a differential equation: $\\\\phi''(x)+\\\\phi(x)=0$ with boundary conditions $\\\\phi(0)=0$, $\\\\phi'(1)=\\\\cos 1$, yielding $\\\\phi(x)=\\\\sin x$.\",\n  \"suggestions\": \"To solve the equation, rewrite it as $\\\\phi(x)=x\\\\cos1+\\\\int_0^1\\\\min(x,t)\\\\phi(t)\\\\,dt$. Differentiate twice: $\\\\phi''(x)+\\\\phi(x)=0$. Use $\\\\phi(0)=0$ and $\\\\phi'(1)=\\\\cos1$ to get $\\\\phi(x)=\\\\sin x$. Verify by plugging back into the original equation.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer does not solve the integral equation; it only attempts to prove existence and uniqueness via Banach fixed-point theorem, but the proof contains an error: the inequality $d(F(\\\\phi_1),F(\\\\phi_2)) \\\\le \\\\int_0^1\\\\int_0^1 \\\\min(x,t)\\\\,|\\\\phi_1(t)-\\\\phi_2(t)|\\\\,dt\\\\,dx$ is not a valid bound for the supremum norm. Moreover, even if existence/uniqueness were correctly established, the explicit solution $\\\\phi(x)$ is required. The correct approach is to differentiate twice to obtain a differential equation: $\\\\phi''(x)+\\\\phi(x)=0$ with boundary conditions $\\\\phi(0)=0$, $\\\\phi'(1)=\\\\cos 1$, yielding $\\\\phi(x)=\\\\sin x$.\",\n  \"suggestions\": \"To solve the equation, rewrite it as $\\\\phi(x)=x\\\\cos1+\\\\int_0^1\\\\min(x,t)\\\\phi(t)\\\\,dt$. Differentiate twice: $\\\\phi''(x)+\\\\phi(x)=0$. Use $\\\\phi(0)=0$ and $\\\\phi'(1)=\\\\cos1$ to get $\\\\phi(x)=\\\\sin x$. Verify by plugging back into the original equation.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer does not solve the integral equation; it only attempts to prove existence and uniqueness via Banach fixed-point theorem, but the proof contains an error: the inequality $d(F(\\phi_1),F(\\phi_2)) \\le \\int_0^1\\int_0^1 \\min(x,t)\\,|\\phi_1(t)-\\phi_2(t)|\\,dt\\,dx$ is not a valid bound for the supremum norm. Moreover, even if existence/uniqueness were correctly established, the explicit solution $\\phi(x)$ is required. The correct approach is to differentiate twice to obtain a differential equation: $\\phi''(x)+\\phi(x)=0$ with boundary conditions $\\phi(0)=0$, $\\phi'(1)=\\cos 1$, yielding $\\phi(x)=\\sin x$.",
+        "suggestions": "To solve the equation, rewrite it as $\\phi(x)=x\\cos1+\\int_0^1\\min(x,t)\\phi(t)\\,dt$. Differentiate twice: $\\phi''(x)+\\phi(x)=0$. Use $\\phi(0)=0$ and $\\phi'(1)=\\cos1$ to get $\\phi(x)=\\sin x$. Verify by plugging back into the original equation.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the probability measure $\\mu$ on the interval $[-1,1]$ defined by\n$$\nd\\mu(x) = \\frac{1}{\\pi\\sqrt{1-x^2}}\\,dx.\n$$\nIts logarithmic potential is\n$$\nU_\\mu(z) = \\int_{-1}^{1} \\log\\frac{1}{|z-x|}\\,d\\mu(x),\\qquad z\\in\\mathbb{C},\n$$\nwhere $\\log$ denotes the natural logarithm. Show that for every $z\\in[-1,1]$ (i.e., $z$ is real with $-1\\le z\\le 1$), $U_\\mu(z)$ is constant (independent of $z$) and find the value of this constant.",
+    "run_id": "19",
+    "topic_slug": "potential_theory",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains mathematical errors. (1) The change of variable from u to v is flawed: after setting v = u - z, the integrand becomes log|v+z|/(\u03c0\u221a(1-v^2)), not log|v|. The claim that the integrand is symmetric about u=z is false for general z, so the reduction to an integral independent of z is unjustified. (2) The evaluation of the resulting integral \u222b_{-1}^{1} log|v|/(\u03c0\u221a(1-v^2)) dv as 0 is incorrect; the correct value is -log 2 (which would give U_\u03bc(z)=log 2 after sign correction). Therefore the answer is not correct.\",\n  \"suggestions\": \"To correctly solve, one can use known results from potential theory: the arcsine measure is the equilibrium measure of [-1,1] and its potential is constant log 2 on the interval. Alternatively, compute U_\u03bc(z) directly by evaluating the integral using a known identity, e.g., via substitution x = cos \u03b8 and using properties of the Poisson kernel or complex analysis.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains mathematical errors. (1) The change of variable from u to v is flawed: after setting v = u - z, the integrand becomes log|v+z|/(\u03c0\u221a(1-v^2)), not log|v|. The claim that the integrand is symmetric about u=z is false for general z, so the reduction to an integral independent of z is unjustified. (2) The evaluation of the resulting integral \u222b_{-1}^{1} log|v|/(\u03c0\u221a(1-v^2)) dv as 0 is incorrect; the correct value is -log 2 (which would give U_\u03bc(z)=log 2 after sign correction). Therefore the answer is not correct.\",\n  \"suggestions\": \"To correctly solve, one can use known results from potential theory: the arcsine measure is the equilibrium measure of [-1,1] and its potential is constant log 2 on the interval. Alternatively, compute U_\u03bc(z) directly by evaluating the integral using a known identity, e.g., via substitution x = cos \u03b8 and using properties of the Poisson kernel or complex analysis.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains mathematical errors. (1) The change of variable from u to v is flawed: after setting v = u - z, the integrand becomes log|v+z|/(\u03c0\u221a(1-v^2)), not log|v|. The claim that the integrand is symmetric about u=z is false for general z, so the reduction to an integral independent of z is unjustified. (2) The evaluation of the resulting integral \u222b_{-1}^{1} log|v|/(\u03c0\u221a(1-v^2)) dv as 0 is incorrect; the correct value is -log 2 (which would give U_\u03bc(z)=log 2 after sign correction). Therefore the answer is not correct.",
+        "suggestions": "To correctly solve, one can use known results from potential theory: the arcsine measure is the equilibrium measure of [-1,1] and its potential is constant log 2 on the interval. Alternatively, compute U_\u03bc(z) directly by evaluating the integral using a known identity, e.g., via substitution x = cos \u03b8 and using properties of the Poisson kernel or complex analysis.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately identifies the mathematical errors, provides correct reasoning, and adheres to the required JSON format. No improvements are necessary."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider an infinite sequence of independent tosses of a biased coin. Each toss results in heads (H) with probability $p$ and tails (T) with probability $q = 1-p$, where $0 < p < 1$. Let $N$ be the number of tosses required to observe the pattern HTHT for the first time (i.e., the first occurrence of four consecutive tosses equal to H, T, H, T in that order). Compute the expected value $\\mathbb{E}[N]$ as a closed-form expression in terms of $p$ (or $p$ and $q$).",
+    "run_id": "42",
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors. (1) The recursion for E[X_1] incorrectly equates E[X_1|first toss H] to E[X_2] without accounting for the fact that the first toss has already been taken and that partial progress (H) affects future expectations. (2) The derivation for E[X_2] conditions on the first two tosses, but X_2 is defined starting from toss 2, so toss 1 should be irrelevant. (3) The claim 'If the first two tosses are HT, we have already observed the pattern HTHT' is false; HT is only two tosses, not the full four-toss pattern. (4) The resulting expression (2p^2+1)/(p(2p-1)) is undefined at p=0.5, whereas the true expectation is finite (e.g., for p=0.5, E[N]=20). Thus the answer is incorrect.\",\n  \"suggestions\": \"Use a proper state-based method (Markov chain) or the pattern matching theorem to compute the expected waiting time correctly, taking into account overlaps like the 'HT' prefix-suffix.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors. (1) The recursion for E[X_1] incorrectly equates E[X_1|first toss H] to E[X_2] without accounting for the fact that the first toss has already been taken and that partial progress (H) affects future expectations. (2) The derivation for E[X_2] conditions on the first two tosses, but X_2 is defined starting from toss 2, so toss 1 should be irrelevant. (3) The claim 'If the first two tosses are HT, we have already observed the pattern HTHT' is false; HT is only two tosses, not the full four-toss pattern. (4) The resulting expression (2p^2+1)/(p(2p-1)) is undefined at p=0.5, whereas the true expectation is finite (e.g., for p=0.5, E[N]=20). Thus the answer is incorrect.\",\n  \"suggestions\": \"Use a proper state-based method (Markov chain) or the pattern matching theorem to compute the expected waiting time correctly, taking into account overlaps like the 'HT' prefix-suffix.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains multiple mathematical errors. (1) The recursion for E[X_1] incorrectly equates E[X_1|first toss H] to E[X_2] without accounting for the fact that the first toss has already been taken and that partial progress (H) affects future expectations. (2) The derivation for E[X_2] conditions on the first two tosses, but X_2 is defined starting from toss 2, so toss 1 should be irrelevant. (3) The claim 'If the first two tosses are HT, we have already observed the pattern HTHT' is false; HT is only two tosses, not the full four-toss pattern. (4) The resulting expression (2p^2+1)/(p(2p-1)) is undefined at p=0.5, whereas the true expectation is finite (e.g., for p=0.5, E[N]=20). Thus the answer is incorrect.",
+        "suggestions": "Use a proper state-based method (Markov chain) or the pattern matching theorem to compute the expected waiting time correctly, taking into account overlaps like the 'HT' prefix-suffix.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $k$ be a nonzero integer. Define $X_k$ to be the CW complex obtained by attaching a $3$-cell to the $2$-sphere $S^2$ via a map $f: S^2 \\to S^2$ of degree $k$. Compute the complex topological K-theory groups $K^0(X_k)$ and $K^1(X_k)$.",
+    "run_id": "13",
+    "topic_slug": "k_theory",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains several mathematical errors. (1) The claim 'It is known that $K^0(S^n) \\\\cong \\\\mathbb{Z}$ and $K^1(S^n) \\\\cong 0$ for any sphere $S^n$' is false: for even $n$, $K^0(S^n) \\\\cong \\\\mathbb{Z} \\\\oplus \\\\mathbb{Z}$ (unreduced) and for odd $n$, $K^1(S^n) \\\\cong \\\\mathbb{Z}$. (2) The suspension argument '$K^n(\\\\Sigma X) \\\\cong K^{n+2}(X)$' is not a standard K-theory isomorphism; the correct relation is $\\\\tilde{K}^{-n}(X) \\\\cong \\\\tilde{K}^0(\\\\Sigma^n X)$. (3) The final result $K^1(X_k) \\\\cong 0$ is incorrect; the correct group is $\\\\mathbb{Z}/|k|\\\\mathbb{Z}$. The reasoning is flawed and leads to an invalid conclusion.\",\n  \"suggestions\": \"Use the cofiber sequence $S^2 \\\\xrightarrow{f} S^2 \\\\to X_k \\\\to S^3 \\\\xrightarrow{\\\\Sigma f} S^3$ and the long exact sequence in reduced K-theory. Since $\\\\tilde{K}^0(S^2) \\\\cong \\\\mathbb{Z}$ and $f^*$ is multiplication by $k$, one obtains $0 \\\\to \\\\tilde{K}^0(X_k) \\\\to \\\\mathbb{Z} \\\\xrightarrow{k} \\\\mathbb{Z} \\\\to \\\\tilde{K}^1(X_k) \\\\to 0$, yielding $\\\\tilde{K}^0(X_k)=0$ and $\\\\tilde{K}^1(X_k) \\\\cong \\\\mathbb{Z}/k\\\\mathbb{Z}$. Hence $K^0(X_k) \\\\cong \\\\mathbb{Z}$ and $K^1(X_k) \\\\cong \\\\mathbb{Z}/|k|\\\\mathbb{Z}$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains several mathematical errors. (1) The claim 'It is known that $K^0(S^n) \\\\cong \\\\mathbb{Z}$ and $K^1(S^n) \\\\cong 0$ for any sphere $S^n$' is false: for even $n$, $K^0(S^n) \\\\cong \\\\mathbb{Z} \\\\oplus \\\\mathbb{Z}$ (unreduced) and for odd $n$, $K^1(S^n) \\\\cong \\\\mathbb{Z}$. (2) The suspension argument '$K^n(\\\\Sigma X) \\\\cong K^{n+2}(X)$' is not a standard K-theory isomorphism; the correct relation is $\\\\tilde{K}^{-n}(X) \\\\cong \\\\tilde{K}^0(\\\\Sigma^n X)$. (3) The final result $K^1(X_k) \\\\cong 0$ is incorrect; the correct group is $\\\\mathbb{Z}/|k|\\\\mathbb{Z}$. The reasoning is flawed and leads to an invalid conclusion.\",\n  \"suggestions\": \"Use the cofiber sequence $S^2 \\\\xrightarrow{f} S^2 \\\\to X_k \\\\to S^3 \\\\xrightarrow{\\\\Sigma f} S^3$ and the long exact sequence in reduced K-theory. Since $\\\\tilde{K}^0(S^2) \\\\cong \\\\mathbb{Z}$ and $f^*$ is multiplication by $k$, one obtains $0 \\\\to \\\\tilde{K}^0(X_k) \\\\to \\\\mathbb{Z} \\\\xrightarrow{k} \\\\mathbb{Z} \\\\to \\\\tilde{K}^1(X_k) \\\\to 0$, yielding $\\\\tilde{K}^0(X_k)=0$ and $\\\\tilde{K}^1(X_k) \\\\cong \\\\mathbb{Z}/k\\\\mathbb{Z}$. Hence $K^0(X_k) \\\\cong \\\\mathbb{Z}$ and $K^1(X_k) \\\\cong \\\\mathbb{Z}/|k|\\\\mathbb{Z}$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains several mathematical errors. (1) The claim 'It is known that $K^0(S^n) \\cong \\mathbb{Z}$ and $K^1(S^n) \\cong 0$ for any sphere $S^n$' is false: for even $n$, $K^0(S^n) \\cong \\mathbb{Z} \\oplus \\mathbb{Z}$ (unreduced) and for odd $n$, $K^1(S^n) \\cong \\mathbb{Z}$. (2) The suspension argument '$K^n(\\Sigma X) \\cong K^{n+2}(X)$' is not a standard K-theory isomorphism; the correct relation is $\\tilde{K}^{-n}(X) \\cong \\tilde{K}^0(\\Sigma^n X)$. (3) The final result $K^1(X_k) \\cong 0$ is incorrect; the correct group is $\\mathbb{Z}/|k|\\mathbb{Z}$. The reasoning is flawed and leads to an invalid conclusion.",
+        "suggestions": "Use the cofiber sequence $S^2 \\xrightarrow{f} S^2 \\to X_k \\to S^3 \\xrightarrow{\\Sigma f} S^3$ and the long exact sequence in reduced K-theory. Since $\\tilde{K}^0(S^2) \\cong \\mathbb{Z}$ and $f^*$ is multiplication by $k$, one obtains $0 \\to \\tilde{K}^0(X_k) \\to \\mathbb{Z} \\xrightarrow{k} \\mathbb{Z} \\to \\tilde{K}^1(X_k) \\to 0$, yielding $\\tilde{K}^0(X_k)=0$ and $\\tilde{K}^1(X_k) \\cong \\mathbb{Z}/k\\mathbb{Z}$. Hence $K^0(X_k) \\cong \\mathbb{Z}$ and $K^1(X_k) \\cong \\mathbb{Z}/|k|\\mathbb{Z}$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the viscous Burgers equation\n$$\nu_t + u u_x = \\nu u_{xx}, \\qquad x \\in \\mathbb{R},\\ t>0,\n$$\nwith constant viscosity $\\nu > 0$.  Let the initial condition be a step function:\n$$\nu(x,0) = \\begin{cases}\nU, & x < 0,\\\\\n0, & x > 0,\n\\end{cases}\n$$\nwhere $U > 0$ is a constant.\n\n(a) Introduce the Cole\u2013Hopf transformation $u = -2\\nu (\\ln \\varphi)_x$ and show that $\\varphi$ satisfies the heat equation $\\varphi_t = \\nu \\varphi_{xx}$.\n\n(b) Determine an appropriate initial condition $\\varphi(x,0)$ consistent with the given $u(x,0)$.  (Choose the constant of integration so that $\\varphi(0,0)=1$.)\n\n(c) Solve the initial value problem for $\\varphi(x,t)$ by expressing $\\varphi$ as a convolution with the heat kernel and evaluating the integrals in terms of the complementary error function\n$$\n\\operatorname{erfc}(z) = \\frac{2}{\\sqrt{\\pi}} \\int_z^\\infty e^{-s^2}\\,ds.\n$$\n\n(d) Hence find the solution $u(x,t)$ in the closed form\n$$\nu(x,t) = \\frac{U \\; e^{U^2 t/(4\\nu)}\\; \\operatorname{erfc}\\!\\left( \\dfrac{x - U t}{\\sqrt{4\\nu t}} \\right)}\n{e^{U^2 t/(4\\nu)}\\; \\operatorname{erfc}\\!\\left( \\dfrac{x - U t}{\\sqrt{4\\nu t}} \\right) + e^{U x/(2\\nu)}\\; \\operatorname{erfc}\\!\\left( -\\dfrac{x}{\\sqrt{4\\nu t}} \\right)}.\n$$\n\n(e) (Optional) Verify that this solution tends to the initial step as $t \\to 0^+$.",
+    "run_id": "23",
+    "topic_slug": "partial_differential_equations",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (a) contains fundamental errors: the derivatives u_x and u_t are incorrectly computed (e.g., u_x = -2\u03bd \u03c6_{xx} is false; the correct expression is u_x = -2\u03bd (\u03c6_{xx} \u03c6 - \u03c6_x^2)/\u03c6^2). The subsequent manipulation is therefore invalid. Part (c) evaluates the convolution incorrectly, yielding \u03c6(x,t) = \u00bd[ e^{U^2 t/(4\u03bd)} erfc((x-Ut)/\u221a{4\u03bd t}) + e^{U x/(2\u03bd)} erfc(-x/\u221a{4\u03bd t}) ], which does not satisfy the initial condition from part (b) (e.g., as t\u21920\u207a, for x<0 it gives 1 instead of e^{-Ux/(2\u03bd)}). Consequently, the derivation of u in part (d) is not justified. The answer contains mathematical errors throughout.\",\n  \"suggestions\": \"In part (a), use u = -2\u03bd \u03c6_x/\u03c6 and compute derivatives with the quotient rule. In part (c), recompute the convolution integrals carefully by completing the square; the correct \u03c6 is \u03c6 = \u00bd[ erfc(-x/\u221a{4\u03bd t}) + e^{U^2 t/(4\u03bd) - U x/(2\u03bd)} erfc((x-Ut)/\u221a{4\u03bd t}) ]. Then part (d) follows by differentiating ln \u03c6.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (a) contains fundamental errors: the derivatives u_x and u_t are incorrectly computed (e.g., u_x = -2\u03bd \u03c6_{xx} is false; the correct expression is u_x = -2\u03bd (\u03c6_{xx} \u03c6 - \u03c6_x^2)/\u03c6^2). The subsequent manipulation is therefore invalid. Part (c) evaluates the convolution incorrectly, yielding \u03c6(x,t) = \u00bd[ e^{U^2 t/(4\u03bd)} erfc((x-Ut)/\u221a{4\u03bd t}) + e^{U x/(2\u03bd)} erfc(-x/\u221a{4\u03bd t}) ], which does not satisfy the initial condition from part (b) (e.g., as t\u21920\u207a, for x<0 it gives 1 instead of e^{-Ux/(2\u03bd)}). Consequently, the derivation of u in part (d) is not justified. The answer contains mathematical errors throughout.\",\n  \"suggestions\": \"In part (a), use u = -2\u03bd \u03c6_x/\u03c6 and compute derivatives with the quotient rule. In part (c), recompute the convolution integrals carefully by completing the square; the correct \u03c6 is \u03c6 = \u00bd[ erfc(-x/\u221a{4\u03bd t}) + e^{U^2 t/(4\u03bd) - U x/(2\u03bd)} erfc((x-Ut)/\u221a{4\u03bd t}) ]. Then part (d) follows by differentiating ln \u03c6.\"\n}",
+        "verdict": "incorrect",
+        "notes": "Part (a) contains fundamental errors: the derivatives u_x and u_t are incorrectly computed (e.g., u_x = -2\u03bd \u03c6_{xx} is false; the correct expression is u_x = -2\u03bd (\u03c6_{xx} \u03c6 - \u03c6_x^2)/\u03c6^2). The subsequent manipulation is therefore invalid. Part (c) evaluates the convolution incorrectly, yielding \u03c6(x,t) = \u00bd[ e^{U^2 t/(4\u03bd)} erfc((x-Ut)/\u221a{4\u03bd t}) + e^{U x/(2\u03bd)} erfc(-x/\u221a{4\u03bd t}) ], which does not satisfy the initial condition from part (b) (e.g., as t\u21920\u207a, for x<0 it gives 1 instead of e^{-Ux/(2\u03bd)}). Consequently, the derivation of u in part (d) is not justified. The answer contains mathematical errors throughout.",
+        "suggestions": "In part (a), use u = -2\u03bd \u03c6_x/\u03c6 and compute derivatives with the quotient rule. In part (c), recompute the convolution integrals carefully by completing the square; the correct \u03c6 is \u03c6 = \u00bd[ erfc(-x/\u221a{4\u03bd t}) + e^{U^2 t/(4\u03bd) - U x/(2\u03bd)} erfc((x-Ut)/\u221a{4\u03bd t}) ]. Then part (d) follows by differentiating ln \u03c6.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the torus $T$ obtained by rotating a circle of radius $r$ about an axis in its plane that is a distance $R > r > 0$ from the circle's center. Using the standard parametrization\n$$\n\\mathbf{X}(\\theta, \\varphi) = \\big( (R + r\\cos\\varphi)\\cos\\theta,\\ (R + r\\cos\\varphi)\\sin\\theta,\\ r\\sin\\varphi \\big), \\qquad \\theta \\in [0,2\\pi),\\ \\varphi \\in [0,2\\pi),\n$$\ncompute the Gaussian curvature $K$ of the torus as a function of $\\varphi$ (it is independent of $\\theta$). Then evaluate the total Gaussian curvature $\\iint_T K \\, dA$ by direct integration, and verify that it equals zero.",
+    "run_id": "37",
+    "topic_slug": "differential_geometry",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains mathematical errors in the second fundamental form coefficients. For instance, it states L = -r/(R + r cos \u03c6) and N = -r, but the correct L (using the given parametrization and standard definitions) is either -(R + r cos \u03c6) cos \u03c6 or (R + r cos \u03c6) cos \u03c6 depending on sign convention, and N should be -r (or r) but the sign must be consistent. The provided L is dimensionally inconsistent and leads to an incorrect Gaussian curvature. Moreover, the answer does not actually compute K(\u03c6) nor perform the integration to verify total curvature is zero, leaving the solution incomplete. Thus the answer is both erroneous and incomplete.\",\n  \"suggestions\": \"Recalculate the second fundamental form correctly. Compute E, F, G, then find the unit normal N, then compute L = \\\\mathbf{X}_{\\\\theta\\\\theta} \\\\cdot \\\\mathbf{N}, M = \\\\mathbf{X}_{\\\\theta\\\\varphi} \\\\cdot \\\\mathbf{N}, N = \\\\mathbf{X}_{\\\\varphi\\\\varphi} \\\\cdot \\\\mathbf{N} (or with minus sign consistently). Then substitute into K = (LN - M^2)/(EG - F^2) to obtain K(\u03c6) = \\\\frac{\\\\cos \u03c6}{r(R + r \\\\cos \u03c6)}. Then integrate: \u222c K dA = \u222b_0^{2\u03c0} \u222b_0^{2\u03c0} K(\u03c6) \u221a(EG-F^2) d\u03b8 d\u03c6 = \u222b_0^{2\u03c0} \u222b_0^{2\u03c0} \\\\frac{\\\\cos \u03c6}{r(R + r \\\\cos \u03c6)} r(R + r \\\\cos \u03c6) d\u03b8 d\u03c6 = \u222b_0^{2\u03c0} \u222b_0^{2\u03c0} \\\\cos \u03c6 d\u03b8 d\u03c6 = 0. Provide these steps explicitly.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains mathematical errors in the second fundamental form coefficients. For instance, it states L = -r/(R + r cos \u03c6) and N = -r, but the correct L (using the given parametrization and standard definitions) is either -(R + r cos \u03c6) cos \u03c6 or (R + r cos \u03c6) cos \u03c6 depending on sign convention, and N should be -r (or r) but the sign must be consistent. The provided L is dimensionally inconsistent and leads to an incorrect Gaussian curvature. Moreover, the answer does not actually compute K(\u03c6) nor perform the integration to verify total curvature is zero, leaving the solution incomplete. Thus the answer is both erroneous and incomplete.\",\n  \"suggestions\": \"Recalculate the second fundamental form correctly. Compute E, F, G, then find the unit normal N, then compute L = \\\\mathbf{X}_{\\\\theta\\\\theta} \\\\cdot \\\\mathbf{N}, M = \\\\mathbf{X}_{\\\\theta\\\\varphi} \\\\cdot \\\\mathbf{N}, N = \\\\mathbf{X}_{\\\\varphi\\\\varphi} \\\\cdot \\\\mathbf{N} (or with minus sign consistently). Then substitute into K = (LN - M^2)/(EG - F^2) to obtain K(\u03c6) = \\\\frac{\\\\cos \u03c6}{r(R + r \\\\cos \u03c6)}. Then integrate: \u222c K dA = \u222b_0^{2\u03c0} \u222b_0^{2\u03c0} K(\u03c6) \u221a(EG-F^2) d\u03b8 d\u03c6 = \u222b_0^{2\u03c0} \u222b_0^{2\u03c0} \\\\frac{\\\\cos \u03c6}{r(R + r \\\\cos \u03c6)} r(R + r \\\\cos \u03c6) d\u03b8 d\u03c6 = \u222b_0^{2\u03c0} \u222b_0^{2\u03c0} \\\\cos \u03c6 d\u03b8 d\u03c6 = 0. Provide these steps explicitly.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains mathematical errors in the second fundamental form coefficients. For instance, it states L = -r/(R + r cos \u03c6) and N = -r, but the correct L (using the given parametrization and standard definitions) is either -(R + r cos \u03c6) cos \u03c6 or (R + r cos \u03c6) cos \u03c6 depending on sign convention, and N should be -r (or r) but the sign must be consistent. The provided L is dimensionally inconsistent and leads to an incorrect Gaussian curvature. Moreover, the answer does not actually compute K(\u03c6) nor perform the integration to verify total curvature is zero, leaving the solution incomplete. Thus the answer is both erroneous and incomplete.",
+        "suggestions": "Recalculate the second fundamental form correctly. Compute E, F, G, then find the unit normal N, then compute L = \\mathbf{X}_{\\theta\\theta} \\cdot \\mathbf{N}, M = \\mathbf{X}_{\\theta\\varphi} \\cdot \\mathbf{N}, N = \\mathbf{X}_{\\varphi\\varphi} \\cdot \\mathbf{N} (or with minus sign consistently). Then substitute into K = (LN - M^2)/(EG - F^2) to obtain K(\u03c6) = \\frac{\\cos \u03c6}{r(R + r \\cos \u03c6)}. Then integrate: \u222c K dA = \u222b_0^{2\u03c0} \u222b_0^{2\u03c0} K(\u03c6) \u221a(EG-F^2) d\u03b8 d\u03c6 = \u222b_0^{2\u03c0} \u222b_0^{2\u03c0} \\frac{\\cos \u03c6}{r(R + r \\cos \u03c6)} r(R + r \\cos \u03c6) d\u03b8 d\u03c6 = \u222b_0^{2\u03c0} \u222b_0^{2\u03c0} \\cos \u03c6 d\u03b8 d\u03c6 = 0. Provide these steps explicitly.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; it correctly identifies the errors in the second fundamental form coefficients and the incompleteness of the answer, provides correct reasoning, and follows the required JSON format. No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Find the first three terms in the asymptotic expansion (in powers of $1/n$) of\n$$\nT_n = \\sum_{k=1}^{n} \\frac{1}{n^2 + k^2}\n$$\nas $n \\to \\infty$. Express the coefficients in simplest form.\n[/QUESTION]",
+    "run_id": "27",
+    "topic_slug": "approximations_and_expansions",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a fundamental error: it incorrectly equates the Riemann sum to the integral, writing $T_n = \\\\frac{1}{n} \\\\int_0^1 f(x) dx$, which is false. The sum $\\\\frac{1}{n}\\\\sum_{k=1}^n f(k/n)$ approximates the integral but is not equal. Moreover, the Taylor expansion of $f(x)$ around 0 and integration over [0,1] yields $\\\\int_0^1 (1-x^2)dx = 2/3$, but the true integral $\\\\int_0^1 \\\\frac{dx}{1+x^2} = \\\\pi/4$. Consequently, the claimed leading term $2/(3n)$ is incorrect. The correct asymptotic expansion requires Euler-Maclaurin or other methods, giving leading term $\\\\pi/(4n)$.\",\n  \"suggestions\": \"Do not replace the sum with an integral without error analysis. Use Euler-Maclaurin summation or treat $T_n = \\\\frac{1}{n} \\\\sum_{k=1}^n \\\\frac{1}{1+(k/n)^2}$ and expand the sum as $\\\\int_0^1 f(x) dx + \\\\frac{1}{2n}(f(0)-f(1)) + \\\\dots$ to obtain terms in $1/n$, $1/n^2$, etc. Alternatively, compute the sum exactly using digamma functions and expand asymptotically.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a fundamental error: it incorrectly equates the Riemann sum to the integral, writing $T_n = \\\\frac{1}{n} \\\\int_0^1 f(x) dx$, which is false. The sum $\\\\frac{1}{n}\\\\sum_{k=1}^n f(k/n)$ approximates the integral but is not equal. Moreover, the Taylor expansion of $f(x)$ around 0 and integration over [0,1] yields $\\\\int_0^1 (1-x^2)dx = 2/3$, but the true integral $\\\\int_0^1 \\\\frac{dx}{1+x^2} = \\\\pi/4$. Consequently, the claimed leading term $2/(3n)$ is incorrect. The correct asymptotic expansion requires Euler-Maclaurin or other methods, giving leading term $\\\\pi/(4n)$.\",\n  \"suggestions\": \"Do not replace the sum with an integral without error analysis. Use Euler-Maclaurin summation or treat $T_n = \\\\frac{1}{n} \\\\sum_{k=1}^n \\\\frac{1}{1+(k/n)^2}$ and expand the sum as $\\\\int_0^1 f(x) dx + \\\\frac{1}{2n}(f(0)-f(1)) + \\\\dots$ to obtain terms in $1/n$, $1/n^2$, etc. Alternatively, compute the sum exactly using digamma functions and expand asymptotically.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains a fundamental error: it incorrectly equates the Riemann sum to the integral, writing $T_n = \\frac{1}{n} \\int_0^1 f(x) dx$, which is false. The sum $\\frac{1}{n}\\sum_{k=1}^n f(k/n)$ approximates the integral but is not equal. Moreover, the Taylor expansion of $f(x)$ around 0 and integration over [0,1] yields $\\int_0^1 (1-x^2)dx = 2/3$, but the true integral $\\int_0^1 \\frac{dx}{1+x^2} = \\pi/4$. Consequently, the claimed leading term $2/(3n)$ is incorrect. The correct asymptotic expansion requires Euler-Maclaurin or other methods, giving leading term $\\pi/(4n)$.",
+        "suggestions": "Do not replace the sum with an integral without error analysis. Use Euler-Maclaurin summation or treat $T_n = \\frac{1}{n} \\sum_{k=1}^n \\frac{1}{1+(k/n)^2}$ and expand the sum as $\\int_0^1 f(x) dx + \\frac{1}{2n}(f(0)-f(1)) + \\dots$ to obtain terms in $1/n$, $1/n^2$, etc. Alternatively, compute the sum exactly using digamma functions and expand asymptotically.",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "Could not parse evaluation JSON. Raw text: "
+          ],
+          "improvements": "Self-check evaluation unknown due to parsing failure."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R = \\mathbb{Z}/4\\mathbb{Z}$ and let $M = \\mathbb{Z}/2\\mathbb{Z}$ be the $R$-module where the action is given by the natural surjection $R \\to \\mathbb{Z}/2\\mathbb{Z}$ (i.e., $r \\cdot a = \\overline{r} \\, a$, where $\\overline{r}$ denotes reduction modulo $2$). Compute $\\operatorname{Ext}^n_R(M, M)$ for all integers $n \\ge 0$. Moreover, describe the structure of the graded ring $\\operatorname{Ext}^*_R(M, M) = \\bigoplus_{n \\ge 0} \\operatorname{Ext}^n_R(M, M)$ with the Yoneda product. (Is it isomorphic to a polynomial ring over $\\mathbb{Z}/2\\mathbb{Z}$? If so, determine the degree of the generator.)",
+    "run_id": "12",
+    "topic_slug": "category_theory_and_homological_algebra",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a fundamental error: the claimed projective resolution 0 \u2192 R \u2192 R \u2192 M \u2192 0 (with multiplication by 2) is not exact because multiplication by 2 on \u2124/4\u2124 is not injective (2\u00b72=0). This invalidates the computation of Ext\u207f for n>1. The correct Ext groups are Ext\u207f_R(M,M) \u2245 \u2124/2\u2124 for all n \u2265 0, not zero for n>1. Additionally, the conclusion that the graded ring is a polynomial ring contradicts the earlier vanishing claim; if Ext\u207f=0 for n>1, the graded ring would be concentrated in degrees 0 and 1, not a polynomial ring. Thus the answer is mathematically incorrect.\",\n  \"suggestions\": \"To correct, use the short exact sequence 0 \u2192 M \u2192 R \u2192 M \u2192 0 and the long exact sequence for Ext, or an infinite projective resolution \u2026 \u2192 R \u2192 R \u2192 R \u2192 M \u2192 0 with differential multiplication by 2. This yields Ext\u207f \u2245 \u2124/2\u2124 for all n, and the Yoneda product gives a polynomial ring \u2124/2\u2124[x] with |x|=1.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a fundamental error: the claimed projective resolution 0 \u2192 R \u2192 R \u2192 M \u2192 0 (with multiplication by 2) is not exact because multiplication by 2 on \u2124/4\u2124 is not injective (2\u00b72=0). This invalidates the computation of Ext\u207f for n>1. The correct Ext groups are Ext\u207f_R(M,M) \u2245 \u2124/2\u2124 for all n \u2265 0, not zero for n>1. Additionally, the conclusion that the graded ring is a polynomial ring contradicts the earlier vanishing claim; if Ext\u207f=0 for n>1, the graded ring would be concentrated in degrees 0 and 1, not a polynomial ring. Thus the answer is mathematically incorrect.\",\n  \"suggestions\": \"To correct, use the short exact sequence 0 \u2192 M \u2192 R \u2192 M \u2192 0 and the long exact sequence for Ext, or an infinite projective resolution \u2026 \u2192 R \u2192 R \u2192 R \u2192 M \u2192 0 with differential multiplication by 2. This yields Ext\u207f \u2245 \u2124/2\u2124 for all n, and the Yoneda product gives a polynomial ring \u2124/2\u2124[x] with |x|=1.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains a fundamental error: the claimed projective resolution 0 \u2192 R \u2192 R \u2192 M \u2192 0 (with multiplication by 2) is not exact because multiplication by 2 on \u2124/4\u2124 is not injective (2\u00b72=0). This invalidates the computation of Ext\u207f for n>1. The correct Ext groups are Ext\u207f_R(M,M) \u2245 \u2124/2\u2124 for all n \u2265 0, not zero for n>1. Additionally, the conclusion that the graded ring is a polynomial ring contradicts the earlier vanishing claim; if Ext\u207f=0 for n>1, the graded ring would be concentrated in degrees 0 and 1, not a polynomial ring. Thus the answer is mathematically incorrect.",
+        "suggestions": "To correct, use the short exact sequence 0 \u2192 M \u2192 R \u2192 M \u2192 0 and the long exact sequence for Ext, or an infinite projective resolution \u2026 \u2192 R \u2192 R \u2192 R \u2192 M \u2192 0 with differential multiplication by 2. This yields Ext\u207f \u2245 \u2124/2\u2124 for all n, and the Yoneda product gives a polynomial ring \u2124/2\u2124[x] with |x|=1.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately identifies the error in the projective resolution and correctly states the Ext groups and graded ring structure. It provides evidence-based reasoning and follows the required JSON format."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X_n$ denote the CW complex obtained by attaching a 2-cell to the circle $S^1$ via a map $f : \\partial D^2 \\to S^1$ of degree $n$, where $n \\in \\mathbb{Z}$. Determine all integers $n$ for which $X_n$ is a closed 2-manifold (i.e., a compact surface without boundary). For those values of $n$, identify the manifold up to homeomorphism.",
+    "run_id": "40",
+    "topic_slug": "manifolds_and_cell_complexes",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "",
+        "raw_critique": "",
+        "verdict": "unknown",
+        "notes": "",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "The critique is missing; no content to evaluate."
+          ],
+          "improvements": "Provide a critique in the required JSON format, with fields 'verdict', 'notes', and optionally 'suggestions'. The critique should assess the answer's correctness, completeness, rigor, and well-posedness recognition."
+        }
+      },
+      {
+        "round": 2,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is incorrect. The claim that $X_n$ is a closed 2-manifold only for $n=\\\\pm1$ is false. For $n=\\\\pm1$, the attaching map is a homeomorphism, so $X_{\\\\pm1}$ is homeomorphic to a disk $D^2$, which has a boundary and is not a closed manifold. The identification $X_1\\\\cong S^2$ and $X_{-1}\\\\cong\\\\mathbb{RP}^2$ is erroneous. The correct integers are $n=\\\\pm2$, yielding $X_{\\\\pm2}\\\\cong\\\\mathbb{RP}^2$. One can see this by analyzing the local structure at points of the $1$-skeleton: for $|n|=1$ the neighborhood is a half-disk (boundary point), for $|n|=2$ two half-disks glue to a full disk (interior point), and for $|n|>2$ the gluing of $|n|$ half-disks creates a singularity (not locally Euclidean). Alternatively, the Euler characteristic of $X_n$ is $1$, so if it were a closed surface it would have to be $\\\\mathbb{RP}^2$ (the only closed surface with $\\\\chi=1$), which is known to arise from attaching a $2$-cell via a degree $2$ map.\",\n  \"suggestions\": \"The solution should be revised to: $n=\\\\pm2$ give a closed $2$-manifold, namely the real projective plane $\\\\mathbb{RP}^2$. For all other $n$, $X_n$ is either a manifold with boundary ($n=\\\\pm1$) or not a manifold ($n=0$ or $|n|>2$).\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is incorrect. The claim that $X_n$ is a closed 2-manifold only for $n=\\\\pm1$ is false. For $n=\\\\pm1$, the attaching map is a homeomorphism, so $X_{\\\\pm1}$ is homeomorphic to a disk $D^2$, which has a boundary and is not a closed manifold. The identification $X_1\\\\cong S^2$ and $X_{-1}\\\\cong\\\\mathbb{RP}^2$ is erroneous. The correct integers are $n=\\\\pm2$, yielding $X_{\\\\pm2}\\\\cong\\\\mathbb{RP}^2$. One can see this by analyzing the local structure at points of the $1$-skeleton: for $|n|=1$ the neighborhood is a half-disk (boundary point), for $|n|=2$ two half-disks glue to a full disk (interior point), and for $|n|>2$ the gluing of $|n|$ half-disks creates a singularity (not locally Euclidean). Alternatively, the Euler characteristic of $X_n$ is $1$, so if it were a closed surface it would have to be $\\\\mathbb{RP}^2$ (the only closed surface with $\\\\chi=1$), which is known to arise from attaching a $2$-cell via a degree $2$ map.\",\n  \"suggestions\": \"The solution should be revised to: $n=\\\\pm2$ give a closed $2$-manifold, namely the real projective plane $\\\\mathbb{RP}^2$. For all other $n$, $X_n$ is either a manifold with boundary ($n=\\\\pm1$) or not a manifold ($n=0$ or $|n|>2$).\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer is incorrect. The claim that $X_n$ is a closed 2-manifold only for $n=\\pm1$ is false. For $n=\\pm1$, the attaching map is a homeomorphism, so $X_{\\pm1}$ is homeomorphic to a disk $D^2$, which has a boundary and is not a closed manifold. The identification $X_1\\cong S^2$ and $X_{-1}\\cong\\mathbb{RP}^2$ is erroneous. The correct integers are $n=\\pm2$, yielding $X_{\\pm2}\\cong\\mathbb{RP}^2$. One can see this by analyzing the local structure at points of the $1$-skeleton: for $|n|=1$ the neighborhood is a half-disk (boundary point), for $|n|=2$ two half-disks glue to a full disk (interior point), and for $|n|>2$ the gluing of $|n|$ half-disks creates a singularity (not locally Euclidean). Alternatively, the Euler characteristic of $X_n$ is $1$, so if it were a closed surface it would have to be $\\mathbb{RP}^2$ (the only closed surface with $\\chi=1$), which is known to arise from attaching a $2$-cell via a degree $2$ map.",
+        "suggestions": "The solution should be revised to: $n=\\pm2$ give a closed $2$-manifold, namely the real projective plane $\\mathbb{RP}^2$. For all other $n$, $X_n$ is either a manifold with boundary ($n=\\pm1$) or not a manifold ($n=0$ or $|n|>2$).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
   }
 ]

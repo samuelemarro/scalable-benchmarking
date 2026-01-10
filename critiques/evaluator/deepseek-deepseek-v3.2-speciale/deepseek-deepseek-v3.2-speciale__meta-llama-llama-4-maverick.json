@@ -116,5 +116,1013 @@
         }
       }
     ]
+  },
+  {
+    "question": "Consider the probability measure $\\mu$ on the interval $[-1,1]$ defined by\n$$\nd\\mu(x) = \\frac{1}{\\pi\\sqrt{1-x^2}}\\,dx.\n$$\nIts logarithmic potential is\n$$\nU_\\mu(z) = \\int_{-1}^{1} \\log\\frac{1}{|z-x|}\\,d\\mu(x),\\qquad z\\in\\mathbb{C},\n$$\nwhere $\\log$ denotes the natural logarithm. Show that for every $z\\in[-1,1]$ (i.e., $z$ is real with $-1\\le z\\le 1$), $U_\\mu(z)$ is constant (independent of $z$) and find the value of this constant.",
+    "run_id": "19",
+    "topic_slug": "potential_theory",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly identifies the constant as $\\\\log 2$ and mentions that the measure is the arcsine distribution, but it does not provide a derivation to show that $U_\\\\mu(z)$ is constant on $[-1,1]$ or to compute the value. The steps merely recall known facts (e.g., 'Recall or derive the value ... using known properties') without actually proving the claim. The question explicitly asks to 'show' the constancy and find the constant, so a proof is required. The answer is therefore incomplete.\",\n  \"suggestions\": \"Provide a complete calculation, for instance by using the substitution $x = \\\\cos\\\\theta$ to evaluate the integral $U_\\\\mu(z) = -\\\\frac{1}{\\\\pi}\\\\int_{-1}^{1} \\\\frac{\\\\log|z-x|}{\\\\sqrt{1-x^2}}\\\\,dx$ for $z\\\\in[-1,1]$, showing that it simplifies to $\\\\log 2$ independent of $z$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly identifies the constant as $\\\\log 2$ and mentions that the measure is the arcsine distribution, but it does not provide a derivation to show that $U_\\\\mu(z)$ is constant on $[-1,1]$ or to compute the value. The steps merely recall known facts (e.g., 'Recall or derive the value ... using known properties') without actually proving the claim. The question explicitly asks to 'show' the constancy and find the constant, so a proof is required. The answer is therefore incomplete.\",\n  \"suggestions\": \"Provide a complete calculation, for instance by using the substitution $x = \\\\cos\\\\theta$ to evaluate the integral $U_\\\\mu(z) = -\\\\frac{1}{\\\\pi}\\\\int_{-1}^{1} \\\\frac{\\\\log|z-x|}{\\\\sqrt{1-x^2}}\\\\,dx$ for $z\\\\in[-1,1]$, showing that it simplifies to $\\\\log 2$ independent of $z$.\"\n}",
+        "verdict": "insufficient",
+        "notes": "The answer correctly identifies the constant as $\\log 2$ and mentions that the measure is the arcsine distribution, but it does not provide a derivation to show that $U_\\mu(z)$ is constant on $[-1,1]$ or to compute the value. The steps merely recall known facts (e.g., 'Recall or derive the value ... using known properties') without actually proving the claim. The question explicitly asks to 'show' the constancy and find the constant, so a proof is required. The answer is therefore incomplete.",
+        "suggestions": "Provide a complete calculation, for instance by using the substitution $x = \\cos\\theta$ to evaluate the integral $U_\\mu(z) = -\\frac{1}{\\pi}\\int_{-1}^{1} \\frac{\\log|z-x|}{\\sqrt{1-x^2}}\\,dx$ for $z\\in[-1,1]$, showing that it simplifies to $\\log 2$ independent of $z$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately identifies the answer as insufficient due to lack of derivation and provides a valid suggestion. No revisions needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a Noetherian commutative ring with identity. An element $r \\in R$ is called a **zero-divisor** if there exists a nonzero $s \\in R$ such that $rs = 0$. An **associated prime** of $R$ is a prime ideal that can be written as $\\operatorname{Ann}(x) = \\{ r \\in R \\mid r x = 0\\}$ for some nonzero $x \\in R$. Prove that the set of zero-divisors of $R$ is exactly the union of all associated primes of $R$.",
+    "run_id": "7",
+    "topic_slug": "commutative_algebra",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"In Step 5, the argument that every zero-divisor lies in some associated prime is flawed. The answer picks an element x with maximal annihilator among all nonzero elements, but does not ensure that r annihilates this x. The statement 'Since r \u2208 Ann(x)' is unjustified because the chosen x may not satisfy rx = 0. The correct approach is to consider the set of annihilators of nonzero elements y such that ry = 0, pick a maximal one among those (using Noetherian property), and then show it is prime.\",\n  \"suggestions\": \"Modify Step 5 to restrict to elements annihilated by r. Specifically: For a zero-divisor r, let S = { Ann(y) | y \u2260 0, ry = 0 }. This set is nonempty. Since R is Noetherian, S has a maximal element Ann(x). Then prove Ann(x) is prime. Then r \u2208 Ann(x) by construction, so r is in that associated prime.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"In Step 5, the argument that every zero-divisor lies in some associated prime is flawed. The answer picks an element x with maximal annihilator among all nonzero elements, but does not ensure that r annihilates this x. The statement 'Since r \u2208 Ann(x)' is unjustified because the chosen x may not satisfy rx = 0. The correct approach is to consider the set of annihilators of nonzero elements y such that ry = 0, pick a maximal one among those (using Noetherian property), and then show it is prime.\",\n  \"suggestions\": \"Modify Step 5 to restrict to elements annihilated by r. Specifically: For a zero-divisor r, let S = { Ann(y) | y \u2260 0, ry = 0 }. This set is nonempty. Since R is Noetherian, S has a maximal element Ann(x). Then prove Ann(x) is prime. Then r \u2208 Ann(x) by construction, so r is in that associated prime.\"\n}",
+        "verdict": "incorrect",
+        "notes": "In Step 5, the argument that every zero-divisor lies in some associated prime is flawed. The answer picks an element x with maximal annihilator among all nonzero elements, but does not ensure that r annihilates this x. The statement 'Since r \u2208 Ann(x)' is unjustified because the chosen x may not satisfy rx = 0. The correct approach is to consider the set of annihilators of nonzero elements y such that ry = 0, pick a maximal one among those (using Noetherian property), and then show it is prime.",
+        "suggestions": "Modify Step 5 to restrict to elements annihilated by r. Specifically: For a zero-divisor r, let S = { Ann(y) | y \u2260 0, ry = 0 }. This set is nonempty. Since R is Noetherian, S has a maximal element Ann(x). Then prove Ann(x) is prime. Then r \u2208 Ann(x) by construction, so r is in that associated prime.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique correctly identifies the flaw and provides a valid correction; it is accurate and well-justified."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a finite group such that the automorphism group $\\operatorname{Aut}(G)$ is trivial (i.e., the only automorphism of $G$ is the identity map). Prove that $G$ is either the trivial group or the cyclic group of order $2$.",
+    "run_id": "14",
+    "topic_slug": "group_theory_and_generalizations",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly deduces that G is abelian and every element has order 2. However, the proof that any such group with more than two elements must have nontrivial automorphism is incomplete. In step 8, the author only examines the case G \u2245 \u2124\u2082 \u00d7 \u2124\u2082 and says 'This indicates that if |G| > 2, Aut(G) is not trivial.' This is not a rigorous justification; one must show that for any elementary abelian 2-group of order \u2265 4, there exists a nontrivial automorphism (e.g., swapping two independent generators). Without this, the conclusion is not fully established.\",\n  \"suggestions\": \"Provide a general argument: after showing G is an elementary abelian 2-group, note that if |G| > 2, then its dimension as an \ud835\udd3d\u2082-vector space is at least 2, so there exist basis vectors; swapping two basis vectors yields a nontrivial automorphism.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly deduces that G is abelian and every element has order 2. However, the proof that any such group with more than two elements must have nontrivial automorphism is incomplete. In step 8, the author only examines the case G \u2245 \u2124\u2082 \u00d7 \u2124\u2082 and says 'This indicates that if |G| > 2, Aut(G) is not trivial.' This is not a rigorous justification; one must show that for any elementary abelian 2-group of order \u2265 4, there exists a nontrivial automorphism (e.g., swapping two independent generators). Without this, the conclusion is not fully established.\",\n  \"suggestions\": \"Provide a general argument: after showing G is an elementary abelian 2-group, note that if |G| > 2, then its dimension as an \ud835\udd3d\u2082-vector space is at least 2, so there exist basis vectors; swapping two basis vectors yields a nontrivial automorphism.\"\n}",
+        "verdict": "insufficient",
+        "notes": "The answer correctly deduces that G is abelian and every element has order 2. However, the proof that any such group with more than two elements must have nontrivial automorphism is incomplete. In step 8, the author only examines the case G \u2245 \u2124\u2082 \u00d7 \u2124\u2082 and says 'This indicates that if |G| > 2, Aut(G) is not trivial.' This is not a rigorous justification; one must show that for any elementary abelian 2-group of order \u2265 4, there exists a nontrivial automorphism (e.g., swapping two independent generators). Without this, the conclusion is not fully established.",
+        "suggestions": "Provide a general argument: after showing G is an elementary abelian 2-group, note that if |G| > 2, then its dimension as an \ud835\udd3d\u2082-vector space is at least 2, so there exist basis vectors; swapping two basis vectors yields a nontrivial automorphism.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique correctly identifies the incompleteness in the original answer and provides a clear, evidence-based explanation. No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f:[0,1]\\to\\mathbb{R}$ be a function satisfying $|f(x)-f(y)|\\le 2|x-y|$ for all $x,y\\in[0,1]$. Suppose $f(0)=0$ and $f(1)=1$. Determine the maximum possible value of $\\int_0^1 f(x)\\,dx$.",
+    "run_id": "16",
+    "topic_slug": "real_functions",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives pointwise bounds $f(x)\\\\le 2x$ and $f(x)\\\\le 3-2x$, giving $f(x)\\\\le \\\\min(2x,3-2x)$. The integral of this upper bound is computed as $\\\\int_0^{3/4}2x\\\\,dx+\\\\int_{3/4}^1(3-2x)\\\\,dx=7/8$. The construction $f(x)=2x$ on $[0,3/4)$ and $f(x)=3-2x$ on $[3/4,1]$ satisfies the Lipschitz condition (continuous, piecewise linear with slopes $\\\\pm2$), showing the bound is attainable. The reasoning is complete and rigorous.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives pointwise bounds $f(x)\\\\le 2x$ and $f(x)\\\\le 3-2x$, giving $f(x)\\\\le \\\\min(2x,3-2x)$. The integral of this upper bound is computed as $\\\\int_0^{3/4}2x\\\\,dx+\\\\int_{3/4}^1(3-2x)\\\\,dx=7/8$. The construction $f(x)=2x$ on $[0,3/4)$ and $f(x)=3-2x$ on $[3/4,1]$ satisfies the Lipschitz condition (continuous, piecewise linear with slopes $\\\\pm2$), showing the bound is attainable. The reasoning is complete and rigorous.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly derives pointwise bounds $f(x)\\le 2x$ and $f(x)\\le 3-2x$, giving $f(x)\\le \\min(2x,3-2x)$. The integral of this upper bound is computed as $\\int_0^{3/4}2x\\,dx+\\int_{3/4}^1(3-2x)\\,dx=7/8$. The construction $f(x)=2x$ on $[0,3/4)$ and $f(x)=3-2x$ on $[3/4,1]$ satisfies the Lipschitz condition (continuous, piecewise linear with slopes $\\pm2$), showing the bound is attainable. The reasoning is complete and rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Evaluate the definite integral\n$$\n\\int_0^1 \\ln \\Gamma(x) \\, dx,\n$$\nwhere $\\Gamma$ denotes the Euler gamma function. Give the exact value.",
+    "run_id": "21",
+    "topic_slug": "special_functions",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the reflection formula $\\\\Gamma(x)\\\\Gamma(1-x)=\\\\pi/\\\\sin(\\\\pi x)$ and the known integral $\\\\int_0^\\\\pi \\\\ln\\\\sin u\\\\,du = -\\\\pi\\\\ln 2$ to derive $\\\\int_0^1 \\\\ln\\\\Gamma(x)\\\\,dx = \\\\frac12\\\\ln(2\\\\pi)$. All steps are logically sound, and the answer is complete and rigorous.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the reflection formula $\\\\Gamma(x)\\\\Gamma(1-x)=\\\\pi/\\\\sin(\\\\pi x)$ and the known integral $\\\\int_0^\\\\pi \\\\ln\\\\sin u\\\\,du = -\\\\pi\\\\ln 2$ to derive $\\\\int_0^1 \\\\ln\\\\Gamma(x)\\\\,dx = \\\\frac12\\\\ln(2\\\\pi)$. All steps are logically sound, and the answer is complete and rigorous.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly applies the reflection formula $\\Gamma(x)\\Gamma(1-x)=\\pi/\\sin(\\pi x)$ and the known integral $\\int_0^\\pi \\ln\\sin u\\,du = -\\pi\\ln 2$ to derive $\\int_0^1 \\ln\\Gamma(x)\\,dx = \\frac12\\ln(2\\pi)$. All steps are logically sound, and the answer is complete and rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Find the general solution of the differential equation\n$$ (x^2 + y^2 + x)\\,dx + y\\,dy = 0. $$",
+    "run_id": "22",
+    "topic_slug": "ordinary_differential_equations",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the equation as not exact, finds an integrating factor \\$\\\\mu(x)=e^{2x}\\$, verifies exactness, integrates to obtain the potential function, and arrives at the general solution \\$e^{2x}(x^2+y^2)=C\\$. All steps are mathematically sound and complete.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the equation as not exact, finds an integrating factor \\\\(\\\\mu(x)=e^{2x}\\\\), verifies exactness, integrates to obtain the potential function, and arrives at the general solution \\\\(e^{2x}(x^2+y^2)=C\\\\). All steps are mathematically sound and complete.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the equation as not exact, finds an integrating factor \\$\\\\mu(x)=e^{2x}\\$, verifies exactness, integrates to obtain the potential function, and arrives at the general solution \\$e^{2x}(x^2+y^2)=C\\$. All steps are mathematically sound and complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate, correctly identifies the answer as correct, and follows the required JSON format. No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $B = \\{ z \\in \\mathbb{C}^n \\mid \\|z\\| < 1 \\}$ be the unit ball in $\\mathbb{C}^n$ ($n \\ge 1$), where $\\|z\\|^2 = \\sum_{i=1}^n |z_i|^2$. Suppose $f: B \\to B$ is a biholomorphism (i.e., $f$ is holomorphic, bijective, and its inverse $f^{-1}$ is also holomorphic) such that $f(0) = 0$. Prove that $f$ is a linear unitary transformation; that is, there exists an $n \\times n$ unitary matrix $U$ such that $f(z) = U z$ for all $z \\in B$.",
+    "run_id": "20",
+    "topic_slug": "several_complex_variables_and_analytic_spaces",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Step 3 incorrectly justifies $\\\\|f(z)\\\\| = \\\\|z\\\\|$ by stating 'because both $f$ and $f^{-1}$ are norm-preserving at $0$.' This is not valid; preserving the origin does not imply equality of norms. The correct argument uses the Schwarz lemma to obtain $\\\\|f(z)\\\\| \\\\le \\\\|z\\\\|$ and $\\\\|z\\\\| \\\\le \\\\|f(z)\\\\|$, giving equality globally. Step 4 contains a serious error: defining $g(z)=f^{-1}(f'(0)^{-1}f(z))$ and claiming $g'(0)=I$. The derivative computation actually yields $g'(0) = (f'(0))^{-1} \\\\neq I$ (unless $f'(0)=I$). This invalidates the proof that $g$ is the identity and thus that $f$ is linear. The approach can be corrected by using $h(z) = (f'(0))^{-1}f(z)$ instead.\",\n  \"suggestions\": \"Use the Schwarz lemma to show $\\\\|f(z)\\\\| = \\\\|z\\\\|$ for all $z$, then deduce $f'(0)$ is unitary. Then define $h(z) = (f'(0))^{-1}f(z)$, note $h(0)=0$, $h'(0)=I$, and apply Cartan's uniqueness theorem to conclude $h(z)=z$, hence $f(z)=f'(0)z$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Step 3 incorrectly justifies $\\\\|f(z)\\\\| = \\\\|z\\\\|$ by stating 'because both $f$ and $f^{-1}$ are norm-preserving at $0$.' This is not valid; preserving the origin does not imply equality of norms. The correct argument uses the Schwarz lemma to obtain $\\\\|f(z)\\\\| \\\\le \\\\|z\\\\|$ and $\\\\|z\\\\| \\\\le \\\\|f(z)\\\\|$, giving equality globally. Step 4 contains a serious error: defining $g(z)=f^{-1}(f'(0)^{-1}f(z))$ and claiming $g'(0)=I$. The derivative computation actually yields $g'(0) = (f'(0))^{-1} \\\\neq I$ (unless $f'(0)=I$). This invalidates the proof that $g$ is the identity and thus that $f$ is linear. The approach can be corrected by using $h(z) = (f'(0))^{-1}f(z)$ instead.\",\n  \"suggestions\": \"Use the Schwarz lemma to show $\\\\|f(z)\\\\| = \\\\|z\\\\|$ for all $z$, then deduce $f'(0)$ is unitary. Then define $h(z) = (f'(0))^{-1}f(z)$, note $h(0)=0$, $h'(0)=I$, and apply Cartan's uniqueness theorem to conclude $h(z)=z$, hence $f(z)=f'(0)z$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "Step 3 incorrectly justifies $\\|f(z)\\| = \\|z\\|$ by stating 'because both $f$ and $f^{-1}$ are norm-preserving at $0$.' This is not valid; preserving the origin does not imply equality of norms. The correct argument uses the Schwarz lemma to obtain $\\|f(z)\\| \\le \\|z\\|$ and $\\|z\\| \\le \\|f(z)\\|$, giving equality globally. Step 4 contains a serious error: defining $g(z)=f^{-1}(f'(0)^{-1}f(z))$ and claiming $g'(0)=I$. The derivative computation actually yields $g'(0) = (f'(0))^{-1} \\neq I$ (unless $f'(0)=I$). This invalidates the proof that $g$ is the identity and thus that $f$ is linear. The approach can be corrected by using $h(z) = (f'(0))^{-1}f(z)$ instead.",
+        "suggestions": "Use the Schwarz lemma to show $\\|f(z)\\| = \\|z\\|$ for all $z$, then deduce $f'(0)$ is unitary. Then define $h(z) = (f'(0))^{-1}f(z)$, note $h(0)=0$, $h'(0)=I$, and apply Cartan's uniqueness theorem to conclude $h(z)=z$, hence $f(z)=f'(0)z$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique correctly identifies the errors and provides accurate reasoning."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Find all functions $f: \\mathbb{R} \\to \\mathbb{R}$ such that\n$$\nf(x f(y) + f(x)) = f(x) f(y) + x\n$$\nfor all real numbers $x, y$.",
+    "run_id": "25",
+    "topic_slug": "difference_and_functional_equations",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer claims the only solution is $f(x)=x$, but $f(x)=-x$ also satisfies the equation (e.g., direct substitution verifies it). The reasoning does not exclude this possibility, and the attempted uniqueness argument is incomplete (the step 'Assume there exists an $x$ such that $f(x) \\\\neq x$ ... we need to show that this leads to a contradiction' is not carried out). Therefore the answer is mathematically incorrect because it fails to find all functions.\",\n  \"suggestions\": \"A complete solution should derive $f(0)=0$, $f(f(x))=x$, and then use the derived equation $f(xy+f(x)) = f(x)y + x$ to prove that $f$ is linear, leading to $f(x)=x$ or $f(x)=-x$ as the only solutions.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer claims the only solution is $f(x)=x$, but $f(x)=-x$ also satisfies the equation (e.g., direct substitution verifies it). The reasoning does not exclude this possibility, and the attempted uniqueness argument is incomplete (the step 'Assume there exists an $x$ such that $f(x) \\\\neq x$ ... we need to show that this leads to a contradiction' is not carried out). Therefore the answer is mathematically incorrect because it fails to find all functions.\",\n  \"suggestions\": \"A complete solution should derive $f(0)=0$, $f(f(x))=x$, and then use the derived equation $f(xy+f(x)) = f(x)y + x$ to prove that $f$ is linear, leading to $f(x)=x$ or $f(x)=-x$ as the only solutions.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer claims the only solution is $f(x)=x$, but $f(x)=-x$ also satisfies the equation (e.g., direct substitution verifies it). The reasoning does not exclude this possibility, and the attempted uniqueness argument is incomplete (the step 'Assume there exists an $x$ such that $f(x) \\neq x$ ... we need to show that this leads to a contradiction' is not carried out). Therefore the answer is mathematically incorrect because it fails to find all functions.",
+        "suggestions": "A complete solution should derive $f(0)=0$, $f(f(x))=x$, and then use the derived equation $f(xy+f(x)) = f(x)y + x$ to prove that $f$ is linear, leading to $f(x)=x$ or $f(x)=-x$ as the only solutions.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a connected topological group with identity element $e$. Prove that the fundamental group $\\pi_1(G,e)$ is abelian.",
+    "run_id": "15",
+    "topic_slug": "topological_groups_and_lie_groups",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains mathematical errors. The claim that traversing the boundary clockwise gives \u03b1*\u03b2 and counterclockwise gives \u03b2*\u03b1 is incorrect; the full boundary yields a loop \u03b1*\u03b2*\u03b1^{-1}*\u03b2^{-1}. Moreover, stating that \\\"the map F restricted to the boundary provides a homotopy\\\" is wrong\u2014the restriction is a loop, not a homotopy. The reasoning does not correctly establish that \u03b1*\u03b2 \u2243 \u03b2*\u03b1.\",\n  \"suggestions\": \"To correct the proof, consider two paths from (0,0) to (1,1): along the bottom then right, and along the left then top. Under F, these become loops homotopic to \u03b1*\u03b2 and \u03b2*\u03b1, respectively. Because the square is contractible, these two paths are homotopic relative to endpoints, giving the desired homotopy. Alternatively, use the Eckmann\u2013Hilton argument with concatenation and pointwise multiplication.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains mathematical errors. The claim that traversing the boundary clockwise gives \u03b1*\u03b2 and counterclockwise gives \u03b2*\u03b1 is incorrect; the full boundary yields a loop \u03b1*\u03b2*\u03b1^{-1}*\u03b2^{-1}. Moreover, stating that \\\"the map F restricted to the boundary provides a homotopy\\\" is wrong\u2014the restriction is a loop, not a homotopy. The reasoning does not correctly establish that \u03b1*\u03b2 \u2243 \u03b2*\u03b1.\",\n  \"suggestions\": \"To correct the proof, consider two paths from (0,0) to (1,1): along the bottom then right, and along the left then top. Under F, these become loops homotopic to \u03b1*\u03b2 and \u03b2*\u03b1, respectively. Because the square is contractible, these two paths are homotopic relative to endpoints, giving the desired homotopy. Alternatively, use the Eckmann\u2013Hilton argument with concatenation and pointwise multiplication.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains mathematical errors. The claim that traversing the boundary clockwise gives \u03b1*\u03b2 and counterclockwise gives \u03b2*\u03b1 is incorrect; the full boundary yields a loop \u03b1*\u03b2*\u03b1^{-1}*\u03b2^{-1}. Moreover, stating that \"the map F restricted to the boundary provides a homotopy\" is wrong\u2014the restriction is a loop, not a homotopy. The reasoning does not correctly establish that \u03b1*\u03b2 \u2243 \u03b2*\u03b1.",
+        "suggestions": "To correct the proof, consider two paths from (0,0) to (1,1): along the bottom then right, and along the left then top. Under F, these become loops homotopic to \u03b1*\u03b2 and \u03b2*\u03b1, respectively. Because the square is contractible, these two paths are homotopic relative to endpoints, giving the desired homotopy. Alternatively, use the Eckmann\u2013Hilton argument with concatenation and pointwise multiplication.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $A$ be an $n \\times n$ complex matrix. Prove that $e^A = I$ (where $I$ is the identity matrix) if and only if $A$ is diagonalizable and every eigenvalue of $A$ is an integer multiple of $2\\pi i$.",
+    "run_id": "9",
+    "topic_slug": "linear_and_multilinear_algebra",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves both directions. The 'if' direction uses diagonalization to show e^A = I. The 'only if' direction uses the Jordan canonical form: e^A = I forces each Jordan block to be 1\u00d71 (hence A is diagonalizable) and eigenvalues satisfy e^{\u03bb}=1, i.e., \u03bb = 2\u03c0i k. There is a minor inaccuracy in stating that off-diagonal entries vanish unless \u03bb_i = 0, but this remark is not used in the core argument and does not affect the validity. Overall, the solution is mathematically sound, complete, and sufficiently rigorous.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves both directions. The 'if' direction uses diagonalization to show e^A = I. The 'only if' direction uses the Jordan canonical form: e^A = I forces each Jordan block to be 1\u00d71 (hence A is diagonalizable) and eigenvalues satisfy e^{\u03bb}=1, i.e., \u03bb = 2\u03c0i k. There is a minor inaccuracy in stating that off-diagonal entries vanish unless \u03bb_i = 0, but this remark is not used in the core argument and does not affect the validity. Overall, the solution is mathematically sound, complete, and sufficiently rigorous.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly proves both directions. The 'if' direction uses diagonalization to show e^A = I. The 'only if' direction uses the Jordan canonical form: e^A = I forces each Jordan block to be 1\u00d71 (hence A is diagonalizable) and eigenvalues satisfy e^{\u03bb}=1, i.e., \u03bb = 2\u03c0i k. There is a minor inaccuracy in stating that off-diagonal entries vanish unless \u03bb_i = 0, but this remark is not used in the core argument and does not affect the validity. Overall, the solution is mathematically sound, complete, and sufficiently rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the integral equation\n$$\nf(x) + \\lambda \\int_{-\\infty}^{\\infty} e^{-|x-t|} f(t) \\, dt = e^{-|x|}, \\qquad x \\in \\mathbb{R},\n$$\nwhere $\\lambda$ is a real constant. Use the Fourier transform defined by\n$$\n\\hat{g}(\\omega) = \\int_{-\\infty}^{\\infty} g(x) e^{-i\\omega x} \\, dx,\n$$\nwith the inverse transform given by\n$$\ng(x) = \\frac{1}{2\\pi} \\int_{-\\infty}^{\\infty} \\hat{g}(\\omega) e^{i\\omega x} \\, d\\omega.\n$$\nDetermine the range of $\\lambda$ for which the equation admits a solution, and find the solution $f(x)$ in closed form.",
+    "run_id": "30",
+    "topic_slug": "integral_transforms_and_operational_calculus",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the Fourier transform, solves for $\\\\hat{f}(\\\\omega)$, and inverts to obtain $f(x) = \\\\frac{1}{\\\\sqrt{1+2\\\\lambda}} e^{-\\\\sqrt{1+2\\\\lambda}|x|}$. The range $\\\\lambda > -\\\\frac12$ is correctly identified. All steps are mathematically sound and complete.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the Fourier transform, solves for $\\\\hat{f}(\\\\omega)$, and inverts to obtain $f(x) = \\\\frac{1}{\\\\sqrt{1+2\\\\lambda}} e^{-\\\\sqrt{1+2\\\\lambda}|x|}$. The range $\\\\lambda > -\\\\frac12$ is correctly identified. All steps are mathematically sound and complete.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly applies the Fourier transform, solves for $\\hat{f}(\\omega)$, and inverts to obtain $f(x) = \\frac{1}{\\sqrt{1+2\\lambda}} e^{-\\sqrt{1+2\\lambda}|x|}$. The range $\\lambda > -\\frac12$ is correctly identified. All steps are mathematically sound and complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\triangle ABC$ have side lengths $AB = 13$, $AC = 15$, and $BC = 14$. Denote by $D$ the foot of the internal angle bisector from $A$ to side $BC$. Let the incircle of $\\triangle ABC$ touch side $BC$ at $E$. The line through $E$ perpendicular to $BC$ meets $AD$ at $F$. Find the length of $DF$.",
+    "run_id": "35",
+    "topic_slug": "geometry",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the angle bisector theorem, incircle tangency lengths, coordinate geometry, and distance formula. All steps are logically valid and complete. The final answer $\\\\frac{\\\\sqrt{65}}{2}$ is correct.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the angle bisector theorem, incircle tangency lengths, coordinate geometry, and distance formula. All steps are logically valid and complete. The final answer $\\\\frac{\\\\sqrt{65}}{2}$ is correct.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly applies the angle bisector theorem, incircle tangency lengths, coordinate geometry, and distance formula. All steps are logically valid and complete. The final answer $\\frac{\\sqrt{65}}{2}$ is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathfrak{g}$ be a finite-dimensional Lie algebra over a field $F$ of characteristic $0$. For $x \\in \\mathfrak{g}$, define the adjoint operator $\\operatorname{ad}_x : \\mathfrak{g} \\to \\mathfrak{g}$ by $\\operatorname{ad}_x(y) = [x, y]$. The Killing form is defined by\n$$\n\\kappa(x, y) = \\operatorname{tr}(\\operatorname{ad}_x \\circ \\operatorname{ad}_y), \\qquad x, y \\in \\mathfrak{g}.\n$$\n\n(a) Show that $\\kappa$ is a symmetric bilinear form.\n\n(b) Prove that $\\kappa$ is invariant, i.e., for all $x, y, z \\in \\mathfrak{g}$,\n$$\n\\kappa([x, y], z) = \\kappa(x, [y, z]).\n$$\n\n(c) Show that the radical of $\\kappa$,\n$$\n\\operatorname{Rad}(\\kappa) = \\{ x \\in \\mathfrak{g} \\mid \\kappa(x, y) = 0 \\text{ for all } y \\in \\mathfrak{g} \\},\n$$\nis an ideal of $\\mathfrak{g}$.\n\n(d) Prove that if $\\kappa$ is nondegenerate (i.e., $\\operatorname{Rad}(\\kappa) = 0$), then $\\mathfrak{g}$ is semisimple, i.e., $\\mathfrak{g}$ contains no nonzero abelian ideals.",
+    "run_id": "11",
+    "topic_slug": "nonassociative_rings_and_algebras",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"In part (c), the justification that \\$\\\\kappa([y,x],z) = \\\\kappa(y,[x,z]) = 0\\$ because \\$[x,z] \\\\in \\\\mathfrak{g}\\$ and \\$x \\\\in \\\\operatorname{Rad}(\\\\kappa)\\$ is invalid. The condition \\$x \\\\in \\\\operatorname{Rad}(\\\\kappa)\\$ only guarantees \\$\\\\kappa(x,w)=0\\$ for all \\$w\\$, but here the expression is \\$\\\\kappa(y,[x,z])\\$ with \\$y\\$ arbitrary, which does not directly involve \\$x\\$ as the first argument. This step lacks proper reasoning and renders the proof incorrect.\",\n  \"suggestions\": \"To fix part (c), use invariance and the definition of the radical correctly: \\$\\\\kappa([y,x],z) = -\\\\kappa([x,y],z) = -\\\\kappa(x,[y,z]) = 0\\$, or combine symmetry and invariance: \\$\\\\kappa([y,x],z) = \\\\kappa(y,[x,z]) = \\\\kappa([x,z],y) = \\\\kappa(x,[z,y]) = 0\\$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"In part (c), the justification that \\\\(\\\\kappa([y,x],z) = \\\\kappa(y,[x,z]) = 0\\\\) because \\\\([x,z] \\\\in \\\\mathfrak{g}\\\\) and \\\\(x \\\\in \\\\operatorname{Rad}(\\\\kappa)\\\\) is invalid. The condition \\\\(x \\\\in \\\\operatorname{Rad}(\\\\kappa)\\\\) only guarantees \\\\(\\\\kappa(x,w)=0\\\\) for all \\\\(w\\\\), but here the expression is \\\\(\\\\kappa(y,[x,z])\\\\) with \\\\(y\\\\) arbitrary, which does not directly involve \\\\(x\\\\) as the first argument. This step lacks proper reasoning and renders the proof incorrect.\",\n  \"suggestions\": \"To fix part (c), use invariance and the definition of the radical correctly: \\\\(\\\\kappa([y,x],z) = -\\\\kappa([x,y],z) = -\\\\kappa(x,[y,z]) = 0\\\\), or combine symmetry and invariance: \\\\(\\\\kappa([y,x],z) = \\\\kappa(y,[x,z]) = \\\\kappa([x,z],y) = \\\\kappa(x,[z,y]) = 0\\\\).\"\n}",
+        "verdict": "incorrect",
+        "notes": "In part (c), the justification that \\$\\\\kappa([y,x],z) = \\\\kappa(y,[x,z]) = 0\\$ because \\$[x,z] \\\\in \\\\mathfrak{g}\\$ and \\$x \\\\in \\\\operatorname{Rad}(\\\\kappa)\\$ is invalid. The condition \\$x \\\\in \\\\operatorname{Rad}(\\\\kappa)\\$ only guarantees \\$\\\\kappa(x,w)=0\\$ for all \\$w\\$, but here the expression is \\$\\\\kappa(y,[x,z])\\$ with \\$y\\$ arbitrary, which does not directly involve \\$x\\$ as the first argument. This step lacks proper reasoning and renders the proof incorrect.",
+        "suggestions": "To fix part (c), use invariance and the definition of the radical correctly: \\$\\\\kappa([y,x],z) = -\\\\kappa([x,y],z) = -\\\\kappa(x,[y,z]) = 0\\$, or combine symmetry and invariance: \\$\\\\kappa([y,x],z) = \\\\kappa(y,[x,z]) = \\\\kappa([x,z],y) = \\\\kappa(x,[z,y]) = 0\\$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Prove that there exists a Lebesgue measurable set $E \\subseteq \\mathbb{R}$ such that for every nonempty open interval $I \\subseteq \\mathbb{R}$, we have $0 < m(E \\cap I) < m(I)$, where $m$ denotes Lebesgue measure.",
+    "run_id": "17",
+    "topic_slug": "measure_and_integration",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer attempts a construction but fails to rigorously prove that $0 < m(E \\\\cap I) < m(I)$ for all open intervals $I$. The positivity is argued via existence of a dyadic subinterval and a fat Cantor set inside it, which is valid if such sets are constructed. However, the argument for strict inequality is handwavy ('by ensuring the fat Cantor sets are not too dense, we can keep $m(E \\\\cap I) < m(I)$') and does not provide any details or justification. The overlapping of dyadic intervals is ignored, and the claim that the sets are 'disjoint' is incorrect. Without a concrete method to guarantee $m(E \\\\cap I) < m(I)$, the proof is incomplete.\",\n  \"suggestions\": \"Provide a precise construction that ensures both $m(E \\\\cap I) > 0$ and $m(E \\\\cap I) < m(I)$. For instance, enumerate all open intervals with rational endpoints $(I_n)$. Inductively choose disjoint closed nowhere dense sets $A_n \\\\subseteq I_n$ with $0 < m(A_n) < m(I_n)$ and such that $\\\\sum_{I_n \\\\subseteq I} m(A_n) < m(I)$ for every interval $I$ (this can be achieved by making $m(A_n)$ sufficiently small). Then let $E = \\\\bigcup_n A_n$. Show that for any open interval $I$, there exists some $I_n \\\\subseteq I$, giving $m(E \\\\cap I) \\\\ge m(A_n) > 0$. Also, because the $A_n$ are disjoint and their total measure within $I$ is strictly less than $m(I)$, we get $m(E \\\\cap I) < m(I)$. Alternatively, cite known results or use a construction involving a fat Cantor set and its translates scaled to all intervals.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer attempts a construction but fails to rigorously prove that $0 < m(E \\\\cap I) < m(I)$ for all open intervals $I$. The positivity is argued via existence of a dyadic subinterval and a fat Cantor set inside it, which is valid if such sets are constructed. However, the argument for strict inequality is handwavy ('by ensuring the fat Cantor sets are not too dense, we can keep $m(E \\\\cap I) < m(I)$') and does not provide any details or justification. The overlapping of dyadic intervals is ignored, and the claim that the sets are 'disjoint' is incorrect. Without a concrete method to guarantee $m(E \\\\cap I) < m(I)$, the proof is incomplete.\",\n  \"suggestions\": \"Provide a precise construction that ensures both $m(E \\\\cap I) > 0$ and $m(E \\\\cap I) < m(I)$. For instance, enumerate all open intervals with rational endpoints $(I_n)$. Inductively choose disjoint closed nowhere dense sets $A_n \\\\subseteq I_n$ with $0 < m(A_n) < m(I_n)$ and such that $\\\\sum_{I_n \\\\subseteq I} m(A_n) < m(I)$ for every interval $I$ (this can be achieved by making $m(A_n)$ sufficiently small). Then let $E = \\\\bigcup_n A_n$. Show that for any open interval $I$, there exists some $I_n \\\\subseteq I$, giving $m(E \\\\cap I) \\\\ge m(A_n) > 0$. Also, because the $A_n$ are disjoint and their total measure within $I$ is strictly less than $m(I)$, we get $m(E \\\\cap I) < m(I)$. Alternatively, cite known results or use a construction involving a fat Cantor set and its translates scaled to all intervals.\"\n}",
+        "verdict": "insufficient",
+        "notes": "The answer attempts a construction but fails to rigorously prove that $0 < m(E \\cap I) < m(I)$ for all open intervals $I$. The positivity is argued via existence of a dyadic subinterval and a fat Cantor set inside it, which is valid if such sets are constructed. However, the argument for strict inequality is handwavy ('by ensuring the fat Cantor sets are not too dense, we can keep $m(E \\cap I) < m(I)$') and does not provide any details or justification. The overlapping of dyadic intervals is ignored, and the claim that the sets are 'disjoint' is incorrect. Without a concrete method to guarantee $m(E \\cap I) < m(I)$, the proof is incomplete.",
+        "suggestions": "Provide a precise construction that ensures both $m(E \\cap I) > 0$ and $m(E \\cap I) < m(I)$. For instance, enumerate all open intervals with rational endpoints $(I_n)$. Inductively choose disjoint closed nowhere dense sets $A_n \\subseteq I_n$ with $0 < m(A_n) < m(I_n)$ and such that $\\sum_{I_n \\subseteq I} m(A_n) < m(I)$ for every interval $I$ (this can be achieved by making $m(A_n)$ sufficiently small). Then let $E = \\bigcup_n A_n$. Show that for any open interval $I$, there exists some $I_n \\subseteq I$, giving $m(E \\cap I) \\ge m(A_n) > 0$. Also, because the $A_n$ are disjoint and their total measure within $I$ is strictly less than $m(I)$, we get $m(E \\cap I) < m(I)$. Alternatively, cite known results or use a construction involving a fat Cantor set and its translates scaled to all intervals.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the torus $T$ obtained by rotating a circle of radius $r$ about an axis in its plane that is a distance $R > r > 0$ from the circle's center. Using the standard parametrization\n$$\n\\mathbf{X}(\\theta, \\varphi) = \\big( (R + r\\cos\\varphi)\\cos\\theta,\\ (R + r\\cos\\varphi)\\sin\\theta,\\ r\\sin\\varphi \\big), \\qquad \\theta \\in [0,2\\pi),\\ \\varphi \\in [0,2\\pi),\n$$\ncompute the Gaussian curvature $K$ of the torus as a function of $\\varphi$ (it is independent of $\\theta$). Then evaluate the total Gaussian curvature $\\iint_T K \\, dA$ by direct integration, and verify that it equals zero.",
+    "run_id": "37",
+    "topic_slug": "differential_geometry",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"All steps are mathematically correct. The Gaussian curvature is correctly derived as $K = \\\\frac{\\\\cos\\\\varphi}{r(R + r\\\\cos\\\\varphi)}$, and the total Gaussian curvature integrates to $0$ as shown. The solution is complete and rigorous.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"All steps are mathematically correct. The Gaussian curvature is correctly derived as $K = \\\\frac{\\\\cos\\\\varphi}{r(R + r\\\\cos\\\\varphi)}$, and the total Gaussian curvature integrates to $0$ as shown. The solution is complete and rigorous.\"\n}",
+        "verdict": "correct",
+        "notes": "All steps are mathematically correct. The Gaussian curvature is correctly derived as $K = \\frac{\\cos\\varphi}{r(R + r\\cos\\varphi)}$, and the total Gaussian curvature integrates to $0$ as shown. The solution is complete and rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Solve the following integral equation for $\\phi(x)$ on the interval $0 \\le x \\le 1$:\n\n$$\n\\phi(x) = x \\cos 1 + \\int_0^1 \\min(x,t) \\, \\phi(t) \\, dt,\n$$\n\nwhere $\\min(x,t)$ denotes the smaller of $x$ and $t$.",
+    "run_id": "31",
+    "topic_slug": "integral_equations",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically correct and complete. The derivation uses valid differentiation and solves the resulting ODE with appropriate boundary conditions. The verification step confirms the solution satisfies the original equation. A minor typographical error in step 5 (writing 'x \u00b7 x \u03c6(x)' instead of 'x \u03c6(x)') does not affect the correctness.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically correct and complete. The derivation uses valid differentiation and solves the resulting ODE with appropriate boundary conditions. The verification step confirms the solution satisfies the original equation. A minor typographical error in step 5 (writing 'x \u00b7 x \u03c6(x)' instead of 'x \u03c6(x)') does not affect the correctness.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution is mathematically correct and complete. The derivation uses valid differentiation and solves the resulting ODE with appropriate boundary conditions. The verification step confirms the solution satisfies the original equation. A minor typographical error in step 5 (writing 'x \u00b7 x \u03c6(x)' instead of 'x \u03c6(x)') does not affect the correctness.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "None needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the rational map $\\varphi: \\mathbb{P}^2 \\to \\mathbb{P}^2$ over $\\mathbb{C}$ given in homogeneous coordinates by\n$$\n\\varphi(x:y:z) = (yz : xz : xy).\n$$\nLet $X$ be the blow-up of $\\mathbb{P}^2$ at the three points \n$$\nP_1 = (1:0:0),\\quad P_2 = (0:1:0),\\quad P_3 = (0:0:1).\n$$\nDenote by $\\pi: X \\to \\mathbb{P}^2$ the blow-down morphism, and let $E_1, E_2, E_3$ be the exceptional divisors over $P_1, P_2, P_3$ respectively. Let $H = \\pi^* \\mathcal{O}_{\\mathbb{P}^2}(1)$ be the pullback of the hyperplane class.\n\n(a) Show that $\\varphi$ lifts to a morphism $\\Phi: X \\to \\mathbb{P}^2$ (i.e., $\\Phi = \\varphi \\circ \\pi$ is a morphism).\n(b) Compute the class of the line bundle $\\Phi^* \\mathcal{O}_{\\mathbb{P}^2}(1)$ in $\\operatorname{Pic}(X)$ in terms of $H, E_1, E_2, E_3$.\n(c) Prove that $\\varphi$ is birational and determine its inverse rational map.",
+    "run_id": "8",
+    "topic_slug": "algebraic_geometry",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (b) is correct: \\$\\\\Phi^*\\\\mathcal{O}_{\\\\mathbb{P}^2}(1) = 2H - E_1 - E_2 - E_3\\$. However, part (c) contains mathematical errors. The derivation of the inverse map is flawed: from \\$u=yz, v=xz, w=xy\\$ it does not follow that \\$x^2 = vw\\$; rather, \\$x^2 = vw/u\\$ (and similarly for \\$y^2, z^2$). The claimed inverse \\$(vw:uw:uv)\\$ is actually \\$\\\\varphi(u:v:w)\\$, not the inverse. In fact, \\$\\\\varphi\\$ is an involution (\\$\\\\varphi\\\\circ\\\\varphi = \\\\mathrm{id}\\$ on the open set where \\$xyz\\\\neq0\\$), so the inverse rational map is \\$\\\\varphi\\$ itself. The verification attempt also fails. Part (a) is sketched but not fully rigorous; the main error in part (c) renders the overall answer incorrect.\",\n  \"suggestions\": \"For part (c), show that \\$\\\\varphi\\\\circ\\\\varphi = \\\\mathrm{id}\\$ on a dense open set, hence \\$\\\\varphi\\$ is birational with inverse \\$\\\\varphi\\$. Provide a correct computation: \\$\\\\varphi(\\\\varphi(x:y:z)) = (x^2yz : xy^2z : xyz^2) = (x:y:z)\\$ after factoring \\$xyz\\\\neq0\\$. For part (a), give a clear local coordinate analysis for all three points to confirm the lift is a morphism.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (b) is correct: \\\\(\\\\Phi^*\\\\mathcal{O}_{\\\\mathbb{P}^2}(1) = 2H - E_1 - E_2 - E_3\\\\). However, part (c) contains mathematical errors. The derivation of the inverse map is flawed: from \\\\(u=yz, v=xz, w=xy\\\\) it does not follow that \\\\(x^2 = vw\\\\); rather, \\\\(x^2 = vw/u\\\\) (and similarly for \\\\(y^2, z^2\\)). The claimed inverse \\\\((vw:uw:uv)\\\\) is actually \\\\(\\\\varphi(u:v:w)\\\\), not the inverse. In fact, \\\\(\\\\varphi\\\\) is an involution (\\\\(\\\\varphi\\\\circ\\\\varphi = \\\\mathrm{id}\\\\) on the open set where \\\\(xyz\\\\neq0\\\\)), so the inverse rational map is \\\\(\\\\varphi\\\\) itself. The verification attempt also fails. Part (a) is sketched but not fully rigorous; the main error in part (c) renders the overall answer incorrect.\",\n  \"suggestions\": \"For part (c), show that \\\\(\\\\varphi\\\\circ\\\\varphi = \\\\mathrm{id}\\\\) on a dense open set, hence \\\\(\\\\varphi\\\\) is birational with inverse \\\\(\\\\varphi\\\\). Provide a correct computation: \\\\(\\\\varphi(\\\\varphi(x:y:z)) = (x^2yz : xy^2z : xyz^2) = (x:y:z)\\\\) after factoring \\\\(xyz\\\\neq0\\\\). For part (a), give a clear local coordinate analysis for all three points to confirm the lift is a morphism.\"\n}",
+        "verdict": "incorrect",
+        "notes": "Part (b) is correct: $\\Phi^*\\mathcal{O}_{\\mathbb{P}^2}(1) = 2H - E_1 - E_2 - E_3$. However, part (c) contains mathematical errors. The derivation of the inverse map is flawed: from $u=yz, v=xz, w=xy$ it does not follow that $x^2 = vw$; rather, $x^2 = vw/u$ (and similarly for $y^2, z^2$). The claimed inverse $(vw:uw:uv)$ is actually $\\varphi(u:v:w)$, not the inverse. In fact, $\\varphi$ is an involution ($\\varphi\\circ\\varphi = \\mathrm{id}$ on the open set where $xyz\\neq0$), so the inverse rational map is $\\varphi$ itself. The verification attempt also fails. Part (a) is sketched but not fully rigorous; the main error in part (c) renders the overall answer incorrect.",
+        "suggestions": "For part (c), show that $\\varphi\\circ\\varphi = \\mathrm{id}$ on a dense open set, hence $\\varphi$ is birational with inverse $\\varphi$. Provide a correct computation: $\\varphi(\\varphi(x:y:z)) = (x^2yz : xy^2z : xyz^2) = (x:y:z)$ after factoring $xyz\\neq0$. For part (a), give a clear local coordinate analysis for all three points to confirm the lift is a morphism.",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "Could not parse evaluation JSON. Raw text: "
+          ],
+          "improvements": "Self-check evaluation unknown due to parsing failure."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\theta$ be an irrational number. Define the rotation $R_\\theta: [0,1) \\to [0,1)$ by $R_\\theta(x) = x + \\theta \\pmod 1$, where we identify $[0,1)$ with the circle $\\mathbb{R}/\\mathbb{Z}$. Let $\\lambda$ denote the Lebesgue measure on $[0,1)$.\n\nProve the following:\n(a) $R_\\theta$ is ergodic with respect to $\\lambda$.\n(b) $R_\\theta$ is not strong mixing with respect to $\\lambda$.\n(c) $R_\\theta$ is uniquely ergodic, i.e., $\\lambda$ is the only $R_\\theta$-invariant Borel probability measure on $[0,1)$.\n[/QUESTION]",
+    "run_id": "24",
+    "topic_slug": "dynamical_systems_and_ergodic_theory",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer provides correct proofs for all three parts. (a) Uses Fourier series to show any invariant set's characteristic function is constant, implying measure 0 or 1. (b) Exhibits A = [0,1/2) and uses density of orbits to show \u03bb(R_\u03b8^{-n}(A) \u2229 A) does not converge to 1/4, disproving strong mixing. (c) Uses Fourier transform of an invariant measure to show its Fourier coefficients vanish for n\u22600, forcing equality with Lebesgue measure. All steps are mathematically sound and complete. Minor omissions (e.g., not explicitly proving \u03bb invariance) do not affect correctness.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer provides correct proofs for all three parts. (a) Uses Fourier series to show any invariant set's characteristic function is constant, implying measure 0 or 1. (b) Exhibits A = [0,1/2) and uses density of orbits to show \u03bb(R_\u03b8^{-n}(A) \u2229 A) does not converge to 1/4, disproving strong mixing. (c) Uses Fourier transform of an invariant measure to show its Fourier coefficients vanish for n\u22600, forcing equality with Lebesgue measure. All steps are mathematically sound and complete. Minor omissions (e.g., not explicitly proving \u03bb invariance) do not affect correctness.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer provides correct proofs for all three parts. (a) Uses Fourier series to show any invariant set's characteristic function is constant, implying measure 0 or 1. (b) Exhibits A = [0,1/2) and uses density of orbits to show \u03bb(R_\u03b8^{-n}(A) \u2229 A) does not converge to 1/4, disproving strong mixing. (c) Uses Fourier transform of an invariant measure to show its Fourier coefficients vanish for n\u22600, forcing equality with Lebesgue measure. All steps are mathematically sound and complete. Minor omissions (e.g., not explicitly proving \u03bb invariance) do not affect correctness.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $L^2[0,1]$ denote the Hilbert space of (equivalence classes of) Lebesgue measurable square-integrable functions on $[0,1]$ with the usual inner product $\\langle f,g\\rangle = \\int_0^1 f(x)\\overline{g(x)}\\,dx$. Define the Volterra operator $V:L^2[0,1]\\to L^2[0,1]$ by\n$$\n(Vf)(x) = \\int_0^x f(t)\\,dt,\\qquad x\\in[0,1].\n$$\nDetermine the operator norm $\\|V\\|$.",
+    "run_id": "33",
+    "topic_slug": "operator_theory",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in Step 6: the claimed lower bound using f_n(t)=sin(n\\\\pi t) is incorrect. Computing the ratio yields \\\\|Vf_n\\\\|/\\\\|f_n\\\\| = \\\\sqrt{3}/(n\\\\pi) \\\\to 0, not 2/\\\\pi. Therefore the lower bound argument fails. Moreover, the upper bound derived (\\\\le 1/\\\\sqrt{2}) is not sufficient to establish \\\\|V\\\\| \\\\le 2/\\\\pi; the answer merely appeals to known results without proof. Consequently, the reasoning does not correctly determine the operator norm.\",\n  \"suggestions\": \"To correctly determine the norm, solve the eigenvalue problem for V*V, which leads to a differential equation: -\\\\lambda f''(x) = f(x) with boundary conditions f(1)=0, f'(0)=0. The eigenvalues are \\\\lambda_n = (2/(\\\\pi(2n+1)))^2, so the norm is the square root of the largest eigenvalue, i.e., 2/\\\\pi. Alternatively, provide a rigorous derivation using Fourier analysis or known singular values.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in Step 6: the claimed lower bound using f_n(t)=sin(n\\\\pi t) is incorrect. Computing the ratio yields \\\\|Vf_n\\\\|/\\\\|f_n\\\\| = \\\\sqrt{3}/(n\\\\pi) \\\\to 0, not 2/\\\\pi. Therefore the lower bound argument fails. Moreover, the upper bound derived (\\\\le 1/\\\\sqrt{2}) is not sufficient to establish \\\\|V\\\\| \\\\le 2/\\\\pi; the answer merely appeals to known results without proof. Consequently, the reasoning does not correctly determine the operator norm.\",\n  \"suggestions\": \"To correctly determine the norm, solve the eigenvalue problem for V*V, which leads to a differential equation: -\\\\lambda f''(x) = f(x) with boundary conditions f(1)=0, f'(0)=0. The eigenvalues are \\\\lambda_n = (2/(\\\\pi(2n+1)))^2, so the norm is the square root of the largest eigenvalue, i.e., 2/\\\\pi. Alternatively, provide a rigorous derivation using Fourier analysis or known singular values.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains a mathematical error in Step 6: the claimed lower bound using f_n(t)=sin(n\\pi t) is incorrect. Computing the ratio yields \\|Vf_n\\|/\\|f_n\\| = \\sqrt{3}/(n\\pi) \\to 0, not 2/\\pi. Therefore the lower bound argument fails. Moreover, the upper bound derived (\\le 1/\\sqrt{2}) is not sufficient to establish \\|V\\| \\le 2/\\pi; the answer merely appeals to known results without proof. Consequently, the reasoning does not correctly determine the operator norm.",
+        "suggestions": "To correctly determine the norm, solve the eigenvalue problem for V*V, which leads to a differential equation: -\\lambda f''(x) = f(x) with boundary conditions f(1)=0, f'(0)=0. The eigenvalues are \\lambda_n = (2/(\\pi(2n+1)))^2, so the norm is the square root of the largest eigenvalue, i.e., 2/\\pi. Alternatively, provide a rigorous derivation using Fourier analysis or known singular values.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique correctly identifies the mathematical error and the lack of proof; it is accurate and well-justified."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $S$ be a finite set of points in the Euclidean plane, not all lying on a single line. Prove that there exists a line which contains exactly two points of $S$.",
+    "run_id": "36",
+    "topic_slug": "convex_and_discrete_geometry",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in Step 9. It claims: 'The line through P and the point closer to P (either A or B) will be closer to the other point (either B or A) than P is to L.' This is false. For a counterexample, let P = (0,1), L be the x-axis, with A = (0.1,0) and B = (10,0). The distance from P to L is 1. The point closer to P is A. The distance from B to line PA is approximately 9.85 > 1, contradicting the claim. The correct choice is the point farther from the foot of the perpendicular (i.e., the one with larger distance along L) to obtain a contradiction. Since the reasoning relies on an invalid step, the proof is incorrect.\",\n  \"suggestions\": \"To fix the proof, after selecting two points A and B on the same side of the foot Q, let A be the one closer to Q and B the one farther. Consider the line through P and B. Then the distance from A to line PB is (|AB|/|PB|) * d, which is strictly less than d because |AB| < |PB| (since |PB| = sqrt(d^2 + |BQ|^2) > |BQ| \u2265 |AB|). This contradicts the minimality of d, establishing that L must contain exactly two points.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in Step 9. It claims: 'The line through P and the point closer to P (either A or B) will be closer to the other point (either B or A) than P is to L.' This is false. For a counterexample, let P = (0,1), L be the x-axis, with A = (0.1,0) and B = (10,0). The distance from P to L is 1. The point closer to P is A. The distance from B to line PA is approximately 9.85 > 1, contradicting the claim. The correct choice is the point farther from the foot of the perpendicular (i.e., the one with larger distance along L) to obtain a contradiction. Since the reasoning relies on an invalid step, the proof is incorrect.\",\n  \"suggestions\": \"To fix the proof, after selecting two points A and B on the same side of the foot Q, let A be the one closer to Q and B the one farther. Consider the line through P and B. Then the distance from A to line PB is (|AB|/|PB|) * d, which is strictly less than d because |AB| < |PB| (since |PB| = sqrt(d^2 + |BQ|^2) > |BQ| \u2265 |AB|). This contradicts the minimality of d, establishing that L must contain exactly two points.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains a mathematical error in Step 9. It claims: 'The line through P and the point closer to P (either A or B) will be closer to the other point (either B or A) than P is to L.' This is false. For a counterexample, let P = (0,1), L be the x-axis, with A = (0.1,0) and B = (10,0). The distance from P to L is 1. The point closer to P is A. The distance from B to line PA is approximately 9.85 > 1, contradicting the claim. The correct choice is the point farther from the foot of the perpendicular (i.e., the one with larger distance along L) to obtain a contradiction. Since the reasoning relies on an invalid step, the proof is incorrect.",
+        "suggestions": "To fix the proof, after selecting two points A and B on the same side of the foot Q, let A be the one closer to Q and B the one farther. Consider the line through P and B. Then the distance from A to line PB is (|AB|/|PB|) * d, which is strictly less than d because |AB| < |PB| (since |PB| = sqrt(d^2 + |BQ|^2) > |BQ| \u2265 |AB|). This contradicts the minimality of d, establishing that L must contain exactly two points.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a compact abelian group with normalized Haar measure $\\mu$ (i.e., $\\mu(G)=1$). Denote by $\\widehat{G}$ the dual group of continuous characters $\\chi: G \\to \\mathbb{T}$, where $\\mathbb{T} = \\{z \\in \\mathbb{C}: |z|=1\\}$. For a function $f \\in L^1(G)$, define its Fourier transform $\\widehat{f}: \\widehat{G} \\to \\mathbb{C}$ by\n$$\n\\widehat{f}(\\chi) = \\int_G f(g) \\overline{\\chi(g)} \\, d\\mu(g).\n$$\nRecall that the characters separate points of $G$: for any distinct $x,y \\in G$, there exists $\\chi \\in \\widehat{G}$ such that $\\chi(x) \\neq \\chi(y)$.\n\n(a) Show that the set $\\widehat{G}$ is an orthonormal set in $L^2(G)$; that is, for $\\chi, \\psi \\in \\widehat{G}$,\n$$\n\\langle \\chi, \\psi \\rangle = \\int_G \\chi(g) \\overline{\\psi(g)} \\, d\\mu(g) = \\delta_{\\chi,\\psi}.\n$$\n\n(b) Using the Stone\u2013Weierstrass theorem, prove that the linear span of $\\widehat{G}$ is dense in $C(G)$ with respect to the uniform norm $\\|f\\|_\\infty = \\sup_{g\\in G} |f(g)|$.\n\n(c) Conclude that $\\widehat{G}$ is an orthonormal basis for $L^2(G)$.\n\n(d) Deduce the Plancherel identity: for every $f \\in L^2(G)$,\n$$\n\\int_G |f(g)|^2 \\, d\\mu(g) = \\sum_{\\chi \\in \\widehat{G}} |\\widehat{f}(\\chi)|^2.\n$$\n\nMake sure to justify all steps, including the application of the Stone\u2013Weierstrass theorem and the density arguments.",
+    "run_id": "29",
+    "topic_slug": "abstract_harmonic_analysis",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically correct and complete. All steps are justified appropriately. The orthonormality proof uses translation invariance correctly. The application of Stone-Weierstrass is valid (the linear span of characters is a *-subalgebra because characters are closed under conjugation, though this is not explicitly stated, it is immediate). The density arguments to show completeness and Plancherel are standard and correctly executed.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically correct and complete. All steps are justified appropriately. The orthonormality proof uses translation invariance correctly. The application of Stone-Weierstrass is valid (the linear span of characters is a *-subalgebra because characters are closed under conjugation, though this is not explicitly stated, it is immediate). The density arguments to show completeness and Plancherel are standard and correctly executed.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution is mathematically correct and complete. All steps are justified appropriately. The orthonormality proof uses translation invariance correctly. The application of Stone-Weierstrass is valid (the linear span of characters is a *-subalgebra because characters are closed under conjugation, though this is not explicitly stated, it is immediate). The density arguments to show completeness and Plancherel are standard and correctly executed.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f \\in L^2(\\mathbb{R})$ be a function with compact support, i.e., there exists $A > 0$ such that $f(x) = 0$ for almost every $|x| > A$. Define its Fourier transform by\n$$\n\\hat f(\\xi) = \\int_{\\mathbb{R}} f(x) e^{-2\\pi i x \\xi} \\, dx,\n$$\nwhich is well-defined as an $L^1$ integral because $f$ is integrable on $[-A,A]$. Prove that if $\\hat f$ also has compact support (i.e., there exists $B > 0$ such that $\\hat f(\\xi) = 0$ for almost every $|\\xi| > B$), then $f$ must be zero almost everywhere. In other words, there is no nonzero $L^2$ function with both $f$ and $\\hat f$ compactly supported.",
+    "run_id": "28",
+    "topic_slug": "harmonic_analysis_on_euclidean_spaces",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly uses Fourier inversion and analyticity to show f must be zero. The argument is mathematically sound. There is a minor imprecision: the hypothesis states f(x)=0 for almost every |x|>A, not all such x, but the entire function defined by the integral agrees with f a.e. and, being continuous, must vanish on an open set (or the set of zeros has an accumulation point), so the identity theorem applies. This step is implicitly covered. Overall, the answer is correct.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly uses Fourier inversion and analyticity to show f must be zero. The argument is mathematically sound. There is a minor imprecision: the hypothesis states f(x)=0 for almost every |x|>A, not all such x, but the entire function defined by the integral agrees with f a.e. and, being continuous, must vanish on an open set (or the set of zeros has an accumulation point), so the identity theorem applies. This step is implicitly covered. Overall, the answer is correct.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly uses Fourier inversion and analyticity to show f must be zero. The argument is mathematically sound. There is a minor imprecision: the hypothesis states f(x)=0 for almost every |x|>A, not all such x, but the entire function defined by the integral agrees with f a.e. and, being continuous, must vanish on an open set (or the set of zeros has an accumulation point), so the identity theorem applies. This step is implicitly covered. Overall, the answer is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the viscous Burgers equation\n$$\nu_t + u u_x = \\nu u_{xx}, \\qquad x \\in \\mathbb{R},\\ t>0,\n$$\nwith constant viscosity $\\nu > 0$.  Let the initial condition be a step function:\n$$\nu(x,0) = \\begin{cases}\nU, & x < 0,\\\\\n0, & x > 0,\n\\end{cases}\n$$\nwhere $U > 0$ is a constant.\n\n(a) Introduce the Cole\u2013Hopf transformation $u = -2\\nu (\\ln \\varphi)_x$ and show that $\\varphi$ satisfies the heat equation $\\varphi_t = \\nu \\varphi_{xx}$.\n\n(b) Determine an appropriate initial condition $\\varphi(x,0)$ consistent with the given $u(x,0)$.  (Choose the constant of integration so that $\\varphi(0,0)=1$.)\n\n(c) Solve the initial value problem for $\\varphi(x,t)$ by expressing $\\varphi$ as a convolution with the heat kernel and evaluating the integrals in terms of the complementary error function\n$$\n\\operatorname{erfc}(z) = \\frac{2}{\\sqrt{\\pi}} \\int_z^\\infty e^{-s^2}\\,ds.\n$$\n\n(d) Hence find the solution $u(x,t)$ in the closed form\n$$\nu(x,t) = \\frac{U \\; e^{U^2 t/(4\\nu)}\\; \\operatorname{erfc}\\!\\left( \\dfrac{x - U t}{\\sqrt{4\\nu t}} \\right)}\n{e^{U^2 t/(4\\nu)}\\; \\operatorname{erfc}\\!\\left( \\dfrac{x - U t}{\\sqrt{4\\nu t}} \\right) + e^{U x/(2\\nu)}\\; \\operatorname{erfc}\\!\\left( -\\dfrac{x}{\\sqrt{4\\nu t}} \\right)}.\n$$\n\n(e) (Optional) Verify that this solution tends to the initial step as $t \\to 0^+$.",
+    "run_id": "23",
+    "topic_slug": "partial_differential_equations",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the heat equation for \\$\\\\varphi\\$, determines the initial condition \\$\\\\varphi(x,0)\\$ with the given normalization, solves the heat equation via convolution and evaluates the integrals in terms of the complementary error function, and finally obtains the closed form for \\$u(x,t)\\$. There is a minor sign typo in Step 7: the integrand for \\$y<0\\$ should be \\$e^{-Uy/(2\\\\nu)}\\$ instead of \\$e^{Uy/(2\\\\nu)}\\$; the subsequent evaluation is unaffected. The optional verification (Step 10) contains errors in the limits of erfc and is incomplete, but this does not impact the required parts. Overall, the required parts are mathematically sound, complete, and adequately rigorous.\",\n  \"suggestions\": \"Correct the sign typo in the integrand to \\$e^{-Uy/(2\\\\nu)}\\$. For the optional part, the limits of erfc as \\$t\\\\to0^+\\$ should be reviewed: \\$\\\\operatorname{erfc}(z)\\\\to0\\$ as \\$z\\\\to+\\\\infty\\$ and \\$\\\\to2\\$ as \\$z\\\\to-\\\\infty\\$. A careful asymptotic analysis yields the correct step-function limit.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the heat equation for \\\\(\\\\varphi\\\\), determines the initial condition \\\\(\\\\varphi(x,0)\\\\) with the given normalization, solves the heat equation via convolution and evaluates the integrals in terms of the complementary error function, and finally obtains the closed form for \\\\(u(x,t)\\\\). There is a minor sign typo in Step 7: the integrand for \\\\(y<0\\\\) should be \\\\(e^{-Uy/(2\\\\nu)}\\\\) instead of \\\\(e^{Uy/(2\\\\nu)}\\\\); the subsequent evaluation is unaffected. The optional verification (Step 10) contains errors in the limits of erfc and is incomplete, but this does not impact the required parts. Overall, the required parts are mathematically sound, complete, and adequately rigorous.\",\n  \"suggestions\": \"Correct the sign typo in the integrand to \\\\(e^{-Uy/(2\\\\nu)}\\\\). For the optional part, the limits of erfc as \\\\(t\\\\to0^+\\\\) should be reviewed: \\\\(\\\\operatorname{erfc}(z)\\\\to0\\\\) as \\\\(z\\\\to+\\\\infty\\\\) and \\\\(\\\\to2\\\\) as \\\\(z\\\\to-\\\\infty\\\\). A careful asymptotic analysis yields the correct step-function limit.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly derives the heat equation for $\\varphi$, determines the initial condition $\\varphi(x,0)$ with the given normalization, solves the heat equation via convolution and evaluates the integrals in terms of the complementary error function, and finally obtains the closed form for $u(x,t)$. There is a minor sign typo in Step 7: the integrand for $y<0$ should be $e^{-Uy/(2\\nu)}$ instead of $e^{Uy/(2\\nu)}$; the subsequent evaluation is unaffected. The optional verification (Step 10) contains errors in the limits of erfc and is incomplete, but this does not impact the required parts. Overall, the required parts are mathematically sound, complete, and adequately rigorous.",
+        "suggestions": "Correct the sign typo in the integrand to $e^{-Uy/(2\\nu)}$. For the optional part, the limits of erfc as $t\\to0^+$ should be reviewed: $\\operatorname{erfc}(z)\\to0$ as $z\\to+\\infty$ and $\\to2$ as $z\\to-\\infty$. A careful asymptotic analysis yields the correct step-function limit.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $T$ denote the torus, represented as the quotient space of the square $[0,1]\\times[0,1]$ by identifying $(0,y)\\sim(1,y)$ and $(x,0)\\sim(x,1)$. Choose a closed disk $D\\subset T$ contained in the interior of the square (for instance, the image of a small Euclidean disk centered at $(1/2,1/2)$). Remove its interior to obtain the punctured torus $T_0 = T\\setminus\\operatorname{int}(D)$.\n\nLet $M$ be the M\u00f6bius strip, defined as the quotient of $[0,1]\\times[0,1]$ by $(0,y)\\sim(1,1-y)$. Its boundary $\\partial M$ is a circle.\n\nForm the space $X = T_0\\cup_h M$ by gluing $T_0$ and $M$ along their boundaries via a homeomorphism $h\\colon \\partial M\\to \\partial D$. (The choice of homeomorphism does not affect the answer up to isomorphism.)\n\nCompute the fundamental group $\\pi_1(X)$.",
+    "run_id": "39",
+    "topic_slug": "algebraic_topology",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer claims that the inclusion of the boundary circle into the punctured torus induces a trivial homomorphism because 'the loop around \u2202T0 is nullhomotopic in T0 because it bounds the removed disk.' This is false: in T0 the removed disk is absent, so the boundary loop is not nullhomotopic; it represents the commutator of the two generators of \u03c0\u2081(T\u2080). Consequently, the Seifert\u2013van Kampen computation is wrong, and the fundamental group is not the free group on three generators. The correct group is a one-relator group, e.g., \u27e8a, b, c | a b a\u207b\u00b9 b\u207b\u00b9 = c\u00b2\u27e9.\",\n  \"suggestions\": \"Correct the induced map from \u03c0\u2081(\u2202T\u2080) to \u03c0\u2081(T\u2080): it sends the generator to the commutator [a,b] = a b a\u207b\u00b9 b\u207b\u00b9. Then the amalgamated product yields \u03c0\u2081(X) = \u27e8a, b, c | a b a\u207b\u00b9 b\u207b\u00b9 = c\u00b2\u27e9 (up to orientation).\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer claims that the inclusion of the boundary circle into the punctured torus induces a trivial homomorphism because 'the loop around \u2202T0 is nullhomotopic in T0 because it bounds the removed disk.' This is false: in T0 the removed disk is absent, so the boundary loop is not nullhomotopic; it represents the commutator of the two generators of \u03c0\u2081(T\u2080). Consequently, the Seifert\u2013van Kampen computation is wrong, and the fundamental group is not the free group on three generators. The correct group is a one-relator group, e.g., \u27e8a, b, c | a b a\u207b\u00b9 b\u207b\u00b9 = c\u00b2\u27e9.\",\n  \"suggestions\": \"Correct the induced map from \u03c0\u2081(\u2202T\u2080) to \u03c0\u2081(T\u2080): it sends the generator to the commutator [a,b] = a b a\u207b\u00b9 b\u207b\u00b9. Then the amalgamated product yields \u03c0\u2081(X) = \u27e8a, b, c | a b a\u207b\u00b9 b\u207b\u00b9 = c\u00b2\u27e9 (up to orientation).\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer claims that the inclusion of the boundary circle into the punctured torus induces a trivial homomorphism because 'the loop around \u2202T0 is nullhomotopic in T0 because it bounds the removed disk.' This is false: in T0 the removed disk is absent, so the boundary loop is not nullhomotopic; it represents the commutator of the two generators of \u03c0\u2081(T\u2080). Consequently, the Seifert\u2013van Kampen computation is wrong, and the fundamental group is not the free group on three generators. The correct group is a one-relator group, e.g., \u27e8a, b, c | a b a\u207b\u00b9 b\u207b\u00b9 = c\u00b2\u27e9.",
+        "suggestions": "Correct the induced map from \u03c0\u2081(\u2202T\u2080) to \u03c0\u2081(T\u2080): it sends the generator to the commutator [a,b] = a b a\u207b\u00b9 b\u207b\u00b9. Then the amalgamated product yields \u03c0\u2081(X) = \u27e8a, b, c | a b a\u207b\u00b9 b\u207b\u00b9 = c\u00b2\u27e9 (up to orientation).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a commutative ring with identity. Denote by $T_n(R)$ the ring of $n \\times n$ upper triangular matrices over $R$, i.e., matrices $(a_{ij})$ with $a_{ij} \\in R$ for $i \\le j$ and $a_{ij}=0$ for $i > j$. Prove that the Jacobson radical $J(T_n(R))$ is exactly the set\n$$\n\\{ A = (a_{ij}) \\in T_n(R) \\mid a_{ii} \\in J(R) \\text{ for all } i = 1,\\dots,n \\}.\n$$",
+    "run_id": "10",
+    "topic_slug": "associative_rings_and_algebras",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "",
+        "raw_critique": "",
+        "verdict": "unknown",
+        "notes": "",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "The critique is missing; there is no content to evaluate."
+          ],
+          "improvements": "Provide a critique in the required JSON format, with fields 'verdict' (one of correct, incorrect, insufficient, obscure), 'notes' (string), and optionally 'suggestions' (string). The critique should assess the answer's correctness, completeness, rigor, and well-posedness."
+        }
+      },
+      {
+        "round": 2,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer provides a clear and correct proof. It correctly uses the characterization of the Jacobson radical via units. The forward direction is properly argued by choosing appropriate diagonal matrices. The converse direction correctly notes that $I - AX$ is upper triangular with unit diagonal entries, and that such matrices are invertible in $T_n(R)$ (e.g., by induction). The reasoning is complete and rigorous enough for the problem.\",\n  \"suggestions\": \"To enhance clarity, one could briefly justify why an upper triangular matrix with unit diagonal is invertible in $T_n(R)$, perhaps by outlining the inductive construction of its inverse. Also, note that $T_n(R)$ is not commutative, but the unit characterization still holds for the Jacobson radical.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer provides a clear and correct proof. It correctly uses the characterization of the Jacobson radical via units. The forward direction is properly argued by choosing appropriate diagonal matrices. The converse direction correctly notes that $I - AX$ is upper triangular with unit diagonal entries, and that such matrices are invertible in $T_n(R)$ (e.g., by induction). The reasoning is complete and rigorous enough for the problem.\",\n  \"suggestions\": \"To enhance clarity, one could briefly justify why an upper triangular matrix with unit diagonal is invertible in $T_n(R)$, perhaps by outlining the inductive construction of its inverse. Also, note that $T_n(R)$ is not commutative, but the unit characterization still holds for the Jacobson radical.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer provides a clear and correct proof. It correctly uses the characterization of the Jacobson radical via units. The forward direction is properly argued by choosing appropriate diagonal matrices. The converse direction correctly notes that $I - AX$ is upper triangular with unit diagonal entries, and that such matrices are invertible in $T_n(R)$ (e.g., by induction). The reasoning is complete and rigorous enough for the problem.",
+        "suggestions": "To enhance clarity, one could briefly justify why an upper triangular matrix with unit diagonal is invertible in $T_n(R)$, perhaps by outlining the inductive construction of its inverse. Also, note that $T_n(R)$ is not commutative, but the unit characterization still holds for the Jacobson radical.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $k$ be a nonzero integer. Define $X_k$ to be the CW complex obtained by attaching a $3$-cell to the $2$-sphere $S^2$ via a map $f: S^2 \\to S^2$ of degree $k$. Compute the complex topological K-theory groups $K^0(X_k)$ and $K^1(X_k)$.",
+    "run_id": "13",
+    "topic_slug": "k_theory",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "failed",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "",
+        "raw_critique": "",
+        "verdict": "unknown",
+        "notes": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $w(x)=e^{-x}$ on $[0,\\infty)$. Determine the nodes $x_1, x_2$ (with $0 < x_1 < x_2$) and weights $w_1, w_2$ such that the quadrature rule\n$$\n\\int_0^\\infty e^{-x} f(x)\\,dx \\approx w_1 f(x_1) + w_2 f(x_2)\n$$\nis exact for all polynomials $f$ of degree at most $3$. Provide the exact values in simplified radical form.",
+    "run_id": "44",
+    "topic_slug": "numerical_analysis",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly computes the integrals, identifies nodes as roots of Laguerre polynomial L_2, solves for weights, and provides simplified radicals. All steps are mathematically sound and complete.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly computes the integrals, identifies nodes as roots of Laguerre polynomial L_2, solves for weights, and provides simplified radicals. All steps are mathematically sound and complete.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly computes the integrals, identifies nodes as roots of Laguerre polynomial L_2, solves for weights, and provides simplified radicals. All steps are mathematically sound and complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate, well-justified, and follows the required format."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $C[0,1]$ denote the Banach space of complex-valued continuous functions on $[0,1]$ equipped with the supremum norm $\\|f\\|_\\infty = \\sup_{x\\in[0,1]}|f(x)|$. Define the Volterra operator $V: C[0,1] \\to C[0,1]$ by\n$$\n(Vf)(x) = \\int_0^x f(t)\\,dt, \\qquad x\\in[0,1].\n$$\nProve that $V$ is a compact linear operator and that its spectrum $\\sigma(V) = \\{0\\}$.",
+    "run_id": "32",
+    "topic_slug": "functional_analysis",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof that \u03bb\u22600 belongs to the resolvent set contains a serious error: it differentiates the equation (V-\u03bbI)f = g, which requires both f and g to be differentiable. However, g is an arbitrary continuous function, not necessarily differentiable, and f is not known to be differentiable a priori. This invalidates the derivation of the differential equation and the subsequent solution. The compactness proof is correct, but the spectrum argument is flawed, making the overall answer incorrect.\",\n  \"suggestions\": \"To prove that \u03bb\u22600 is in the resolvent set, one can use the Neumann series: (I - (1/\u03bb)V)\u207b\u00b9 = \u2211_{n=0}\u221e (1/\u03bb)^n V\u207f, which converges because V is quasinilpotent (or because \u2016V\u207f\u2016 \u2264 1/n! and the series converges). Alternatively, one can directly verify that the formula f(x) = - (1/\u03bb)g(x) - (1/\u03bb\u00b2)\u222b\u2080\u02e3 e^{(x-t)/\u03bb} g(t) dt satisfies (V-\u03bbI)f = g for any continuous g, without differentiating.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof that \u03bb\u22600 belongs to the resolvent set contains a serious error: it differentiates the equation (V-\u03bbI)f = g, which requires both f and g to be differentiable. However, g is an arbitrary continuous function, not necessarily differentiable, and f is not known to be differentiable a priori. This invalidates the derivation of the differential equation and the subsequent solution. The compactness proof is correct, but the spectrum argument is flawed, making the overall answer incorrect.\",\n  \"suggestions\": \"To prove that \u03bb\u22600 is in the resolvent set, one can use the Neumann series: (I - (1/\u03bb)V)\u207b\u00b9 = \u2211_{n=0}\u221e (1/\u03bb)^n V\u207f, which converges because V is quasinilpotent (or because \u2016V\u207f\u2016 \u2264 1/n! and the series converges). Alternatively, one can directly verify that the formula f(x) = - (1/\u03bb)g(x) - (1/\u03bb\u00b2)\u222b\u2080\u02e3 e^{(x-t)/\u03bb} g(t) dt satisfies (V-\u03bbI)f = g for any continuous g, without differentiating.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The proof that \u03bb\u22600 belongs to the resolvent set contains a serious error: it differentiates the equation (V-\u03bbI)f = g, which requires both f and g to be differentiable. However, g is an arbitrary continuous function, not necessarily differentiable, and f is not known to be differentiable a priori. This invalidates the derivation of the differential equation and the subsequent solution. The compactness proof is correct, but the spectrum argument is flawed, making the overall answer incorrect.",
+        "suggestions": "To prove that \u03bb\u22600 is in the resolvent set, one can use the Neumann series: (I - (1/\u03bb)V)\u207b\u00b9 = \u2211_{n=0}\u221e (1/\u03bb)^n V\u207f, which converges because V is quasinilpotent (or because \u2016V\u207f\u2016 \u2264 1/n! and the series converges). Alternatively, one can directly verify that the formula f(x) = - (1/\u03bb)g(x) - (1/\u03bb\u00b2)\u222b\u2080\u02e3 e^{(x-t)/\u03bb} g(t) dt satisfies (V-\u03bbI)f = g for any continuous g, without differentiating.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Find the first three terms in the asymptotic expansion (in powers of $1/n$) of\n$$\nT_n = \\sum_{k=1}^{n} \\frac{1}{n^2 + k^2}\n$$\nas $n \\to \\infty$. Express the coefficients in simplest form.\n[/QUESTION]",
+    "run_id": "27",
+    "topic_slug": "approximations_and_expansions",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a critical error in step 6: it misrepresents $T_n$ as $\\\\frac{1}{n}\\\\sum_{k=1}^n \\\\frac{1}{1+(k/n)^2}$ instead of the correct $\\\\frac{1}{n^2}\\\\sum_{k=1}^n \\\\frac{1}{1+(k/n)^2}$. This mis-scaling leads to an extra factor of $1/n$ in the boundary terms and incorrect coefficients. Consequently, the derived asymptotic expansion $\\\\frac{\\\\pi+3}{4n}-\\\\frac{1}{24n^2}$ does not match the correct expansion, which is $\\\\frac{\\\\pi}{4n}-\\\\frac{1}{4n^2}-\\\\frac{1}{24n^3}+O(1/n^5)$. The answer is therefore mathematically incorrect.\",\n  \"suggestions\": \"Apply the Euler-Maclaurin formula directly to the original sum $\\\\sum_{k=1}^n \\\\frac{1}{n^2+k^2}$, or correctly scale the Riemann sum to obtain $T_n = \\\\frac{1}{n^2}\\\\sum_{k=1}^n f(k/n)$ and then use the expansion for the right Riemann sum. Verify the scaling and boundary terms carefully.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a critical error in step 6: it misrepresents $T_n$ as $\\\\frac{1}{n}\\\\sum_{k=1}^n \\\\frac{1}{1+(k/n)^2}$ instead of the correct $\\\\frac{1}{n^2}\\\\sum_{k=1}^n \\\\frac{1}{1+(k/n)^2}$. This mis-scaling leads to an extra factor of $1/n$ in the boundary terms and incorrect coefficients. Consequently, the derived asymptotic expansion $\\\\frac{\\\\pi+3}{4n}-\\\\frac{1}{24n^2}$ does not match the correct expansion, which is $\\\\frac{\\\\pi}{4n}-\\\\frac{1}{4n^2}-\\\\frac{1}{24n^3}+O(1/n^5)$. The answer is therefore mathematically incorrect.\",\n  \"suggestions\": \"Apply the Euler-Maclaurin formula directly to the original sum $\\\\sum_{k=1}^n \\\\frac{1}{n^2+k^2}$, or correctly scale the Riemann sum to obtain $T_n = \\\\frac{1}{n^2}\\\\sum_{k=1}^n f(k/n)$ and then use the expansion for the right Riemann sum. Verify the scaling and boundary terms carefully.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains a critical error in step 6: it misrepresents $T_n$ as $\\frac{1}{n}\\sum_{k=1}^n \\frac{1}{1+(k/n)^2}$ instead of the correct $\\frac{1}{n^2}\\sum_{k=1}^n \\frac{1}{1+(k/n)^2}$. This mis-scaling leads to an extra factor of $1/n$ in the boundary terms and incorrect coefficients. Consequently, the derived asymptotic expansion $\\frac{\\pi+3}{4n}-\\frac{1}{24n^2}$ does not match the correct expansion, which is $\\frac{\\pi}{4n}-\\frac{1}{4n^2}-\\frac{1}{24n^3}+O(1/n^5)$. The answer is therefore mathematically incorrect.",
+        "suggestions": "Apply the Euler-Maclaurin formula directly to the original sum $\\sum_{k=1}^n \\frac{1}{n^2+k^2}$, or correctly scale the Riemann sum to obtain $T_n = \\frac{1}{n^2}\\sum_{k=1}^n f(k/n)$ and then use the expansion for the right Riemann sum. Verify the scaling and boundary terms carefully.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "None needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "A uniform chain of length $L > 1$ is suspended from two points at the same height, located at $(0,0)$ and $(1,0)$. By the principle of minimum potential energy, the chain adopts the shape $y(x)$ that minimizes\n$$\nU[y] = \\int_0^1 y(x) \\sqrt{1 + [y'(x)]^2} \\, dx\n$$\nsubject to the fixed length constraint\n$$\n\\int_0^1 \\sqrt{1 + [y'(x)]^2} \\, dx = L,\n$$\nand boundary conditions $y(0) = 0$, $y(1) = 0$.\n\nFind the function $y(x)$ describing the chain. Your answer should express $y(x)$ in terms of a parameter that is determined implicitly by $L$.",
+    "run_id": "34",
+    "topic_slug": "calculus_of_variations_and_optimization",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in Step 5: integrating $\\\\int \\\\frac{1}{y-\\\\lambda}\\\\,dx$ as $\\\\ln|y-\\\\lambda|$ is invalid because $y$ is a function of $x$. Although the later steps correct this, the presence of this invalid reasoning step makes the answer not mathematically sound. The final result is correct, but the derivation includes an error.\",\n  \"suggestions\": \"Remove the erroneous integration step and directly use the correct separation of variables with $p=y'$ and $y''=p\\\\,dp/dy$, as done in Step 7. Ensure all steps are valid.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in Step 5: integrating $\\\\int \\\\frac{1}{y-\\\\lambda}\\\\,dx$ as $\\\\ln|y-\\\\lambda|$ is invalid because $y$ is a function of $x$. Although the later steps correct this, the presence of this invalid reasoning step makes the answer not mathematically sound. The final result is correct, but the derivation includes an error.\",\n  \"suggestions\": \"Remove the erroneous integration step and directly use the correct separation of variables with $p=y'$ and $y''=p\\\\,dp/dy$, as done in Step 7. Ensure all steps are valid.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains a mathematical error in Step 5: integrating $\\int \\frac{1}{y-\\lambda}\\,dx$ as $\\ln|y-\\lambda|$ is invalid because $y$ is a function of $x$. Although the later steps correct this, the presence of this invalid reasoning step makes the answer not mathematically sound. The final result is correct, but the derivation includes an error.",
+        "suggestions": "Remove the erroneous integration step and directly use the correct separation of variables with $p=y'$ and $y''=p\\,dp/dy$, as done in Step 7. Ensure all steps are valid.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately identifies the mathematical error and provides appropriate suggestions."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R = \\mathbb{Z}/4\\mathbb{Z}$ and let $M = \\mathbb{Z}/2\\mathbb{Z}$ be the $R$-module where the action is given by the natural surjection $R \\to \\mathbb{Z}/2\\mathbb{Z}$ (i.e., $r \\cdot a = \\overline{r} \\, a$, where $\\overline{r}$ denotes reduction modulo $2$). Compute $\\operatorname{Ext}^n_R(M, M)$ for all integers $n \\ge 0$. Moreover, describe the structure of the graded ring $\\operatorname{Ext}^*_R(M, M) = \\bigoplus_{n \\ge 0} \\operatorname{Ext}^n_R(M, M)$ with the Yoneda product. (Is it isomorphic to a polynomial ring over $\\mathbb{Z}/2\\mathbb{Z}$? If so, determine the degree of the generator.)",
+    "run_id": "12",
+    "topic_slug": "category_theory_and_homological_algebra",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in the reasoning about the Yoneda product. It states: 'Since both Ext^1_R(M, M) and Ext^2_R(M, M) are isomorphic to Z/2Z, and given that the product of two non-zero elements in Z/2Z is 1, the Yoneda product is non-trivial.' This is an invalid deduction; the field multiplication being non-zero does not imply the Yoneda product is non-zero (the Yoneda product could be the zero map). The answer fails to provide a valid justification for why the product is non-zero, which is essential to conclude that the graded ring is a polynomial ring. Although the computation of the Ext groups is correct, the flawed reasoning renders the answer incorrect.\",\n  \"suggestions\": \"To correct the answer, one should properly justify the ring structure, e.g., by showing that the generator of Ext^1 corresponds to the identity chain map on the periodic resolution and that its square is non-zero, or by splicing the short exact sequence with itself to obtain a non-split 2-extension.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in the reasoning about the Yoneda product. It states: 'Since both Ext^1_R(M, M) and Ext^2_R(M, M) are isomorphic to Z/2Z, and given that the product of two non-zero elements in Z/2Z is 1, the Yoneda product is non-trivial.' This is an invalid deduction; the field multiplication being non-zero does not imply the Yoneda product is non-zero (the Yoneda product could be the zero map). The answer fails to provide a valid justification for why the product is non-zero, which is essential to conclude that the graded ring is a polynomial ring. Although the computation of the Ext groups is correct, the flawed reasoning renders the answer incorrect.\",\n  \"suggestions\": \"To correct the answer, one should properly justify the ring structure, e.g., by showing that the generator of Ext^1 corresponds to the identity chain map on the periodic resolution and that its square is non-zero, or by splicing the short exact sequence with itself to obtain a non-split 2-extension.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains a mathematical error in the reasoning about the Yoneda product. It states: 'Since both Ext^1_R(M, M) and Ext^2_R(M, M) are isomorphic to Z/2Z, and given that the product of two non-zero elements in Z/2Z is 1, the Yoneda product is non-trivial.' This is an invalid deduction; the field multiplication being non-zero does not imply the Yoneda product is non-zero (the Yoneda product could be the zero map). The answer fails to provide a valid justification for why the product is non-zero, which is essential to conclude that the graded ring is a polynomial ring. Although the computation of the Ext groups is correct, the flawed reasoning renders the answer incorrect.",
+        "suggestions": "To correct the answer, one should properly justify the ring structure, e.g., by showing that the generator of Ext^1 corresponds to the identity chain map on the periodic resolution and that its square is non-zero, or by splicing the short exact sequence with itself to obtain a non-split 2-extension.",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "Could not parse evaluation JSON. Raw text: "
+          ],
+          "improvements": "Self-check evaluation unknown due to parsing failure."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X_1, X_2, \\dots, X_n$ be a random sample from a geometric distribution with parameter $p$ ($0 < p < 1$), i.e., \n$$\nP(X_i = k) = (1-p)^{k-1} p, \\quad k = 1,2,\\dots.\n$$\nAssume $n \\ge 2$. Find the uniformly minimum variance unbiased estimator (UMVUE) of $p^2$.",
+    "run_id": "43",
+    "topic_slug": "statistics",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in Step 8: the claimed expectation \\$E[T(T-1)] = n(n-1)/p^2\\$ is incorrect (the correct expression is \\$(n^2 + n - 2np)/p^2\\$). More importantly, the final estimator \\$\\\\frac{\\\\binom{T-3}{n-3}}{\\\\binom{T-1}{n-1}}\\$ is only defined for \\$n \\\\ge 3\\$. The problem states \\$n \\\\ge 2\\$, and for \\$n=2\\$ the UMVUE is \\$I\\\\{T=2\\\\}\\$. The answer does not cover this case, rendering it incomplete and incorrect.\",\n  \"suggestions\": \"Correct the expectation formula if included, and provide a separate expression for \\$n=2\\$ (or give a unified formula that works for all \\$n\\\\ge2\\$). For \\$n\\\\ge3\\$ the derived estimator is correct, but it must be explicitly stated that it applies only for \\$n\\\\ge3\\$ and the \\$n=2\\$ case handled separately.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in Step 8: the claimed expectation \\\\(E[T(T-1)] = n(n-1)/p^2\\\\) is incorrect (the correct expression is \\\\((n^2 + n - 2np)/p^2\\\\)). More importantly, the final estimator \\\\(\\\\frac{\\\\binom{T-3}{n-3}}{\\\\binom{T-1}{n-1}}\\\\) is only defined for \\\\(n \\\\ge 3\\\\). The problem states \\\\(n \\\\ge 2\\\\), and for \\\\(n=2\\\\) the UMVUE is \\\\(I\\\\{T=2\\\\}\\\\). The answer does not cover this case, rendering it incomplete and incorrect.\",\n  \"suggestions\": \"Correct the expectation formula if included, and provide a separate expression for \\\\(n=2\\\\) (or give a unified formula that works for all \\\\(n\\\\ge2\\\\)). For \\\\(n\\\\ge3\\\\) the derived estimator is correct, but it must be explicitly stated that it applies only for \\\\(n\\\\ge3\\\\) and the \\\\(n=2\\\\) case handled separately.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains a mathematical error in Step 8: the claimed expectation \\$E[T(T-1)] = n(n-1)/p^2\\$ is incorrect (the correct expression is \\$(n^2 + n - 2np)/p^2\\$). More importantly, the final estimator \\$\\frac{\\binom{T-3}{n-3}}{\\binom{T-1}{n-1}}\\$ is only defined for \\$n \\ge 3\\$. The problem states \\$n \\ge 2\\$, and for \\$n=2\\$ the UMVUE is \\$I\\{T=2\\}\\$. The answer does not cover this case, rendering it incomplete and incorrect.",
+        "suggestions": "Correct the expectation formula if included, and provide a separate expression for \\$n=2\\$ (or give a unified formula that works for all \\$n\\ge2\\$). For \\$n\\ge3\\$ the derived estimator is correct, but it must be explicitly stated that it applies only for \\$n\\ge3\\$ and the \\$n=2\\$ case handled separately.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X_n$ denote the CW complex obtained by attaching a 2-cell to the circle $S^1$ via a map $f : \\partial D^2 \\to S^1$ of degree $n$, where $n \\in \\mathbb{Z}$. Determine all integers $n$ for which $X_n$ is a closed 2-manifold (i.e., a compact surface without boundary). For those values of $n$, identify the manifold up to homeomorphism.",
+    "run_id": "40",
+    "topic_slug": "manifolds_and_cell_complexes",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains mathematical errors: (1) It claims $X_{\\\\pm 1} \\\\cong S^2$, but actually $X_1$ is homeomorphic to $D^2$ (a disk), which has boundary and is not a closed manifold. Moreover, $S^2$ has Euler characteristic 2, contradicting the computed $\\\\chi(X_n)=1$. (2) It asserts that for $|n|>1$, $X_n$ is not a manifold, but $X_2$ is well-known to be $\\\\mathbb{RP}^2$, a closed surface. Thus the correct integers are $n = \\\\pm 2$, not $\\\\pm 1$.\",\n  \"suggestions\": \"To correct, analyze the local structure at points on the 1-skeleton: a point on the circle is a manifold point without boundary iff the attaching map is a double cover (|n|=2). For |n|=1, the result is a disk (boundary); for |n|>2, the space is not a manifold. The Euler characteristic $\\\\chi=1$ forces any closed surface $X_n$ to be $\\\\mathbb{RP}^2$, which occurs for |n|=2.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains mathematical errors: (1) It claims $X_{\\\\pm 1} \\\\cong S^2$, but actually $X_1$ is homeomorphic to $D^2$ (a disk), which has boundary and is not a closed manifold. Moreover, $S^2$ has Euler characteristic 2, contradicting the computed $\\\\chi(X_n)=1$. (2) It asserts that for $|n|>1$, $X_n$ is not a manifold, but $X_2$ is well-known to be $\\\\mathbb{RP}^2$, a closed surface. Thus the correct integers are $n = \\\\pm 2$, not $\\\\pm 1$.\",\n  \"suggestions\": \"To correct, analyze the local structure at points on the 1-skeleton: a point on the circle is a manifold point without boundary iff the attaching map is a double cover (|n|=2). For |n|=1, the result is a disk (boundary); for |n|>2, the space is not a manifold. The Euler characteristic $\\\\chi=1$ forces any closed surface $X_n$ to be $\\\\mathbb{RP}^2$, which occurs for |n|=2.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains mathematical errors: (1) It claims $X_{\\pm 1} \\cong S^2$, but actually $X_1$ is homeomorphic to $D^2$ (a disk), which has boundary and is not a closed manifold. Moreover, $S^2$ has Euler characteristic 2, contradicting the computed $\\chi(X_n)=1$. (2) It asserts that for $|n|>1$, $X_n$ is not a manifold, but $X_2$ is well-known to be $\\mathbb{RP}^2$, a closed surface. Thus the correct integers are $n = \\pm 2$, not $\\pm 1$.",
+        "suggestions": "To correct, analyze the local structure at points on the 1-skeleton: a point on the circle is a manifold point without boundary iff the attaching map is a double cover (|n|=2). For |n|=1, the result is a disk (boundary); for |n|>2, the space is not a manifold. The Euler characteristic $\\chi=1$ forces any closed surface $X_n$ to be $\\mathbb{RP}^2$, which occurs for |n|=2.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique correctly identifies the mathematical errors and provides accurate reasoning; no improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $S^n$ denote the unit sphere in $\\mathbb{R}^{n+1}$ (with $n \\ge 1$). Compute the de Rham cohomology groups $H^k_{\\mathrm{dR}}(S^n)$ for all integers $k \\ge 0$. Provide a complete proof using the Mayer\u2013Vietoris sequence for de Rham cohomology.",
+    "run_id": "41",
+    "topic_slug": "global_analysis_on_manifolds",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in Step 6: it claims that for $k>0$ the Mayer-Vietoris sequence simplifies to $0 \\\\to H^k_{\\\\mathrm{dR}}(S^n) \\\\to H^k_{\\\\mathrm{dR}}(S^{n-1}) \\\\to H^{k+1}_{\\\\mathrm{dR}}(S^n) \\\\to 0$. This is incorrect. The correct segment for $k>0$ is $H^k_{\\\\mathrm{dR}}(S^n) \\\\to 0 \\\\to H^k_{\\\\mathrm{dR}}(S^{n-1}) \\\\to H^{k+1}_{\\\\mathrm{dR}}(S^n) \\\\to 0$, which yields an isomorphism $H^k_{\\\\mathrm{dR}}(S^{n-1}) \\\\cong H^{k+1}_{\\\\mathrm{dR}}(S^n)$ (not a short exact sequence with $H^k_{\\\\mathrm{dR}}(S^n)$ as a subgroup). The deduction of the isomorphism from the erroneous sequence is invalid (it would require $H^k_{\\\\mathrm{dR}}(S^n)=0$, which is not yet established). This error undermines the logical soundness of the proof.\",\n  \"suggestions\": \"Correct the Mayer-Vietoris simplification: for $k>0$, use the segment $H^k_{\\\\mathrm{dR}}(S^n) \\\\to 0 \\\\to H^k_{\\\\mathrm{dR}}(S^{n-1}) \\\\to H^{k+1}_{\\\\mathrm{dR}}(S^n) \\\\to 0$ to obtain the isomorphism $H^k_{\\\\mathrm{dR}}(S^{n-1}) \\\\cong H^{k+1}_{\\\\mathrm{dR}}(S^n)$. Then proceed with induction as before.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in Step 6: it claims that for $k>0$ the Mayer-Vietoris sequence simplifies to $0 \\\\to H^k_{\\\\mathrm{dR}}(S^n) \\\\to H^k_{\\\\mathrm{dR}}(S^{n-1}) \\\\to H^{k+1}_{\\\\mathrm{dR}}(S^n) \\\\to 0$. This is incorrect. The correct segment for $k>0$ is $H^k_{\\\\mathrm{dR}}(S^n) \\\\to 0 \\\\to H^k_{\\\\mathrm{dR}}(S^{n-1}) \\\\to H^{k+1}_{\\\\mathrm{dR}}(S^n) \\\\to 0$, which yields an isomorphism $H^k_{\\\\mathrm{dR}}(S^{n-1}) \\\\cong H^{k+1}_{\\\\mathrm{dR}}(S^n)$ (not a short exact sequence with $H^k_{\\\\mathrm{dR}}(S^n)$ as a subgroup). The deduction of the isomorphism from the erroneous sequence is invalid (it would require $H^k_{\\\\mathrm{dR}}(S^n)=0$, which is not yet established). This error undermines the logical soundness of the proof.\",\n  \"suggestions\": \"Correct the Mayer-Vietoris simplification: for $k>0$, use the segment $H^k_{\\\\mathrm{dR}}(S^n) \\\\to 0 \\\\to H^k_{\\\\mathrm{dR}}(S^{n-1}) \\\\to H^{k+1}_{\\\\mathrm{dR}}(S^n) \\\\to 0$ to obtain the isomorphism $H^k_{\\\\mathrm{dR}}(S^{n-1}) \\\\cong H^{k+1}_{\\\\mathrm{dR}}(S^n)$. Then proceed with induction as before.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains a mathematical error in Step 6: it claims that for $k>0$ the Mayer-Vietoris sequence simplifies to $0 \\to H^k_{\\mathrm{dR}}(S^n) \\to H^k_{\\mathrm{dR}}(S^{n-1}) \\to H^{k+1}_{\\mathrm{dR}}(S^n) \\to 0$. This is incorrect. The correct segment for $k>0$ is $H^k_{\\mathrm{dR}}(S^n) \\to 0 \\to H^k_{\\mathrm{dR}}(S^{n-1}) \\to H^{k+1}_{\\mathrm{dR}}(S^n) \\to 0$, which yields an isomorphism $H^k_{\\mathrm{dR}}(S^{n-1}) \\cong H^{k+1}_{\\mathrm{dR}}(S^n)$ (not a short exact sequence with $H^k_{\\mathrm{dR}}(S^n)$ as a subgroup). The deduction of the isomorphism from the erroneous sequence is invalid (it would require $H^k_{\\mathrm{dR}}(S^n)=0$, which is not yet established). This error undermines the logical soundness of the proof.",
+        "suggestions": "Correct the Mayer-Vietoris simplification: for $k>0$, use the segment $H^k_{\\mathrm{dR}}(S^n) \\to 0 \\to H^k_{\\mathrm{dR}}(S^{n-1}) \\to H^{k+1}_{\\mathrm{dR}}(S^n) \\to 0$ to obtain the isomorphism $H^k_{\\mathrm{dR}}(S^{n-1}) \\cong H^{k+1}_{\\mathrm{dR}}(S^n)$. Then proceed with induction as before.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately identifies the error in the answer's Mayer-Vietoris simplification and explains why it is invalid. It provides the correct segment and notes the missing zero term. No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider an infinite sequence of independent tosses of a biased coin. Each toss results in heads (H) with probability $p$ and tails (T) with probability $q = 1-p$, where $0 < p < 1$. Let $N$ be the number of tosses required to observe the pattern HTHT for the first time (i.e., the first occurrence of four consecutive tosses equal to H, T, H, T in that order). Compute the expected value $\\mathbb{E}[N]$ as a closed-form expression in terms of $p$ (or $p$ and $q$).",
+    "run_id": "42",
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "",
+        "raw_critique": "",
+        "verdict": "unknown",
+        "notes": "",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "The critique is missing; no content provided. A valid critique must be a JSON object with required fields (verdict, notes, optional suggestions)."
+          ],
+          "improvements": "Provide a critique in the required JSON format, including verdict (correct, incorrect, insufficient, or obscure), notes (string), and optionally suggestions."
+        }
+      },
+      {
+        "round": 2,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The Markov chain setup and equations are correct, but there are algebraic errors in solving the system. In Step 7, the term involving $E_N(S_0)$ should be $E_N(S_0)/(1+p)$, not $(p/(1+p))E_N(S_0)$. This leads to an incorrect intermediate expression. Moreover, the final boxed answer $\\\\frac{1}{pq^2}+\\\\frac{1}{p^2q}$ does not match the (already incorrect) derived expression $\\\\frac{1+p}{p}+\\\\frac{2-p^2}{(1-p)^2}$. For $p=0.5$, the boxed answer gives 16, while the correct expected number is 20, confirming the error.\",\n  \"suggestions\": \"Re\u2011solve the linear equations carefully. A correct derivation yields $\\\\mathbb{E}[N] = \\\\frac{1+p}{p^2} + \\\\frac{2-p^2}{p\\\\,q^2}$ (with $q=1-p$). One can also write $\\\\mathbb{E}[N] = \\\\frac{1}{p^2}+\\\\frac{1}{p}+\\\\frac{2-p^2}{p\\\\,q^2}$. Check by substituting $p=0.5$ to obtain 20.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The Markov chain setup and equations are correct, but there are algebraic errors in solving the system. In Step 7, the term involving $E_N(S_0)$ should be $E_N(S_0)/(1+p)$, not $(p/(1+p))E_N(S_0)$. This leads to an incorrect intermediate expression. Moreover, the final boxed answer $\\\\frac{1}{pq^2}+\\\\frac{1}{p^2q}$ does not match the (already incorrect) derived expression $\\\\frac{1+p}{p}+\\\\frac{2-p^2}{(1-p)^2}$. For $p=0.5$, the boxed answer gives 16, while the correct expected number is 20, confirming the error.\",\n  \"suggestions\": \"Re\u2011solve the linear equations carefully. A correct derivation yields $\\\\mathbb{E}[N] = \\\\frac{1+p}{p^2} + \\\\frac{2-p^2}{p\\\\,q^2}$ (with $q=1-p$). One can also write $\\\\mathbb{E}[N] = \\\\frac{1}{p^2}+\\\\frac{1}{p}+\\\\frac{2-p^2}{p\\\\,q^2}$. Check by substituting $p=0.5$ to obtain 20.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The Markov chain setup and equations are correct, but there are algebraic errors in solving the system. In Step 7, the term involving $E_N(S_0)$ should be $E_N(S_0)/(1+p)$, not $(p/(1+p))E_N(S_0)$. This leads to an incorrect intermediate expression. Moreover, the final boxed answer $\\frac{1}{pq^2}+\\frac{1}{p^2q}$ does not match the (already incorrect) derived expression $\\frac{1+p}{p}+\\frac{2-p^2}{(1-p)^2}$. For $p=0.5$, the boxed answer gives 16, while the correct expected number is 20, confirming the error.",
+        "suggestions": "Re\u2011solve the linear equations carefully. A correct derivation yields $\\mathbb{E}[N] = \\frac{1+p}{p^2} + \\frac{2-p^2}{p\\,q^2}$ (with $q=1-p$). One can also write $\\mathbb{E}[N] = \\frac{1}{p^2}+\\frac{1}{p}+\\frac{2-p^2}{p\\,q^2}$. Check by substituting $p=0.5$ to obtain 20.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Evaluate the series\n$$\n\\sum_{n=1}^{\\infty} \\frac{(-1)^{n-1} H_n}{n},\n$$\nwhere $H_n = \\sum_{k=1}^{n} \\frac{1}{k}$ denotes the $n$-th harmonic number. Provide the exact value in closed form.",
+    "run_id": "26",
+    "topic_slug": "sequences_series_and_summability",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer provides the correct closed form $\\\\frac{(\\\\ln 2)^2}{2} + \\\\frac{\\\\pi^2}{12}$. The derivation uses valid techniques (generating function, integral representation of $H_n$, interchange of sum and integral) and the steps, though concise, are mathematically sound. No errors or substantive gaps are present; the final result is accurate.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer provides the correct closed form $\\\\frac{(\\\\ln 2)^2}{2} + \\\\frac{\\\\pi^2}{12}$. The derivation uses valid techniques (generating function, integral representation of $H_n$, interchange of sum and integral) and the steps, though concise, are mathematically sound. No errors or substantive gaps are present; the final result is accurate.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer provides the correct closed form $\\frac{(\\ln 2)^2}{2} + \\frac{\\pi^2}{12}$. The derivation uses valid techniques (generating function, integral representation of $H_n$, interchange of sum and integral) and the steps, though concise, are mathematically sound. No errors or substantive gaps are present; the final result is accurate.",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "The critique incorrectly declares the answer as correct, but the answer's final result is wrong: the correct sum is $\\frac{\\pi^2}{12} - \\frac{(\\ln 2)^2}{2}$, not plus.",
+            "The critique fails to identify the erroneous step where the answer claims the series simplifies to $\\int_0^1 \\frac{\\ln(1+x)}{x}dx$, which is not equivalent to the original series and leads to the wrong sign.",
+            "The critique asserts that the derivation is mathematically sound, but it contains a sign error and an invalid simplification, indicating a lack of thorough verification."
+          ],
+          "improvements": "When critiquing an answer, always verify the final result against known values or derive it independently. Check each step for mathematical accuracy, including algebraic manipulations and integral evaluations. Pay attention to sign errors and ensure that any claimed simplifications are correctly performed. In this case, the correct closed form is $\\frac{\\pi^2}{12} - \\frac{(\\ln 2)^2}{2}$, and the derivation should be corrected accordingly."
+        }
+      },
+      {
+        "round": 2,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The final answer is incorrect. The correct value of the series is $\\\\frac{\\\\pi^2}{12} - \\\\frac{(\\\\ln 2)^2}{2}$, not the plus sign given. The error stems from the mistaken claim that $\\\\int_0^1 \\\\frac{\\\\ln(1+x)}{x} dx = \\\\frac{\\\\pi^2}{12} + \\\\frac{(\\\\ln 2)^2}{2}$. In fact, $\\\\int_0^1 \\\\frac{\\\\ln(1+x)}{x} dx = \\\\frac{\\\\pi^2}{12}$ (via dilogarithm). The derivation using the integral representation of $H_n$ leads to $\\\\int_0^1 \\\\frac{\\\\ln 2 - \\\\ln(1+x)}{1-x} dx$, which evaluates to $\\\\frac{\\\\pi^2}{12} - \\\\frac{(\\\\ln 2)^2}{2}$ after proper evaluation.\",\n  \"suggestions\": \"Re-evaluate the integral $\\\\int_0^1 \\\\frac{\\\\ln(1+x)}{x} dx$ correctly. Alternatively, use the generating function approach: $\\\\sum_{n=1}^\\\\infty H_n x^n = -\\\\frac{\\\\ln(1-x)}{1-x}$. Setting $x=-1$ after integration yields the correct result. A reliable method: $H_n = \\\\int_0^1 \\\\frac{1-t^n}{1-t} dt$, interchange sum and integral, compute $\\\\sum_{n=1}^\\\\infty \\\\frac{(-1)^{n-1}}{n}(1-t^n) = \\\\ln 2 - \\\\ln(1+t)$, then evaluate $\\\\int_0^1 \\\\frac{\\\\ln 2 - \\\\ln(1+t)}{1-t} dt = \\\\frac{\\\\pi^2}{12} - \\\\frac{(\\\\ln 2)^2}{2}$ (e.g., by expanding $\\\\frac{1}{1-t}$ as a geometric series or using known dilogarithm values).\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The final answer is incorrect. The correct value of the series is $\\\\frac{\\\\pi^2}{12} - \\\\frac{(\\\\ln 2)^2}{2}$, not the plus sign given. The error stems from the mistaken claim that $\\\\int_0^1 \\\\frac{\\\\ln(1+x)}{x} dx = \\\\frac{\\\\pi^2}{12} + \\\\frac{(\\\\ln 2)^2}{2}$. In fact, $\\\\int_0^1 \\\\frac{\\\\ln(1+x)}{x} dx = \\\\frac{\\\\pi^2}{12}$ (via dilogarithm). The derivation using the integral representation of $H_n$ leads to $\\\\int_0^1 \\\\frac{\\\\ln 2 - \\\\ln(1+x)}{1-x} dx$, which evaluates to $\\\\frac{\\\\pi^2}{12} - \\\\frac{(\\\\ln 2)^2}{2}$ after proper evaluation.\",\n  \"suggestions\": \"Re-evaluate the integral $\\\\int_0^1 \\\\frac{\\\\ln(1+x)}{x} dx$ correctly. Alternatively, use the generating function approach: $\\\\sum_{n=1}^\\\\infty H_n x^n = -\\\\frac{\\\\ln(1-x)}{1-x}$. Setting $x=-1$ after integration yields the correct result. A reliable method: $H_n = \\\\int_0^1 \\\\frac{1-t^n}{1-t} dt$, interchange sum and integral, compute $\\\\sum_{n=1}^\\\\infty \\\\frac{(-1)^{n-1}}{n}(1-t^n) = \\\\ln 2 - \\\\ln(1+t)$, then evaluate $\\\\int_0^1 \\\\frac{\\\\ln 2 - \\\\ln(1+t)}{1-t} dt = \\\\frac{\\\\pi^2}{12} - \\\\frac{(\\\\ln 2)^2}{2}$ (e.g., by expanding $\\\\frac{1}{1-t}$ as a geometric series or using known dilogarithm values).\"\n}",
+        "verdict": "incorrect",
+        "notes": "The final answer is incorrect. The correct value of the series is $\\frac{\\pi^2}{12} - \\frac{(\\ln 2)^2}{2}$, not the plus sign given. The error stems from the mistaken claim that $\\int_0^1 \\frac{\\ln(1+x)}{x} dx = \\frac{\\pi^2}{12} + \\frac{(\\ln 2)^2}{2}$. In fact, $\\int_0^1 \\frac{\\ln(1+x)}{x} dx = \\frac{\\pi^2}{12}$ (via dilogarithm). The derivation using the integral representation of $H_n$ leads to $\\int_0^1 \\frac{\\ln 2 - \\ln(1+x)}{1-x} dx$, which evaluates to $\\frac{\\pi^2}{12} - \\frac{(\\ln 2)^2}{2}$ after proper evaluation.",
+        "suggestions": "Re-evaluate the integral $\\int_0^1 \\frac{\\ln(1+x)}{x} dx$ correctly. Alternatively, use the generating function approach: $\\sum_{n=1}^\\infty H_n x^n = -\\frac{\\ln(1-x)}{1-x}$. Setting $x=-1$ after integration yields the correct result. A reliable method: $H_n = \\int_0^1 \\frac{1-t^n}{1-t} dt$, interchange sum and integral, compute $\\sum_{n=1}^\\infty \\frac{(-1)^{n-1}}{n}(1-t^n) = \\ln 2 - \\ln(1+t)$, then evaluate $\\int_0^1 \\frac{\\ln 2 - \\ln(1+t)}{1-t} dt = \\frac{\\pi^2}{12} - \\frac{(\\ln 2)^2}{2}$ (e.g., by expanding $\\frac{1}{1-t}$ as a geometric series or using known dilogarithm values).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Define the Sorgenfrey line $\\mathbb{R}_\\ell$ as the topological space whose underlying set is $\\mathbb{R}$ and whose topology is generated by the half-open intervals $[a,b)$ with $a<b$. The Sorgenfrey plane is the product space $\\mathbb{R}_\\ell \\times \\mathbb{R}_\\ell$.\n\nProve that the Sorgenfrey plane is not normal.",
+    "run_id": "38",
+    "topic_slug": "general_topology",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "",
+        "raw_critique": "",
+        "verdict": "unknown",
+        "notes": "",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "The critique is missing; no content provided.",
+            "The critique does not follow the required JSON format (must be a JSON object with fields 'verdict', 'notes', and optionally 'suggestions')."
+          ],
+          "improvements": "Provide a complete critique in the required JSON format. The critique should evaluate the answer according to the rubric, giving a verdict (correct, incorrect, insufficient, obscure), notes with evidence-based reasoning, and optionally suggestions for improvement."
+        }
+      },
+      {
+        "round": 2,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer attempts to prove non-normality by considering the disjoint closed sets D (rational antidiagonal) and L\\\\D (irrational antidiagonal). However, the argument contains several gaps and a crucial error.\\n\\n- The reasoning that D is closed in the whole space because it is closed in L and L is closed is insufficiently justified, though it can be corrected.\\n- More seriously, Step 5 claims that for any irrational x, one can find a rational r sufficiently close such that r \\u2208 [e_x, f_x) and -r \\u2208 [g_x, h_x). This is false under the assumption that V is disjoint from U (and hence contains no rational points of L). Indeed, if V_x \\u2286 V and V \\u2229 D = \\u2205, then V_x cannot contain any point (r,-r) with r \\u2208 \\u211a. Therefore the condition r \\u2208 [e_x, f_x) and -r \\u2208 [g_x, h_x) cannot hold for any rational r. The attempted contradiction fails.\\n\\nThus the proof does not establish the non-normality of the Sorgenfrey plane. A correct proof can be given using Jones' lemma (since the antidiagonal is an uncountable closed discrete subspace while the space is separable) or via a more careful diagonalization argument.\",\n  \"suggestions\": \"To improve, provide a rigorous proof: Show L = {(x,-x)} is closed and discrete, hence |L| = \\u2101. Since \\u211d_\\u2113 \\u00d7 \\u211d_\\u2113 is separable (\\u211a\\u00d7\\u211a is dense), Jones' lemma implies that if the space were normal, then 2^{\\u2101} \\u2264 2^{\\u2135\\u2080}, a contradiction. Alternatively, one can directly show that D and L\\\\D cannot be separated by constructing specific neighborhoods leading to an intersection, but care must be taken to avoid the error above.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer attempts to prove non-normality by considering the disjoint closed sets D (rational antidiagonal) and L\\\\D (irrational antidiagonal). However, the argument contains several gaps and a crucial error.\\n\\n- The reasoning that D is closed in the whole space because it is closed in L and L is closed is insufficiently justified, though it can be corrected.\\n- More seriously, Step 5 claims that for any irrational x, one can find a rational r sufficiently close such that r \\u2208 [e_x, f_x) and -r \\u2208 [g_x, h_x). This is false under the assumption that V is disjoint from U (and hence contains no rational points of L). Indeed, if V_x \\u2286 V and V \\u2229 D = \\u2205, then V_x cannot contain any point (r,-r) with r \\u2208 \\u211a. Therefore the condition r \\u2208 [e_x, f_x) and -r \\u2208 [g_x, h_x) cannot hold for any rational r. The attempted contradiction fails.\\n\\nThus the proof does not establish the non-normality of the Sorgenfrey plane. A correct proof can be given using Jones' lemma (since the antidiagonal is an uncountable closed discrete subspace while the space is separable) or via a more careful diagonalization argument.\",\n  \"suggestions\": \"To improve, provide a rigorous proof: Show L = {(x,-x)} is closed and discrete, hence |L| = \\u2101. Since \\u211d_\\u2113 \\u00d7 \\u211d_\\u2113 is separable (\\u211a\\u00d7\\u211a is dense), Jones' lemma implies that if the space were normal, then 2^{\\u2101} \\u2264 2^{\\u2135\\u2080}, a contradiction. Alternatively, one can directly show that D and L\\\\D cannot be separated by constructing specific neighborhoods leading to an intersection, but care must be taken to avoid the error above.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer attempts to prove non-normality by considering the disjoint closed sets D (rational antidiagonal) and L\\D (irrational antidiagonal). However, the argument contains several gaps and a crucial error.\n\n- The reasoning that D is closed in the whole space because it is closed in L and L is closed is insufficiently justified, though it can be corrected.\n- More seriously, Step 5 claims that for any irrational x, one can find a rational r sufficiently close such that r \u2208 [e_x, f_x) and -r \u2208 [g_x, h_x). This is false under the assumption that V is disjoint from U (and hence contains no rational points of L). Indeed, if V_x \u2286 V and V \u2229 D = \u2205, then V_x cannot contain any point (r,-r) with r \u2208 \u211a. Therefore the condition r \u2208 [e_x, f_x) and -r \u2208 [g_x, h_x) cannot hold for any rational r. The attempted contradiction fails.\n\nThus the proof does not establish the non-normality of the Sorgenfrey plane. A correct proof can be given using Jones' lemma (since the antidiagonal is an uncountable closed discrete subspace while the space is separable) or via a more careful diagonalization argument.",
+        "suggestions": "To improve, provide a rigorous proof: Show L = {(x,-x)} is closed and discrete, hence |L| = \u2101. Since \u211d_\u2113 \u00d7 \u211d_\u2113 is separable (\u211a\u00d7\u211a is dense), Jones' lemma implies that if the space were normal, then 2^{\u2101} \u2264 2^{\u2135\u2080}, a contradiction. Alternatively, one can directly show that D and L\\D cannot be separated by constructing specific neighborhoods leading to an intersection, but care must be taken to avoid the error above.",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "The critique incorrectly claims that Step 5 is false. The existence of a rational point in any basic open rectangle around an irrational antidiagonal point is a valid consequence of the density of rationals and the interval intersection property, leading to a contradiction that shows no disjoint open separation exists. This is a standard direct proof of non-normality.",
+            "The critique misinterprets the logical structure: the contradiction is derived from the assumption that V is disjoint from D; showing that V must contain a point of D under that assumption is exactly the desired contradiction, not an error.",
+            "The critique fails to recognize that the proof, despite a minor error in justifying the closedness of L (using continuity of addition, which is false), is essentially correct. The critique's verdict of 'incorrect' is therefore unwarranted; the answer should be considered at least partially correct or insufficient rather than completely incorrect."
+          ],
+          "improvements": "A more accurate critique would note that the justification for L being closed is flawed (addition is not continuous in the Sorgenfrey topology) but can be fixed. The separation argument using density of rationals is valid and should be acknowledged. The verdict could be 'insufficient' if the closedness of L is not properly justified, but the core argument is sound. The critique should provide specific corrections rather than dismissing the entire proof."
+        }
+      },
+      {
+        "round": 3,
+        "cleaned_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer contains a correct idea but has gaps and a minor error. The claim that $L$ is closed because it is the preimage of $\\\\{0\\\\}$ under addition is not justified (addition is not known to be continuous in the Sorgenfrey topology). However, $L$ can be shown closed directly. The separation argument is essentially correct but presented imprecisely; it should clearly state that any basic neighborhood of an irrational antidiagonal point must contain a rational antidiagonal point, leading to a contradiction. The answer's wording about \\\"U and V intersect because they both contain points arbitrarily close\\\" is vague; the crucial point is that the rational point itself lies in both $U$ and $V$. With these corrections, the proof becomes valid.\",\n  \"suggestions\": \"To improve, provide a rigorous proof:\\n1. Show $L = \\\\{(x,-x): x \\\\in \\\\mathbb{R}\\\\}$ is closed by showing its complement is open.\\n2. Show $D = \\\\{(r,-r): r \\\\in \\\\mathbb{Q}\\\\}$ and $L \\\\setminus D$ are disjoint closed sets (use that $L$ is closed and $D$ is closed in $L$ because its complement in $L$ is open).\\n3. Assume there exist disjoint open sets $U \\\\supseteq D$, $V \\\\supseteq L\\\\setminus D$. For each irrational $x$, pick a basic open set $[x, x+\\\\varepsilon_x) \\\\times [-x, -x+\\\\delta_x) \\\\subseteq V$. By density of $\\\\mathbb{Q}$, choose a rational $r$ with $x \\\\le r < \\\\min(x+\\\\varepsilon_x, x+\\\\delta_x)$. Then $(r,-r) \\\\in V \\\\cap D \\\\subseteq V \\\\cap U$, contradiction. Hence no such separation exists, so $\\\\mathbb{R}_\\\\ell \\\\times \\\\mathbb{R}_\\\\ell$ is not normal.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer contains a correct idea but has gaps and a minor error. The claim that $L$ is closed because it is the preimage of $\\\\{0\\\\}$ under addition is not justified (addition is not known to be continuous in the Sorgenfrey topology). However, $L$ can be shown closed directly. The separation argument is essentially correct but presented imprecisely; it should clearly state that any basic neighborhood of an irrational antidiagonal point must contain a rational antidiagonal point, leading to a contradiction. The answer's wording about \\\"U and V intersect because they both contain points arbitrarily close\\\" is vague; the crucial point is that the rational point itself lies in both $U$ and $V$. With these corrections, the proof becomes valid.\",\n  \"suggestions\": \"To improve, provide a rigorous proof:\\n1. Show $L = \\\\{(x,-x): x \\\\in \\\\mathbb{R}\\\\}$ is closed by showing its complement is open.\\n2. Show $D = \\\\{(r,-r): r \\\\in \\\\mathbb{Q}\\\\}$ and $L \\\\setminus D$ are disjoint closed sets (use that $L$ is closed and $D$ is closed in $L$ because its complement in $L$ is open).\\n3. Assume there exist disjoint open sets $U \\\\supseteq D$, $V \\\\supseteq L\\\\setminus D$. For each irrational $x$, pick a basic open set $[x, x+\\\\varepsilon_x) \\\\times [-x, -x+\\\\delta_x) \\\\subseteq V$. By density of $\\\\mathbb{Q}$, choose a rational $r$ with $x \\\\le r < \\\\min(x+\\\\varepsilon_x, x+\\\\delta_x)$. Then $(r,-r) \\\\in V \\\\cap D \\\\subseteq V \\\\cap U$, contradiction. Hence no such separation exists, so $\\\\mathbb{R}_\\\\ell \\\\times \\\\mathbb{R}_\\\\ell$ is not normal.\"\n}",
+        "verdict": "insufficient",
+        "notes": "The answer contains a correct idea but has gaps and a minor error. The claim that $L$ is closed because it is the preimage of $\\{0\\}$ under addition is not justified (addition is not known to be continuous in the Sorgenfrey topology). However, $L$ can be shown closed directly. The separation argument is essentially correct but presented imprecisely; it should clearly state that any basic neighborhood of an irrational antidiagonal point must contain a rational antidiagonal point, leading to a contradiction. The answer's wording about \"U and V intersect because they both contain points arbitrarily close\" is vague; the crucial point is that the rational point itself lies in both $U$ and $V$. With these corrections, the proof becomes valid.",
+        "suggestions": "To improve, provide a rigorous proof:\n1. Show $L = \\{(x,-x): x \\in \\mathbb{R}\\}$ is closed by showing its complement is open.\n2. Show $D = \\{(r,-r): r \\in \\mathbb{Q}\\}$ and $L \\setminus D$ are disjoint closed sets (use that $L$ is closed and $D$ is closed in $L$ because its complement in $L$ is open).\n3. Assume there exist disjoint open sets $U \\supseteq D$, $V \\supseteq L\\setminus D$. For each irrational $x$, pick a basic open set $[x, x+\\varepsilon_x) \\times [-x, -x+\\delta_x) \\subseteq V$. By density of $\\mathbb{Q}$, choose a rational $r$ with $x \\le r < \\min(x+\\varepsilon_x, x+\\delta_x)$. Then $(r,-r) \\in V \\cap D \\subseteq V \\cap U$, contradiction. Hence no such separation exists, so $\\mathbb{R}_\\ell \\times \\mathbb{R}_\\ell$ is not normal.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Evaluate the improper integral\n$$\n\\int_{0}^{\\infty} \\frac{(\\ln x)^2}{x^2+1} \\, dx.\n$$\nProvide an exact value.",
+    "run_id": "18",
+    "topic_slug": "functions_of_a_complex_variable",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "",
+        "raw_critique": "",
+        "verdict": "unknown",
+        "notes": "",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "The critique is missing; cannot assess accuracy."
+          ],
+          "improvements": "Provide a critique that addresses the answer's correctness, completeness, rigor, and well-posedness recognition, following the required format."
+        }
+      },
+      {
+        "round": 2,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution contains multiple errors. The contour integration method with $f(z)=\\\\frac{(\\\\ln z)^3}{z^2+1}$ and a keyhole contour around the positive real axis must account for both poles at $z=i$ and $z=-i$; the residue at $z=-i$ was omitted. Moreover, the relation between the contour integral and the real-line integrals is sign\u2011wrong: the correct equality is $\\\\int_0^\\\\infty\\\\frac{(\\\\ln x)^3-(\\\\ln x+2\\\\pi i)^3}{x^2+1}\\\\,dx=2\\\\pi i\\\\sum\\\\text{Res}$, not the difference written. Even with the missing pole, the arithmetic in steps 9\u201311 is inconsistent (e.g., the coefficient of $\\\\int_0^\\\\infty\\\\frac{dx}{x^2+1}$ is mishandled). The final answer $\\\\frac{31\\\\pi^3}{48}$ is therefore incorrect. The proper value, obtainable by a corrected contour integration or by other methods (e.g., series expansion or differentiation under the integral), is $\\\\frac{\\\\pi^3}{8}$.\",\n  \"suggestions\": \"Include the residue at $z=-i$ (which under the branch $0\\\\le\\\\arg z<2\\\\pi$ equals $\\\\frac{27\\\\pi^3}{16}$). Correctly set up the equation from the contour: $\\\\int_0^\\\\infty\\\\frac{(\\\\ln x)^3-(\\\\ln x+2\\\\pi i)^3}{x^2+1}\\\\,dx=2\\\\pi i\\\\left(\\\\operatorname{Res}_{z=i}+\\\\operatorname{Res}_{z=-i}\\\\right)$. Expand, separate real and imaginary parts, use $\\\\int_0^\\\\infty\\\\frac{\\\\ln x}{x^2+1}\\\\,dx=0$ and $\\\\int_0^\\\\infty\\\\frac{dx}{x^2+1}=\\\\frac{\\\\pi}{2}$, then solve for $\\\\int_0^\\\\infty\\\\frac{(\\\\ln x)^2}{x^2+1}\\\\,dx$ to obtain $\\\\frac{\\\\pi^3}{8}$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution contains multiple errors. The contour integration method with $f(z)=\\\\frac{(\\\\ln z)^3}{z^2+1}$ and a keyhole contour around the positive real axis must account for both poles at $z=i$ and $z=-i$; the residue at $z=-i$ was omitted. Moreover, the relation between the contour integral and the real-line integrals is sign\u2011wrong: the correct equality is $\\\\int_0^\\\\infty\\\\frac{(\\\\ln x)^3-(\\\\ln x+2\\\\pi i)^3}{x^2+1}\\\\,dx=2\\\\pi i\\\\sum\\\\text{Res}$, not the difference written. Even with the missing pole, the arithmetic in steps 9\u201311 is inconsistent (e.g., the coefficient of $\\\\int_0^\\\\infty\\\\frac{dx}{x^2+1}$ is mishandled). The final answer $\\\\frac{31\\\\pi^3}{48}$ is therefore incorrect. The proper value, obtainable by a corrected contour integration or by other methods (e.g., series expansion or differentiation under the integral), is $\\\\frac{\\\\pi^3}{8}$.\",\n  \"suggestions\": \"Include the residue at $z=-i$ (which under the branch $0\\\\le\\\\arg z<2\\\\pi$ equals $\\\\frac{27\\\\pi^3}{16}$). Correctly set up the equation from the contour: $\\\\int_0^\\\\infty\\\\frac{(\\\\ln x)^3-(\\\\ln x+2\\\\pi i)^3}{x^2+1}\\\\,dx=2\\\\pi i\\\\left(\\\\operatorname{Res}_{z=i}+\\\\operatorname{Res}_{z=-i}\\\\right)$. Expand, separate real and imaginary parts, use $\\\\int_0^\\\\infty\\\\frac{\\\\ln x}{x^2+1}\\\\,dx=0$ and $\\\\int_0^\\\\infty\\\\frac{dx}{x^2+1}=\\\\frac{\\\\pi}{2}$, then solve for $\\\\int_0^\\\\infty\\\\frac{(\\\\ln x)^2}{x^2+1}\\\\,dx$ to obtain $\\\\frac{\\\\pi^3}{8}$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The solution contains multiple errors. The contour integration method with $f(z)=\\frac{(\\ln z)^3}{z^2+1}$ and a keyhole contour around the positive real axis must account for both poles at $z=i$ and $z=-i$; the residue at $z=-i$ was omitted. Moreover, the relation between the contour integral and the real-line integrals is sign\u2011wrong: the correct equality is $\\int_0^\\infty\\frac{(\\ln x)^3-(\\ln x+2\\pi i)^3}{x^2+1}\\,dx=2\\pi i\\sum\\text{Res}$, not the difference written. Even with the missing pole, the arithmetic in steps 9\u201311 is inconsistent (e.g., the coefficient of $\\int_0^\\infty\\frac{dx}{x^2+1}$ is mishandled). The final answer $\\frac{31\\pi^3}{48}$ is therefore incorrect. The proper value, obtainable by a corrected contour integration or by other methods (e.g., series expansion or differentiation under the integral), is $\\frac{\\pi^3}{8}$.",
+        "suggestions": "Include the residue at $z=-i$ (which under the branch $0\\le\\arg z<2\\pi$ equals $\\frac{27\\pi^3}{16}$). Correctly set up the equation from the contour: $\\int_0^\\infty\\frac{(\\ln x)^3-(\\ln x+2\\pi i)^3}{x^2+1}\\,dx=2\\pi i\\left(\\operatorname{Res}_{z=i}+\\operatorname{Res}_{z=-i}\\right)$. Expand, separate real and imaginary parts, use $\\int_0^\\infty\\frac{\\ln x}{x^2+1}\\,dx=0$ and $\\int_0^\\infty\\frac{dx}{x^2+1}=\\frac{\\pi}{2}$, then solve for $\\int_0^\\infty\\frac{(\\ln x)^2}{x^2+1}\\,dx$ to obtain $\\frac{\\pi^3}{8}$.",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "The critique incorrectly states that the arithmetic in steps 9\u201311 is inconsistent and that the coefficient of \u222b_0^\u221e dx/(x^2+1) is mishandled. In fact, the arithmetic in those steps is consistent given the earlier (incorrect) equation; the errors are the missing pole and the sign error in the contour relation."
+          ],
+          "improvements": "Revise the critique to remove the inaccurate claim about arithmetic inconsistency and coefficient mishandling. Instead, clarify that the arithmetic is correct under the erroneous assumptions, but the errors are the omission of the residue at -i and the sign of the contour integral relation. Also, ensure to note that the final answer is \u03c0^3/8."
+        }
+      },
+      {
+        "round": 3,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution attempts to evaluate the integral using contour integration with $f(z) = \\\\frac{(\\\\ln z)^3}{z^2+1}$ and a keyhole contour. However, there are two main errors:\\n\\n1. The residue at $z = -i$ is omitted. For a keyhole contour that encloses both poles (since the branch cut is along the positive real axis), the sum of residues at $z = i$ and $z = -i$ must be considered. The residue at $z = -i$ (with appropriate branch of log) contributes an additional term, altering the resulting equation.\\n\\n2. The relation between the contour integral and the real integrals is sign-reversed. The correct identity from the residue theorem is $$\\\\int_0^\\\\infty \\\\frac{(\\\\ln x)^3 - (\\\\ln x + 2\\\\pi i)^3}{x^2+1}\\\\,dx = 2\\\\pi i\\\\left(\\\\operatorname{Res}_{z=i} f + \\\\operatorname{Res}_{z=-i} f\\\\right).$$ The answer instead writes the difference in the opposite order, leading to a sign error.\\n\\nEven if the residues were correctly summed, the sign mistake would change the result. The arithmetic in steps 9\u201311 is consistent under the erroneous assumptions, but the final answer is incorrect. The correct value of the integral is $\\\\frac{\\\\pi^3}{8}$.\",\n  \"suggestions\": \"To correct the solution, include both residues and set up the equation correctly. For the branch $0 \\\\le \\\\arg z < 2\\\\pi$, we have $\\\\ln i = i\\\\pi/2$ and $\\\\ln(-i) = i3\\\\pi/2$. Then\\n$$\\\\operatorname{Res}_{z=i} f = \\\\frac{(i\\\\pi/2)^3}{2i} = -\\\\frac{\\\\pi^3}{16}, \\\\qquad \\\\operatorname{Res}_{z=-i} f = \\\\frac{(i3\\\\pi/2)^3}{-2i} = \\\\frac{27\\\\pi^3}{16}.$$\\nSumming gives $\\\\frac{13\\\\pi^3}{8}$. The residue theorem yields\\n$$\\\\int_0^\\\\infty \\\\frac{(\\\\ln x)^3 - (\\\\ln x+2\\\\pi i)^3}{x^2+1}\\\\,dx = 2\\\\pi i \\\\cdot \\\\frac{13\\\\pi^3}{8} = \\\\frac{13\\\\pi^4 i}{4}.$$\\nExpanding the left side: $(\\\\ln x)^3 - (\\\\ln x+2\\\\pi i)^3 = -6\\\\pi i (\\\\ln x)^2 + 12\\\\pi^2 \\\\ln x + 8\\\\pi^3 i$. Using $\\\\int_0^\\\\infty \\\\frac{\\\\ln x}{x^2+1}\\\\,dx=0$ and $\\\\int_0^\\\\infty \\\\frac{dx}{x^2+1}=\\\\frac{\\\\pi}{2}$, equate imaginary parts:\\n$$-6\\\\pi \\\\int_0^\\\\infty \\\\frac{(\\\\ln x)^2}{x^2+1}\\\\,dx + 8\\\\pi^3\\\\cdot\\\\frac{\\\\pi}{2} = \\\\frac{13\\\\pi^4}{4} \\\\quad\\\\Longrightarrow\\\\quad -6\\\\pi I + 4\\\\pi^4 = \\\\frac{13\\\\pi^4}{4}.$$\\nSolving gives $I = \\\\frac{\\\\pi^3}{8}$. Hence the correct value is $\\\\boxed{\\\\frac{\\\\pi^3}{8}}$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution attempts to evaluate the integral using contour integration with $f(z) = \\\\frac{(\\\\ln z)^3}{z^2+1}$ and a keyhole contour. However, there are two main errors:\\n\\n1. The residue at $z = -i$ is omitted. For a keyhole contour that encloses both poles (since the branch cut is along the positive real axis), the sum of residues at $z = i$ and $z = -i$ must be considered. The residue at $z = -i$ (with appropriate branch of log) contributes an additional term, altering the resulting equation.\\n\\n2. The relation between the contour integral and the real integrals is sign-reversed. The correct identity from the residue theorem is $$\\\\int_0^\\\\infty \\\\frac{(\\\\ln x)^3 - (\\\\ln x + 2\\\\pi i)^3}{x^2+1}\\\\,dx = 2\\\\pi i\\\\left(\\\\operatorname{Res}_{z=i} f + \\\\operatorname{Res}_{z=-i} f\\\\right).$$ The answer instead writes the difference in the opposite order, leading to a sign error.\\n\\nEven if the residues were correctly summed, the sign mistake would change the result. The arithmetic in steps 9\u201311 is consistent under the erroneous assumptions, but the final answer is incorrect. The correct value of the integral is $\\\\frac{\\\\pi^3}{8}$.\",\n  \"suggestions\": \"To correct the solution, include both residues and set up the equation correctly. For the branch $0 \\\\le \\\\arg z < 2\\\\pi$, we have $\\\\ln i = i\\\\pi/2$ and $\\\\ln(-i) = i3\\\\pi/2$. Then\\n$$\\\\operatorname{Res}_{z=i} f = \\\\frac{(i\\\\pi/2)^3}{2i} = -\\\\frac{\\\\pi^3}{16}, \\\\qquad \\\\operatorname{Res}_{z=-i} f = \\\\frac{(i3\\\\pi/2)^3}{-2i} = \\\\frac{27\\\\pi^3}{16}.$$\\nSumming gives $\\\\frac{13\\\\pi^3}{8}$. The residue theorem yields\\n$$\\\\int_0^\\\\infty \\\\frac{(\\\\ln x)^3 - (\\\\ln x+2\\\\pi i)^3}{x^2+1}\\\\,dx = 2\\\\pi i \\\\cdot \\\\frac{13\\\\pi^3}{8} = \\\\frac{13\\\\pi^4 i}{4}.$$\\nExpanding the left side: $(\\\\ln x)^3 - (\\\\ln x+2\\\\pi i)^3 = -6\\\\pi i (\\\\ln x)^2 + 12\\\\pi^2 \\\\ln x + 8\\\\pi^3 i$. Using $\\\\int_0^\\\\infty \\\\frac{\\\\ln x}{x^2+1}\\\\,dx=0$ and $\\\\int_0^\\\\infty \\\\frac{dx}{x^2+1}=\\\\frac{\\\\pi}{2}$, equate imaginary parts:\\n$$-6\\\\pi \\\\int_0^\\\\infty \\\\frac{(\\\\ln x)^2}{x^2+1}\\\\,dx + 8\\\\pi^3\\\\cdot\\\\frac{\\\\pi}{2} = \\\\frac{13\\\\pi^4}{4} \\\\quad\\\\Longrightarrow\\\\quad -6\\\\pi I + 4\\\\pi^4 = \\\\frac{13\\\\pi^4}{4}.$$\\nSolving gives $I = \\\\frac{\\\\pi^3}{8}$. Hence the correct value is $\\\\boxed{\\\\frac{\\\\pi^3}{8}}$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The solution attempts to evaluate the integral using contour integration with $f(z) = \\frac{(\\ln z)^3}{z^2+1}$ and a keyhole contour. However, there are two main errors:\n\n1. The residue at $z = -i$ is omitted. For a keyhole contour that encloses both poles (since the branch cut is along the positive real axis), the sum of residues at $z = i$ and $z = -i$ must be considered. The residue at $z = -i$ (with appropriate branch of log) contributes an additional term, altering the resulting equation.\n\n2. The relation between the contour integral and the real integrals is sign-reversed. The correct identity from the residue theorem is $$\\int_0^\\infty \\frac{(\\ln x)^3 - (\\ln x + 2\\pi i)^3}{x^2+1}\\,dx = 2\\pi i\\left(\\operatorname{Res}_{z=i} f + \\operatorname{Res}_{z=-i} f\\right).$$ The answer instead writes the difference in the opposite order, leading to a sign error.\n\nEven if the residues were correctly summed, the sign mistake would change the result. The arithmetic in steps 9\u201311 is consistent under the erroneous assumptions, but the final answer is incorrect. The correct value of the integral is $\\frac{\\pi^3}{8}$.",
+        "suggestions": "To correct the solution, include both residues and set up the equation correctly. For the branch $0 \\le \\arg z < 2\\pi$, we have $\\ln i = i\\pi/2$ and $\\ln(-i) = i3\\pi/2$. Then\n$$\\operatorname{Res}_{z=i} f = \\frac{(i\\pi/2)^3}{2i} = -\\frac{\\pi^3}{16}, \\qquad \\operatorname{Res}_{z=-i} f = \\frac{(i3\\pi/2)^3}{-2i} = \\frac{27\\pi^3}{16}.$$\nSumming gives $\\frac{13\\pi^3}{8}$. The residue theorem yields\n$$\\int_0^\\infty \\frac{(\\ln x)^3 - (\\ln x+2\\pi i)^3}{x^2+1}\\,dx = 2\\pi i \\cdot \\frac{13\\pi^3}{8} = \\frac{13\\pi^4 i}{4}.$$\nExpanding the left side: $(\\ln x)^3 - (\\ln x+2\\pi i)^3 = -6\\pi i (\\ln x)^2 + 12\\pi^2 \\ln x + 8\\pi^3 i$. Using $\\int_0^\\infty \\frac{\\ln x}{x^2+1}\\,dx=0$ and $\\int_0^\\infty \\frac{dx}{x^2+1}=\\frac{\\pi}{2}$, equate imaginary parts:\n$$-6\\pi \\int_0^\\infty \\frac{(\\ln x)^2}{x^2+1}\\,dx + 8\\pi^3\\cdot\\frac{\\pi}{2} = \\frac{13\\pi^4}{4} \\quad\\Longrightarrow\\quad -6\\pi I + 4\\pi^4 = \\frac{13\\pi^4}{4}.$$\nSolving gives $I = \\frac{\\pi^3}{8}$. Hence the correct value is $\\boxed{\\frac{\\pi^3}{8}}$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no improvements needed."
+        }
+      }
+    ]
   }
 ]
