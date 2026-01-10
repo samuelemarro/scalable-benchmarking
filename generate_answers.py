@@ -17,7 +17,7 @@ from prompt_library import (
     load_self_critique_guidance,
 )
 from self_improvement import self_improve_answers
-from model_api import query_llm_batch, query_llm_single
+from model_api import query_llm_batch, query_llm_parallel, query_llm_single
 from constants import STATUS_FAILED, STATUS_ILL_POSED, STATUS_SUCCEEDED
 from data_models import (
     AnswerAttempt,
@@ -119,14 +119,18 @@ def run_generation(
     q_slug = _slugify(question_model)
     a_slug = _slugify(answer_model)
 
-    if len(prompts) == 1 or disable_batch:
-        prompt_iter = prompts
-        if len(prompts) > 1:
-            prompt_iter = tqdm(prompts, desc=f"{a_slug} answers", leave=False)
+    if len(prompts) == 1:
         raw_answers = [
-            query_llm_single(answer_model, prompt, temperature=temperature, reasoning=reasoning)
-            for prompt in prompt_iter
+            query_llm_single(answer_model, prompts[0], temperature=temperature, reasoning=reasoning)
         ]
+    elif disable_batch:
+        raw_answers = query_llm_parallel(
+            answer_model,
+            prompts,
+            temperature=temperature,
+            reasoning=reasoning,
+            desc=f"{a_slug} answers",
+        )
     else:
         raw_answers = query_llm_batch(answer_model, prompts, temperature=temperature, reasoning=reasoning)
 

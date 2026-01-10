@@ -18,7 +18,7 @@ from prompt_library import (
 )
 from self_improvement import self_improve_critiques
 from utils import benchmark_answers_from_entries, clean_math, entry_key, safe_load_json, setup_logging
-from model_api import query_llm_batch, query_llm_single
+from model_api import query_llm_batch, query_llm_parallel, query_llm_single
 from constants import (
     CRITIQUE_VERDICT_UNKNOWN,
     STATUS_FAILED,
@@ -132,8 +132,17 @@ def extract_structured_critique(text: Optional[str]) -> Tuple[str, str, Optional
 
 
 def _batched_query(model: str, prompts: List[str], disable_batch: bool, temperature: float, reasoning: Optional[str]) -> List[str]:
-    if len(prompts) == 1 or disable_batch:
+    if not prompts:
+        return []
+    if len(prompts) == 1:
         return [query_llm_single(model, prompts[0], temperature=temperature, reasoning=reasoning)]
+    if disable_batch:
+        return query_llm_parallel(
+            model,
+            prompts,
+            temperature=temperature,
+            reasoning=reasoning,
+        )
     return query_llm_batch(model, prompts, temperature=temperature, reasoning=reasoning)
 
 

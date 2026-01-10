@@ -3,7 +3,7 @@ from typing import Callable, Dict, List, Optional, Sequence
 
 from tqdm import tqdm
 
-from model_api import query_llm_batch, query_llm_single
+from model_api import query_llm_batch, query_llm_parallel, query_llm_single
 from utils import safe_load_json
 from constants import STATUS_FAILED, STATUS_ILL_POSED, STATUS_SUCCEEDED
 
@@ -26,8 +26,12 @@ class ImprovementResult:
 
 
 def _batched_query(model: str, prompts: Sequence[str], disable_batch: bool, **kwargs) -> List[str]:
-    if len(prompts) == 1 or disable_batch:
+    if not prompts:
+        return []
+    if len(prompts) == 1:
         return [query_llm_single(model, prompts[0], **kwargs)]
+    if disable_batch:
+        return query_llm_parallel(model, list(prompts), **kwargs)
     return query_llm_batch(model, prompts, **kwargs)
 
 

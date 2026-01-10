@@ -18,7 +18,7 @@ from prompt_library import (
     load_self_critique_guidance,
 )
 from self_improvement import self_improve_answers
-from model_api import query_llm_batch, query_llm_single
+from model_api import query_llm_batch, query_llm_parallel, query_llm_single
 from constants import STATUS_FAILED, STATUS_ILL_POSED, STATUS_PENDING, STATUS_SUCCEEDED
 from data_models import (
     BenchmarkEntry,
@@ -156,11 +156,15 @@ def generate_questions(
                         previous_attempts.append(question)
         prompts.append(build_question_prompt(topic_name, guidance, previous_attempts if previous_attempts else None))
 
-    if len(prompts) == 1 or disable_batch:
-        return [
-            query_llm_single(model, prompt, temperature=temperature, reasoning=reasoning)
-            for prompt in prompts
-        ]
+    if len(prompts) == 1:
+        return [query_llm_single(model, prompts[0], temperature=temperature, reasoning=reasoning)]
+    if disable_batch:
+        return query_llm_parallel(
+            model,
+            prompts,
+            temperature=temperature,
+            reasoning=reasoning,
+        )
     return query_llm_batch(model, prompts, temperature=temperature, reasoning=reasoning)
 
 

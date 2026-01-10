@@ -1,6 +1,7 @@
 import atexit
 import json
 import logging
+from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import Pool
 import os
 import tempfile
@@ -782,6 +783,47 @@ def _query_gemini_batch(model: str, messages_list: List[str], prompt: str, respo
     if len(responses) != len(messages_list):
         raise RuntimeError(f"Gemini batch returned {len(responses)} responses but expected {len(messages_list)}")
     return responses
+
+
+def query_llm_parallel(
+    model: str,
+    messages_list: List[str],
+    prompt: str = "You are a helpful assistant.",
+    response_format: Optional[Dict] = None,
+    temperature: Optional[float] = None,
+    api_kwargs: Optional[Dict] = None,
+    reasoning: Optional[str] = None,
+    max_workers: int = 8,
+    show_progress: bool = True,
+    desc: Optional[str] = None,
+) -> List[str]:
+    """
+    Parallel query using query_llm_single for each message. Avoids provider batch APIs.
+    """
+    if not messages_list:
+        return []
+
+    _validate_response_format(response_format)
+
+    if api_kwargs:
+        if api_kwargs.get("reasoning") is not None:
+            raise ValueError("Do not set 'reasoning' in api_kwargs; use the reasoning parameter instead.")
+
+        if api_kwargs.get("temperature") is not None:
+            raise ValueError("Do not set 'temperature' in api_kwargs; use the temperature parameter instead.")
+
+    worker_args = [(model, message, prompt, response_format, temperature, api_kwargs, reasoning) for message in messages_list]
+    if max_workers is None or max_workers < 1 or len(worker_args) == 1:
+        results_iter = (_single_query_worker(args) for args in worker_args)
+        if show_progress and len(worker_args) > 1:
+            return list(tqdm(results_iter, total=len(worker_args), desc=desc or f"Processing {model}", unit="query"))
+        return list(results_iter)
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        results_iter = executor.map(_single_query_worker, worker_args)
+        if show_progress:
+            return list(tqdm(results_iter, total=len(worker_args), desc=desc or f"Processing {model}", unit="query"))
+        return list(results_iter)
 
 
 def query_llm_batch(model: str, messages_list: List[str], prompt: str = "You are a helpful assistant.", response_format: Optional[Dict] = None, temperature: Optional[float] = None, api_kwargs: Optional[Dict] = None, reasoning: Optional[str] = None, max_workers: int = 8) -> List[str]:
