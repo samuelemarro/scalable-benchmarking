@@ -513,32 +513,6 @@
     ]
   },
   {
-    "question": "Consider the second-order linear ordinary differential equation given by:\n\n$$ y'' - 4y' + 4y = e^{2x}, $$\n\nwhere $y(x)$ is a function of $x$. Find the general solution of this differential equation.",
-    "run_id": "22",
-    "topic_slug": "ordinary_differential_equations",
-    "question_author": "openai-gpt-4o-2024-08-06",
-    "critic": "deepseek-deepseek-v3.2-speciale",
-    "answer_author": "openai-gpt-4o-2024-08-06",
-    "status": "succeeded",
-    "attempts": [
-      {
-        "round": 1,
-        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The second derivative of the trial particular solution is computed incorrectly. The answer states y_p''(x) = A(2 + 4x + 4x^2)e^{2x}, but the correct derivative is A(2 + 8x + 4x^2)e^{2x}. The subsequent simplification to 2A e^{2x} is then unjustified; with the given expression, the x terms do not cancel (they sum to -4A x e^{2x}). This is a mathematical error that invalidates the derivation, even though the final particular solution is correct.\",\n  \"suggestions\": \"Recalculate the second derivative correctly: y_p' = A(2x+2x^2)e^{2x}, then y_p'' = A[(2+4x)e^{2x} + (2x+2x^2)*2e^{2x}] = A(2+8x+4x^2)e^{2x}. Substituting yields 2A e^{2x} = e^{2x}, giving A = 1/2. Alternatively, use the method of undetermined coefficients with the correct form.\"\n}",
-        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The second derivative of the trial particular solution is computed incorrectly. The answer states y_p''(x) = A(2 + 4x + 4x^2)e^{2x}, but the correct derivative is A(2 + 8x + 4x^2)e^{2x}. The subsequent simplification to 2A e^{2x} is then unjustified; with the given expression, the x terms do not cancel (they sum to -4A x e^{2x}). This is a mathematical error that invalidates the derivation, even though the final particular solution is correct.\",\n  \"suggestions\": \"Recalculate the second derivative correctly: y_p' = A(2x+2x^2)e^{2x}, then y_p'' = A[(2+4x)e^{2x} + (2x+2x^2)*2e^{2x}] = A(2+8x+4x^2)e^{2x}. Substituting yields 2A e^{2x} = e^{2x}, giving A = 1/2. Alternatively, use the method of undetermined coefficients with the correct form.\"\n}",
-        "verdict": "incorrect",
-        "notes": "The second derivative of the trial particular solution is computed incorrectly. The answer states y_p''(x) = A(2 + 4x + 4x^2)e^{2x}, but the correct derivative is A(2 + 8x + 4x^2)e^{2x}. The subsequent simplification to 2A e^{2x} is then unjustified; with the given expression, the x terms do not cancel (they sum to -4A x e^{2x}). This is a mathematical error that invalidates the derivation, even though the final particular solution is correct.",
-        "suggestions": "Recalculate the second derivative correctly: y_p' = A(2x+2x^2)e^{2x}, then y_p'' = A[(2+4x)e^{2x} + (2x+2x^2)*2e^{2x}] = A(2+8x+4x^2)e^{2x}. Substituting yields 2A e^{2x} = e^{2x}, giving A = 1/2. Alternatively, use the method of undetermined coefficients with the correct form.",
-        "evaluation": {
-          "verdict": "fail",
-          "issues": [
-            "Could not parse evaluation JSON. Raw text: "
-          ],
-          "improvements": "Self-check evaluation unknown due to parsing failure."
-        }
-      }
-    ]
-  },
-  {
     "question": "Consider the partial differential equation (PDE) given by:\n\n$$ u_{xx} + u_{yy} = 0 $$\n\nwhere $u(x, y)$ is a twice continuously differentiable function defined on the entire plane $\\mathbb{R}^2$. This is known as the Laplace equation in two dimensions. \n\nSuppose $u(x, y)$ is subject to the boundary condition:\n\n$$ u(x, 0) = \\sin(x) $$\n\nfor all $x \\in \\mathbb{R}$.\n\nFind a function $u(x, y)$ that satisfies both the PDE and the given boundary condition.",
     "run_id": "23",
     "topic_slug": "partial_differential_equations",

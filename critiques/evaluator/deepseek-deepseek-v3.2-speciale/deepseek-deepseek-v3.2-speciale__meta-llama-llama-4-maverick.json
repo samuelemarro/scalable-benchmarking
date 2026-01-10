@@ -494,32 +494,6 @@
     ]
   },
   {
-    "question": "Consider the rational map $\\varphi: \\mathbb{P}^2 \\to \\mathbb{P}^2$ over $\\mathbb{C}$ given in homogeneous coordinates by\n$$\n\\varphi(x:y:z) = (yz : xz : xy).\n$$\nLet $X$ be the blow-up of $\\mathbb{P}^2$ at the three points \n$$\nP_1 = (1:0:0),\\quad P_2 = (0:1:0),\\quad P_3 = (0:0:1).\n$$\nDenote by $\\pi: X \\to \\mathbb{P}^2$ the blow-down morphism, and let $E_1, E_2, E_3$ be the exceptional divisors over $P_1, P_2, P_3$ respectively. Let $H = \\pi^* \\mathcal{O}_{\\mathbb{P}^2}(1)$ be the pullback of the hyperplane class.\n\n(a) Show that $\\varphi$ lifts to a morphism $\\Phi: X \\to \\mathbb{P}^2$ (i.e., $\\Phi = \\varphi \\circ \\pi$ is a morphism).\n(b) Compute the class of the line bundle $\\Phi^* \\mathcal{O}_{\\mathbb{P}^2}(1)$ in $\\operatorname{Pic}(X)$ in terms of $H, E_1, E_2, E_3$.\n(c) Prove that $\\varphi$ is birational and determine its inverse rational map.",
-    "run_id": "8",
-    "topic_slug": "algebraic_geometry",
-    "question_author": "deepseek-deepseek-v3.2-speciale",
-    "critic": "deepseek-deepseek-v3.2-speciale",
-    "answer_author": "meta-llama-llama-4-maverick",
-    "status": "succeeded",
-    "attempts": [
-      {
-        "round": 1,
-        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (b) is correct: \\$\\\\Phi^*\\\\mathcal{O}_{\\\\mathbb{P}^2}(1) = 2H - E_1 - E_2 - E_3\\$. However, part (c) contains mathematical errors. The derivation of the inverse map is flawed: from \\$u=yz, v=xz, w=xy\\$ it does not follow that \\$x^2 = vw\\$; rather, \\$x^2 = vw/u\\$ (and similarly for \\$y^2, z^2$). The claimed inverse \\$(vw:uw:uv)\\$ is actually \\$\\\\varphi(u:v:w)\\$, not the inverse. In fact, \\$\\\\varphi\\$ is an involution (\\$\\\\varphi\\\\circ\\\\varphi = \\\\mathrm{id}\\$ on the open set where \\$xyz\\\\neq0\\$), so the inverse rational map is \\$\\\\varphi\\$ itself. The verification attempt also fails. Part (a) is sketched but not fully rigorous; the main error in part (c) renders the overall answer incorrect.\",\n  \"suggestions\": \"For part (c), show that \\$\\\\varphi\\\\circ\\\\varphi = \\\\mathrm{id}\\$ on a dense open set, hence \\$\\\\varphi\\$ is birational with inverse \\$\\\\varphi\\$. Provide a correct computation: \\$\\\\varphi(\\\\varphi(x:y:z)) = (x^2yz : xy^2z : xyz^2) = (x:y:z)\\$ after factoring \\$xyz\\\\neq0\\$. For part (a), give a clear local coordinate analysis for all three points to confirm the lift is a morphism.\"\n}",
-        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (b) is correct: \\\\(\\\\Phi^*\\\\mathcal{O}_{\\\\mathbb{P}^2}(1) = 2H - E_1 - E_2 - E_3\\\\). However, part (c) contains mathematical errors. The derivation of the inverse map is flawed: from \\\\(u=yz, v=xz, w=xy\\\\) it does not follow that \\\\(x^2 = vw\\\\); rather, \\\\(x^2 = vw/u\\\\) (and similarly for \\\\(y^2, z^2\\)). The claimed inverse \\\\((vw:uw:uv)\\\\) is actually \\\\(\\\\varphi(u:v:w)\\\\), not the inverse. In fact, \\\\(\\\\varphi\\\\) is an involution (\\\\(\\\\varphi\\\\circ\\\\varphi = \\\\mathrm{id}\\\\) on the open set where \\\\(xyz\\\\neq0\\\\)), so the inverse rational map is \\\\(\\\\varphi\\\\) itself. The verification attempt also fails. Part (a) is sketched but not fully rigorous; the main error in part (c) renders the overall answer incorrect.\",\n  \"suggestions\": \"For part (c), show that \\\\(\\\\varphi\\\\circ\\\\varphi = \\\\mathrm{id}\\\\) on a dense open set, hence \\\\(\\\\varphi\\\\) is birational with inverse \\\\(\\\\varphi\\\\). Provide a correct computation: \\\\(\\\\varphi(\\\\varphi(x:y:z)) = (x^2yz : xy^2z : xyz^2) = (x:y:z)\\\\) after factoring \\\\(xyz\\\\neq0\\\\). For part (a), give a clear local coordinate analysis for all three points to confirm the lift is a morphism.\"\n}",
-        "verdict": "incorrect",
-        "notes": "Part (b) is correct: $\\Phi^*\\mathcal{O}_{\\mathbb{P}^2}(1) = 2H - E_1 - E_2 - E_3$. However, part (c) contains mathematical errors. The derivation of the inverse map is flawed: from $u=yz, v=xz, w=xy$ it does not follow that $x^2 = vw$; rather, $x^2 = vw/u$ (and similarly for $y^2, z^2$). The claimed inverse $(vw:uw:uv)$ is actually $\\varphi(u:v:w)$, not the inverse. In fact, $\\varphi$ is an involution ($\\varphi\\circ\\varphi = \\mathrm{id}$ on the open set where $xyz\\neq0$), so the inverse rational map is $\\varphi$ itself. The verification attempt also fails. Part (a) is sketched but not fully rigorous; the main error in part (c) renders the overall answer incorrect.",
-        "suggestions": "For part (c), show that $\\varphi\\circ\\varphi = \\mathrm{id}$ on a dense open set, hence $\\varphi$ is birational with inverse $\\varphi$. Provide a correct computation: $\\varphi(\\varphi(x:y:z)) = (x^2yz : xy^2z : xyz^2) = (x:y:z)$ after factoring $xyz\\neq0$. For part (a), give a clear local coordinate analysis for all three points to confirm the lift is a morphism.",
-        "evaluation": {
-          "verdict": "fail",
-          "issues": [
-            "Could not parse evaluation JSON. Raw text: "
-          ],
-          "improvements": "Self-check evaluation unknown due to parsing failure."
-        }
-      }
-    ]
-  },
-  {
     "question": "Let $\\theta$ be an irrational number. Define the rotation $R_\\theta: [0,1) \\to [0,1)$ by $R_\\theta(x) = x + \\theta \\pmod 1$, where we identify $[0,1)$ with the circle $\\mathbb{R}/\\mathbb{Z}$. Let $\\lambda$ denote the Lebesgue measure on $[0,1)$.\n\nProve the following:\n(a) $R_\\theta$ is ergodic with respect to $\\lambda$.\n(b) $R_\\theta$ is not strong mixing with respect to $\\lambda$.\n(c) $R_\\theta$ is uniquely ergodic, i.e., $\\lambda$ is the only $R_\\theta$-invariant Borel probability measure on $[0,1)$.\n[/QUESTION]",
     "run_id": "24",
     "topic_slug": "dynamical_systems_and_ergodic_theory",
@@ -723,29 +697,6 @@
     ]
   },
   {
-    "question": "Let $k$ be a nonzero integer. Define $X_k$ to be the CW complex obtained by attaching a $3$-cell to the $2$-sphere $S^2$ via a map $f: S^2 \\to S^2$ of degree $k$. Compute the complex topological K-theory groups $K^0(X_k)$ and $K^1(X_k)$.",
-    "run_id": "13",
-    "topic_slug": "k_theory",
-    "question_author": "deepseek-deepseek-v3.2-speciale",
-    "critic": "deepseek-deepseek-v3.2-speciale",
-    "answer_author": "meta-llama-llama-4-maverick",
-    "status": "failed",
-    "attempts": [
-      {
-        "round": 1,
-        "cleaned_critique": "",
-        "raw_critique": "",
-        "verdict": "unknown",
-        "notes": "",
-        "evaluation": {
-          "verdict": "pass",
-          "issues": [],
-          "improvements": ""
-        }
-      }
-    ]
-  },
-  {
     "question": "Let $w(x)=e^{-x}$ on $[0,\\infty)$. Determine the nodes $x_1, x_2$ (with $0 < x_1 < x_2$) and weights $w_1, w_2$ such that the quadrature rule\n$$\n\\int_0^\\infty e^{-x} f(x)\\,dx \\approx w_1 f(x_1) + w_2 f(x_2)\n$$\nis exact for all polynomials $f$ of degree at most $3$. Provide the exact values in simplified radical form.",
     "run_id": "44",
     "topic_slug": "numerical_analysis",
@@ -836,32 +787,6 @@
           "verdict": "pass",
           "issues": [],
           "improvements": "The critique accurately identifies the mathematical error and provides appropriate suggestions."
-        }
-      }
-    ]
-  },
-  {
-    "question": "Let $R = \\mathbb{Z}/4\\mathbb{Z}$ and let $M = \\mathbb{Z}/2\\mathbb{Z}$ be the $R$-module where the action is given by the natural surjection $R \\to \\mathbb{Z}/2\\mathbb{Z}$ (i.e., $r \\cdot a = \\overline{r} \\, a$, where $\\overline{r}$ denotes reduction modulo $2$). Compute $\\operatorname{Ext}^n_R(M, M)$ for all integers $n \\ge 0$. Moreover, describe the structure of the graded ring $\\operatorname{Ext}^*_R(M, M) = \\bigoplus_{n \\ge 0} \\operatorname{Ext}^n_R(M, M)$ with the Yoneda product. (Is it isomorphic to a polynomial ring over $\\mathbb{Z}/2\\mathbb{Z}$? If so, determine the degree of the generator.)",
-    "run_id": "12",
-    "topic_slug": "category_theory_and_homological_algebra",
-    "question_author": "deepseek-deepseek-v3.2-speciale",
-    "critic": "deepseek-deepseek-v3.2-speciale",
-    "answer_author": "meta-llama-llama-4-maverick",
-    "status": "succeeded",
-    "attempts": [
-      {
-        "round": 1,
-        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in the reasoning about the Yoneda product. It states: 'Since both Ext^1_R(M, M) and Ext^2_R(M, M) are isomorphic to Z/2Z, and given that the product of two non-zero elements in Z/2Z is 1, the Yoneda product is non-trivial.' This is an invalid deduction; the field multiplication being non-zero does not imply the Yoneda product is non-zero (the Yoneda product could be the zero map). The answer fails to provide a valid justification for why the product is non-zero, which is essential to conclude that the graded ring is a polynomial ring. Although the computation of the Ext groups is correct, the flawed reasoning renders the answer incorrect.\",\n  \"suggestions\": \"To correct the answer, one should properly justify the ring structure, e.g., by showing that the generator of Ext^1 corresponds to the identity chain map on the periodic resolution and that its square is non-zero, or by splicing the short exact sequence with itself to obtain a non-split 2-extension.\"\n}",
-        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in the reasoning about the Yoneda product. It states: 'Since both Ext^1_R(M, M) and Ext^2_R(M, M) are isomorphic to Z/2Z, and given that the product of two non-zero elements in Z/2Z is 1, the Yoneda product is non-trivial.' This is an invalid deduction; the field multiplication being non-zero does not imply the Yoneda product is non-zero (the Yoneda product could be the zero map). The answer fails to provide a valid justification for why the product is non-zero, which is essential to conclude that the graded ring is a polynomial ring. Although the computation of the Ext groups is correct, the flawed reasoning renders the answer incorrect.\",\n  \"suggestions\": \"To correct the answer, one should properly justify the ring structure, e.g., by showing that the generator of Ext^1 corresponds to the identity chain map on the periodic resolution and that its square is non-zero, or by splicing the short exact sequence with itself to obtain a non-split 2-extension.\"\n}",
-        "verdict": "incorrect",
-        "notes": "The answer contains a mathematical error in the reasoning about the Yoneda product. It states: 'Since both Ext^1_R(M, M) and Ext^2_R(M, M) are isomorphic to Z/2Z, and given that the product of two non-zero elements in Z/2Z is 1, the Yoneda product is non-trivial.' This is an invalid deduction; the field multiplication being non-zero does not imply the Yoneda product is non-zero (the Yoneda product could be the zero map). The answer fails to provide a valid justification for why the product is non-zero, which is essential to conclude that the graded ring is a polynomial ring. Although the computation of the Ext groups is correct, the flawed reasoning renders the answer incorrect.",
-        "suggestions": "To correct the answer, one should properly justify the ring structure, e.g., by showing that the generator of Ext^1 corresponds to the identity chain map on the periodic resolution and that its square is non-zero, or by splicing the short exact sequence with itself to obtain a non-split 2-extension.",
-        "evaluation": {
-          "verdict": "fail",
-          "issues": [
-            "Could not parse evaluation JSON. Raw text: "
-          ],
-          "improvements": "Self-check evaluation unknown due to parsing failure."
         }
       }
     ]

@@ -807,32 +807,6 @@
     ]
   },
   {
-    "question": "Find the first three terms in the asymptotic expansion (in powers of $1/n$) of\n$$\nT_n = \\sum_{k=1}^{n} \\frac{1}{n^2 + k^2}\n$$\nas $n \\to \\infty$. Express the coefficients in simplest form.\n[/QUESTION]",
-    "run_id": "27",
-    "topic_slug": "approximations_and_expansions",
-    "question_author": "deepseek-deepseek-v3.2-speciale",
-    "critic": "deepseek-deepseek-v3.2-speciale",
-    "answer_author": "openai-gpt-3.5-turbo-0125",
-    "status": "succeeded",
-    "attempts": [
-      {
-        "round": 1,
-        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a fundamental error: it incorrectly equates the Riemann sum to the integral, writing $T_n = \\\\frac{1}{n} \\\\int_0^1 f(x) dx$, which is false. The sum $\\\\frac{1}{n}\\\\sum_{k=1}^n f(k/n)$ approximates the integral but is not equal. Moreover, the Taylor expansion of $f(x)$ around 0 and integration over [0,1] yields $\\\\int_0^1 (1-x^2)dx = 2/3$, but the true integral $\\\\int_0^1 \\\\frac{dx}{1+x^2} = \\\\pi/4$. Consequently, the claimed leading term $2/(3n)$ is incorrect. The correct asymptotic expansion requires Euler-Maclaurin or other methods, giving leading term $\\\\pi/(4n)$.\",\n  \"suggestions\": \"Do not replace the sum with an integral without error analysis. Use Euler-Maclaurin summation or treat $T_n = \\\\frac{1}{n} \\\\sum_{k=1}^n \\\\frac{1}{1+(k/n)^2}$ and expand the sum as $\\\\int_0^1 f(x) dx + \\\\frac{1}{2n}(f(0)-f(1)) + \\\\dots$ to obtain terms in $1/n$, $1/n^2$, etc. Alternatively, compute the sum exactly using digamma functions and expand asymptotically.\"\n}",
-        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a fundamental error: it incorrectly equates the Riemann sum to the integral, writing $T_n = \\\\frac{1}{n} \\\\int_0^1 f(x) dx$, which is false. The sum $\\\\frac{1}{n}\\\\sum_{k=1}^n f(k/n)$ approximates the integral but is not equal. Moreover, the Taylor expansion of $f(x)$ around 0 and integration over [0,1] yields $\\\\int_0^1 (1-x^2)dx = 2/3$, but the true integral $\\\\int_0^1 \\\\frac{dx}{1+x^2} = \\\\pi/4$. Consequently, the claimed leading term $2/(3n)$ is incorrect. The correct asymptotic expansion requires Euler-Maclaurin or other methods, giving leading term $\\\\pi/(4n)$.\",\n  \"suggestions\": \"Do not replace the sum with an integral without error analysis. Use Euler-Maclaurin summation or treat $T_n = \\\\frac{1}{n} \\\\sum_{k=1}^n \\\\frac{1}{1+(k/n)^2}$ and expand the sum as $\\\\int_0^1 f(x) dx + \\\\frac{1}{2n}(f(0)-f(1)) + \\\\dots$ to obtain terms in $1/n$, $1/n^2$, etc. Alternatively, compute the sum exactly using digamma functions and expand asymptotically.\"\n}",
-        "verdict": "incorrect",
-        "notes": "The answer contains a fundamental error: it incorrectly equates the Riemann sum to the integral, writing $T_n = \\frac{1}{n} \\int_0^1 f(x) dx$, which is false. The sum $\\frac{1}{n}\\sum_{k=1}^n f(k/n)$ approximates the integral but is not equal. Moreover, the Taylor expansion of $f(x)$ around 0 and integration over [0,1] yields $\\int_0^1 (1-x^2)dx = 2/3$, but the true integral $\\int_0^1 \\frac{dx}{1+x^2} = \\pi/4$. Consequently, the claimed leading term $2/(3n)$ is incorrect. The correct asymptotic expansion requires Euler-Maclaurin or other methods, giving leading term $\\pi/(4n)$.",
-        "suggestions": "Do not replace the sum with an integral without error analysis. Use Euler-Maclaurin summation or treat $T_n = \\frac{1}{n} \\sum_{k=1}^n \\frac{1}{1+(k/n)^2}$ and expand the sum as $\\int_0^1 f(x) dx + \\frac{1}{2n}(f(0)-f(1)) + \\dots$ to obtain terms in $1/n$, $1/n^2$, etc. Alternatively, compute the sum exactly using digamma functions and expand asymptotically.",
-        "evaluation": {
-          "verdict": "fail",
-          "issues": [
-            "Could not parse evaluation JSON. Raw text: "
-          ],
-          "improvements": "Self-check evaluation unknown due to parsing failure."
-        }
-      }
-    ]
-  },
-  {
     "question": "Let $R = \\mathbb{Z}/4\\mathbb{Z}$ and let $M = \\mathbb{Z}/2\\mathbb{Z}$ be the $R$-module where the action is given by the natural surjection $R \\to \\mathbb{Z}/2\\mathbb{Z}$ (i.e., $r \\cdot a = \\overline{r} \\, a$, where $\\overline{r}$ denotes reduction modulo $2$). Compute $\\operatorname{Ext}^n_R(M, M)$ for all integers $n \\ge 0$. Moreover, describe the structure of the graded ring $\\operatorname{Ext}^*_R(M, M) = \\bigoplus_{n \\ge 0} \\operatorname{Ext}^n_R(M, M)$ with the Yoneda product. (Is it isomorphic to a polynomial ring over $\\mathbb{Z}/2\\mathbb{Z}$? If so, determine the degree of the generator.)",
     "run_id": "12",
     "topic_slug": "category_theory_and_homological_algebra",
