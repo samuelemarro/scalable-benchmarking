@@ -58,6 +58,36 @@ def collect_debate_keys(entries: List[Optional[DebateEntry]]) -> Set[Tuple[Optio
     return keys
 
 
+def build_entry_map(entries: List[Optional[Any]]) -> Dict[Tuple[Optional[str], Optional[str], Optional[str]], Any]:
+    mapped: Dict[Tuple[Optional[str], Optional[str], Optional[str]], Any] = {}
+    for entry in entries:
+        if not entry:
+            continue
+        key = debate_key(entry.run_id, entry.topic_slug, entry.question)
+        if not key:
+            continue
+        existing = mapped.get(key)
+        if not existing:
+            mapped[key] = entry
+            continue
+        existing_status = getattr(existing, "status", None)
+        entry_status = getattr(entry, "status", None)
+        if existing_status != STATUS_SUCCEEDED and entry_status == STATUS_SUCCEEDED:
+            mapped[key] = entry
+    return mapped
+
+
+def index_by_key(entries: List[Optional[DebateEntry]]) -> Dict[Tuple[Optional[str], Optional[str], Optional[str]], int]:
+    index: Dict[Tuple[Optional[str], Optional[str], Optional[str]], int] = {}
+    for idx, entry in enumerate(entries):
+        if not entry:
+            continue
+        key = debate_key(entry.run_id, entry.topic_slug, entry.question)
+        if key and key not in index:
+            index[key] = idx
+    return index
+
+
 def final_answer(entry: AnswerEntry) -> Optional[str]:
     attempts = entry.attempts or []
     if not attempts:
@@ -113,6 +143,22 @@ def final_critique_verdict(entry: CritiqueEntry) -> Optional[str]:
     return attempts[-1].verdict
 
 
+def critique_status_details(entry: Optional[CritiqueEntry]) -> str:
+    if not entry:
+        return "entry=None"
+    attempts = entry.attempts or []
+    last = attempts[-1] if attempts else None
+    last_verdict = last.verdict if last else None
+    raw_len = len(last.raw_critique or "") if last else 0
+    cleaned_len = len(last.cleaned_critique or "") if last else 0
+    notes_len = len(last.notes or "") if last else 0
+    return (
+        "status="
+        f"{entry.status}, attempts={len(attempts)}, last_verdict={last_verdict}, "
+        f"raw_len={raw_len}, cleaned_len={cleaned_len}, notes_len={notes_len}"
+    )
+
+
 def load_answers_for_critique_debates(
     answers_dir: Path,
     q_slug: str,
@@ -142,7 +188,7 @@ def run_round(
         prompt=system_prompt + "\n\nIMPORTANT: Respond with JSON containing 'message' (your response text) and 'concede' (boolean, true if you concede/agree, false otherwise).",
         temperature=temperature,
         reasoning=reasoning,
-        response_format={"type": "json_object"},
+        response_format={"type": "json_object"} if 'anthropic' not in speaker_model else None,
     )
     parsed = safe_load_json(reply)
     if isinstance(parsed, dict) and "message" in parsed:
@@ -559,6 +605,8 @@ def main():
                             answer_slug,
                             benchmark_entries,
                         )
+                        answer_map = build_entry_map(answers)
+                        answer_map = build_entry_map(answers)
                         debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                         existing = load_debate_entries(debate_path)
                         existing_keys = collect_debate_keys(existing)
@@ -567,25 +615,27 @@ def main():
                                 break
                             if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
                                 logger.warning(
-                                    f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: not succeeded"
+                                    "Skipping critique/"
+                                    f"{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: "
+                                    f"not succeeded ({critique_status_details(crit_entry)})"
                                 )
                                 continue
                             verdict = final_critique_verdict(crit_entry)
                             if verdict in {None, CRITIQUE_VERDICT_UNKNOWN}:
                                 logger.warning(
-                                    f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: unknown final verdict"
+                                    "Skipping critique/"
+                                    f"{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: "
+                                    f"unknown final verdict ({critique_status_details(crit_entry)})"
                                 )
                                 continue
                             if verdict == CRITIQUE_VERDICT_CORRECT:
                                 continue
-                            if idx >= len(answers):
-                                continue
-                            if len(existing) > idx and existing[idx]:
-                                continue
                             key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
+                            if not key:
+                                continue
                             if key and key in existing_keys:
                                 continue
-                            answer_entry = answers[idx]
+                            answer_entry = answer_map.get(key)
                             if not answer_entry:
                                 continue
                             answer_text = final_answer(answer_entry) or ""
@@ -662,15 +712,11 @@ def main():
                     lock = lock_for(debate_path)
                     with lock:
                         existing = load_debate_entries(debate_path)
-                        existing_keys = collect_debate_keys(existing)
-                        if len(existing) > idx and existing[idx]:
-                            return False
                         key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
-                        if key and key in existing_keys:
+                        if not key:
                             return False
-                        if len(existing) <= idx:
-                            existing.extend([None for _ in range(idx - len(existing) + 1)])
-                        existing[idx] = DebateEntry(
+                        index = index_by_key(existing)
+                        entry = DebateEntry(
                             question=crit_entry.question,
                             alice_model=critic_model.slug,
                             bob_model=answer_model.slug,
@@ -680,6 +726,7 @@ def main():
                             critic=critic_model.slug,
                             history=history,
                         )
+                        existing.append(entry)
                         save_debate_entries(debate_path, existing)
                     return True
 
@@ -727,27 +774,36 @@ def main():
                             answer_slug,
                             benchmark_entries,
                         )
+                        answer_map = build_entry_map(answers)
                         for idx, crit_entry in enumerate(critiques):
                             if args.limit is not None and total_tasks >= args.limit:
                                 break
                             if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
-                                logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: not succeeded")
+                                logger.warning(
+                                    "Skipping critique/"
+                                    f"{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: "
+                                    f"not succeeded ({critique_status_details(crit_entry)})"
+                                )
                                 continue
                             verdict = final_critique_verdict(crit_entry)
                             if verdict in {None, CRITIQUE_VERDICT_UNKNOWN}:
-                                logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: unknown final verdict")
+                                logger.warning(
+                                    "Skipping critique/"
+                                    f"{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: "
+                                    f"unknown final verdict ({critique_status_details(crit_entry)})"
+                                )
                                 continue
                             if final_critique_verdict(crit_entry) == CRITIQUE_VERDICT_CORRECT:
-                                continue
-                            if idx >= len(answers):
                                 continue
                             debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                             existing = load_debate_entries(debate_path)
                             existing_keys = collect_debate_keys(existing)
-                            if len(existing) > idx and existing[idx]:
-                                continue
                             key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
+                            if not key:
+                                continue
                             if key and key in existing_keys:
+                                continue
+                            if not answer_map.get(key):
                                 continue
                             total_tasks += 1
                         if args.limit is not None and total_tasks >= args.limit:
@@ -800,15 +856,12 @@ def main():
                                 continue
                             if verdict == CRITIQUE_VERDICT_CORRECT:
                                 continue
-                            if idx >= len(answers):
-                                continue
-                            answer_entry = answers[idx]
-
-                            if len(existing) > idx and existing[idx]:
-                                continue
                             key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
+                            if not key:
+                                continue
                             if key and key in existing_keys:
                                 continue
+                            answer_entry = answer_map.get(key)
                             if not answer_entry:
                                 continue
                             answer_text = final_answer(answer_entry) or ""
@@ -832,9 +885,7 @@ def main():
                                     critic_model.reasoning,
                                     not args.no_allow_concede,
                                 )
-                                if len(existing) <= idx:
-                                    existing.extend([None for _ in range(idx - len(existing) + 1)])
-                                existing[idx] = DebateEntry(
+                                entry = DebateEntry(
                                     question=crit_entry.question,
                                     alice_model=critic_model.slug,
                                     bob_model=answer_model.slug,
@@ -844,6 +895,11 @@ def main():
                                     critic=critic_model.slug,
                                     history=history,
                                 )
+                                index = index_by_key(existing)
+                                if key in index:
+                                    existing[index[key]] = entry
+                                else:
+                                    existing.append(entry)
                                 save_debate_entries(debate_path, existing)
                                 if key:
                                     existing_keys.add(key)

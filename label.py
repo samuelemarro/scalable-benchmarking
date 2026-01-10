@@ -26,6 +26,47 @@ def _task_id(prefix: str, run_id: Optional[str], topic_slug: Optional[str], ques
     return f"{prefix}/unknown"
 
 
+def _digest_question(question: Optional[str]) -> Optional[str]:
+    if not question:
+        return None
+    return hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
+
+
+def _find_entry_by_run_id(entries: List, run_id: Optional[str]):
+    if run_id is None:
+        return None
+    run_id = str(run_id)
+    for entry in entries:
+        if not entry:
+            continue
+        if str(entry.run_id) == run_id:
+            return entry
+    return None
+
+
+def _find_entry_by_digest(entries: List, topic_slug: Optional[str], digest: Optional[str]):
+    if not topic_slug or not digest:
+        return None
+    for entry in entries:
+        if not entry or entry.topic_slug != topic_slug:
+            continue
+        if _digest_question(entry.question) == digest:
+            return entry
+    return None
+
+
+def _maybe_index_fallback(entries: List, idx_str: Optional[str]):
+    if idx_str is None:
+        return None
+    try:
+        idx = int(idx_str)
+    except ValueError:
+        return None
+    if 0 <= idx < len(entries):
+        return entries[idx]
+    return None
+
+
 def list_illposed(answers_dir: Path, debates_dir: Path) -> List[Dict]:
     items = []
     for q_dir in answers_dir.glob("*"):
@@ -165,35 +206,69 @@ def main():
 
     if args.show:
         key = args.show
-        if key.count("/") == 2:
+        parts = key.split("/")
+        critique_modes = {p.name for p in args.critiques_dir.glob("*") if p.is_dir()}
+        if parts[0] == "critique":
+            parts = parts[1:]
+        elif parts[0] == "illposed":
+            parts = parts[1:]
+
+        is_critique = parts[0] in critique_modes if parts else False
+        if not is_critique:
             # ill-posed
-            parts = key.split("/")
-            q_slug, a_slug, idx = parts[0], parts[1], int(parts[2])
+            if len(parts) < 3:
+                raise ValueError("Ill-posed key must look like qslug/aslug/run_id or qslug/aslug/topic/hash")
+            q_slug, a_slug = parts[0], parts[1]
+            run_id = parts[2] if len(parts) == 3 else None
+            topic_slug = parts[2] if len(parts) >= 4 else None
+            digest = parts[3] if len(parts) >= 4 else None
             answer_file = args.answers_dir / q_slug / f"{a_slug}.json"
             debate_file = args.debates_dir / "illposed" / q_slug / f"{a_slug}.json"
             answers = load_answer_entries(answer_file)
             debates = load_debate_entries(debate_file)
+            answer_record = _find_entry_by_run_id(answers, run_id) or _find_entry_by_digest(
+                answers, topic_slug, digest
+            )
+            if not answer_record and run_id:
+                answer_record = _maybe_index_fallback(answers, run_id)
+            debate_record = _find_entry_by_run_id(debates, run_id) or _find_entry_by_digest(
+                debates, topic_slug, digest
+            )
+            if not debate_record and run_id:
+                debate_record = _maybe_index_fallback(debates, run_id)
             item = {
                 "key": key,
-                "answer_record": answers[idx].model_dump(exclude_none=True) if idx < len(answers) and answers[idx] else {},
-                "debate": debates[idx].model_dump(exclude_none=True) if idx < len(debates) and debates[idx] else {},
+                "answer_record": answer_record.model_dump(exclude_none=True) if answer_record else {},
+                "debate": debate_record.model_dump(exclude_none=True) if debate_record else {},
             }
             show_item(item)
         else:
-            parts = key.split("/")
-            if len(parts) != 4:
-                raise ValueError("Critique key must look like mode/qslug/critic__answer/idx")
-            mode, q_slug, pair, idx_str = parts
+            # critique
+            if len(parts) < 4:
+                raise ValueError("Critique key must look like mode/qslug/critic__answer/run_id or mode/qslug/critic__answer/topic/hash")
+            mode, q_slug, pair = parts[0], parts[1], parts[2]
             critic_slug, answer_slug = pair.split("__")
-            idx = int(idx_str)
+            run_id = parts[3] if len(parts) == 4 else None
+            topic_slug = parts[3] if len(parts) >= 5 else None
+            digest = parts[4] if len(parts) >= 5 else None
             crit_file = args.critiques_dir / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
             debate_file = args.debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
             critiques = load_critique_entries(crit_file)
             debates = load_debate_entries(debate_file)
+            critique_record = _find_entry_by_run_id(critiques, run_id) or _find_entry_by_digest(
+                critiques, topic_slug, digest
+            )
+            if not critique_record and run_id:
+                critique_record = _maybe_index_fallback(critiques, run_id)
+            debate_record = _find_entry_by_run_id(debates, run_id) or _find_entry_by_digest(
+                debates, topic_slug, digest
+            )
+            if not debate_record and run_id:
+                debate_record = _maybe_index_fallback(debates, run_id)
             item = {
                 "key": key,
-                "critique_record": critiques[idx].model_dump(exclude_none=True) if idx < len(critiques) and critiques[idx] else {},
-                "debate": debates[idx].model_dump(exclude_none=True) if idx < len(debates) and debates[idx] else {},
+                "critique_record": critique_record.model_dump(exclude_none=True) if critique_record else {},
+                "debate": debate_record.model_dump(exclude_none=True) if debate_record else {},
             }
             show_item(item)
         return
