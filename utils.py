@@ -43,6 +43,7 @@ def setup_logging(level: str = "INFO") -> None:
     # Disable httpx logging at INFO level to reduce noise
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("httpcore").setLevel(logging.WARNING)
+    logging.getLogger("google_genai.models").setLevel(logging.WARNING)
 
 
 def load_json(path: Path, default):
