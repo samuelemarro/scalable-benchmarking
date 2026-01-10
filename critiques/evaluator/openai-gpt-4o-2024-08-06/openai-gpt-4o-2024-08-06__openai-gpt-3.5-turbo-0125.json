@@ -200,5 +200,805 @@
         }
       }
     ]
+  },
+  {
+    "question": "Let $A$ be a $3 \\times 3$ matrix with real entries such that $A^3 = I$, where $I$ is the $3 \\times 3$ identity matrix. Determine all possible eigenvalues of $A$ and prove your result.",
+    "run_id": "9",
+    "topic_slug": "linear_and_multilinear_algebra",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer correctly identifies that the eigenvalues of $A$ must satisfy $\\\\lambda^3 = 1$, but it fails to consider that $A$ is a real matrix. For a real matrix, complex eigenvalues must occur in conjugate pairs. The eigenvalues $e^{2\\\\pi i/3}$ and $e^{4\\\\pi i/3}$ are complex conjugates, so they can both be eigenvalues of $A$. However, the answer does not address the possibility of having repeated eigenvalues or the fact that the characteristic polynomial of a $3 \\\\times 3$ real matrix must have real coefficients. The answer should also consider the multiplicity of the eigenvalues and the fact that the sum of the eigenvalues (considering multiplicity) must be real.\",\n  \"suggestions\": \"Consider the constraints imposed by $A$ being a real matrix, such as the requirement for complex eigenvalues to occur in conjugate pairs. Discuss the possible combinations of the eigenvalues $1$, $e^{2\\\\pi i/3}$, and $e^{4\\\\pi i/3}$ that satisfy these conditions, and ensure the characteristic polynomial has real coefficients.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer correctly identifies that the eigenvalues of $A$ must satisfy $\\\\lambda^3 = 1$, but it fails to consider that $A$ is a real matrix. For a real matrix, complex eigenvalues must occur in conjugate pairs. The eigenvalues $e^{2\\\\pi i/3}$ and $e^{4\\\\pi i/3}$ are complex conjugates, so they can both be eigenvalues of $A$. However, the answer does not address the possibility of having repeated eigenvalues or the fact that the characteristic polynomial of a $3 \\\\times 3$ real matrix must have real coefficients. The answer should also consider the multiplicity of the eigenvalues and the fact that the sum of the eigenvalues (considering multiplicity) must be real.\",\n  \"suggestions\": \"Consider the constraints imposed by $A$ being a real matrix, such as the requirement for complex eigenvalues to occur in conjugate pairs. Discuss the possible combinations of the eigenvalues $1$, $e^{2\\\\pi i/3}$, and $e^{4\\\\pi i/3}$ that satisfy these conditions, and ensure the characteristic polynomial has real coefficients.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer correctly identifies that the eigenvalues of $A$ must satisfy $\\lambda^3 = 1$, but it fails to consider that $A$ is a real matrix. For a real matrix, complex eigenvalues must occur in conjugate pairs. The eigenvalues $e^{2\\pi i/3}$ and $e^{4\\pi i/3}$ are complex conjugates, so they can both be eigenvalues of $A$. However, the answer does not address the possibility of having repeated eigenvalues or the fact that the characteristic polynomial of a $3 \\times 3$ real matrix must have real coefficients. The answer should also consider the multiplicity of the eigenvalues and the fact that the sum of the eigenvalues (considering multiplicity) must be real.",
+        "suggestions": "Consider the constraints imposed by $A$ being a real matrix, such as the requirement for complex eigenvalues to occur in conjugate pairs. Discuss the possible combinations of the eigenvalues $1$, $e^{2\\pi i/3}$, and $e^{4\\pi i/3}$ that satisfy these conditions, and ensure the characteristic polynomial has real coefficients.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a commutative ring with unity, and let $I$ and $J$ be ideals of $R$. Define the product of $I$ and $J$, denoted $IJ$, as the set of all finite sums of elements of the form $ab$ where $a \\in I$ and $b \\in J$. Prove that $IJ$ is an ideal of $R$.",
+    "run_id": "10",
+    "topic_slug": "associative_rings_and_algebras",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof contains a mistake in the closure under addition step. The expression $x + y = (a_1b_1 + c_1d_1) + (a_2b_2 + c_2d_2) + \\ldots + (a_nb_n + c_md_m)$ is incorrect because it assumes $m = n$ and pairs terms incorrectly. The correct approach is to consider $x + y = (a_1b_1 + a_2b_2 + \\ldots + a_nb_n) + (c_1d_1 + c_2d_2 + \\ldots + c_md_m)$ as a single sum of terms of the form $a_ib_i$ and $c_jd_j$, which are all in $IJ$. The absorption of products step is correct.\",\n  \"suggestions\": \"Correct the closure under addition step by properly handling the sums $x$ and $y$ as a single sum of terms of the form $a_ib_i$ and $c_jd_j$, without assuming $m = n$ or pairing terms incorrectly.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof contains a mistake in the closure under addition step. The expression $x + y = (a_1b_1 + c_1d_1) + (a_2b_2 + c_2d_2) + \\ldots + (a_nb_n + c_md_m)$ is incorrect because it assumes $m = n$ and pairs terms incorrectly. The correct approach is to consider $x + y = (a_1b_1 + a_2b_2 + \\ldots + a_nb_n) + (c_1d_1 + c_2d_2 + \\ldots + c_md_m)$ as a single sum of terms of the form $a_ib_i$ and $c_jd_j$, which are all in $IJ$. The absorption of products step is correct.\",\n  \"suggestions\": \"Correct the closure under addition step by properly handling the sums $x$ and $y$ as a single sum of terms of the form $a_ib_i$ and $c_jd_j$, without assuming $m = n$ or pairing terms incorrectly.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The proof contains a mistake in the closure under addition step. The expression $x + y = (a_1b_1 + c_1d_1) + (a_2b_2 + c_2d_2) + \\ldots + (a_nb_n + c_md_m)$ is incorrect because it assumes $m = n$ and pairs terms incorrectly. The correct approach is to consider $x + y = (a_1b_1 + a_2b_2 + \\ldots + a_nb_n) + (c_1d_1 + c_2d_2 + \\ldots + c_md_m)$ as a single sum of terms of the form $a_ib_i$ and $c_jd_j$, which are all in $IJ$. The absorption of products step is correct.",
+        "suggestions": "Correct the closure under addition step by properly handling the sums $x$ and $y$ as a single sum of terms of the form $a_ib_i$ and $c_jd_j$, without assuming $m = n$ or pairing terms incorrectly.",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "The critique incorrectly identifies an error in the closure under addition step. The original proof correctly handles the sums $x$ and $y$ as a single sum of terms of the form $a_ib_i$ and $c_jd_j$, without assuming $m = n$ or pairing terms incorrectly.",
+            "The critique suggests a correction that is unnecessary because the original proof is already correct in its handling of closure under addition."
+          ],
+          "improvements": "Re-evaluate the original proof's closure under addition step. Confirm that the proof correctly handles the sums $x$ and $y$ as a single sum of terms of the form $a_ib_i$ and $c_jd_j$, and that it does not assume $m = n$ or pair terms incorrectly. Adjust the critique to reflect the correctness of the original proof in this aspect."
+        }
+      },
+      {
+        "round": 2,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof contains a mistake in the closure under addition step. The expression $x + y = (a_1b_1 + c_1d_1) + (a_2b_2 + c_2d_2) + \\ldots + (a_nb_n + c_md_m)$ is incorrect because it assumes $m = n$ and pairs terms incorrectly. The correct approach is to consider $x + y = (a_1b_1 + a_2b_2 + \\ldots + a_nb_n) + (c_1d_1 + c_2d_2 + \\ldots + c_md_m)$ as a single sum of terms of the form $a_ib_i$ and $c_jd_j$, which are all in $IJ$. The absorption of products step is correct.\",\n  \"suggestions\": \"Correct the closure under addition step by properly handling the sums $x$ and $y$ as a single sum of terms of the form $a_ib_i$ and $c_jd_j$, without assuming $m = n$ or pairing terms incorrectly.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof contains a mistake in the closure under addition step. The expression $x + y = (a_1b_1 + c_1d_1) + (a_2b_2 + c_2d_2) + \\ldots + (a_nb_n + c_md_m)$ is incorrect because it assumes $m = n$ and pairs terms incorrectly. The correct approach is to consider $x + y = (a_1b_1 + a_2b_2 + \\ldots + a_nb_n) + (c_1d_1 + c_2d_2 + \\ldots + c_md_m)$ as a single sum of terms of the form $a_ib_i$ and $c_jd_j$, which are all in $IJ$. The absorption of products step is correct.\",\n  \"suggestions\": \"Correct the closure under addition step by properly handling the sums $x$ and $y$ as a single sum of terms of the form $a_ib_i$ and $c_jd_j$, without assuming $m = n$ or pairing terms incorrectly.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The proof contains a mistake in the closure under addition step. The expression $x + y = (a_1b_1 + c_1d_1) + (a_2b_2 + c_2d_2) + \\ldots + (a_nb_n + c_md_m)$ is incorrect because it assumes $m = n$ and pairs terms incorrectly. The correct approach is to consider $x + y = (a_1b_1 + a_2b_2 + \\ldots + a_nb_n) + (c_1d_1 + c_2d_2 + \\ldots + c_md_m)$ as a single sum of terms of the form $a_ib_i$ and $c_jd_j$, which are all in $IJ$. The absorption of products step is correct.",
+        "suggestions": "Correct the closure under addition step by properly handling the sums $x$ and $y$ as a single sum of terms of the form $a_ib_i$ and $c_jd_j$, without assuming $m = n$ or pairing terms incorrectly.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $A$ be a nonassociative algebra over the field $\\mathbb{R}$ with a basis $\\{e_1, e_2, e_3\\}$. The multiplication in $A$ is defined by the following rules:\n\n1. $e_1 e_1 = e_2$,\n2. $e_1 e_2 = e_3$,\n3. $e_2 e_1 = -e_3$,\n4. $e_2 e_2 = e_1$,\n5. $e_3 e_1 = e_1$,\n6. $e_3 e_2 = e_2$,\n7. $e_3 e_3 = e_3$.\n\nDetermine whether $A$ is a Lie algebra. If it is, find the dimension of its center. If it is not, provide a reason why it fails to be a Lie algebra.",
+    "run_id": "11",
+    "topic_slug": "nonassociative_rings_and_algebras",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains errors in the computation of the Lie brackets and the verification of the Jacobi identity. Specifically, the calculation of $[e_2, e_1]$ is incorrect; it should be $[e_2, e_1] = e_2 e_1 - e_1 e_2 = -e_3 - e_3 = -2e_3$, not $2e_1$. Additionally, the Jacobi identity is not verified for all combinations of basis elements, and the claim that $e_1$ is in the center is incorrect because $[e_1, e_2] = e_3 \\\\neq 0$. Therefore, the conclusion that $A$ is a Lie algebra is incorrect.\",\n  \"suggestions\": \"Recompute the Lie brackets correctly and verify the Jacobi identity for all combinations of basis elements. Check the conditions for an element to be in the center of a Lie algebra correctly.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains errors in the computation of the Lie brackets and the verification of the Jacobi identity. Specifically, the calculation of $[e_2, e_1]$ is incorrect; it should be $[e_2, e_1] = e_2 e_1 - e_1 e_2 = -e_3 - e_3 = -2e_3$, not $2e_1$. Additionally, the Jacobi identity is not verified for all combinations of basis elements, and the claim that $e_1$ is in the center is incorrect because $[e_1, e_2] = e_3 \\\\neq 0$. Therefore, the conclusion that $A$ is a Lie algebra is incorrect.\",\n  \"suggestions\": \"Recompute the Lie brackets correctly and verify the Jacobi identity for all combinations of basis elements. Check the conditions for an element to be in the center of a Lie algebra correctly.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer contains errors in the computation of the Lie brackets and the verification of the Jacobi identity. Specifically, the calculation of $[e_2, e_1]$ is incorrect; it should be $[e_2, e_1] = e_2 e_1 - e_1 e_2 = -e_3 - e_3 = -2e_3$, not $2e_1$. Additionally, the Jacobi identity is not verified for all combinations of basis elements, and the claim that $e_1$ is in the center is incorrect because $[e_1, e_2] = e_3 \\neq 0$. Therefore, the conclusion that $A$ is a Lie algebra is incorrect.",
+        "suggestions": "Recompute the Lie brackets correctly and verify the Jacobi identity for all combinations of basis elements. Check the conditions for an element to be in the center of a Lie algebra correctly.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathcal{A}$ be an abelian category, and consider the following short exact sequence of objects in $\\mathcal{A}$:\n\n$$ 0 \\to A \\xrightarrow{f} B \\xrightarrow{g} C \\to 0. $$\n\nAssume that $C$ is a projective object in $\\mathcal{A}$. Prove that the sequence splits, i.e., show that there exists a morphism $h: C \\to B$ such that $g \\circ h = \\text{id}_C$.",
+    "run_id": "12",
+    "topic_slug": "category_theory_and_homological_algebra",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly claims that the sequence splits because $C$ is projective, without providing a valid argument. The answer states 'Since $C$ is projective, the morphism $g: B \\\\to C$ splits,' but this is not a valid justification. The correct reasoning should involve using the projective property of $C$ to lift the identity morphism $\\\\text{id}_C: C \\\\to C$ through $g: B \\\\to C$. Specifically, since $C$ is projective, there exists a morphism $h: C \\\\to B$ such that $g \\\\circ h = \\\\text{id}_C$, which is the definition of a split sequence. The answer fails to explicitly construct or justify the existence of such an $h$ using the projective property.\",\n  \"suggestions\": \"To correct the answer, explicitly use the projective property of $C$ to construct the morphism $h: C \\\\to B$. Show that because $C$ is projective, the identity morphism $\\\\text{id}_C: C \\\\to C$ can be lifted through $g: B \\\\to C$, resulting in a morphism $h: C \\\\to B$ such that $g \\\\circ h = \\\\text{id}_C$. This demonstrates that the sequence splits.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly claims that the sequence splits because $C$ is projective, without providing a valid argument. The answer states 'Since $C$ is projective, the morphism $g: B \\\\to C$ splits,' but this is not a valid justification. The correct reasoning should involve using the projective property of $C$ to lift the identity morphism $\\\\text{id}_C: C \\\\to C$ through $g: B \\\\to C$. Specifically, since $C$ is projective, there exists a morphism $h: C \\\\to B$ such that $g \\\\circ h = \\\\text{id}_C$, which is the definition of a split sequence. The answer fails to explicitly construct or justify the existence of such an $h$ using the projective property.\",\n  \"suggestions\": \"To correct the answer, explicitly use the projective property of $C$ to construct the morphism $h: C \\\\to B$. Show that because $C$ is projective, the identity morphism $\\\\text{id}_C: C \\\\to C$ can be lifted through $g: B \\\\to C$, resulting in a morphism $h: C \\\\to B$ such that $g \\\\circ h = \\\\text{id}_C$. This demonstrates that the sequence splits.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly claims that the sequence splits because $C$ is projective, without providing a valid argument. The answer states 'Since $C$ is projective, the morphism $g: B \\to C$ splits,' but this is not a valid justification. The correct reasoning should involve using the projective property of $C$ to lift the identity morphism $\\text{id}_C: C \\to C$ through $g: B \\to C$. Specifically, since $C$ is projective, there exists a morphism $h: C \\to B$ such that $g \\circ h = \\text{id}_C$, which is the definition of a split sequence. The answer fails to explicitly construct or justify the existence of such an $h$ using the projective property.",
+        "suggestions": "To correct the answer, explicitly use the projective property of $C$ to construct the morphism $h: C \\to B$. Show that because $C$ is projective, the identity morphism $\\text{id}_C: C \\to C$ can be lifted through $g: B \\to C$, resulting in a morphism $h: C \\to B$ such that $g \\circ h = \\text{id}_C$. This demonstrates that the sequence splits.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a compact Hausdorff space, and let $C(X, \\mathbb{C})$ denote the algebra of continuous complex-valued functions on $X$. Consider the vector bundle $E \\to X$ associated with a projection $p \\in M_n(C(X, \\mathbb{C}))$, where $M_n(C(X, \\mathbb{C}))$ is the algebra of $n \\times n$ matrices with entries in $C(X, \\mathbb{C})$. \n\nSuppose $p$ is a projection such that $p^2 = p$ and $p^* = p$. The K-theory group $K^0(X)$ is defined as the Grothendieck group of isomorphism classes of vector bundles over $X$. \n\nProve that the class $[E]$ in $K^0(X)$ is independent of the choice of the projection $p$ within its homotopy class. In other words, if $p_t \\in M_n(C(X, \\mathbb{C}))$ is a continuous family of projections with $p_0 = p$ and $p_1 = q$, then $[E_p] = [E_q]$ in $K^0(X)$.",
+    "run_id": "13",
+    "topic_slug": "k_theory",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly identifies the need to use the homotopy invariance property of $K$-theory to show that $[E_p] = [E_q]$ in $K^0(X)$. However, it lacks a detailed explanation of why the homotopy invariance property applies in this context. Specifically, it does not explain how the continuous family of projections $p_t$ induces a continuous family of vector bundles, nor does it explicitly state the connection between the homotopy of projections and the isomorphism classes of vector bundles. The answer assumes the reader is familiar with these concepts without providing the necessary justification.\",\n  \"suggestions\": \"Provide a more detailed explanation of how the continuous family of projections $p_t$ leads to a continuous family of vector bundles, and explicitly state the homotopy invariance property of $K$-theory that is being used. This would involve explaining how the homotopy of projections translates into an isomorphism of vector bundles over $X$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly identifies the need to use the homotopy invariance property of $K$-theory to show that $[E_p] = [E_q]$ in $K^0(X)$. However, it lacks a detailed explanation of why the homotopy invariance property applies in this context. Specifically, it does not explain how the continuous family of projections $p_t$ induces a continuous family of vector bundles, nor does it explicitly state the connection between the homotopy of projections and the isomorphism classes of vector bundles. The answer assumes the reader is familiar with these concepts without providing the necessary justification.\",\n  \"suggestions\": \"Provide a more detailed explanation of how the continuous family of projections $p_t$ leads to a continuous family of vector bundles, and explicitly state the homotopy invariance property of $K$-theory that is being used. This would involve explaining how the homotopy of projections translates into an isomorphism of vector bundles over $X$.\"\n}\n```",
+        "verdict": "insufficient",
+        "notes": "The answer correctly identifies the need to use the homotopy invariance property of $K$-theory to show that $[E_p] = [E_q]$ in $K^0(X)$. However, it lacks a detailed explanation of why the homotopy invariance property applies in this context. Specifically, it does not explain how the continuous family of projections $p_t$ induces a continuous family of vector bundles, nor does it explicitly state the connection between the homotopy of projections and the isomorphism classes of vector bundles. The answer assumes the reader is familiar with these concepts without providing the necessary justification.",
+        "suggestions": "Provide a more detailed explanation of how the continuous family of projections $p_t$ leads to a continuous family of vector bundles, and explicitly state the homotopy invariance property of $K$-theory that is being used. This would involve explaining how the homotopy of projections translates into an isomorphism of vector bundles over $X$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a finite group of order 56. Prove that $G$ has a normal subgroup of order 7.",
+    "run_id": "14",
+    "topic_slug": "group_theory_and_generalizations",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies the Sylow theorems to determine the number of Sylow 7-subgroups in a group of order 56. It correctly identifies that the number of such subgroups, $n_7$, must divide 56 and be congruent to 1 modulo 7. The only value that satisfies these conditions is $n_7 = 1$, indicating a unique Sylow 7-subgroup, which must be normal. The reasoning is sound and complete.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies the Sylow theorems to determine the number of Sylow 7-subgroups in a group of order 56. It correctly identifies that the number of such subgroups, $n_7$, must divide 56 and be congruent to 1 modulo 7. The only value that satisfies these conditions is $n_7 = 1$, indicating a unique Sylow 7-subgroup, which must be normal. The reasoning is sound and complete.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies the Sylow theorems to determine the number of Sylow 7-subgroups in a group of order 56. It correctly identifies that the number of such subgroups, $n_7$, must divide 56 and be congruent to 1 modulo 7. The only value that satisfies these conditions is $n_7 = 1$, indicating a unique Sylow 7-subgroup, which must be normal. The reasoning is sound and complete.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a connected Lie group and let $H$ be a closed subgroup of $G$. Prove that the quotient space $G/H$ is a smooth manifold. Furthermore, determine the dimension of $G/H$ in terms of the dimensions of $G$ and $H$.",
+    "run_id": "15",
+    "topic_slug": "topological_groups_and_lie_groups",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly claims that the map $\\\\phi: G \\\\to G/H$ is smooth. The map $\\\\phi$ is actually the canonical projection, which is continuous but not smooth in the sense of Lie group homomorphisms. The correct approach involves showing that $G/H$ can be given a smooth structure by using the fact that $H$ is a closed subgroup, which allows $G/H$ to inherit a smooth manifold structure from $G$. The answer also fails to explicitly construct an atlas or demonstrate the smoothness of transition maps. Additionally, the proof does not adequately justify why $G/H$ is a smooth manifold, as it does not address the local triviality of the bundle $G \\\\to G/H$.\",\n  \"suggestions\": \"To correct the answer, explicitly construct an atlas for $G/H$ using local sections or charts from $G$ that respect the quotient topology. Show that the transition maps are smooth. Use the fact that $H$ is closed to argue that $G/H$ is a smooth manifold. Ensure that the smooth structure is well-defined by verifying the local triviality of the bundle $G \\\\to G/H$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly claims that the map $\\\\phi: G \\\\to G/H$ is smooth. The map $\\\\phi$ is actually the canonical projection, which is continuous but not smooth in the sense of Lie group homomorphisms. The correct approach involves showing that $G/H$ can be given a smooth structure by using the fact that $H$ is a closed subgroup, which allows $G/H$ to inherit a smooth manifold structure from $G$. The answer also fails to explicitly construct an atlas or demonstrate the smoothness of transition maps. Additionally, the proof does not adequately justify why $G/H$ is a smooth manifold, as it does not address the local triviality of the bundle $G \\\\to G/H$.\",\n  \"suggestions\": \"To correct the answer, explicitly construct an atlas for $G/H$ using local sections or charts from $G$ that respect the quotient topology. Show that the transition maps are smooth. Use the fact that $H$ is closed to argue that $G/H$ is a smooth manifold. Ensure that the smooth structure is well-defined by verifying the local triviality of the bundle $G \\\\to G/H$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly claims that the map $\\phi: G \\to G/H$ is smooth. The map $\\phi$ is actually the canonical projection, which is continuous but not smooth in the sense of Lie group homomorphisms. The correct approach involves showing that $G/H$ can be given a smooth structure by using the fact that $H$ is a closed subgroup, which allows $G/H$ to inherit a smooth manifold structure from $G$. The answer also fails to explicitly construct an atlas or demonstrate the smoothness of transition maps. Additionally, the proof does not adequately justify why $G/H$ is a smooth manifold, as it does not address the local triviality of the bundle $G \\to G/H$.",
+        "suggestions": "To correct the answer, explicitly construct an atlas for $G/H$ using local sections or charts from $G$ that respect the quotient topology. Show that the transition maps are smooth. Use the fact that $H$ is closed to argue that $G/H$ is a smooth manifold. Ensure that the smooth structure is well-defined by verifying the local triviality of the bundle $G \\to G/H$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a continuous function such that for all $x \\in \\mathbb{R}$, $f(x) = f(x^2)$. Prove that $f$ is a constant function.",
+    "run_id": "16",
+    "topic_slug": "real_functions",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof contains logical errors and incorrect reasoning. The argument incorrectly uses the concept of preimages of open sets and does not properly utilize the given condition $f(x) = f(x^2)$ to show that $f$ is constant. The statement 'b \\\\in f^{-1}(U) but b \\\\notin f^{-1}(U)' is contradictory and does not make sense. The proof does not correctly apply the properties of continuous functions or the given functional equation to reach the conclusion.\",\n  \"suggestions\": \"To prove that $f$ is constant, consider the implications of $f(x) = f(x^2)$ for different values of $x$. For example, consider $x = 0$ and $x = 1$, and use the fact that $f(x) = f(x^2)$ implies $f(x) = f(x^{2^n})$ for any $n$. Use the continuity of $f$ to argue that $f$ must be constant on the entire real line.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof contains logical errors and incorrect reasoning. The argument incorrectly uses the concept of preimages of open sets and does not properly utilize the given condition $f(x) = f(x^2)$ to show that $f$ is constant. The statement 'b \\\\in f^{-1}(U) but b \\\\notin f^{-1}(U)' is contradictory and does not make sense. The proof does not correctly apply the properties of continuous functions or the given functional equation to reach the conclusion.\",\n  \"suggestions\": \"To prove that $f$ is constant, consider the implications of $f(x) = f(x^2)$ for different values of $x$. For example, consider $x = 0$ and $x = 1$, and use the fact that $f(x) = f(x^2)$ implies $f(x) = f(x^{2^n})$ for any $n$. Use the continuity of $f$ to argue that $f$ must be constant on the entire real line.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The proof contains logical errors and incorrect reasoning. The argument incorrectly uses the concept of preimages of open sets and does not properly utilize the given condition $f(x) = f(x^2)$ to show that $f$ is constant. The statement 'b \\in f^{-1}(U) but b \\notin f^{-1}(U)' is contradictory and does not make sense. The proof does not correctly apply the properties of continuous functions or the given functional equation to reach the conclusion.",
+        "suggestions": "To prove that $f$ is constant, consider the implications of $f(x) = f(x^2)$ for different values of $x$. For example, consider $x = 0$ and $x = 1$, and use the fact that $f(x) = f(x^2)$ implies $f(x) = f(x^{2^n})$ for any $n$. Use the continuity of $f$ to argue that $f$ must be constant on the entire real line.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: [0, 1] \\to \\mathbb{R}$ be a Lebesgue integrable function such that $\\int_0^1 f(x) \\, dx = 0$. Prove that for any $\\epsilon > 0$, there exists a measurable set $E \\subseteq [0, 1]$ with measure $m(E) < \\epsilon$ such that $\\int_{[0, 1] \\setminus E} f(x) \\, dx = 0$.",
+    "run_id": "17",
+    "topic_slug": "measure_and_integration",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly claims that $m(E) = 0$ for the set $E = \\\\{x \\\\in [0, 1] : g(x) > 0\\\\}$, where $g(x) = \\\\max\\\\{f(x), 0\\\\}$. The argument that $m(E) = 0$ is flawed because it assumes that the integral of $g(x)$ being zero implies the measure of the set where $g(x) > 0$ is zero, which is not necessarily true. The solution does not address how to ensure $m(E) < \\\\epsilon$ for any given $\\\\epsilon > 0$. The proof needs to construct a set $E$ with the desired properties, possibly using the properties of the function $f$ and its integral.\",\n  \"suggestions\": \"To correct the solution, consider using the fact that $\\\\int_0^1 f(x) \\\\, dx = 0$ implies that the positive and negative parts of $f$ must balance out. Use this to construct a set $E$ with small measure such that the integral over the complement is zero. This might involve considering the sets where $f(x)$ is positive and negative separately and using the integrability of $f$ to control the measure of $E$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly claims that $m(E) = 0$ for the set $E = \\\\{x \\\\in [0, 1] : g(x) > 0\\\\}$, where $g(x) = \\\\max\\\\{f(x), 0\\\\}$. The argument that $m(E) = 0$ is flawed because it assumes that the integral of $g(x)$ being zero implies the measure of the set where $g(x) > 0$ is zero, which is not necessarily true. The solution does not address how to ensure $m(E) < \\\\epsilon$ for any given $\\\\epsilon > 0$. The proof needs to construct a set $E$ with the desired properties, possibly using the properties of the function $f$ and its integral.\",\n  \"suggestions\": \"To correct the solution, consider using the fact that $\\\\int_0^1 f(x) \\\\, dx = 0$ implies that the positive and negative parts of $f$ must balance out. Use this to construct a set $E$ with small measure such that the integral over the complement is zero. This might involve considering the sets where $f(x)$ is positive and negative separately and using the integrability of $f$ to control the measure of $E$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly claims that $m(E) = 0$ for the set $E = \\{x \\in [0, 1] : g(x) > 0\\}$, where $g(x) = \\max\\{f(x), 0\\}$. The argument that $m(E) = 0$ is flawed because it assumes that the integral of $g(x)$ being zero implies the measure of the set where $g(x) > 0$ is zero, which is not necessarily true. The solution does not address how to ensure $m(E) < \\epsilon$ for any given $\\epsilon > 0$. The proof needs to construct a set $E$ with the desired properties, possibly using the properties of the function $f$ and its integral.",
+        "suggestions": "To correct the solution, consider using the fact that $\\int_0^1 f(x) \\, dx = 0$ implies that the positive and negative parts of $f$ must balance out. Use this to construct a set $E$ with small measure such that the integral over the complement is zero. This might involve considering the sets where $f(x)$ is positive and negative separately and using the integrability of $f$ to control the measure of $E$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f(z) = z^3 - 3z + 2$ be a polynomial function of a complex variable $z$. Determine all the roots of $f(z)$ in the complex plane.",
+    "run_id": "18",
+    "topic_slug": "functions_of_a_complex_variable",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly states that the roots of the polynomial $f(z) = z^3 - 3z + 2$ are $z = -2, 1, 1$. The factorization step is incorrect. The polynomial $z^3 - 3z + 2$ does not factor as $(z - 1)(z^2 + z - 2)$. The correct factorization should be $(z - 1)^2(z + 2)$, leading to the roots $z = 1, 1, -2$. The answer also incorrectly lists $z = 1$ twice as a result of the quadratic solution, which is not applicable here.\",\n  \"suggestions\": \"Re-evaluate the factorization of the polynomial $z^3 - 3z + 2$. Verify the factorization by checking the roots and ensure the correct multiplicity of each root is considered.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly states that the roots of the polynomial $f(z) = z^3 - 3z + 2$ are $z = -2, 1, 1$. The factorization step is incorrect. The polynomial $z^3 - 3z + 2$ does not factor as $(z - 1)(z^2 + z - 2)$. The correct factorization should be $(z - 1)^2(z + 2)$, leading to the roots $z = 1, 1, -2$. The answer also incorrectly lists $z = 1$ twice as a result of the quadratic solution, which is not applicable here.\",\n  \"suggestions\": \"Re-evaluate the factorization of the polynomial $z^3 - 3z + 2$. Verify the factorization by checking the roots and ensure the correct multiplicity of each root is considered.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly states that the roots of the polynomial $f(z) = z^3 - 3z + 2$ are $z = -2, 1, 1$. The factorization step is incorrect. The polynomial $z^3 - 3z + 2$ does not factor as $(z - 1)(z^2 + z - 2)$. The correct factorization should be $(z - 1)^2(z + 2)$, leading to the roots $z = 1, 1, -2$. The answer also incorrectly lists $z = 1$ twice as a result of the quadratic solution, which is not applicable here.",
+        "suggestions": "Re-evaluate the factorization of the polynomial $z^3 - 3z + 2$. Verify the factorization by checking the roots and ensure the correct multiplicity of each root is considered.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $D$ be the open unit disk in the complex plane, i.e., $D = \\{ z \\in \\mathbb{C} : |z| < 1 \\}$. Consider the function $u: D \\to \\mathbb{R}$ defined by\n\n$$ u(z) = \\log \\left( \\frac{1}{1 - |z|^2} \\right). $$\n\nProve that $u$ is a harmonic function on $D$. Furthermore, determine whether $u$ can be extended to a harmonic function on the closed unit disk $\\overline{D} = \\{ z \\in \\mathbb{C} : |z| \\leq 1 \\}$.",
+    "run_id": "19",
+    "topic_slug": "potential_theory",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly shows that the function $u(z) = \\\\log \\\\left( \\\\frac{1}{1 - |z|^2} \\\\right)$ is harmonic on the open unit disk $D$ by verifying that the Laplacian $\\\\Delta u = 0$. The partial derivatives are computed correctly, and the conclusion that $u$ is harmonic follows from the calculation. The answer also correctly identifies that $u$ cannot be extended to the closed unit disk $\\\\overline{D}$ because $u$ becomes unbounded as $|z|$ approaches 1, making it discontinuous on the boundary.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly shows that the function $u(z) = \\\\log \\\\left( \\\\frac{1}{1 - |z|^2} \\\\right)$ is harmonic on the open unit disk $D$ by verifying that the Laplacian $\\\\Delta u = 0$. The partial derivatives are computed correctly, and the conclusion that $u$ is harmonic follows from the calculation. The answer also correctly identifies that $u$ cannot be extended to the closed unit disk $\\\\overline{D}$ because $u$ becomes unbounded as $|z|$ approaches 1, making it discontinuous on the boundary.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly shows that the function $u(z) = \\log \\left( \\frac{1}{1 - |z|^2} \\right)$ is harmonic on the open unit disk $D$ by verifying that the Laplacian $\\Delta u = 0$. The partial derivatives are computed correctly, and the conclusion that $u$ is harmonic follows from the calculation. The answer also correctly identifies that $u$ cannot be extended to the closed unit disk $\\overline{D}$ because $u$ becomes unbounded as $|z|$ approaches 1, making it discontinuous on the boundary.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{C}^2 \\to \\mathbb{C}$ be a holomorphic function defined by $f(z_1, z_2) = z_1^2 + z_2^2 - 1$. Consider the set $V = \\{ (z_1, z_2) \\in \\mathbb{C}^2 \\mid f(z_1, z_2) = 0 \\}$, which is an analytic variety in $\\mathbb{C}^2$. Determine whether $V$ is irreducible, and if it is not, find its irreducible components.",
+    "run_id": "20",
+    "topic_slug": "several_complex_variables_and_analytic_spaces",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly describes the set $V$ as a circle in the complex plane. In $\\mathbb{C}^2$, the equation $z_1^2 + z_2^2 = 1$ defines a more complex structure than a simple circle. The reasoning that $V$ is irreducible because a circle is a simple closed curve is flawed, as it misinterprets the geometry in $\\mathbb{C}^2$. The irreducibility of $V$ should be analyzed in terms of algebraic geometry, considering whether $f(z_1, z_2)$ can be factored into non-trivial holomorphic functions, which the answer does not address.\",\n  \"suggestions\": \"Re-evaluate the irreducibility of $V$ by considering the factorization of $f(z_1, z_2) = z_1^2 + z_2^2 - 1$ in the ring of holomorphic functions. Check if $f$ can be expressed as a product of non-constant holomorphic functions, which would indicate reducibility.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly describes the set $V$ as a circle in the complex plane. In $\\mathbb{C}^2$, the equation $z_1^2 + z_2^2 = 1$ defines a more complex structure than a simple circle. The reasoning that $V$ is irreducible because a circle is a simple closed curve is flawed, as it misinterprets the geometry in $\\mathbb{C}^2$. The irreducibility of $V$ should be analyzed in terms of algebraic geometry, considering whether $f(z_1, z_2)$ can be factored into non-trivial holomorphic functions, which the answer does not address.\",\n  \"suggestions\": \"Re-evaluate the irreducibility of $V$ by considering the factorization of $f(z_1, z_2) = z_1^2 + z_2^2 - 1$ in the ring of holomorphic functions. Check if $f$ can be expressed as a product of non-constant holomorphic functions, which would indicate reducibility.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly describes the set $V$ as a circle in the complex plane. In $\\mathbb{C}^2$, the equation $z_1^2 + z_2^2 = 1$ defines a more complex structure than a simple circle. The reasoning that $V$ is irreducible because a circle is a simple closed curve is flawed, as it misinterprets the geometry in $\\mathbb{C}^2$. The irreducibility of $V$ should be analyzed in terms of algebraic geometry, considering whether $f(z_1, z_2)$ can be factored into non-trivial holomorphic functions, which the answer does not address.",
+        "suggestions": "Re-evaluate the irreducibility of $V$ by considering the factorization of $f(z_1, z_2) = z_1^2 + z_2^2 - 1$ in the ring of holomorphic functions. Check if $f$ can be expressed as a product of non-constant holomorphic functions, which would indicate reducibility.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the Gamma function $\\Gamma(z)$, which is defined for complex numbers $z$ with $\\Re(z) > 0$ by the integral\n\n$$ \\Gamma(z) = \\int_0^\\infty t^{z-1} e^{-t} \\, dt. $$\n\nThe Gamma function satisfies the functional equation $\\Gamma(z+1) = z\\Gamma(z)$ and is related to the factorial by $\\Gamma(n) = (n-1)!$ for natural numbers $n$. \n\nProve that for any positive integer $n$, the following identity holds:\n\n$$ \\Gamma\\left(\\frac{1}{2}\\right) \\Gamma\\left(n + \\frac{1}{2}\\right) = \\frac{(2n-1)!! \\sqrt{\\pi}}{2^n}, $$\n\nwhere $(2n-1)!!$ denotes the double factorial, defined as the product of all odd numbers up to $(2n-1)$.",
+    "run_id": "21",
+    "topic_slug": "special_functions",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains several errors in the manipulation of the Gamma function and the integrals. In step 2, the product of the integrals is incorrectly combined into a single integral, which is not valid. The expression for $\\\\Gamma\\\\left(n + \\\\frac{1}{2}\\\\right)$ is also incorrect; it should be $\\\\int_0^\\\\infty t^{n-1/2} e^{-t} \\\\, dt$. The change of variables in step 5 is incorrectly applied, and the subsequent steps do not correctly derive the double factorial expression. The final expression for the double factorial is not properly justified or derived from the given steps.\",\n  \"suggestions\": \"Correct the expression for $\\\\Gamma\\\\left(n + \\\\frac{1}{2}\\\\right)$ and ensure the product of integrals is handled correctly. Use the known result $\\\\Gamma\\\\left(\\\\frac{1}{2}\\\\right) = \\\\sqrt{\\\\pi}$ and apply the functional equation of the Gamma function to derive the correct expression for the double factorial. Ensure all steps are mathematically valid and justified.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains several errors in the manipulation of the Gamma function and the integrals. In step 2, the product of the integrals is incorrectly combined into a single integral, which is not valid. The expression for $\\\\Gamma\\\\left(n + \\\\frac{1}{2}\\\\right)$ is also incorrect; it should be $\\\\int_0^\\\\infty t^{n-1/2} e^{-t} \\\\, dt$. The change of variables in step 5 is incorrectly applied, and the subsequent steps do not correctly derive the double factorial expression. The final expression for the double factorial is not properly justified or derived from the given steps.\",\n  \"suggestions\": \"Correct the expression for $\\\\Gamma\\\\left(n + \\\\frac{1}{2}\\\\right)$ and ensure the product of integrals is handled correctly. Use the known result $\\\\Gamma\\\\left(\\\\frac{1}{2}\\\\right) = \\\\sqrt{\\\\pi}$ and apply the functional equation of the Gamma function to derive the correct expression for the double factorial. Ensure all steps are mathematically valid and justified.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer contains several errors in the manipulation of the Gamma function and the integrals. In step 2, the product of the integrals is incorrectly combined into a single integral, which is not valid. The expression for $\\Gamma\\left(n + \\frac{1}{2}\\right)$ is also incorrect; it should be $\\int_0^\\infty t^{n-1/2} e^{-t} \\, dt$. The change of variables in step 5 is incorrectly applied, and the subsequent steps do not correctly derive the double factorial expression. The final expression for the double factorial is not properly justified or derived from the given steps.",
+        "suggestions": "Correct the expression for $\\Gamma\\left(n + \\frac{1}{2}\\right)$ and ensure the product of integrals is handled correctly. Use the known result $\\Gamma\\left(\\frac{1}{2}\\right) = \\sqrt{\\pi}$ and apply the functional equation of the Gamma function to derive the correct expression for the double factorial. Ensure all steps are mathematically valid and justified.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the second-order linear ordinary differential equation given by:\n\n$$ y'' - 4y' + 4y = e^{2x}, $$\n\nwhere $y(x)$ is a function of $x$. Find the general solution of this differential equation.",
+    "run_id": "22",
+    "topic_slug": "ordinary_differential_equations",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution incorrectly assumes a particular solution of the form $y_p(x) = Ae^{2x}$, which is part of the homogeneous solution. For repeated roots, the particular solution should be of the form $y_p(x) = Ax^2 e^{2x}$. The substitution and solving for $A$ are incorrect due to this oversight.\",\n  \"suggestions\": \"Use the method of undetermined coefficients with a trial solution $y_p(x) = Ax^2 e^{2x}$ for the particular solution, as $e^{2x}$ and $xe^{2x}$ are already solutions to the homogeneous equation.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution incorrectly assumes a particular solution of the form $y_p(x) = Ae^{2x}$, which is part of the homogeneous solution. For repeated roots, the particular solution should be of the form $y_p(x) = Ax^2 e^{2x}$. The substitution and solving for $A$ are incorrect due to this oversight.\",\n  \"suggestions\": \"Use the method of undetermined coefficients with a trial solution $y_p(x) = Ax^2 e^{2x}$ for the particular solution, as $e^{2x}$ and $xe^{2x}$ are already solutions to the homogeneous equation.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The solution incorrectly assumes a particular solution of the form $y_p(x) = Ae^{2x}$, which is part of the homogeneous solution. For repeated roots, the particular solution should be of the form $y_p(x) = Ax^2 e^{2x}$. The substitution and solving for $A$ are incorrect due to this oversight.",
+        "suggestions": "Use the method of undetermined coefficients with a trial solution $y_p(x) = Ax^2 e^{2x}$ for the particular solution, as $e^{2x}$ and $xe^{2x}$ are already solutions to the homogeneous equation.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the partial differential equation (PDE) given by:\n\n$$ u_{xx} + u_{yy} = 0 $$\n\nwhere $u(x, y)$ is a twice continuously differentiable function defined on the entire plane $\\mathbb{R}^2$. This is known as the Laplace equation in two dimensions. \n\nSuppose $u(x, y)$ is subject to the boundary condition:\n\n$$ u(x, 0) = \\sin(x) $$\n\nfor all $x \\in \\mathbb{R}$.\n\nFind a function $u(x, y)$ that satisfies both the PDE and the given boundary condition.",
+    "run_id": "23",
+    "topic_slug": "partial_differential_equations",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proposed solution $u(x, y) = \\sin(x) + Ay$ does not satisfy the Laplace equation $u_{xx} + u_{yy} = 0$. Substituting $u(x, y) = \\sin(x) + Ay$ into the Laplace equation gives $-\\sin(x) + 0 = -\\sin(x)$, which is not equal to zero. Therefore, the solution does not satisfy the PDE. The error arises from assuming a solution form that does not inherently satisfy the Laplace equation.\",\n  \"suggestions\": \"Consider using separation of variables or another method to find a solution that satisfies both the PDE and the boundary condition. The solution should ensure that $u_{xx} + u_{yy} = 0$ is satisfied for all $(x, y) \\\\in \\\\mathbb{R}^2$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proposed solution $u(x, y) = \\sin(x) + Ay$ does not satisfy the Laplace equation $u_{xx} + u_{yy} = 0$. Substituting $u(x, y) = \\sin(x) + Ay$ into the Laplace equation gives $-\\sin(x) + 0 = -\\sin(x)$, which is not equal to zero. Therefore, the solution does not satisfy the PDE. The error arises from assuming a solution form that does not inherently satisfy the Laplace equation.\",\n  \"suggestions\": \"Consider using separation of variables or another method to find a solution that satisfies both the PDE and the boundary condition. The solution should ensure that $u_{xx} + u_{yy} = 0$ is satisfied for all $(x, y) \\\\in \\\\mathbb{R}^2$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The proposed solution $u(x, y) = \\sin(x) + Ay$ does not satisfy the Laplace equation $u_{xx} + u_{yy} = 0$. Substituting $u(x, y) = \\sin(x) + Ay$ into the Laplace equation gives $-\\sin(x) + 0 = -\\sin(x)$, which is not equal to zero. Therefore, the solution does not satisfy the PDE. The error arises from assuming a solution form that does not inherently satisfy the Laplace equation.",
+        "suggestions": "Consider using separation of variables or another method to find a solution that satisfies both the PDE and the boundary condition. The solution should ensure that $u_{xx} + u_{yy} = 0$ is satisfied for all $(x, y) \\\\in \\\\mathbb{R}^2$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the discrete dynamical system defined by the map $T: [0, 1] \\to [0, 1]$ given by\n\n$$ T(x) = \\begin{cases} \n2x, & \\text{if } 0 \\leq x < \\frac{1}{2}, \\\\\n2x - 1, & \\text{if } \\frac{1}{2} \\leq x \\leq 1.\n\\end{cases} $$\n\nThis map is known as the tent map. Determine the set of all periodic points of period 2 for this map. A point $x \\in [0, 1]$ is a periodic point of period 2 if $T^2(x) = x$ and $T(x) \\neq x$.",
+    "run_id": "24",
+    "topic_slug": "dynamical_systems_and_ergodic_theory",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution incorrectly identifies the periodic points of period 2. The calculation for $T(T(x))$ is incorrect. For $0 \\\\leq x < \\\\frac{1}{2}$, $T(T(x)) = 4x$ is correct, but for $\\\\frac{1}{2} \\\\leq x \\\\leq 1$, $T(T(x)) = 4x - 3$ is incorrect. The correct calculation should consider the cases for $T(x)$ again. Additionally, the solution does not check the condition $T(x) \\\\neq x$, which is necessary for period 2 points.\",\n  \"suggestions\": \"Recalculate $T(T(x))$ by considering the correct cases for $T(x)$ and ensure to check the condition $T(x) \\\\neq x$ for period 2 points. Specifically, for $\\\\frac{1}{2} \\\\leq x \\\\leq 1$, $T(T(x))$ should be calculated by considering the value of $2x - 1$ and determining which case it falls into for the second application of $T$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution incorrectly identifies the periodic points of period 2. The calculation for $T(T(x))$ is incorrect. For $0 \\\\leq x < \\\\frac{1}{2}$, $T(T(x)) = 4x$ is correct, but for $\\\\frac{1}{2} \\\\leq x \\\\leq 1$, $T(T(x)) = 4x - 3$ is incorrect. The correct calculation should consider the cases for $T(x)$ again. Additionally, the solution does not check the condition $T(x) \\\\neq x$, which is necessary for period 2 points.\",\n  \"suggestions\": \"Recalculate $T(T(x))$ by considering the correct cases for $T(x)$ and ensure to check the condition $T(x) \\\\neq x$ for period 2 points. Specifically, for $\\\\frac{1}{2} \\\\leq x \\\\leq 1$, $T(T(x))$ should be calculated by considering the value of $2x - 1$ and determining which case it falls into for the second application of $T$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The solution incorrectly identifies the periodic points of period 2. The calculation for $T(T(x))$ is incorrect. For $0 \\leq x < \\frac{1}{2}$, $T(T(x)) = 4x$ is correct, but for $\\frac{1}{2} \\leq x \\leq 1$, $T(T(x)) = 4x - 3$ is incorrect. The correct calculation should consider the cases for $T(x)$ again. Additionally, the solution does not check the condition $T(x) \\neq x$, which is necessary for period 2 points.",
+        "suggestions": "Recalculate $T(T(x))$ by considering the correct cases for $T(x)$ and ensure to check the condition $T(x) \\neq x$ for period 2 points. Specifically, for $\\frac{1}{2} \\leq x \\leq 1$, $T(T(x))$ should be calculated by considering the value of $2x - 1$ and determining which case it falls into for the second application of $T$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the sequence $\\{a_n\\}_{n=1}^{\\infty}$ defined by the recurrence relation $a_1 = 1$, and for $n \\geq 1$, $a_{n+1} = \\frac{1}{2}a_n + \\frac{1}{2^n}$. Determine the limit of the sequence $\\{a_n\\}$ as $n \\to \\infty$.",
+    "run_id": "26",
+    "topic_slug": "sequences_series_and_summability",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the pattern in the sequence and proves it by induction. The base case and inductive step are both handled correctly, showing that $a_n = 1 - \\\\frac{1}{2^n}$ for all $n \\\\geq 1$. The limit as $n \\\\to \\\\infty$ is correctly calculated as 1. The solution is mathematically sound, complete, and adequately rigorous.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the pattern in the sequence and proves it by induction. The base case and inductive step are both handled correctly, showing that $a_n = 1 - \\\\frac{1}{2^n}$ for all $n \\\\geq 1$. The limit as $n \\\\to \\\\infty$ is correctly calculated as 1. The solution is mathematically sound, complete, and adequately rigorous.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the pattern in the sequence and proves it by induction. The base case and inductive step are both handled correctly, showing that $a_n = 1 - \\frac{1}{2^n}$ for all $n \\geq 1$. The limit as $n \\to \\infty$ is correctly calculated as 1. The solution is mathematically sound, complete, and adequately rigorous.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the function $f(x) = e^{x^2}$. Find the first four non-zero terms of the Taylor series expansion of $f(x)$ about $x = 0$.",
+    "run_id": "27",
+    "topic_slug": "approximations_and_expansions",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly claims that the first four non-zero terms of the Taylor series are $1 + x^2 + \\\\frac{2}{3}x^3$. The calculation of the derivatives is incorrect. Specifically, the third derivative $f'''(x)$ is incorrectly calculated, leading to an incorrect term in the series. The correct third derivative is $f'''(x) = (4x + 8x^3)e^{x^2}$, which gives $f'''(0) = 0$. The fourth derivative $f^{(4)}(x)$ should be calculated to find the next non-zero term.\",\n  \"suggestions\": \"Recalculate the derivatives correctly, particularly $f'''(x)$ and $f^{(4)}(x)$, to find the correct first four non-zero terms of the Taylor series.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly claims that the first four non-zero terms of the Taylor series are $1 + x^2 + \\\\frac{2}{3}x^3$. The calculation of the derivatives is incorrect. Specifically, the third derivative $f'''(x)$ is incorrectly calculated, leading to an incorrect term in the series. The correct third derivative is $f'''(x) = (4x + 8x^3)e^{x^2}$, which gives $f'''(0) = 0$. The fourth derivative $f^{(4)}(x)$ should be calculated to find the next non-zero term.\",\n  \"suggestions\": \"Recalculate the derivatives correctly, particularly $f'''(x)$ and $f^{(4)}(x)$, to find the correct first four non-zero terms of the Taylor series.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly claims that the first four non-zero terms of the Taylor series are $1 + x^2 + \\frac{2}{3}x^3$. The calculation of the derivatives is incorrect. Specifically, the third derivative $f'''(x)$ is incorrectly calculated, leading to an incorrect term in the series. The correct third derivative is $f'''(x) = (4x + 8x^3)e^{x^2}$, which gives $f'''(0) = 0$. The fourth derivative $f^{(4)}(x)$ should be calculated to find the next non-zero term.",
+        "suggestions": "Recalculate the derivatives correctly, particularly $f'''(x)$ and $f^{(4)}(x)$, to find the correct first four non-zero terms of the Taylor series.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{R}^2 \\to \\mathbb{R}$ be a function defined by $f(x, y) = e^{-(x^2 + y^2)}$. Consider the Fourier transform $\\mathcal{F}\\{f\\}$ of $f$, defined by\n\n$$ \\mathcal{F}\\{f\\}(\\xi, \\eta) = \\int_{\\mathbb{R}^2} f(x, y) e^{-2\\pi i (x \\xi + y \\eta)} \\, dx \\, dy. $$\n\nFind the exact value of $\\mathcal{F}\\{f\\}(\\xi, \\eta)$ for all $(\\xi, \\eta) \\in \\mathbb{R}^2$.",
+    "run_id": "28",
+    "topic_slug": "harmonic_analysis_on_euclidean_spaces",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mistake in the computation of the Gaussian integrals. The integral of a Gaussian function of the form $e^{-(x + a)^2}$ over the entire real line is $\\sqrt{\\pi}$, but the presence of the complex term $a = \\pi i \\xi$ changes the nature of the integral. The correct evaluation should consider the shift in the complex plane, which results in a different factor. The correct result for the Fourier transform of a Gaussian is known to be $e^{-\\pi^2 (\\xi^2 + \\eta^2)}$, not $e^{\\pi^2 (\\xi^2 + \\eta^2)}$. The sign in the exponent is incorrect.\",\n  \"suggestions\": \"Re-evaluate the Gaussian integrals considering the complex shift properly. The correct result should involve $e^{-\\pi^2 (\\xi^2 + \\eta^2)}$ instead of $e^{\\pi^2 (\\xi^2 + \\eta^2)}$. Ensure the correct application of the Fourier transform properties for Gaussian functions.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mistake in the computation of the Gaussian integrals. The integral of a Gaussian function of the form $e^{-(x + a)^2}$ over the entire real line is $\\sqrt{\\pi}$, but the presence of the complex term $a = \\pi i \\xi$ changes the nature of the integral. The correct evaluation should consider the shift in the complex plane, which results in a different factor. The correct result for the Fourier transform of a Gaussian is known to be $e^{-\\pi^2 (\\xi^2 + \\eta^2)}$, not $e^{\\pi^2 (\\xi^2 + \\eta^2)}$. The sign in the exponent is incorrect.\",\n  \"suggestions\": \"Re-evaluate the Gaussian integrals considering the complex shift properly. The correct result should involve $e^{-\\pi^2 (\\xi^2 + \\eta^2)}$ instead of $e^{\\pi^2 (\\xi^2 + \\eta^2)}$. Ensure the correct application of the Fourier transform properties for Gaussian functions.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer contains a mistake in the computation of the Gaussian integrals. The integral of a Gaussian function of the form $e^{-(x + a)^2}$ over the entire real line is $\\sqrt{\\pi}$, but the presence of the complex term $a = \\pi i \\xi$ changes the nature of the integral. The correct evaluation should consider the shift in the complex plane, which results in a different factor. The correct result for the Fourier transform of a Gaussian is known to be $e^{-\\pi^2 (\\xi^2 + \\eta^2)}$, not $e^{\\pi^2 (\\xi^2 + \\eta^2)}$. The sign in the exponent is incorrect.",
+        "suggestions": "Re-evaluate the Gaussian integrals considering the complex shift properly. The correct result should involve $e^{-\\pi^2 (\\xi^2 + \\eta^2)}$ instead of $e^{\\pi^2 (\\xi^2 + \\eta^2)}$. Ensure the correct application of the Fourier transform properties for Gaussian functions.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a locally compact abelian group, and let $\\widehat{G}$ denote its Pontryagin dual, the group of continuous homomorphisms from $G$ to the circle group $\\mathbb{T} = \\{ z \\in \\mathbb{C} : |z| = 1 \\}$, equipped with pointwise multiplication. Suppose $f \\in L^1(G)$, the space of integrable functions on $G$. Define the Fourier transform of $f$ as $\\widehat{f}(\\chi) = \\int_G f(x) \\overline{\\chi(x)} \\, dx$ for $\\chi \\in \\widehat{G}$.\n\nProve that if $f \\in L^1(G)$ and $\\widehat{f} = 0$ on a neighborhood of the identity in $\\widehat{G}$, then $f = 0$ almost everywhere on $G$.",
+    "run_id": "29",
+    "topic_slug": "abstract_harmonic_analysis",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof contains several errors and unjustified claims. Firstly, the claim that $K = \\\\{ \\\\chi \\\\in \\\\widehat{G} : \\\\widehat{f}(\\\\chi) = 0 \\\\}$ is a closed subgroup of $\\\\widehat{G}$ is incorrect; $K$ is not necessarily a subgroup. The argument involving Pontryagin duality and the Peter-Weyl theorem is misapplied. The Peter-Weyl theorem is not applicable in this context, as it pertains to compact groups and their representations, not to the Fourier transform on locally compact abelian groups. Additionally, the expression $f(x) = \\\\sum_{\\\\chi \\\\in \\\\widehat{H}} c_{\\\\chi} \\\\chi(x)$ is not justified, as $f$ is in $L^1(G)$, not necessarily expressible as a sum over characters in this manner. The conclusion that $c_{\\\\chi} = 0$ for all $\\\\chi \\\\in \\\\widehat{H}$ is also unjustified, as the orthonormality argument is not valid in this context.\",\n  \"suggestions\": \"To correct the proof, one should use the fact that the Fourier transform separates points in $L^1(G)$, and the vanishing of the Fourier transform on a neighborhood of the identity implies that $f$ must be zero almost everywhere. This can be shown using the properties of the Fourier transform and the structure of locally compact abelian groups, without incorrectly invoking the Peter-Weyl theorem or misapplying Pontryagin duality.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof contains several errors and unjustified claims. Firstly, the claim that $K = \\\\{ \\\\chi \\\\in \\\\widehat{G} : \\\\widehat{f}(\\\\chi) = 0 \\\\}$ is a closed subgroup of $\\\\widehat{G}$ is incorrect; $K$ is not necessarily a subgroup. The argument involving Pontryagin duality and the Peter-Weyl theorem is misapplied. The Peter-Weyl theorem is not applicable in this context, as it pertains to compact groups and their representations, not to the Fourier transform on locally compact abelian groups. Additionally, the expression $f(x) = \\\\sum_{\\\\chi \\\\in \\\\widehat{H}} c_{\\\\chi} \\\\chi(x)$ is not justified, as $f$ is in $L^1(G)$, not necessarily expressible as a sum over characters in this manner. The conclusion that $c_{\\\\chi} = 0$ for all $\\\\chi \\\\in \\\\widehat{H}$ is also unjustified, as the orthonormality argument is not valid in this context.\",\n  \"suggestions\": \"To correct the proof, one should use the fact that the Fourier transform separates points in $L^1(G)$, and the vanishing of the Fourier transform on a neighborhood of the identity implies that $f$ must be zero almost everywhere. This can be shown using the properties of the Fourier transform and the structure of locally compact abelian groups, without incorrectly invoking the Peter-Weyl theorem or misapplying Pontryagin duality.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The proof contains several errors and unjustified claims. Firstly, the claim that $K = \\{ \\chi \\in \\widehat{G} : \\widehat{f}(\\chi) = 0 \\}$ is a closed subgroup of $\\widehat{G}$ is incorrect; $K$ is not necessarily a subgroup. The argument involving Pontryagin duality and the Peter-Weyl theorem is misapplied. The Peter-Weyl theorem is not applicable in this context, as it pertains to compact groups and their representations, not to the Fourier transform on locally compact abelian groups. Additionally, the expression $f(x) = \\sum_{\\chi \\in \\widehat{H}} c_{\\chi} \\chi(x)$ is not justified, as $f$ is in $L^1(G)$, not necessarily expressible as a sum over characters in this manner. The conclusion that $c_{\\chi} = 0$ for all $\\chi \\in \\widehat{H}$ is also unjustified, as the orthonormality argument is not valid in this context.",
+        "suggestions": "To correct the proof, one should use the fact that the Fourier transform separates points in $L^1(G)$, and the vanishing of the Fourier transform on a neighborhood of the identity implies that $f$ must be zero almost everywhere. This can be shown using the properties of the Fourier transform and the structure of locally compact abelian groups, without incorrectly invoking the Peter-Weyl theorem or misapplying Pontryagin duality.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f(t) = e^{-2t} \\sin(3t)$ for $t \\geq 0$. Compute the Laplace transform $\\mathcal{L}\\{f(t)\\}(s)$, where $s$ is a complex number with $\\text{Re}(s) > -2$.",
+    "run_id": "30",
+    "topic_slug": "integral_transforms_and_operational_calculus",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution incorrectly applies the Laplace transform of $\\\\sin(at)$. The transform of $e^{-bt} \\\\sin(at)$ is $\\\\frac{a}{(s+b)^2 + a^2}$, not $\\\\frac{a}{s^2 + a^2}$. The correct Laplace transform of $e^{-2t} \\\\sin(3t)$ is $\\\\frac{3}{(s+2)^2 + 9}$, not $\\\\frac{3}{(s+2)(s^2 + 9)}$. The error occurs when the solution attempts to split the integral incorrectly and misapplies the formula for the Laplace transform of $\\\\sin(at)$.\",\n  \"suggestions\": \"Use the correct formula for the Laplace transform of $e^{-bt} \\\\sin(at)$, which is $\\\\frac{a}{(s+b)^2 + a^2}$, to find the correct result.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution incorrectly applies the Laplace transform of $\\\\sin(at)$. The transform of $e^{-bt} \\\\sin(at)$ is $\\\\frac{a}{(s+b)^2 + a^2}$, not $\\\\frac{a}{s^2 + a^2}$. The correct Laplace transform of $e^{-2t} \\\\sin(3t)$ is $\\\\frac{3}{(s+2)^2 + 9}$, not $\\\\frac{3}{(s+2)(s^2 + 9)}$. The error occurs when the solution attempts to split the integral incorrectly and misapplies the formula for the Laplace transform of $\\\\sin(at)$.\",\n  \"suggestions\": \"Use the correct formula for the Laplace transform of $e^{-bt} \\\\sin(at)$, which is $\\\\frac{a}{(s+b)^2 + a^2}$, to find the correct result.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The solution incorrectly applies the Laplace transform of $\\sin(at)$. The transform of $e^{-bt} \\sin(at)$ is $\\frac{a}{(s+b)^2 + a^2}$, not $\\frac{a}{s^2 + a^2}$. The correct Laplace transform of $e^{-2t} \\sin(3t)$ is $\\frac{3}{(s+2)^2 + 9}$, not $\\frac{3}{(s+2)(s^2 + 9)}$. The error occurs when the solution attempts to split the integral incorrectly and misapplies the formula for the Laplace transform of $\\sin(at)$.",
+        "suggestions": "Use the correct formula for the Laplace transform of $e^{-bt} \\sin(at)$, which is $\\frac{a}{(s+b)^2 + a^2}$, to find the correct result.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $T: \\mathbb{R}^3 \\to \\mathbb{R}^3$ be a linear operator represented by the matrix $A = \\begin{pmatrix} 2 & -1 & 0 \\\\ -1 & 2 & -1 \\\\ 0 & -1 & 2 \\end{pmatrix}$. Determine whether $T$ is invertible, and if so, find the inverse operator $T^{-1}$.",
+    "run_id": "33",
+    "topic_slug": "operator_theory",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly determines that the matrix $A$ is invertible by calculating its determinant, which is non-zero. The determinant calculation is accurate: $\\\\text{det}(A) = 10$. The answer then correctly finds the inverse of the matrix $A$ using the adjugate method. The cofactor matrix and its transpose (adjugate) are correctly computed, and the inverse matrix $A^{-1}$ is correctly calculated as $\\\\frac{1}{10}$ times the adjugate. The final inverse matrix is correctly presented as $\\\\begin{pmatrix} 0.4 & -0.2 & -0.1 \\\\\\\\ -0.2 & 0.4 & -0.2 \\\\\\\\ -0.1 & -0.2 & 0.4 \\\\end{pmatrix}$. The solution is complete and rigorous.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly determines that the matrix $A$ is invertible by calculating its determinant, which is non-zero. The determinant calculation is accurate: $\\\\text{det}(A) = 10$. The answer then correctly finds the inverse of the matrix $A$ using the adjugate method. The cofactor matrix and its transpose (adjugate) are correctly computed, and the inverse matrix $A^{-1}$ is correctly calculated as $\\\\frac{1}{10}$ times the adjugate. The final inverse matrix is correctly presented as $\\\\begin{pmatrix} 0.4 & -0.2 & -0.1 \\\\\\\\ -0.2 & 0.4 & -0.2 \\\\\\\\ -0.1 & -0.2 & 0.4 \\\\end{pmatrix}$. The solution is complete and rigorous.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly determines that the matrix $A$ is invertible by calculating its determinant, which is non-zero. The determinant calculation is accurate: $\\text{det}(A) = 10$. The answer then correctly finds the inverse of the matrix $A$ using the adjugate method. The cofactor matrix and its transpose (adjugate) are correctly computed, and the inverse matrix $A^{-1}$ is correctly calculated as $\\frac{1}{10}$ times the adjugate. The final inverse matrix is correctly presented as $\\begin{pmatrix} 0.4 & -0.2 & -0.1 \\\\ -0.2 & 0.4 & -0.2 \\\\ -0.1 & -0.2 & 0.4 \\end{pmatrix}$. The solution is complete and rigorous.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the functional $J[y] = \\int_0^1 \\left( y'(x)^2 + (y(x) - x)^2 \\right) \\, dx$, where $y(x)$ is a twice-differentiable function satisfying the boundary conditions $y(0) = 0$ and $y(1) = 1$. Find the function $y(x)$ that minimizes the functional $J[y]$.",
+    "run_id": "34",
+    "topic_slug": "calculus_of_variations_and_optimization",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the Euler-Lagrange equation to the given functional. The function $F(x, y, y') = y'(x)^2 + (y(x) - x)^2$ is correctly identified, and the Euler-Lagrange equation is derived as $2y''(x) - 2 = 0$, leading to $y''(x) = 1$. The integration steps are correctly performed, and the boundary conditions $y(0) = 0$ and $y(1) = 1$ are correctly applied to find the constants $C_1$ and $C_2$. The final solution $y(x) = \\\\frac{1}{2}x^2 + \\\\frac{1}{2}x$ is correct.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the Euler-Lagrange equation to the given functional. The function $F(x, y, y') = y'(x)^2 + (y(x) - x)^2$ is correctly identified, and the Euler-Lagrange equation is derived as $2y''(x) - 2 = 0$, leading to $y''(x) = 1$. The integration steps are correctly performed, and the boundary conditions $y(0) = 0$ and $y(1) = 1$ are correctly applied to find the constants $C_1$ and $C_2$. The final solution $y(x) = \\\\frac{1}{2}x^2 + \\\\frac{1}{2}x$ is correct.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly applies the Euler-Lagrange equation to the given functional. The function $F(x, y, y') = y'(x)^2 + (y(x) - x)^2$ is correctly identified, and the Euler-Lagrange equation is derived as $2y''(x) - 2 = 0$, leading to $y''(x) = 1$. The integration steps are correctly performed, and the boundary conditions $y(0) = 0$ and $y(1) = 1$ are correctly applied to find the constants $C_1$ and $C_2$. The final solution $y(x) = \\frac{1}{2}x^2 + \\frac{1}{2}x$ is correct.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a triangle $ABC$ with sides $AB = c$, $BC = a$, and $CA = b$. Let $D$ be a point on side $BC$ such that $AD$ is the angle bisector of $\\angle BAC$. The angle bisector theorem states that $\\frac{BD}{DC} = \\frac{AB}{AC}$. Given that $a = 7$, $b = 5$, and $c = 6$, find the length of $BD$.",
+    "run_id": "35",
+    "topic_slug": "geometry",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the angle bisector theorem to find the length of $BD$. The equation $\\\\frac{BD}{DC} = \\\\frac{AB}{AC}$ is set up correctly with the given side lengths, and the algebraic manipulation to solve for $BD$ is accurate. The final answer, $\\\\frac{36}{11}$, is correct.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the angle bisector theorem to find the length of $BD$. The equation $\\\\frac{BD}{DC} = \\\\frac{AB}{AC}$ is set up correctly with the given side lengths, and the algebraic manipulation to solve for $BD$ is accurate. The final answer, $\\\\frac{36}{11}$, is correct.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly applies the angle bisector theorem to find the length of $BD$. The equation $\\frac{BD}{DC} = \\frac{AB}{AC}$ is set up correctly with the given side lengths, and the algebraic manipulation to solve for $BD$ is accurate. The final answer, $\\frac{36}{11}$, is correct.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $M$ be a smooth manifold and let $\\omega$ be a differential 2-form on $M$. Suppose that $\\omega$ is closed, meaning $d\\omega = 0$, where $d$ is the exterior derivative. Assume further that $M$ is simply connected. Prove that $\\omega$ is exact, i.e., there exists a differential 1-form $\\alpha$ on $M$ such that $\\omega = d\\alpha$.",
+    "run_id": "37",
+    "topic_slug": "differential_geometry",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies Poincar\u00e9's Lemma, which states that on a simply connected manifold, every closed form is exact. The answer identifies that $M$ is simply connected and $\\omega$ is closed, thus correctly concluding that $\\omega$ is exact. The reasoning is sound and complete for the given problem.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies Poincar\u00e9's Lemma, which states that on a simply connected manifold, every closed form is exact. The answer identifies that $M$ is simply connected and $\\omega$ is closed, thus correctly concluding that $\\omega$ is exact. The reasoning is sound and complete for the given problem.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies Poincar\u00e9's Lemma, which states that on a simply connected manifold, every closed form is exact. The answer identifies that $M$ is simply connected and $\\omega$ is closed, thus correctly concluding that $\\omega$ is exact. The reasoning is sound and complete for the given problem.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a topological space and let $A \\subseteq X$ be a subset. Define the closure of $A$, denoted $\\overline{A}$, as the set of all points $x \\in X$ such that every open set $U$ containing $x$ intersects $A$. \n\nConsider the space $X = \\mathbb{R}$ with the standard topology, and let $A = \\{ \\frac{1}{n} \\mid n \\in \\mathbb{N} \\}$. Determine the closure $\\overline{A}$ of the set $A$ in $\\mathbb{R}$.",
+    "run_id": "38",
+    "topic_slug": "general_topology",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly concludes that the closure of $A = \\\\{ \\\\frac{1}{n} \\\\mid n \\\\in \\\\mathbb{N} \\\\}$ is the entire real line $\\\\mathbb{R}$. The reasoning fails because it does not correctly apply the definition of closure. The closure of $A$ should include all limit points of $A$. The sequence $\\\\frac{1}{n}$ converges to $0$, so $0$ is a limit point of $A$. For any $x > 0$, there exists an $\\\\epsilon > 0$ such that the interval $(x - \\\\epsilon, x + \\\\epsilon)$ does not intersect $A$, hence $x$ cannot be in the closure. Therefore, the correct closure is $\\\\overline{A} = A \\\\cup \\\\{0\\\\}$, not $\\\\mathbb{R}$.\",\n  \"suggestions\": \"Re-evaluate the closure by considering the limit points of $A$. Note that $0$ is a limit point of $A$, and for any $x > 0$, there exists an open interval around $x$ that does not intersect $A$. Thus, the closure should be $A \\\\cup \\\\{0\\\\}$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly concludes that the closure of $A = \\\\{ \\\\frac{1}{n} \\\\mid n \\\\in \\\\mathbb{N} \\\\}$ is the entire real line $\\\\mathbb{R}$. The reasoning fails because it does not correctly apply the definition of closure. The closure of $A$ should include all limit points of $A$. The sequence $\\\\frac{1}{n}$ converges to $0$, so $0$ is a limit point of $A$. For any $x > 0$, there exists an $\\\\epsilon > 0$ such that the interval $(x - \\\\epsilon, x + \\\\epsilon)$ does not intersect $A$, hence $x$ cannot be in the closure. Therefore, the correct closure is $\\\\overline{A} = A \\\\cup \\\\{0\\\\}$, not $\\\\mathbb{R}$.\",\n  \"suggestions\": \"Re-evaluate the closure by considering the limit points of $A$. Note that $0$ is a limit point of $A$, and for any $x > 0$, there exists an open interval around $x$ that does not intersect $A$. Thus, the closure should be $A \\\\cup \\\\{0\\\\}$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly concludes that the closure of $A = \\{ \\frac{1}{n} \\mid n \\in \\mathbb{N} \\}$ is the entire real line $\\mathbb{R}$. The reasoning fails because it does not correctly apply the definition of closure. The closure of $A$ should include all limit points of $A$. The sequence $\\frac{1}{n}$ converges to $0$, so $0$ is a limit point of $A$. For any $x > 0$, there exists an $\\epsilon > 0$ such that the interval $(x - \\epsilon, x + \\epsilon)$ does not intersect $A$, hence $x$ cannot be in the closure. Therefore, the correct closure is $\\overline{A} = A \\cup \\{0\\}$, not $\\mathbb{R}$.",
+        "suggestions": "Re-evaluate the closure by considering the limit points of $A$. Note that $0$ is a limit point of $A$, and for any $x > 0$, there exists an open interval around $x$ that does not intersect $A$. Thus, the closure should be $A \\cup \\{0\\}$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a topological space that is homotopy equivalent to the wedge sum of two circles, $S^1 \\vee S^1$. Consider the fundamental group $\\pi_1(X, x_0)$, where $x_0$ is a base point in $X$. Determine the structure of $\\pi_1(X, x_0)$ and provide a proof of your result.",
+    "run_id": "39",
+    "topic_slug": "algebraic_topology",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that the fundamental group of a space homotopy equivalent to the wedge sum of two circles, $S^1 \\vee S^1$, is the free group on two generators, $\\\\langle a, b \\\\rangle$. The use of the Van Kampen theorem is appropriate and correctly applied, as the intersection $U \\\\cap V$ is homotopy equivalent to a point, leading to a trivial fundamental group for the intersection. The reasoning is sound and complete.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that the fundamental group of a space homotopy equivalent to the wedge sum of two circles, $S^1 \\vee S^1$, is the free group on two generators, $\\\\langle a, b \\\\rangle$. The use of the Van Kampen theorem is appropriate and correctly applied, as the intersection $U \\\\cap V$ is homotopy equivalent to a point, leading to a trivial fundamental group for the intersection. The reasoning is sound and complete.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies that the fundamental group of a space homotopy equivalent to the wedge sum of two circles, $S^1 \\vee S^1$, is the free group on two generators, $\\langle a, b \\rangle$. The use of the Van Kampen theorem is appropriate and correctly applied, as the intersection $U \\cap V$ is homotopy equivalent to a point, leading to a trivial fundamental group for the intersection. The reasoning is sound and complete.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $M$ be a compact, connected, orientable 2-dimensional manifold without boundary. Suppose $M$ is homeomorphic to a surface of genus $g$. Consider the Euler characteristic $\\chi(M)$ of the manifold $M$. \n\n(a) Express the Euler characteristic $\\chi(M)$ in terms of the genus $g$.\n\n(b) If $M$ is triangulated with $V$ vertices, $E$ edges, and $F$ faces, use the Euler characteristic to derive a relationship between $V$, $E$, and $F$.\n\n(c) Suppose $M$ is a torus (i.e., $g = 1$). If $M$ is triangulated with 10 vertices, determine the number of edges and faces in this triangulation.",
+    "run_id": "40",
+    "topic_slug": "manifolds_and_cell_complexes",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly states the Euler characteristic formula for a surface of genus $g$ and applies it to derive the relationship $V - E + F = 2 - 2g$. However, in part (c), the solution stops short of determining the exact number of edges and faces for the torus triangulation. It correctly sets up the equation $E - F = 10$ but does not solve for $E$ and $F$. The problem asks for the number of edges and faces, which requires solving the system of equations $10 - E + F = 0$ and $E - F = 10$ to find specific values for $E$ and $F$.\",\n  \"suggestions\": \"Solve the system of equations $10 - E + F = 0$ and $E - F = 10$ to find the exact values of $E$ and $F$. This will complete the solution for part (c).\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly states the Euler characteristic formula for a surface of genus $g$ and applies it to derive the relationship $V - E + F = 2 - 2g$. However, in part (c), the solution stops short of determining the exact number of edges and faces for the torus triangulation. It correctly sets up the equation $E - F = 10$ but does not solve for $E$ and $F$. The problem asks for the number of edges and faces, which requires solving the system of equations $10 - E + F = 0$ and $E - F = 10$ to find specific values for $E$ and $F$.\",\n  \"suggestions\": \"Solve the system of equations $10 - E + F = 0$ and $E - F = 10$ to find the exact values of $E$ and $F$. This will complete the solution for part (c).\"\n}\n```",
+        "verdict": "insufficient",
+        "notes": "The answer correctly states the Euler characteristic formula for a surface of genus $g$ and applies it to derive the relationship $V - E + F = 2 - 2g$. However, in part (c), the solution stops short of determining the exact number of edges and faces for the torus triangulation. It correctly sets up the equation $E - F = 10$ but does not solve for $E$ and $F$. The problem asks for the number of edges and faces, which requires solving the system of equations $10 - E + F = 0$ and $E - F = 10$ to find specific values for $E$ and $F$.",
+        "suggestions": "Solve the system of equations $10 - E + F = 0$ and $E - F = 10$ to find the exact values of $E$ and $F$. This will complete the solution for part (c).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $M$ be a compact, oriented 2-dimensional Riemannian manifold without boundary. Consider a smooth vector field $X$ on $M$. Prove that the Euler characteristic $\\chi(M)$ of the manifold $M$ is equal to the sum of the indices of the isolated zeros of $X$. Assume that $X$ has only isolated zeros.",
+    "run_id": "41",
+    "topic_slug": "global_analysis_on_manifolds",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies the Poincar\u00e9-Hopf theorem, which states that the sum of the indices of the isolated zeros of a vector field on a compact manifold without boundary is equal to the Euler characteristic of the manifold. The explanation is clear and includes the necessary definitions and context, such as the definition of the index of a zero and the expression for the Euler characteristic in terms of Betti numbers. The assumptions of the theorem are satisfied, as the manifold is compact, oriented, and without boundary, and the vector field has only isolated zeros.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies the Poincar\u00e9-Hopf theorem, which states that the sum of the indices of the isolated zeros of a vector field on a compact manifold without boundary is equal to the Euler characteristic of the manifold. The explanation is clear and includes the necessary definitions and context, such as the definition of the index of a zero and the expression for the Euler characteristic in terms of Betti numbers. The assumptions of the theorem are satisfied, as the manifold is compact, oriented, and without boundary, and the vector field has only isolated zeros.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies the Poincar\u00e9-Hopf theorem, which states that the sum of the indices of the isolated zeros of a vector field on a compact manifold without boundary is equal to the Euler characteristic of the manifold. The explanation is clear and includes the necessary definitions and context, such as the definition of the index of a zero and the expression for the Euler characteristic in terms of Betti numbers. The assumptions of the theorem are satisfied, as the manifold is compact, oriented, and without boundary, and the vector field has only isolated zeros.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a continuous-time Markov chain with state space $S = \\{1, 2, 3\\}$ and generator matrix $Q$ given by:\n\n$$\nQ = \\begin{pmatrix}\n-3 & 3 & 0 \\\\\n1 & -4 & 3 \\\\\n0 & 2 & -2\n\\end{pmatrix}.\n$$\n\n(a) Determine the stationary distribution $\\pi = (\\pi_1, \\pi_2, \\pi_3)$ of the Markov chain.\n\n(b) Calculate the expected time to absorption if the chain starts in state 1, assuming state 3 is an absorbing state.",
+    "run_id": "42",
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution for part (a) contains an error in the calculation of the stationary distribution. The system of equations derived from the balance equations is correct, but the solution to these equations is incorrect. Specifically, the solution claims that the stationary distribution is $\\\\pi = \\\\left(\\\\frac{2}{17}, \\\\frac{6}{17}, \\\\frac{9}{17}\\\\right)$, but this does not satisfy the normalization condition $\\\\pi_1 + \\\\pi_2 + \\\\pi_3 = 1$. For part (b), the setup for calculating the expected time to absorption is incorrect. The equations for $T_2$ and $T_3$ are not correctly derived from the generator matrix. The expected time to absorption should be calculated using the correct system of linear equations derived from the generator matrix, considering state 3 as absorbing.\",\n  \"suggestions\": \"For part (a), solve the system of equations correctly and ensure the stationary distribution sums to 1. For part (b), derive the correct system of equations for the expected time to absorption using the generator matrix, ensuring that state 3 is treated as absorbing.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution for part (a) contains an error in the calculation of the stationary distribution. The system of equations derived from the balance equations is correct, but the solution to these equations is incorrect. Specifically, the solution claims that the stationary distribution is $\\\\pi = \\\\left(\\\\frac{2}{17}, \\\\frac{6}{17}, \\\\frac{9}{17}\\\\right)$, but this does not satisfy the normalization condition $\\\\pi_1 + \\\\pi_2 + \\\\pi_3 = 1$. For part (b), the setup for calculating the expected time to absorption is incorrect. The equations for $T_2$ and $T_3$ are not correctly derived from the generator matrix. The expected time to absorption should be calculated using the correct system of linear equations derived from the generator matrix, considering state 3 as absorbing.\",\n  \"suggestions\": \"For part (a), solve the system of equations correctly and ensure the stationary distribution sums to 1. For part (b), derive the correct system of equations for the expected time to absorption using the generator matrix, ensuring that state 3 is treated as absorbing.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The solution for part (a) contains an error in the calculation of the stationary distribution. The system of equations derived from the balance equations is correct, but the solution to these equations is incorrect. Specifically, the solution claims that the stationary distribution is $\\pi = \\left(\\frac{2}{17}, \\frac{6}{17}, \\frac{9}{17}\\right)$, but this does not satisfy the normalization condition $\\pi_1 + \\pi_2 + \\pi_3 = 1$. For part (b), the setup for calculating the expected time to absorption is incorrect. The equations for $T_2$ and $T_3$ are not correctly derived from the generator matrix. The expected time to absorption should be calculated using the correct system of linear equations derived from the generator matrix, considering state 3 as absorbing.",
+        "suggestions": "For part (a), solve the system of equations correctly and ensure the stationary distribution sums to 1. For part (b), derive the correct system of equations for the expected time to absorption using the generator matrix, ensuring that state 3 is treated as absorbing.",
+        "evaluation": {
+          "verdict": "fail",
+          "issues": [
+            "The critique incorrectly identifies the solution for part (a) as incorrect. The stationary distribution provided in the solution does indeed satisfy the balance equations and the normalization condition.",
+            "The critique claims that the solution for part (b) is incorrect without providing specific evidence or identifying the exact errors in the setup of the equations for expected time to absorption."
+          ],
+          "improvements": "For part (a), verify that the stationary distribution satisfies both the balance equations and the normalization condition. For part (b), identify specific errors in the setup of the equations for expected time to absorption, and provide evidence for why the solution is incorrect."
+        }
+      },
+      {
+        "round": 2,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"In part (a), the solution incorrectly calculates the stationary distribution. The proposed distribution does not satisfy the normalization condition \\\\(\\\\pi_1 + \\\\pi_2 + \\\\pi_3 = 1\\\\). Additionally, the balance equations are not solved correctly. In part (b), the setup for calculating the expected time to absorption is flawed. The equations for \\\\(T_2\\\\) and \\\\(T_3\\\\) are not derived correctly from the generator matrix. Specifically, the expected time to absorption should be calculated by considering the transient states and using the correct system of linear equations derived from the generator matrix, treating state 3 as absorbing.\",\n  \"suggestions\": \"For part (a), ensure that the solution to the balance equations satisfies both the balance equations and the normalization condition. Recalculate the stationary distribution correctly. For part (b), derive the correct system of equations for the expected time to absorption using the generator matrix, ensuring that state 3 is treated as absorbing. Use the correct method to solve for the expected time to absorption from the transient states.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"In part (a), the solution incorrectly calculates the stationary distribution. The proposed distribution does not satisfy the normalization condition \\\\(\\\\pi_1 + \\\\pi_2 + \\\\pi_3 = 1\\\\). Additionally, the balance equations are not solved correctly. In part (b), the setup for calculating the expected time to absorption is flawed. The equations for \\\\(T_2\\\\) and \\\\(T_3\\\\) are not derived correctly from the generator matrix. Specifically, the expected time to absorption should be calculated by considering the transient states and using the correct system of linear equations derived from the generator matrix, treating state 3 as absorbing.\",\n  \"suggestions\": \"For part (a), ensure that the solution to the balance equations satisfies both the balance equations and the normalization condition. Recalculate the stationary distribution correctly. For part (b), derive the correct system of equations for the expected time to absorption using the generator matrix, ensuring that state 3 is treated as absorbing. Use the correct method to solve for the expected time to absorption from the transient states.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "In part (a), the solution incorrectly calculates the stationary distribution. The proposed distribution does not satisfy the normalization condition \\(\\pi_1 + \\pi_2 + \\pi_3 = 1\\). Additionally, the balance equations are not solved correctly. In part (b), the setup for calculating the expected time to absorption is flawed. The equations for \\(T_2\\) and \\(T_3\\) are not derived correctly from the generator matrix. Specifically, the expected time to absorption should be calculated by considering the transient states and using the correct system of linear equations derived from the generator matrix, treating state 3 as absorbing.",
+        "suggestions": "For part (a), ensure that the solution to the balance equations satisfies both the balance equations and the normalization condition. Recalculate the stationary distribution correctly. For part (b), derive the correct system of equations for the expected time to absorption using the generator matrix, ensuring that state 3 is treated as absorbing. Use the correct method to solve for the expected time to absorption from the transient states.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a random variable $X$ that follows a normal distribution with an unknown mean $\\mu$ and a known standard deviation $\\sigma = 3$. You are given a random sample of size $n = 25$ from this distribution, with a sample mean $\\bar{x} = 10$. Construct a 95% confidence interval for the population mean $\\mu$.",
+    "run_id": "43",
+    "topic_slug": "statistics",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies the formula for a confidence interval for the population mean when the population standard deviation is known. The sample size is sufficiently large, and the use of the z-distribution is appropriate. The calculation of the confidence interval is accurate, with the correct critical z-value of 1.96 for a 95% confidence level. The final confidence interval $[8.824, 11.176]$ is correctly computed.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies the formula for a confidence interval for the population mean when the population standard deviation is known. The sample size is sufficiently large, and the use of the z-distribution is appropriate. The calculation of the confidence interval is accurate, with the correct critical z-value of 1.96 for a 95% confidence level. The final confidence interval $[8.824, 11.176]$ is correctly computed.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies the formula for a confidence interval for the population mean when the population standard deviation is known. The sample size is sufficiently large, and the use of the z-distribution is appropriate. The calculation of the confidence interval is accurate, with the correct critical z-value of 1.96 for a 95% confidence level. The final confidence interval $[8.824, 11.176]$ is correctly computed.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the function $f(x) = e^{-x^2}$, which is defined for all real numbers $x$. We are interested in approximating the definite integral $I = \\int_{0}^{1} e^{-x^2} \\, dx$ using numerical methods.\n\n1. Use the Trapezoidal Rule with $n = 4$ subintervals to approximate $I$.\n2. Use Simpson's Rule with $n = 4$ subintervals to approximate $I$.\n3. Compare the two approximations and discuss which one is likely to be more accurate and why.",
+    "run_id": "44",
+    "topic_slug": "numerical_analysis",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer outlines the methods for both the Trapezoidal Rule and Simpson's Rule but does not provide the actual numerical approximations for the integral $I = \\\\int_{0}^{1} e^{-x^2} \\\\, dx$. The calculations for $T_4$ and $S_4$ are not completed, leaving the answer incomplete. Additionally, while the explanation of why Simpson's Rule is generally more accurate is correct, the lack of specific numerical results makes it difficult to fully assess the comparison.\",\n  \"suggestions\": \"Complete the calculations for $T_4$ and $S_4$ by evaluating the exponential terms and summing them to provide the numerical approximations. This will allow for a concrete comparison between the two methods.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer outlines the methods for both the Trapezoidal Rule and Simpson's Rule but does not provide the actual numerical approximations for the integral $I = \\\\int_{0}^{1} e^{-x^2} \\\\, dx$. The calculations for $T_4$ and $S_4$ are not completed, leaving the answer incomplete. Additionally, while the explanation of why Simpson's Rule is generally more accurate is correct, the lack of specific numerical results makes it difficult to fully assess the comparison.\",\n  \"suggestions\": \"Complete the calculations for $T_4$ and $S_4$ by evaluating the exponential terms and summing them to provide the numerical approximations. This will allow for a concrete comparison between the two methods.\"\n}\n```",
+        "verdict": "insufficient",
+        "notes": "The answer outlines the methods for both the Trapezoidal Rule and Simpson's Rule but does not provide the actual numerical approximations for the integral $I = \\int_{0}^{1} e^{-x^2} \\, dx$. The calculations for $T_4$ and $S_4$ are not completed, leaving the answer incomplete. Additionally, while the explanation of why Simpson's Rule is generally more accurate is correct, the lack of specific numerical results makes it difficult to fully assess the comparison.",
+        "suggestions": "Complete the calculations for $T_4$ and $S_4$ by evaluating the exponential terms and summing them to provide the numerical approximations. This will allow for a concrete comparison between the two methods.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
   }
 ]

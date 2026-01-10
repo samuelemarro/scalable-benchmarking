@@ -69,5 +69,52 @@
         }
       }
     ]
+  },
+  {
+    "question": "Let $L$ be a finite distributive lattice with least element $0$ and greatest element $1$. An element $j \\in L$ is called **join-irreducible** if $j \\neq 0$ and whenever $j = x \\vee y$ for some $x, y \\in L$, we have $j = x$ or $j = y$. Let $J(L)$ denote the set of join-irreducible elements of $L$, ordered by the restriction of the order of $L$.\n\nA subset $I \\subseteq J(L)$ is an **order ideal** (or down-set) if whenever $x \\in I$ and $y \\in J(L)$ with $y \\leq x$, we have $y \\in I$. The set $D(J(L))$ of all order ideals of $J(L)$ forms a distributive lattice under union (join) and intersection (meet).\n\nDefine $\\varphi: L \\to D(J(L))$ by $\\varphi(a) = \\{ j \\in J(L) \\mid j \\leq a \\}$.\n\nProve that $\\varphi$ is a lattice isomorphism, i.e., that $\\varphi$ is bijective and satisfies $\\varphi(a \\vee b) = \\varphi(a) \\cup \\varphi(b)$ and $\\varphi(a \\wedge b) = \\varphi(a) \\cap \\varphi(b)$ for all $a, b \\in L$.\n[/QUESTION]",
+    "run_id": "4",
+    "topic_slug": "order_lattices_and_ordered_algebraic_structures",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves that \\$\\\\varphi\\$ is well-defined, preserves join and meet, and is bijective. All steps are logically sound and complete. The use of properties of join-irreducible elements in a distributive lattice is appropriately justified (e.g., the key implication \\$j\\\\le a\\\\vee b\\\\Rightarrow j\\\\le a\\\\lor j\\\\le b\\$ is derived via distributivity and join-irreducibility). The arguments for injectivity and surjectivity rely on standard facts about finite lattices (every element is the join of the join-irreducibles below it; join-prime property extends to finite joins), which are correctly invoked. No mathematical errors or substantive gaps are present.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves that \\\\(\\\\varphi\\\\) is well-defined, preserves join and meet, and is bijective. All steps are logically sound and complete. The use of properties of join-irreducible elements in a distributive lattice is appropriately justified (e.g., the key implication \\\\(j\\\\le a\\\\vee b\\\\Rightarrow j\\\\le a\\\\lor j\\\\le b\\\\) is derived via distributivity and join-irreducibility). The arguments for injectivity and surjectivity rely on standard facts about finite lattices (every element is the join of the join-irreducibles below it; join-prime property extends to finite joins), which are correctly invoked. No mathematical errors or substantive gaps are present.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly proves that $\\varphi$ is well-defined, preserves join and meet, and is bijective. All steps are logically sound and complete. The use of properties of join-irreducible elements in a distributive lattice is appropriately justified (e.g., the key implication $j\\le a\\vee b\\Rightarrow j\\le a\\lor j\\le b$ is derived via distributivity and join-irreducibility). The arguments for injectivity and surjectivity rely on standard facts about finite lattices (every element is the join of the join-irreducibles below it; join-prime property extends to finite joins), which are correctly invoked. No mathematical errors or substantive gaps are present.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no revisions needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $S$ be a semigroup (i.e., a set with an associative binary operation) such that for all $a, b \\in S$, $a = aba$. Prove that $S$ is a rectangular band: that is, show that\n\n1. $a^2 = a$ for all $a \\in S$ (idempotence), and\n2. $xyz = xz$ for all $x, y, z \\in S$.",
+    "run_id": "5",
+    "topic_slug": "general_algebraic_systems",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof of idempotence contains an algebraic error: from a = a^2\u00b7a, multiplying by a on the right yields a^2 = a^4, not a^3. The subsequent claim that a^3 = a^2\u00b7a = a\u00b7a is false. The proof of xyz = xz is incoherent: e.g., 'xyz = (xzx)y(xzx)z' is not equal to xyz; the substitution of yz by zx is unjustified; the steps misuse associativity and idempotence. The reasoning does not establish the required identity.\",\n  \"suggestions\": \"For idempotence, use a = a^3 (from b=a) and a = a^4 (from b=a^2) to deduce a^2 = a. For xyz = xz, a correct proof: from the given property, x = x(yz)x and z = zxz. Then xyz = (xy)z = (xy)(zxz) = xyzxz, and xz = x(yz)xz = xyzxz, hence xyz = xz.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof of idempotence contains an algebraic error: from a = a^2\u00b7a, multiplying by a on the right yields a^2 = a^4, not a^3. The subsequent claim that a^3 = a^2\u00b7a = a\u00b7a is false. The proof of xyz = xz is incoherent: e.g., 'xyz = (xzx)y(xzx)z' is not equal to xyz; the substitution of yz by zx is unjustified; the steps misuse associativity and idempotence. The reasoning does not establish the required identity.\",\n  \"suggestions\": \"For idempotence, use a = a^3 (from b=a) and a = a^4 (from b=a^2) to deduce a^2 = a. For xyz = xz, a correct proof: from the given property, x = x(yz)x and z = zxz. Then xyz = (xy)z = (xy)(zxz) = xyzxz, and xz = x(yz)xz = xyzxz, hence xyz = xz.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The proof of idempotence contains an algebraic error: from a = a^2\u00b7a, multiplying by a on the right yields a^2 = a^4, not a^3. The subsequent claim that a^3 = a^2\u00b7a = a\u00b7a is false. The proof of xyz = xz is incoherent: e.g., 'xyz = (xzx)y(xzx)z' is not equal to xyz; the substitution of yz by zx is unjustified; the steps misuse associativity and idempotence. The reasoning does not establish the required identity.",
+        "suggestions": "For idempotence, use a = a^3 (from b=a) and a = a^4 (from b=a^2) to deduce a^2 = a. For xyz = xz, a correct proof: from the given property, x = x(yz)x and z = zxz. Then xyz = (xy)z = (xy)(zxz) = xyzxz, and xz = x(yz)xz = xyzxz, hence xyz = xz.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no improvements needed."
+        }
+      }
+    ]
   }
 ]

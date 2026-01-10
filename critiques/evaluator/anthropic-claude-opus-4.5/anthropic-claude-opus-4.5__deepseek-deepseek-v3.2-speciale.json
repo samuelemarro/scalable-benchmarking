@@ -67,5 +67,904 @@
         }
       }
     ]
+  },
+  {
+    "question": "Let $D_6$ denote the set of positive divisors of $6$, equipped with the partial order given by divisibility (i.e., $a \\leq b$ if and only if $a \\mid b$). Under this ordering, $D_6$ forms a lattice where the meet operation is $a \\wedge b = \\gcd(a,b)$ and the join operation is $a \\vee b = \\text{lcm}(a,b)$.\n\nA **sublattice** of $D_6$ is a nonempty subset $S \\subseteq D_6$ such that for all $a, b \\in S$, both $\\gcd(a,b) \\in S$ and $\\text{lcm}(a,b) \\in S$.\n\nDetermine the total number of sublattices of $D_6$.",
+    "run_id": "4",
+    "topic_slug": "order_lattices_and_ordered_algebraic_structures",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies $D_6 = \\\\{1, 2, 3, 6\\\\}$ and systematically verifies all 15 nonempty subsets for closure under gcd and lcm. The verification of each case is accurate: (1) All 4 singletons are sublattices (trivial closure). (2) For two-element subsets, the answer correctly identifies that $\\\\{2,3\\\\}$ fails because $\\\\gcd(2,3)=1 \\\\notin \\\\{2,3\\\\}$ and $\\\\text{lcm}(2,3)=6 \\\\notin \\\\{2,3\\\\}$, while the other 5 pairs are closed. (3) For three-element subsets, $\\\\{1,2,3\\\\}$ fails because $\\\\text{lcm}(2,3)=6 \\\\notin S$, and $\\\\{2,3,6\\\\}$ fails because $\\\\gcd(2,3)=1 \\\\notin S$, while $\\\\{1,2,6\\\\}$ and $\\\\{1,3,6\\\\}$ are closed. (4) The full set is trivially a sublattice. The arithmetic $4 + 5 + 2 + 1 = 12$ is correct. All pair-wise checks are verified as accurate.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies $D_6 = \\\\{1, 2, 3, 6\\\\}$ and systematically verifies all 15 nonempty subsets for closure under gcd and lcm. The verification of each case is accurate: (1) All 4 singletons are sublattices (trivial closure). (2) For two-element subsets, the answer correctly identifies that $\\\\{2,3\\\\}$ fails because $\\\\gcd(2,3)=1 \\\\notin \\\\{2,3\\\\}$ and $\\\\text{lcm}(2,3)=6 \\\\notin \\\\{2,3\\\\}$, while the other 5 pairs are closed. (3) For three-element subsets, $\\\\{1,2,3\\\\}$ fails because $\\\\text{lcm}(2,3)=6 \\\\notin S$, and $\\\\{2,3,6\\\\}$ fails because $\\\\gcd(2,3)=1 \\\\notin S$, while $\\\\{1,2,6\\\\}$ and $\\\\{1,3,6\\\\}$ are closed. (4) The full set is trivially a sublattice. The arithmetic $4 + 5 + 2 + 1 = 12$ is correct. All pair-wise checks are verified as accurate.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies $D_6 = \\{1, 2, 3, 6\\}$ and systematically verifies all 15 nonempty subsets for closure under gcd and lcm. The verification of each case is accurate: (1) All 4 singletons are sublattices (trivial closure). (2) For two-element subsets, the answer correctly identifies that $\\{2,3\\}$ fails because $\\gcd(2,3)=1 \\notin \\{2,3\\}$ and $\\text{lcm}(2,3)=6 \\notin \\{2,3\\}$, while the other 5 pairs are closed. (3) For three-element subsets, $\\{1,2,3\\}$ fails because $\\text{lcm}(2,3)=6 \\notin S$, and $\\{2,3,6\\}$ fails because $\\gcd(2,3)=1 \\notin S$, while $\\{1,2,6\\}$ and $\\{1,3,6\\}$ are closed. (4) The full set is trivially a sublattice. The arithmetic $4 + 5 + 2 + 1 = 12$ is correct. All pair-wise checks are verified as accurate.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $K = \\mathbb{Q}[x]/(x^3 - 2)$ be the quotient ring. Express the tensor product $K \\otimes_{\\mathbb{Q}} K$ as a direct product of fields and identify each factor explicitly, including its degree over $\\mathbb{Q}$.",
+    "run_id": "5",
+    "topic_slug": "general_algebraic_systems",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. Key verifications:\\n\\n1. **Tensor product computation**: The isomorphism $K \\\\otimes_{\\\\mathbb{Q}} K \\\\cong K[x]/(x^3-2)$ via base change is correct.\\n\\n2. **Factorization**: $(x-\\\\alpha)(x^2+\\\\alpha x+\\\\alpha^2) = x^3 - \\\\alpha^3 = x^3 - 2$ is verified.\\n\\n3. **Irreducibility of quadratic**: The discriminant $\\\\Delta = \\\\alpha^2 - 4\\\\alpha^2 = -3\\\\alpha^2$ is correctly computed. The argument that $\\\\sqrt{-3} \\\\notin K$ (since $[\\\\mathbb{Q}(\\\\sqrt{-3}):\\\\mathbb{Q}] = 2$ does not divide $[K:\\\\mathbb{Q}] = 3$) is valid and correctly implies the quadratic is irreducible over $K$.\\n\\n4. **CRT application**: Correctly applied since $(x-\\\\alpha)$ and $(x^2+\\\\alpha x+\\\\alpha^2)$ are coprime irreducible factors.\\n\\n5. **Second factor identification**: The computation showing $\\\\beta/\\\\alpha$ satisfies $t^2 + t + 1 = 0$ (primitive cube root equation) is correct, leading to $F = K(\\\\omega) = K(\\\\sqrt{-3})$.\\n\\n6. **Degree calculation**: The linear disjointness argument (since $\\\\gcd(3,2) = 1$ and the intersection $\\\\mathbb{Q}(\\\\alpha) \\\\cap \\\\mathbb{Q}(\\\\sqrt{-3}) = \\\\mathbb{Q}$) correctly establishes $[K(\\\\sqrt{-3}):\\\\mathbb{Q}] = 6$.\\n\\n7. **Dimension check**: $3 \\\\cdot 3 = 9 = 3 + 6$ confirms consistency.\\n\\nThe final answer $K \\\\otimes_{\\\\mathbb{Q}} K \\\\cong \\\\mathbb{Q}(\\\\sqrt[3]{2}) \\\\times \\\\mathbb{Q}(\\\\sqrt[3]{2}, \\\\sqrt{-3})$ with degrees 3 and 6 is correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. Key verifications:\\n\\n1. **Tensor product computation**: The isomorphism $K \\\\otimes_{\\\\mathbb{Q}} K \\\\cong K[x]/(x^3-2)$ via base change is correct.\\n\\n2. **Factorization**: $(x-\\\\alpha)(x^2+\\\\alpha x+\\\\alpha^2) = x^3 - \\\\alpha^3 = x^3 - 2$ is verified.\\n\\n3. **Irreducibility of quadratic**: The discriminant $\\\\Delta = \\\\alpha^2 - 4\\\\alpha^2 = -3\\\\alpha^2$ is correctly computed. The argument that $\\\\sqrt{-3} \\\\notin K$ (since $[\\\\mathbb{Q}(\\\\sqrt{-3}):\\\\mathbb{Q}] = 2$ does not divide $[K:\\\\mathbb{Q}] = 3$) is valid and correctly implies the quadratic is irreducible over $K$.\\n\\n4. **CRT application**: Correctly applied since $(x-\\\\alpha)$ and $(x^2+\\\\alpha x+\\\\alpha^2)$ are coprime irreducible factors.\\n\\n5. **Second factor identification**: The computation showing $\\\\beta/\\\\alpha$ satisfies $t^2 + t + 1 = 0$ (primitive cube root equation) is correct, leading to $F = K(\\\\omega) = K(\\\\sqrt{-3})$.\\n\\n6. **Degree calculation**: The linear disjointness argument (since $\\\\gcd(3,2) = 1$ and the intersection $\\\\mathbb{Q}(\\\\alpha) \\\\cap \\\\mathbb{Q}(\\\\sqrt{-3}) = \\\\mathbb{Q}$) correctly establishes $[K(\\\\sqrt{-3}):\\\\mathbb{Q}] = 6$.\\n\\n7. **Dimension check**: $3 \\\\cdot 3 = 9 = 3 + 6$ confirms consistency.\\n\\nThe final answer $K \\\\otimes_{\\\\mathbb{Q}} K \\\\cong \\\\mathbb{Q}(\\\\sqrt[3]{2}) \\\\times \\\\mathbb{Q}(\\\\sqrt[3]{2}, \\\\sqrt{-3})$ with degrees 3 and 6 is correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. Key verifications:\n\n1. **Tensor product computation**: The isomorphism $K \\otimes_{\\mathbb{Q}} K \\cong K[x]/(x^3-2)$ via base change is correct.\n\n2. **Factorization**: $(x-\\alpha)(x^2+\\alpha x+\\alpha^2) = x^3 - \\alpha^3 = x^3 - 2$ is verified.\n\n3. **Irreducibility of quadratic**: The discriminant $\\Delta = \\alpha^2 - 4\\alpha^2 = -3\\alpha^2$ is correctly computed. The argument that $\\sqrt{-3} \\notin K$ (since $[\\mathbb{Q}(\\sqrt{-3}):\\mathbb{Q}] = 2$ does not divide $[K:\\mathbb{Q}] = 3$) is valid and correctly implies the quadratic is irreducible over $K$.\n\n4. **CRT application**: Correctly applied since $(x-\\alpha)$ and $(x^2+\\alpha x+\\alpha^2)$ are coprime irreducible factors.\n\n5. **Second factor identification**: The computation showing $\\beta/\\alpha$ satisfies $t^2 + t + 1 = 0$ (primitive cube root equation) is correct, leading to $F = K(\\omega) = K(\\sqrt{-3})$.\n\n6. **Degree calculation**: The linear disjointness argument (since $\\gcd(3,2) = 1$ and the intersection $\\mathbb{Q}(\\alpha) \\cap \\mathbb{Q}(\\sqrt{-3}) = \\mathbb{Q}$) correctly establishes $[K(\\sqrt{-3}):\\mathbb{Q}] = 6$.\n\n7. **Dimension check**: $3 \\cdot 3 = 9 = 3 + 6$ confirms consistency.\n\nThe final answer $K \\otimes_{\\mathbb{Q}} K \\cong \\mathbb{Q}(\\sqrt[3]{2}) \\times \\mathbb{Q}(\\sqrt[3]{2}, \\sqrt{-3})$ with degrees 3 and 6 is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f(x) = x^5 - 4x + 2 \\in \\mathbb{Q}[x]$, and let $\\alpha \\in \\mathbb{C}$ be a root of $f(x)$.\n\n**(a)** Prove that $f(x)$ is irreducible over $\\mathbb{Q}$.\n\n**(b)** Since $f$ is irreducible and monic of degree 5, the set $\\{1, \\alpha, \\alpha^2, \\alpha^3, \\alpha^4\\}$ forms a basis for the field extension $\\mathbb{Q}(\\alpha)$ over $\\mathbb{Q}$. Express $\\alpha^{-1}$ as a $\\mathbb{Q}$-linear combination of this basis.",
+    "run_id": "6",
+    "topic_slug": "field_theory_and_polynomials",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"Both parts are mathematically sound and complete.\\n\\n**Part (a):** The application of Eisenstein's criterion with $p=2$ is correct. The verification of all three conditions (2 does not divide the leading coefficient 1; 2 divides all non-leading coefficients 0, 0, 0, -4, 2; and $2^2=4$ does not divide the constant term 2) is accurate.\\n\\n**Part (b):** The approach is correct: multiplying both sides of $\\\\alpha^{-1} = c_0 + c_1\\\\alpha + c_2\\\\alpha^2 + c_3\\\\alpha^3 + c_4\\\\alpha^4$ by $\\\\alpha$, substituting $\\\\alpha^5 = 4\\\\alpha - 2$, and equating coefficients using basis uniqueness. The system of equations is set up correctly, and the solution $c_4 = -1/2$, $c_0 = 2$, $c_1 = c_2 = c_3 = 0$ is correct. The final verification $\\\\alpha(2 - \\\\frac{1}{2}\\\\alpha^4) = 2\\\\alpha - \\\\frac{1}{2}(4\\\\alpha - 2) = 1$ confirms the answer.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"Both parts are mathematically sound and complete.\\n\\n**Part (a):** The application of Eisenstein's criterion with $p=2$ is correct. The verification of all three conditions (2 does not divide the leading coefficient 1; 2 divides all non-leading coefficients 0, 0, 0, -4, 2; and $2^2=4$ does not divide the constant term 2) is accurate.\\n\\n**Part (b):** The approach is correct: multiplying both sides of $\\\\alpha^{-1} = c_0 + c_1\\\\alpha + c_2\\\\alpha^2 + c_3\\\\alpha^3 + c_4\\\\alpha^4$ by $\\\\alpha$, substituting $\\\\alpha^5 = 4\\\\alpha - 2$, and equating coefficients using basis uniqueness. The system of equations is set up correctly, and the solution $c_4 = -1/2$, $c_0 = 2$, $c_1 = c_2 = c_3 = 0$ is correct. The final verification $\\\\alpha(2 - \\\\frac{1}{2}\\\\alpha^4) = 2\\\\alpha - \\\\frac{1}{2}(4\\\\alpha - 2) = 1$ confirms the answer.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "Both parts are mathematically sound and complete.\n\n**Part (a):** The application of Eisenstein's criterion with $p=2$ is correct. The verification of all three conditions (2 does not divide the leading coefficient 1; 2 divides all non-leading coefficients 0, 0, 0, -4, 2; and $2^2=4$ does not divide the constant term 2) is accurate.\n\n**Part (b):** The approach is correct: multiplying both sides of $\\alpha^{-1} = c_0 + c_1\\alpha + c_2\\alpha^2 + c_3\\alpha^3 + c_4\\alpha^4$ by $\\alpha$, substituting $\\alpha^5 = 4\\alpha - 2$, and equating coefficients using basis uniqueness. The system of equations is set up correctly, and the solution $c_4 = -1/2$, $c_0 = 2$, $c_1 = c_2 = c_3 = 0$ is correct. The final verification $\\alpha(2 - \\frac{1}{2}\\alpha^4) = 2\\alpha - \\frac{1}{2}(4\\alpha - 2) = 1$ confirms the answer.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $k$ be a field and let $R = k[x, y, z]/(xz, yz)$. Compute the Krull dimension and the depth of $R$ (with respect to the maximal ideal $\\mathfrak{m} = (x, y, z)R$). Determine whether $R$ is a Cohen-Macaulay ring.",
+    "run_id": "7",
+    "topic_slug": "commutative_algebra",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\"verdict\": \"correct\", \"notes\": \"The solution is mathematically sound and complete. The key steps are correctly verified: (1) The factorization $(xz, yz) = (z) \\\\cap (x,y)$ is established via the product ideal $(z)(x,y) = (xz, yz)$, correctly identifying minimal primes and leading to $\\\\dim R = 2$. (2) The regularity of $x+z$ is properly shown using the direct sum decomposition $R \\\\cong k[x,y] \\\\oplus z\\\\cdot k[z]$. (3) The quotient $R/(x+z) \\\\cong k[y,z]/(z^2, yz)$ is correctly computed, and the depth-zero argument (every element of $\\\\mathfrak{n}$ annihilates $z$) is valid. (4) The depth formula application yields $\\\\text{depth}_\\\\mathfrak{m} R = 1$ correctly. (5) The Cohen-Macaulay conclusion follows since $2 \\\\neq 1$. One minor terminological issue: the phrase \\\"$zk[z]$ is a domain\\\" is imprecise since $zk[z]$ lacks multiplicative identity, but the underlying argument (that $z^2 s = 0$ in $R$ implies $s = 0$ since $k[z]$ is a domain) is correct.\"}",
+        "raw_critique": "{\"verdict\": \"correct\", \"notes\": \"The solution is mathematically sound and complete. The key steps are correctly verified: (1) The factorization $(xz, yz) = (z) \\\\cap (x,y)$ is established via the product ideal $(z)(x,y) = (xz, yz)$, correctly identifying minimal primes and leading to $\\\\dim R = 2$. (2) The regularity of $x+z$ is properly shown using the direct sum decomposition $R \\\\cong k[x,y] \\\\oplus z\\\\cdot k[z]$. (3) The quotient $R/(x+z) \\\\cong k[y,z]/(z^2, yz)$ is correctly computed, and the depth-zero argument (every element of $\\\\mathfrak{n}$ annihilates $z$) is valid. (4) The depth formula application yields $\\\\text{depth}_\\\\mathfrak{m} R = 1$ correctly. (5) The Cohen-Macaulay conclusion follows since $2 \\\\neq 1$. One minor terminological issue: the phrase \\\"$zk[z]$ is a domain\\\" is imprecise since $zk[z]$ lacks multiplicative identity, but the underlying argument (that $z^2 s = 0$ in $R$ implies $s = 0$ since $k[z]$ is a domain) is correct.\"}",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. The key steps are correctly verified: (1) The factorization $(xz, yz) = (z) \\cap (x,y)$ is established via the product ideal $(z)(x,y) = (xz, yz)$, correctly identifying minimal primes and leading to $\\dim R = 2$. (2) The regularity of $x+z$ is properly shown using the direct sum decomposition $R \\cong k[x,y] \\oplus z\\cdot k[z]$. (3) The quotient $R/(x+z) \\cong k[y,z]/(z^2, yz)$ is correctly computed, and the depth-zero argument (every element of $\\mathfrak{n}$ annihilates $z$) is valid. (4) The depth formula application yields $\\text{depth}_\\mathfrak{m} R = 1$ correctly. (5) The Cohen-Macaulay conclusion follows since $2 \\neq 1$. One minor terminological issue: the phrase \"$zk[z]$ is a domain\" is imprecise since $zk[z]$ lacks multiplicative identity, but the underlying argument (that $z^2 s = 0$ in $R$ implies $s = 0$ since $k[z]$ is a domain) is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $C$ be the projective closure in $\\mathbb{P}^2_{\\mathbb{C}}$ of the affine plane curve defined by $y^3 = x^5 - x^4$.\n\n(a) Find all singular points of $C$.\n\n(b) Compute the geometric genus of $C$.",
+    "run_id": "8",
+    "topic_slug": "algebraic_geometry",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. The homogenization $F(X,Y,Z) = X^5 - X^4Z - Y^3Z^2$ is correct. The partial derivatives and case analysis for finding singular points at $[0:0:1]$ and $[0:1:0]$ are verified correctly. For part (b), the arithmetic genus computation $p_a = 6$ is correct. The delta invariant calculations are rigorous: at $P_1$, the Milnor number $\\\\mu = 6$ (from the quotient $\\\\mathbb{C}[[x,y]]/(x^3, y^2)$), branch count $r = 1$ (from the irreducible face polynomial $y^3 + x^4$), giving $\\\\delta = 3$ via $\\\\mu = 2\\\\delta - r + 1$. At $P_2$, the analytic equivalence to the $A_4$ singularity $w^2 = u^5$ is established correctly through the completing-the-square argument, yielding $\\\\delta = 2$. The final geometric genus $g = 6 - 5 = 1$ follows correctly. The irreducibility argument using Eisenstein's criterion with prime $(x-1)$ is valid.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. The homogenization $F(X,Y,Z) = X^5 - X^4Z - Y^3Z^2$ is correct. The partial derivatives and case analysis for finding singular points at $[0:0:1]$ and $[0:1:0]$ are verified correctly. For part (b), the arithmetic genus computation $p_a = 6$ is correct. The delta invariant calculations are rigorous: at $P_1$, the Milnor number $\\\\mu = 6$ (from the quotient $\\\\mathbb{C}[[x,y]]/(x^3, y^2)$), branch count $r = 1$ (from the irreducible face polynomial $y^3 + x^4$), giving $\\\\delta = 3$ via $\\\\mu = 2\\\\delta - r + 1$. At $P_2$, the analytic equivalence to the $A_4$ singularity $w^2 = u^5$ is established correctly through the completing-the-square argument, yielding $\\\\delta = 2$. The final geometric genus $g = 6 - 5 = 1$ follows correctly. The irreducibility argument using Eisenstein's criterion with prime $(x-1)$ is valid.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. The homogenization $F(X,Y,Z) = X^5 - X^4Z - Y^3Z^2$ is correct. The partial derivatives and case analysis for finding singular points at $[0:0:1]$ and $[0:1:0]$ are verified correctly. For part (b), the arithmetic genus computation $p_a = 6$ is correct. The delta invariant calculations are rigorous: at $P_1$, the Milnor number $\\mu = 6$ (from the quotient $\\mathbb{C}[[x,y]]/(x^3, y^2)$), branch count $r = 1$ (from the irreducible face polynomial $y^3 + x^4$), giving $\\delta = 3$ via $\\mu = 2\\delta - r + 1$. At $P_2$, the analytic equivalence to the $A_4$ singularity $w^2 = u^5$ is established correctly through the completing-the-square argument, yielding $\\delta = 2$. The final geometric genus $g = 6 - 5 = 1$ follows correctly. The irreducibility argument using Eisenstein's criterion with prime $(x-1)$ is valid.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. All mathematical verifications in the critique are correct: the homogenization, partial derivatives, singular point identification, Milnor number calculation, Newton polygon analysis, delta invariant computations, and the final geometric genus. One minor note for potential enhancement: the critique could explicitly verify the formula $\\mu = 2\\delta - r + 1$ applies to plane curve singularities, but this is standard and the critique's acceptance of it is reasonable."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Looking at this problem, I need to create a challenging matrix theory problem that requires substantive reasoning about eigenvalues and their constraints.\n\n\nLet $A$ be a $4 \\times 4$ matrix with real entries such that $A^4 = I$ (the identity matrix) and $\\operatorname{tr}(A) = 0$. Find all possible values of $\\det(A - I)$.",
+    "run_id": "9",
+    "topic_slug": "linear_and_multilinear_algebra",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\"verdict\": \"correct\", \"notes\": \"The solution is mathematically sound and complete. Step 1 correctly establishes that eigenvalues are fourth roots of unity and that complex eigenvalues come in conjugate pairs ($c = d$). Step 2 correctly uses $\\\\operatorname{tr}(A) = 0$ to derive $a = b$. Step 3 correctly combines constraints to get $a + c = 2$. Step 4 correctly enumerates all three cases. Step 5 correctly computes $\\\\det(A - I) = \\\\prod(\\\\lambda_j - 1)$: Cases 1 and 2 yield 0 (due to eigenvalue 1), and Case 3 yields $(i-1)^2(-i-1)^2 = 4$ (verified: $(i-1)(-i-1) = 2$, so the product is $2^2 = 4$). Step 6 provides valid real matrix examples for each case, confirming realizability. The conclusion that possible values are $\\\\{0, 4\\\\}$ is correct.\"}",
+        "raw_critique": "{\"verdict\": \"correct\", \"notes\": \"The solution is mathematically sound and complete. Step 1 correctly establishes that eigenvalues are fourth roots of unity and that complex eigenvalues come in conjugate pairs ($c = d$). Step 2 correctly uses $\\\\operatorname{tr}(A) = 0$ to derive $a = b$. Step 3 correctly combines constraints to get $a + c = 2$. Step 4 correctly enumerates all three cases. Step 5 correctly computes $\\\\det(A - I) = \\\\prod(\\\\lambda_j - 1)$: Cases 1 and 2 yield 0 (due to eigenvalue 1), and Case 3 yields $(i-1)^2(-i-1)^2 = 4$ (verified: $(i-1)(-i-1) = 2$, so the product is $2^2 = 4$). Step 6 provides valid real matrix examples for each case, confirming realizability. The conclusion that possible values are $\\\\{0, 4\\\\}$ is correct.\"}",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. Step 1 correctly establishes that eigenvalues are fourth roots of unity and that complex eigenvalues come in conjugate pairs ($c = d$). Step 2 correctly uses $\\operatorname{tr}(A) = 0$ to derive $a = b$. Step 3 correctly combines constraints to get $a + c = 2$. Step 4 correctly enumerates all three cases. Step 5 correctly computes $\\det(A - I) = \\prod(\\lambda_j - 1)$: Cases 1 and 2 yield 0 (due to eigenvalue 1), and Case 3 yields $(i-1)^2(-i-1)^2 = 4$ (verified: $(i-1)(-i-1) = 2$, so the product is $2^2 = 4$). Step 6 provides valid real matrix examples for each case, confirming realizability. The conclusion that possible values are $\\{0, 4\\}$ is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $p$ be a prime number, and consider the quotient ring $R = \\mathbb{F}_p[x]/(x^p - x)$, where $\\mathbb{F}_p = \\mathbb{Z}/p\\mathbb{Z}$ is the finite field with $p$ elements.\n\n(a) Prove that $R \\cong \\mathbb{F}_p^p$ as rings, where $\\mathbb{F}_p^p$ denotes the direct product of $p$ copies of $\\mathbb{F}_p$.\n\n(b) Determine the total number of idempotent elements in $R$ (i.e., elements $e \\in R$ satisfying $e^2 = e$).\n\n(c) Determine the number of unital ring homomorphisms from $R$ to $\\mathbb{F}_p$ (homomorphisms $\\phi: R \\to \\mathbb{F}_p$ satisfying $\\phi(1_R) = 1_{\\mathbb{F}_p}$).",
+    "run_id": "10",
+    "topic_slug": "associative_rings_and_algebras",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\"verdict\": \"correct\", \"notes\": \"All three parts are mathematically sound and rigorously justified.\\n\\n**Part (a):** The proof correctly applies Fermat's little theorem to show $x^p - x$ has all elements of $\\\\mathbb{F}_p$ as roots, uses the fact that a degree $p$ polynomial over a field has at most $p$ roots to obtain the complete factorization, verifies the coprimality of the linear factors (correctly noting that $(x-a)-(x-b)=b-a$ is a unit), and applies the Chinese Remainder Theorem appropriately.\\n\\n**Part (b):** The reasoning is correct: ring isomorphisms preserve idempotents, idempotents in a product ring are tuples of idempotents, and the only idempotents in a field are $0$ and $1$. The count of $2^p$ follows correctly.\\n\\n**Part (c):** The argument using the standard basis idempotents $e_i$ is rigorous. The key observations that (1) $\\\\psi(e_i) \\\\in \\\\{0,1\\\\}$ as idempotents in a field, (2) at most one can be $1$ due to orthogonality, and (3) exactly one must be $1$ since $\\\\sum e_i = 1$ and $\\\\psi$ is unital, correctly establish that every unital homomorphism is a coordinate projection. The count of $p$ homomorphisms is correct.\"}",
+        "raw_critique": "{\"verdict\": \"correct\", \"notes\": \"All three parts are mathematically sound and rigorously justified.\\n\\n**Part (a):** The proof correctly applies Fermat's little theorem to show $x^p - x$ has all elements of $\\\\mathbb{F}_p$ as roots, uses the fact that a degree $p$ polynomial over a field has at most $p$ roots to obtain the complete factorization, verifies the coprimality of the linear factors (correctly noting that $(x-a)-(x-b)=b-a$ is a unit), and applies the Chinese Remainder Theorem appropriately.\\n\\n**Part (b):** The reasoning is correct: ring isomorphisms preserve idempotents, idempotents in a product ring are tuples of idempotents, and the only idempotents in a field are $0$ and $1$. The count of $2^p$ follows correctly.\\n\\n**Part (c):** The argument using the standard basis idempotents $e_i$ is rigorous. The key observations that (1) $\\\\psi(e_i) \\\\in \\\\{0,1\\\\}$ as idempotents in a field, (2) at most one can be $1$ due to orthogonality, and (3) exactly one must be $1$ since $\\\\sum e_i = 1$ and $\\\\psi$ is unital, correctly establish that every unital homomorphism is a coordinate projection. The count of $p$ homomorphisms is correct.\"}",
+        "verdict": "correct",
+        "notes": "All three parts are mathematically sound and rigorously justified.\n\n**Part (a):** The proof correctly applies Fermat's little theorem to show $x^p - x$ has all elements of $\\mathbb{F}_p$ as roots, uses the fact that a degree $p$ polynomial over a field has at most $p$ roots to obtain the complete factorization, verifies the coprimality of the linear factors (correctly noting that $(x-a)-(x-b)=b-a$ is a unit), and applies the Chinese Remainder Theorem appropriately.\n\n**Part (b):** The reasoning is correct: ring isomorphisms preserve idempotents, idempotents in a product ring are tuples of idempotents, and the only idempotents in a field are $0$ and $1$. The count of $2^p$ follows correctly.\n\n**Part (c):** The argument using the standard basis idempotents $e_i$ is rigorous. The key observations that (1) $\\psi(e_i) \\in \\{0,1\\}$ as idempotents in a field, (2) at most one can be $1$ due to orthogonality, and (3) exactly one must be $1$ since $\\sum e_i = 1$ and $\\psi$ is unital, correctly establish that every unital homomorphism is a coordinate projection. The count of $p$ homomorphisms is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathfrak{g}$ be the 4-dimensional Lie algebra over $\\mathbb{R}$ with basis $\\{H, X, Y, Z\\}$ and Lie bracket defined by:\n$$[H, X] = X, \\quad [H, Y] = -Y, \\quad [H, Z] = 0, \\quad [X, Y] = Z,$$\nwith all other brackets of basis elements being zero or determined by antisymmetry (i.e., $[X, Z] = [Y, Z] = 0$).\n\n**(a)** Verify that the Jacobi identity $[a, [b, c]] + [b, [c, a]] + [c, [a, b]] = 0$ holds for this bracket by checking it on the triple $(H, X, Y)$.\n\n**(b)** Compute the derived series $\\mathfrak{g}^{(0)} \\supseteq \\mathfrak{g}^{(1)} \\supseteq \\mathfrak{g}^{(2)} \\supseteq \\cdots$, where $\\mathfrak{g}^{(0)} = \\mathfrak{g}$ and $\\mathfrak{g}^{(k+1)} = [\\mathfrak{g}^{(k)}, \\mathfrak{g}^{(k)}]$.\n\n**(c)** Compute the lower central series $\\mathfrak{g}^1 \\supseteq \\mathfrak{g}^2 \\supseteq \\mathfrak{g}^3 \\supseteq \\cdots$, where $\\mathfrak{g}^1 = \\mathfrak{g}$ and $\\mathfrak{g}^{k+1} = [\\mathfrak{g}, \\mathfrak{g}^k]$.\n\n**(d)** Determine whether $\\mathfrak{g}$ is solvable, nilpotent, both, or neither. Justify your answer using the results from parts (b) and (c).",
+    "run_id": "11",
+    "topic_slug": "nonassociative_rings_and_algebras",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"All parts of the solution are mathematically sound and complete.\\n\\n**(a)** The Jacobi identity verification for $(H, X, Y)$ is correct: $[H, [X,Y]] = [H, Z] = 0$, $[X, [Y,H]] = [X, Y] = Z$, and $[Y, [H,X]] = [Y, X] = -Z$, summing to $0$.\\n\\n**(b)** The derived series computation is correct: $\\\\mathfrak{g}^{(1)} = \\\\langle X, Y, Z \\\\rangle$ (from the three nonzero bracket relations), $\\\\mathfrak{g}^{(2)} = \\\\langle Z \\\\rangle$ (only $[X,Y] = Z$ is nonzero within $\\\\mathfrak{g}^{(1)}$), and $\\\\mathfrak{g}^{(3)} = \\\\{0\\\\}$.\\n\\n**(c)** The lower central series computation is correct. The key observation that $[\\\\mathfrak{g}, \\\\mathfrak{g}^2] = \\\\mathfrak{g}^2$ is properly verified by showing that $[H, X] = X$ and $[H, Y] = -Y$ generate $X$ and $Y$, while $[X, Y] = Z$ contributes $Z$. This causes stabilization at $\\\\mathfrak{g}^2 = \\\\langle X, Y, Z \\\\rangle$.\\n\\n**(d)** The conclusions follow correctly from the computed series: solvable because the derived series terminates at $\\\\{0\\\\}$, not nilpotent because the lower central series stabilizes at a nonzero subspace.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"All parts of the solution are mathematically sound and complete.\\n\\n**(a)** The Jacobi identity verification for $(H, X, Y)$ is correct: $[H, [X,Y]] = [H, Z] = 0$, $[X, [Y,H]] = [X, Y] = Z$, and $[Y, [H,X]] = [Y, X] = -Z$, summing to $0$.\\n\\n**(b)** The derived series computation is correct: $\\\\mathfrak{g}^{(1)} = \\\\langle X, Y, Z \\\\rangle$ (from the three nonzero bracket relations), $\\\\mathfrak{g}^{(2)} = \\\\langle Z \\\\rangle$ (only $[X,Y] = Z$ is nonzero within $\\\\mathfrak{g}^{(1)}$), and $\\\\mathfrak{g}^{(3)} = \\\\{0\\\\}$.\\n\\n**(c)** The lower central series computation is correct. The key observation that $[\\\\mathfrak{g}, \\\\mathfrak{g}^2] = \\\\mathfrak{g}^2$ is properly verified by showing that $[H, X] = X$ and $[H, Y] = -Y$ generate $X$ and $Y$, while $[X, Y] = Z$ contributes $Z$. This causes stabilization at $\\\\mathfrak{g}^2 = \\\\langle X, Y, Z \\\\rangle$.\\n\\n**(d)** The conclusions follow correctly from the computed series: solvable because the derived series terminates at $\\\\{0\\\\}$, not nilpotent because the lower central series stabilizes at a nonzero subspace.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "All parts of the solution are mathematically sound and complete.\n\n**(a)** The Jacobi identity verification for $(H, X, Y)$ is correct: $[H, [X,Y]] = [H, Z] = 0$, $[X, [Y,H]] = [X, Y] = Z$, and $[Y, [H,X]] = [Y, X] = -Z$, summing to $0$.\n\n**(b)** The derived series computation is correct: $\\mathfrak{g}^{(1)} = \\langle X, Y, Z \\rangle$ (from the three nonzero bracket relations), $\\mathfrak{g}^{(2)} = \\langle Z \\rangle$ (only $[X,Y] = Z$ is nonzero within $\\mathfrak{g}^{(1)}$), and $\\mathfrak{g}^{(3)} = \\{0\\}$.\n\n**(c)** The lower central series computation is correct. The key observation that $[\\mathfrak{g}, \\mathfrak{g}^2] = \\mathfrak{g}^2$ is properly verified by showing that $[H, X] = X$ and $[H, Y] = -Y$ generate $X$ and $Y$, while $[X, Y] = Z$ contributes $Z$. This causes stabilization at $\\mathfrak{g}^2 = \\langle X, Y, Z \\rangle$.\n\n**(d)** The conclusions follow correctly from the computed series: solvable because the derived series terminates at $\\{0\\}$, not nilpotent because the lower central series stabilizes at a nonzero subspace.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R = \\mathbb{Z}[x]/(x^2)$ be the ring of dual numbers over the integers. Consider $\\mathbb{Z}$ as an $R$-module via the augmentation homomorphism $\\varepsilon: R \\to \\mathbb{Z}$ defined by $\\varepsilon(a + bx) = a$ for $a, b \\in \\mathbb{Z}$ (equivalently, $x$ acts on $\\mathbb{Z}$ as zero). \n\nCompute the abelian groups $\\mathrm{Ext}^n_R(\\mathbb{Z}, \\mathbb{Z})$ for all integers $n \\geq 0$.",
+    "run_id": "12",
+    "topic_slug": "category_theory_and_homological_algebra",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly constructs a free resolution of $\\\\mathbb{Z}$ over $R = \\\\mathbb{Z}[x]/(x^2)$ with all terms being $R$ and all differentials being multiplication by $x$. The exactness verification is correct: $\\\\ker(d_n) = (x) = \\\\text{im}(d_{n+1})$ for all $n \\\\geq 1$, and $\\\\ker(\\\\varepsilon) = (x) = \\\\text{im}(d_1)$. The identification $\\\\text{Hom}_R(R, \\\\mathbb{Z}) \\\\cong \\\\mathbb{Z}$ via $f \\\\mapsto f(1)$ is correct, as any $R$-linear map satisfies $f(r) = \\\\varepsilon(r)f(1)$. The key computation that all coboundary maps $\\\\delta^n$ are zero is also correct: since $\\\\varepsilon$ is a ring homomorphism and $\\\\varepsilon(x) = 0$, we have $f(rx) = \\\\varepsilon(rx)f(1) = \\\\varepsilon(r)\\\\varepsilon(x)f(1) = 0$. With all differentials zero, the cohomology $H^n = C^n \\\\cong \\\\mathbb{Z}$ for all $n \\\\geq 0$. The final answer $\\\\text{Ext}^n_R(\\\\mathbb{Z}, \\\\mathbb{Z}) \\\\cong \\\\mathbb{Z}$ for all $n \\\\geq 0$ is correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly constructs a free resolution of $\\\\mathbb{Z}$ over $R = \\\\mathbb{Z}[x]/(x^2)$ with all terms being $R$ and all differentials being multiplication by $x$. The exactness verification is correct: $\\\\ker(d_n) = (x) = \\\\text{im}(d_{n+1})$ for all $n \\\\geq 1$, and $\\\\ker(\\\\varepsilon) = (x) = \\\\text{im}(d_1)$. The identification $\\\\text{Hom}_R(R, \\\\mathbb{Z}) \\\\cong \\\\mathbb{Z}$ via $f \\\\mapsto f(1)$ is correct, as any $R$-linear map satisfies $f(r) = \\\\varepsilon(r)f(1)$. The key computation that all coboundary maps $\\\\delta^n$ are zero is also correct: since $\\\\varepsilon$ is a ring homomorphism and $\\\\varepsilon(x) = 0$, we have $f(rx) = \\\\varepsilon(rx)f(1) = \\\\varepsilon(r)\\\\varepsilon(x)f(1) = 0$. With all differentials zero, the cohomology $H^n = C^n \\\\cong \\\\mathbb{Z}$ for all $n \\\\geq 0$. The final answer $\\\\text{Ext}^n_R(\\\\mathbb{Z}, \\\\mathbb{Z}) \\\\cong \\\\mathbb{Z}$ for all $n \\\\geq 0$ is correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly constructs a free resolution of $\\mathbb{Z}$ over $R = \\mathbb{Z}[x]/(x^2)$ with all terms being $R$ and all differentials being multiplication by $x$. The exactness verification is correct: $\\ker(d_n) = (x) = \\text{im}(d_{n+1})$ for all $n \\geq 1$, and $\\ker(\\varepsilon) = (x) = \\text{im}(d_1)$. The identification $\\text{Hom}_R(R, \\mathbb{Z}) \\cong \\mathbb{Z}$ via $f \\mapsto f(1)$ is correct, as any $R$-linear map satisfies $f(r) = \\varepsilon(r)f(1)$. The key computation that all coboundary maps $\\delta^n$ are zero is also correct: since $\\varepsilon$ is a ring homomorphism and $\\varepsilon(x) = 0$, we have $f(rx) = \\varepsilon(rx)f(1) = \\varepsilon(r)\\varepsilon(x)f(1) = 0$. With all differentials zero, the cohomology $H^n = C^n \\cong \\mathbb{Z}$ for all $n \\geq 0$. The final answer $\\text{Ext}^n_R(\\mathbb{Z}, \\mathbb{Z}) \\cong \\mathbb{Z}$ for all $n \\geq 0$ is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathbb{CP}^2$ be the complex projective plane and let $H$ denote the tautological line bundle over $\\mathbb{CP}^2$. Define $\\xi = [H] - 1 \\in K^0(\\mathbb{CP}^2)$, where $K^0$ denotes complex topological K-theory.\n\nIt is a standard result that $K^0(\\mathbb{CP}^2) \\cong \\mathbb{Z}[\\xi]/(\\xi^3)$ as rings, and that every complex vector bundle over $\\mathbb{CP}^2$ splits as a direct sum of line bundles (Grothendieck's splitting theorem). Line bundles over $\\mathbb{CP}^2$ are precisely the tensor powers $H^m$ for $m \\in \\mathbb{Z}$.\n\n**(a)** Prove that for all $n \\in \\mathbb{Z}$:\n$$(1+\\xi)^n = 1 + n\\xi + \\binom{n}{2}\\xi^2$$\nwhere $\\binom{n}{2} = \\frac{n(n-1)}{2}$ is the generalized binomial coefficient.\n\n**(b)** A class $\\alpha \\in K^0(\\mathbb{CP}^2)$ is called *effective of rank $r$* if $\\alpha = [E]$ for some complex vector bundle $E$ over $\\mathbb{CP}^2$ of rank $r$.\n\nProve that the class $2 - \\xi \\in K^0(\\mathbb{CP}^2)$ is **not** effective of rank $2$.",
+    "run_id": "13",
+    "topic_slug": "k_theory",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete.\\n\\n**Part (a):** The recurrence relation $P(n+1) = P(n)(1+\\\\xi)$ is correctly verified, with the key identity $n + \\\\binom{n}{2} = \\\\binom{n+1}{2}$ established. The base case $(1+\\\\xi)^0 = 1 = P(0)$ is correct, and induction for $n \\\\geq 0$ follows. For negative integers, the inverse $(1+\\\\xi)^{-1} = 1 - \\\\xi + \\\\xi^2$ is correctly computed (verified by $(1+\\\\xi)(1-\\\\xi+\\\\xi^2) = 1 + \\\\xi^3 = 1$), and the check that $P(-1) = 1 - \\\\xi + \\\\xi^2$ using $\\\\binom{-1}{2} = 1$ is correct. Downward induction completes the proof.\\n\\n**Part (b):** The argument correctly uses Grothendieck's splitting theorem to write any rank-2 bundle as $H^a \\\\oplus H^b$, applies part (a) to express $[E] = 2 + (a+b)\\\\xi + (\\\\binom{a}{2} + \\\\binom{b}{2})\\\\xi^2$, and matches coefficients with $2 - \\\\xi = 2 - \\\\xi + 0\\\\cdot\\\\xi^2$. The system $a + b = -1$ and $\\\\binom{a}{2} + \\\\binom{b}{2} = 0$ leads to $a^2 + a + 1 = 0$, which has discriminant $-3 < 0$ and hence no integer solutions. The conclusion follows.\\n\\nThere is a minor LaTeX formatting issue in the displayed cases environment, but the mathematical content is clear and correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete.\\n\\n**Part (a):** The recurrence relation $P(n+1) = P(n)(1+\\\\xi)$ is correctly verified, with the key identity $n + \\\\binom{n}{2} = \\\\binom{n+1}{2}$ established. The base case $(1+\\\\xi)^0 = 1 = P(0)$ is correct, and induction for $n \\\\geq 0$ follows. For negative integers, the inverse $(1+\\\\xi)^{-1} = 1 - \\\\xi + \\\\xi^2$ is correctly computed (verified by $(1+\\\\xi)(1-\\\\xi+\\\\xi^2) = 1 + \\\\xi^3 = 1$), and the check that $P(-1) = 1 - \\\\xi + \\\\xi^2$ using $\\\\binom{-1}{2} = 1$ is correct. Downward induction completes the proof.\\n\\n**Part (b):** The argument correctly uses Grothendieck's splitting theorem to write any rank-2 bundle as $H^a \\\\oplus H^b$, applies part (a) to express $[E] = 2 + (a+b)\\\\xi + (\\\\binom{a}{2} + \\\\binom{b}{2})\\\\xi^2$, and matches coefficients with $2 - \\\\xi = 2 - \\\\xi + 0\\\\cdot\\\\xi^2$. The system $a + b = -1$ and $\\\\binom{a}{2} + \\\\binom{b}{2} = 0$ leads to $a^2 + a + 1 = 0$, which has discriminant $-3 < 0$ and hence no integer solutions. The conclusion follows.\\n\\nThere is a minor LaTeX formatting issue in the displayed cases environment, but the mathematical content is clear and correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete.\n\n**Part (a):** The recurrence relation $P(n+1) = P(n)(1+\\xi)$ is correctly verified, with the key identity $n + \\binom{n}{2} = \\binom{n+1}{2}$ established. The base case $(1+\\xi)^0 = 1 = P(0)$ is correct, and induction for $n \\geq 0$ follows. For negative integers, the inverse $(1+\\xi)^{-1} = 1 - \\xi + \\xi^2$ is correctly computed (verified by $(1+\\xi)(1-\\xi+\\xi^2) = 1 + \\xi^3 = 1$), and the check that $P(-1) = 1 - \\xi + \\xi^2$ using $\\binom{-1}{2} = 1$ is correct. Downward induction completes the proof.\n\n**Part (b):** The argument correctly uses Grothendieck's splitting theorem to write any rank-2 bundle as $H^a \\oplus H^b$, applies part (a) to express $[E] = 2 + (a+b)\\xi + (\\binom{a}{2} + \\binom{b}{2})\\xi^2$, and matches coefficients with $2 - \\xi = 2 - \\xi + 0\\cdot\\xi^2$. The system $a + b = -1$ and $\\binom{a}{2} + \\binom{b}{2} = 0$ leads to $a^2 + a + 1 = 0$, which has discriminant $-3 < 0$ and hence no integer solutions. The conclusion follows.\n\nThere is a minor LaTeX formatting issue in the displayed cases environment, but the mathematical content is clear and correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. One minor enhancement would be to note that the 'splitting theorem' stated in the problem (that every vector bundle over $\\mathbb{CP}^2$ splits as a direct sum of line bundles) is actually false\u2014Grothendieck's splitting theorem applies to $\\mathbb{CP}^1$, not higher-dimensional projective spaces. For instance, the tangent bundle $T\\mathbb{CP}^2$ has K-theory class $2 + 3\\xi$ (from the Euler sequence), which cannot be written as $[H^a \\oplus H^b]$ for integers $a, b$. However, this is an issue with the problem's premises, not the student's answer. Since the answer correctly uses the stated premises to derive valid conclusions, the 'correct' verdict remains appropriate."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a group of order $16$ in which every non-identity element has order $2$. Determine the total number of subgroups of $G$ (including the trivial subgroup $\\{e\\}$ and $G$ itself).",
+    "run_id": "14",
+    "topic_slug": "group_theory_and_generalizations",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. The proof that $G$ is abelian (from $(ab)^2 = e$ implying $ab = ba$) is correct. The identification of $G \\\\cong (\\\\mathbb{Z}/2\\\\mathbb{Z})^4$ as an elementary abelian 2-group follows correctly from the fundamental theorem of finite abelian groups. The key insight that subgroups correspond to subspaces of a 4-dimensional $\\\\mathbb{F}_2$-vector space is valid. The Gaussian binomial coefficient formula is correctly stated and applied: $\\\\binom{4}{0}_2 = 1$, $\\\\binom{4}{1}_2 = 15$, $\\\\binom{4}{2}_2 = 35$, $\\\\binom{4}{3}_2 = 15$, $\\\\binom{4}{4}_2 = 1$. The arithmetic sum $1 + 15 + 35 + 15 + 1 = 67$ is verified correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. The proof that $G$ is abelian (from $(ab)^2 = e$ implying $ab = ba$) is correct. The identification of $G \\\\cong (\\\\mathbb{Z}/2\\\\mathbb{Z})^4$ as an elementary abelian 2-group follows correctly from the fundamental theorem of finite abelian groups. The key insight that subgroups correspond to subspaces of a 4-dimensional $\\\\mathbb{F}_2$-vector space is valid. The Gaussian binomial coefficient formula is correctly stated and applied: $\\\\binom{4}{0}_2 = 1$, $\\\\binom{4}{1}_2 = 15$, $\\\\binom{4}{2}_2 = 35$, $\\\\binom{4}{3}_2 = 15$, $\\\\binom{4}{4}_2 = 1$. The arithmetic sum $1 + 15 + 35 + 15 + 1 = 67$ is verified correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. The proof that $G$ is abelian (from $(ab)^2 = e$ implying $ab = ba$) is correct. The identification of $G \\cong (\\mathbb{Z}/2\\mathbb{Z})^4$ as an elementary abelian 2-group follows correctly from the fundamental theorem of finite abelian groups. The key insight that subgroups correspond to subspaces of a 4-dimensional $\\mathbb{F}_2$-vector space is valid. The Gaussian binomial coefficient formula is correctly stated and applied: $\\binom{4}{0}_2 = 1$, $\\binom{4}{1}_2 = 15$, $\\binom{4}{2}_2 = 35$, $\\binom{4}{3}_2 = 15$, $\\binom{4}{4}_2 = 1$. The arithmetic sum $1 + 15 + 35 + 15 + 1 = 67$ is verified correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. It correctly verifies: (1) the proof that G is abelian from $(ab)^2 = e$, (2) the identification of G as an elementary abelian 2-group isomorphic to $(\\mathbb{Z}/2\\mathbb{Z})^4$, (3) the correspondence between subgroups and $\\mathbb{F}_2$-subspaces, (4) the Gaussian binomial coefficient calculations for each dimension, and (5) the final arithmetic sum yielding 67. The critique follows proper JSON format with a valid verdict and substantive notes."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $SL_2(\\mathbb{R})$ denote the group of $2 \\times 2$ real matrices with determinant $1$, and let $\\mathfrak{sl}_2(\\mathbb{R})$ denote its Lie algebra, consisting of all $2 \\times 2$ real matrices with trace $0$. Consider the matrix exponential map $\\exp: \\mathfrak{sl}_2(\\mathbb{R}) \\to SL_2(\\mathbb{R})$ defined by\n$$\\exp(A) = \\sum_{n=0}^{\\infty} \\frac{A^n}{n!}.$$\n\nProve that the matrix \n$$g = \\begin{pmatrix} -1 & 1 \\\\ 0 & -1 \\end{pmatrix}$$\nis not in the image of $\\exp$.",
+    "run_id": "15",
+    "topic_slug": "topological_groups_and_lie_groups",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\"verdict\": \"correct\", \"notes\": \"The proof is mathematically sound and complete. It correctly analyzes both cases: (1) When the eigenvalues \u03bb, -\u03bb of A are nonzero, the constraint e^\u03bb = e^{-\u03bb} = -1 forces \u03bb = i\u03c0(2k+1) for some integer k, making \u03bb \u2260 -\u03bb (since \u03bb \u2260 0). Thus A is diagonalizable over \u2102, and exp(A) = P(diag(e^\u03bb, e^{-\u03bb}))P^{-1} = P(-I)P^{-1} = -I \u2260 g. (2) When \u03bb = 0 (nilpotent case), A has only eigenvalue 0, so exp(A) has only eigenvalue e^0 = 1, not -1, contradicting exp(A) = g. The eigenvalue correspondence between A and exp(A) is correctly applied throughout.\"}",
+        "raw_critique": "{\"verdict\": \"correct\", \"notes\": \"The proof is mathematically sound and complete. It correctly analyzes both cases: (1) When the eigenvalues \u03bb, -\u03bb of A are nonzero, the constraint e^\u03bb = e^{-\u03bb} = -1 forces \u03bb = i\u03c0(2k+1) for some integer k, making \u03bb \u2260 -\u03bb (since \u03bb \u2260 0). Thus A is diagonalizable over \u2102, and exp(A) = P(diag(e^\u03bb, e^{-\u03bb}))P^{-1} = P(-I)P^{-1} = -I \u2260 g. (2) When \u03bb = 0 (nilpotent case), A has only eigenvalue 0, so exp(A) has only eigenvalue e^0 = 1, not -1, contradicting exp(A) = g. The eigenvalue correspondence between A and exp(A) is correctly applied throughout.\"}",
+        "verdict": "correct",
+        "notes": "The proof is mathematically sound and complete. It correctly analyzes both cases: (1) When the eigenvalues \u03bb, -\u03bb of A are nonzero, the constraint e^\u03bb = e^{-\u03bb} = -1 forces \u03bb = i\u03c0(2k+1) for some integer k, making \u03bb \u2260 -\u03bb (since \u03bb \u2260 0). Thus A is diagonalizable over \u2102, and exp(A) = P(diag(e^\u03bb, e^{-\u03bb}))P^{-1} = P(-I)P^{-1} = -I \u2260 g. (2) When \u03bb = 0 (nilpotent case), A has only eigenvalue 0, so exp(A) has only eigenvalue e^0 = 1, not -1, contradicting exp(A) = g. The eigenvalue correspondence between A and exp(A) is correctly applied throughout.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Find all continuous functions $f: (0, \\infty) \\to \\mathbb{R}$ such that \n$$f(xy) = xf(y) + yf(x)$$\nfor all $x, y > 0$.",
+    "run_id": "16",
+    "topic_slug": "real_functions",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. The key steps are all valid: (1) The substitution $g(x) = f(x)/x$ correctly transforms the functional equation into $g(xy) = g(x) + g(y)$. (2) The change of variables $h(t) = g(e^t)$ properly converts this to the additive Cauchy equation $h(s+t) = h(s) + h(t)$ on $\\\\mathbb{R}$. (3) The appeal to the well-known result that continuous solutions of the additive Cauchy equation are linear functions $h(t) = ct$ is correctly justified. (4) Unwinding the substitutions correctly yields $f(x) = cx\\\\ln x$. (5) The verification confirms these functions satisfy the original equation. The proof establishes both necessity (any continuous solution must have this form) and sufficiency (all such functions are solutions), making it complete.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. The key steps are all valid: (1) The substitution $g(x) = f(x)/x$ correctly transforms the functional equation into $g(xy) = g(x) + g(y)$. (2) The change of variables $h(t) = g(e^t)$ properly converts this to the additive Cauchy equation $h(s+t) = h(s) + h(t)$ on $\\\\mathbb{R}$. (3) The appeal to the well-known result that continuous solutions of the additive Cauchy equation are linear functions $h(t) = ct$ is correctly justified. (4) Unwinding the substitutions correctly yields $f(x) = cx\\\\ln x$. (5) The verification confirms these functions satisfy the original equation. The proof establishes both necessity (any continuous solution must have this form) and sufficiency (all such functions are solutions), making it complete.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. The key steps are all valid: (1) The substitution $g(x) = f(x)/x$ correctly transforms the functional equation into $g(xy) = g(x) + g(y)$. (2) The change of variables $h(t) = g(e^t)$ properly converts this to the additive Cauchy equation $h(s+t) = h(s) + h(t)$ on $\\mathbb{R}$. (3) The appeal to the well-known result that continuous solutions of the additive Cauchy equation are linear functions $h(t) = ct$ is correctly justified. (4) Unwinding the substitutions correctly yields $f(x) = cx\\ln x$. (5) The verification confirms these functions satisfy the original equation. The proof establishes both necessity (any continuous solution must have this form) and sufficiency (all such functions are solutions), making it complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: (0,1]^2 \\to \\mathbb{R}$ be defined by \n$$f(x,y) = \\frac{x-y}{(x+y)^3}.$$\n\n(a) Evaluate the iterated integral $\\displaystyle I_1 = \\int_0^1 \\left(\\int_0^1 f(x,y) \\, dx\\right) dy$.\n\n(b) Evaluate the iterated integral $\\displaystyle I_2 = \\int_0^1 \\left(\\int_0^1 f(x,y) \\, dy\\right) dx$.\n\n(c) Prove that $f$ is not Lebesgue integrable on $(0,1]^2$, i.e., show that $\\int_{(0,1]^2} |f| \\, d\\lambda^2 = +\\infty$, where $\\lambda^2$ denotes two-dimensional Lebesgue measure.",
+    "run_id": "17",
+    "topic_slug": "measure_and_integration",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\"verdict\": \"correct\", \"notes\": \"All three parts are mathematically sound and complete.\\n\\n**Part (a):** The substitution $u = x + y$ is correctly applied. The antiderivative $-\\\\frac{1}{u} + \\\\frac{y}{u^2}$ is verified by differentiation. The boundary term at $u = y$ (corresponding to $x = 0$) correctly simplifies to 0 since $-\\\\frac{1}{y} + \\\\frac{1}{y} = 0$. The final result $A(y) = -\\\\frac{1}{(1+y)^2}$ and $I_1 = -\\\\frac{1}{2}$ are correct.\\n\\n**Part (b):** The parallel computation with $v = x + y$ is correct. The boundary term at $v = x$ (corresponding to $y = 0$) also simplifies to 0. The result $B(x) = \\\\frac{1}{(1+x)^2}$ and $I_2 = \\\\frac{1}{2}$ are correct.\\n\\n**Part (c):** The symmetry observation $f(x,y) = -f(y,x)$ is valid. The computation of $\\\\int_0^x \\\\frac{x-y}{(x+y)^3}\\\\,dy = \\\\frac{1}{4x}$ is correct. Tonelli's theorem is properly invoked since the integrand is nonnegative on the region $0 < y < x < 1$. The divergence of $\\\\int_0^1 \\\\frac{1}{4x}\\\\,dx = +\\\\infty$ correctly establishes that $f$ is not Lebesgue integrable.\\n\\nThe fact that $I_1 \\\\neq I_2$ while $f$ is not Lebesgue integrable is consistent with the failure of Fubini's theorem when integrability fails.\"}",
+        "raw_critique": "{\"verdict\": \"correct\", \"notes\": \"All three parts are mathematically sound and complete.\\n\\n**Part (a):** The substitution $u = x + y$ is correctly applied. The antiderivative $-\\\\frac{1}{u} + \\\\frac{y}{u^2}$ is verified by differentiation. The boundary term at $u = y$ (corresponding to $x = 0$) correctly simplifies to 0 since $-\\\\frac{1}{y} + \\\\frac{1}{y} = 0$. The final result $A(y) = -\\\\frac{1}{(1+y)^2}$ and $I_1 = -\\\\frac{1}{2}$ are correct.\\n\\n**Part (b):** The parallel computation with $v = x + y$ is correct. The boundary term at $v = x$ (corresponding to $y = 0$) also simplifies to 0. The result $B(x) = \\\\frac{1}{(1+x)^2}$ and $I_2 = \\\\frac{1}{2}$ are correct.\\n\\n**Part (c):** The symmetry observation $f(x,y) = -f(y,x)$ is valid. The computation of $\\\\int_0^x \\\\frac{x-y}{(x+y)^3}\\\\,dy = \\\\frac{1}{4x}$ is correct. Tonelli's theorem is properly invoked since the integrand is nonnegative on the region $0 < y < x < 1$. The divergence of $\\\\int_0^1 \\\\frac{1}{4x}\\\\,dx = +\\\\infty$ correctly establishes that $f$ is not Lebesgue integrable.\\n\\nThe fact that $I_1 \\\\neq I_2$ while $f$ is not Lebesgue integrable is consistent with the failure of Fubini's theorem when integrability fails.\"}",
+        "verdict": "correct",
+        "notes": "All three parts are mathematically sound and complete.\n\n**Part (a):** The substitution $u = x + y$ is correctly applied. The antiderivative $-\\frac{1}{u} + \\frac{y}{u^2}$ is verified by differentiation. The boundary term at $u = y$ (corresponding to $x = 0$) correctly simplifies to 0 since $-\\frac{1}{y} + \\frac{1}{y} = 0$. The final result $A(y) = -\\frac{1}{(1+y)^2}$ and $I_1 = -\\frac{1}{2}$ are correct.\n\n**Part (b):** The parallel computation with $v = x + y$ is correct. The boundary term at $v = x$ (corresponding to $y = 0$) also simplifies to 0. The result $B(x) = \\frac{1}{(1+x)^2}$ and $I_2 = \\frac{1}{2}$ are correct.\n\n**Part (c):** The symmetry observation $f(x,y) = -f(y,x)$ is valid. The computation of $\\int_0^x \\frac{x-y}{(x+y)^3}\\,dy = \\frac{1}{4x}$ is correct. Tonelli's theorem is properly invoked since the integrand is nonnegative on the region $0 < y < x < 1$. The divergence of $\\int_0^1 \\frac{1}{4x}\\,dx = +\\infty$ correctly establishes that $f$ is not Lebesgue integrable.\n\nThe fact that $I_1 \\neq I_2$ while $f$ is not Lebesgue integrable is consistent with the failure of Fubini's theorem when integrability fails.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{C} \\setminus \\{0\\} \\to \\mathbb{C}$ be defined by $f(z) = \\dfrac{e^{1/z}}{z - 1}$. Evaluate the contour integral\n$$\\oint_{|z| = 2} f(z) \\, dz$$\nwhere the contour is traversed counterclockwise. Express your answer in exact form.",
+    "run_id": "18",
+    "topic_slug": "functions_of_a_complex_variable",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\"verdict\": \"correct\", \"notes\": \"The solution correctly identifies both singularities inside the contour: the simple pole at $z=1$ and the essential singularity at $z=0$. The residue calculation at $z=1$ using $\\\\text{Res}(f,1) = \\\\lim_{z\\\\to 1} e^{1/z} = e$ is correct. For the essential singularity at $z=0$, the Laurent series approach is valid: expanding $\\\\frac{1}{z-1} = -\\\\sum_{n=0}^{\\\\infty} z^n$ and $e^{1/z} = \\\\sum_{k=0}^{\\\\infty} \\\\frac{1}{k!z^k}$, then finding the coefficient of $z^{-1}$ by setting $n-k=-1$ (i.e., $n=k-1$ with $k\\\\geq 1$) gives $\\\\text{Res}(f,0) = -\\\\sum_{k=1}^{\\\\infty} \\\\frac{1}{k!} = -(e-1) = 1-e$. The sum of residues is $(1-e) + e = 1$, yielding the final answer $2\\\\pi i \\\\cdot 1 = 2\\\\pi i$.\"}",
+        "raw_critique": "{\"verdict\": \"correct\", \"notes\": \"The solution correctly identifies both singularities inside the contour: the simple pole at $z=1$ and the essential singularity at $z=0$. The residue calculation at $z=1$ using $\\\\text{Res}(f,1) = \\\\lim_{z\\\\to 1} e^{1/z} = e$ is correct. For the essential singularity at $z=0$, the Laurent series approach is valid: expanding $\\\\frac{1}{z-1} = -\\\\sum_{n=0}^{\\\\infty} z^n$ and $e^{1/z} = \\\\sum_{k=0}^{\\\\infty} \\\\frac{1}{k!z^k}$, then finding the coefficient of $z^{-1}$ by setting $n-k=-1$ (i.e., $n=k-1$ with $k\\\\geq 1$) gives $\\\\text{Res}(f,0) = -\\\\sum_{k=1}^{\\\\infty} \\\\frac{1}{k!} = -(e-1) = 1-e$. The sum of residues is $(1-e) + e = 1$, yielding the final answer $2\\\\pi i \\\\cdot 1 = 2\\\\pi i$.\"}",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies both singularities inside the contour: the simple pole at $z=1$ and the essential singularity at $z=0$. The residue calculation at $z=1$ using $\\text{Res}(f,1) = \\lim_{z\\to 1} e^{1/z} = e$ is correct. For the essential singularity at $z=0$, the Laurent series approach is valid: expanding $\\frac{1}{z-1} = -\\sum_{n=0}^{\\infty} z^n$ and $e^{1/z} = \\sum_{k=0}^{\\infty} \\frac{1}{k!z^k}$, then finding the coefficient of $z^{-1}$ by setting $n-k=-1$ (i.e., $n=k-1$ with $k\\geq 1$) gives $\\text{Res}(f,0) = -\\sum_{k=1}^{\\infty} \\frac{1}{k!} = -(e-1) = 1-e$. The sum of residues is $(1-e) + e = 1$, yielding the final answer $2\\pi i \\cdot 1 = 2\\pi i$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\Omega$ be the open upper half of the unit disk in $\\mathbb{R}^2$:\n$$\\Omega = \\{(x, y) \\in \\mathbb{R}^2 : x^2 + y^2 < 1, \\, y > 0\\}.$$\n\nLet $u : \\Omega \\to \\mathbb{R}$ be the unique bounded harmonic function (i.e., $\\Delta u = 0$ in $\\Omega$) that extends continuously to $\\partial\\Omega \\setminus \\{(\\pm 1, 0)\\}$ with boundary values:\n- $u(x, y) = 1$ on the semicircular arc $\\{(x, y) : x^2 + y^2 = 1, \\, y > 0\\}$\n- $u(x, 0) = 0$ on the open segment $\\{(x, 0) : -1 < x < 1\\}$\n\nDetermine the exact value of $u\\left(0, \\dfrac{1}{\\sqrt{3}}\\right)$.",
+    "run_id": "19",
+    "topic_slug": "potential_theory",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the odd reflection technique to extend the problem to the full unit disk. The Schwarz reflection principle validates that the extended function $U$ is harmonic. The Fourier coefficient computation $B_n = \\\\frac{2}{\\\\pi}\\\\int_0^{\\\\pi}\\\\sin(n\\\\theta)\\\\,d\\\\theta = \\\\frac{2(1-(-1)^n)}{\\\\pi n}$ is correct, yielding $B_{2k+1} = \\\\frac{4}{\\\\pi(2k+1)}$ for odd indices. The polar coordinates $(r,\\\\theta) = (1/\\\\sqrt{3}, \\\\pi/2)$ for the point $(0, 1/\\\\sqrt{3})$ are correct. The identity $\\\\sin((2k+1)\\\\pi/2) = (-1)^k$ is properly applied. The series identity $\\\\sum_{k=0}^{\\\\infty} \\\\frac{(-1)^k}{2k+1} x^k = \\\\frac{\\\\arctan(\\\\sqrt{x})}{\\\\sqrt{x}}$ follows from the standard Taylor series for $\\\\arctan(t) = \\\\sum_{k=0}^{\\\\infty} \\\\frac{(-1)^k}{2k+1} t^{2k+1}$ by substituting $t = \\\\sqrt{x}$ and dividing by $t$. With $x = 1/3$, the evaluation yields $\\\\sqrt{3} \\\\cdot \\\\arctan(1/\\\\sqrt{3}) = \\\\sqrt{3} \\\\cdot \\\\pi/6 = \\\\pi\\\\sqrt{3}/6$. The final calculation $\\\\frac{4}{\\\\pi\\\\sqrt{3}} \\\\cdot \\\\frac{\\\\pi\\\\sqrt{3}}{6} = \\\\frac{2}{3}$ is correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the odd reflection technique to extend the problem to the full unit disk. The Schwarz reflection principle validates that the extended function $U$ is harmonic. The Fourier coefficient computation $B_n = \\\\frac{2}{\\\\pi}\\\\int_0^{\\\\pi}\\\\sin(n\\\\theta)\\\\,d\\\\theta = \\\\frac{2(1-(-1)^n)}{\\\\pi n}$ is correct, yielding $B_{2k+1} = \\\\frac{4}{\\\\pi(2k+1)}$ for odd indices. The polar coordinates $(r,\\\\theta) = (1/\\\\sqrt{3}, \\\\pi/2)$ for the point $(0, 1/\\\\sqrt{3})$ are correct. The identity $\\\\sin((2k+1)\\\\pi/2) = (-1)^k$ is properly applied. The series identity $\\\\sum_{k=0}^{\\\\infty} \\\\frac{(-1)^k}{2k+1} x^k = \\\\frac{\\\\arctan(\\\\sqrt{x})}{\\\\sqrt{x}}$ follows from the standard Taylor series for $\\\\arctan(t) = \\\\sum_{k=0}^{\\\\infty} \\\\frac{(-1)^k}{2k+1} t^{2k+1}$ by substituting $t = \\\\sqrt{x}$ and dividing by $t$. With $x = 1/3$, the evaluation yields $\\\\sqrt{3} \\\\cdot \\\\arctan(1/\\\\sqrt{3}) = \\\\sqrt{3} \\\\cdot \\\\pi/6 = \\\\pi\\\\sqrt{3}/6$. The final calculation $\\\\frac{4}{\\\\pi\\\\sqrt{3}} \\\\cdot \\\\frac{\\\\pi\\\\sqrt{3}}{6} = \\\\frac{2}{3}$ is correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly applies the odd reflection technique to extend the problem to the full unit disk. The Schwarz reflection principle validates that the extended function $U$ is harmonic. The Fourier coefficient computation $B_n = \\frac{2}{\\pi}\\int_0^{\\pi}\\sin(n\\theta)\\,d\\theta = \\frac{2(1-(-1)^n)}{\\pi n}$ is correct, yielding $B_{2k+1} = \\frac{4}{\\pi(2k+1)}$ for odd indices. The polar coordinates $(r,\\theta) = (1/\\sqrt{3}, \\pi/2)$ for the point $(0, 1/\\sqrt{3})$ are correct. The identity $\\sin((2k+1)\\pi/2) = (-1)^k$ is properly applied. The series identity $\\sum_{k=0}^{\\infty} \\frac{(-1)^k}{2k+1} x^k = \\frac{\\arctan(\\sqrt{x})}{\\sqrt{x}}$ follows from the standard Taylor series for $\\arctan(t) = \\sum_{k=0}^{\\infty} \\frac{(-1)^k}{2k+1} t^{2k+1}$ by substituting $t = \\sqrt{x}$ and dividing by $t$. With $x = 1/3$, the evaluation yields $\\sqrt{3} \\cdot \\arctan(1/\\sqrt{3}) = \\sqrt{3} \\cdot \\pi/6 = \\pi\\sqrt{3}/6$. The final calculation $\\frac{4}{\\pi\\sqrt{3}} \\cdot \\frac{\\pi\\sqrt{3}}{6} = \\frac{2}{3}$ is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the analytic variety $V \\subset \\mathbb{C}^3$ defined by\n$$V = \\{(z_1, z_2, z_3) \\in \\mathbb{C}^3 : z_1^2 + z_2^2 + z_3^2 = 0 \\text{ and } z_1 z_2 z_3 = 0\\}.$$\n\n(a) Determine all irreducible components of $V$ and describe each geometrically.\n\n(b) Find the singular locus $\\mathrm{Sing}(V)$ of $V$.",
+    "run_id": "20",
+    "topic_slug": "several_complex_variables_and_analytic_spaces",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\"verdict\": \"correct\", \"notes\": \"The answer correctly identifies all six irreducible components of $V$ as complex lines through the origin: $L_1^\\\\pm$, $L_2^\\\\pm$, $L_3^\\\\pm$. The decomposition via $g = z_1z_2z_3 = 0$ into three coordinate plane sections is valid, and the factorization of each quadratic (e.g., $z_2^2 + z_3^2 = (z_2+iz_3)(z_2-iz_3)$) correctly yields two lines per plane.\\n\\nFor part (b), the Jacobian computation is correct. The answer properly verifies that: (1) at points with exactly one coordinate zero, the Jacobian has rank 2, making these points smooth; (2) at the origin, $J = 0$; (3) points with two coordinates zero cannot satisfy $f = 0$ unless all three are zero. The verification that different components only intersect at the origin (since distinct lines through the origin share only that point) completes the argument. The conclusion $\\\\text{Sing}(V) = \\\\{(0,0,0)\\\\}$ is correct.\"}",
+        "raw_critique": "{\"verdict\": \"correct\", \"notes\": \"The answer correctly identifies all six irreducible components of $V$ as complex lines through the origin: $L_1^\\\\pm$, $L_2^\\\\pm$, $L_3^\\\\pm$. The decomposition via $g = z_1z_2z_3 = 0$ into three coordinate plane sections is valid, and the factorization of each quadratic (e.g., $z_2^2 + z_3^2 = (z_2+iz_3)(z_2-iz_3)$) correctly yields two lines per plane.\\n\\nFor part (b), the Jacobian computation is correct. The answer properly verifies that: (1) at points with exactly one coordinate zero, the Jacobian has rank 2, making these points smooth; (2) at the origin, $J = 0$; (3) points with two coordinates zero cannot satisfy $f = 0$ unless all three are zero. The verification that different components only intersect at the origin (since distinct lines through the origin share only that point) completes the argument. The conclusion $\\\\text{Sing}(V) = \\\\{(0,0,0)\\\\}$ is correct.\"}",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies all six irreducible components of $V$ as complex lines through the origin: $L_1^\\pm$, $L_2^\\pm$, $L_3^\\pm$. The decomposition via $g = z_1z_2z_3 = 0$ into three coordinate plane sections is valid, and the factorization of each quadratic (e.g., $z_2^2 + z_3^2 = (z_2+iz_3)(z_2-iz_3)$) correctly yields two lines per plane.\n\nFor part (b), the Jacobian computation is correct. The answer properly verifies that: (1) at points with exactly one coordinate zero, the Jacobian has rank 2, making these points smooth; (2) at the origin, $J = 0$; (3) points with two coordinates zero cannot satisfy $f = 0$ unless all three are zero. The verification that different components only intersect at the origin (since distinct lines through the origin share only that point) completes the argument. The conclusion $\\text{Sing}(V) = \\{(0,0,0)\\}$ is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Looking at this problem, I need to create a challenging special functions problem that requires multiple steps of reasoning and has a verifiable closed-form answer.\n\n\nLet $\\zeta(s)$ denote the Riemann zeta function defined for real $s > 1$ by \n$$\\zeta(s) = \\sum_{k=1}^{\\infty} \\frac{1}{k^s}.$$\n\nEvaluate the infinite series:\n$$\\sum_{n=2}^{\\infty} \\frac{\\zeta(n) - 1}{n}$$\n\nExpress your answer in terms of the Euler-Mascheroni constant $\\gamma = \\lim_{N \\to \\infty}\\left(\\sum_{k=1}^{N} \\frac{1}{k} - \\ln N\\right)$.",
+    "run_id": "21",
+    "topic_slug": "special_functions",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and rigorous throughout. Key verifications: (1) The expansion $\\\\zeta(n)-1 = \\\\sum_{k=2}^{\\\\infty} \\\\frac{1}{k^n}$ is correct. (2) The interchange of summation is properly justified by Tonelli's theorem since all terms are non-negative and the double sum converges absolutely (as the answer implicitly establishes). (3) The Maclaurin series for $-\\\\ln(1-x)$ is correctly applied with $x=1/k$ where $|x| \\\\leq 1/2 < 1$. (4) The algebraic simplification $-\\\\ln(1-1/k) = \\\\ln k - \\\\ln(k-1)$ is correct. (5) The partial sum analysis correctly handles the divergent parts by combining them: the telescoping sum $\\\\sum_{k=2}^{N}(\\\\ln k - \\\\ln(k-1)) = \\\\ln N$ and the harmonic sum $\\\\sum_{k=2}^{N}\\\\frac{1}{k} = H_N - 1$. (6) The limit $\\\\lim_{N\\\\to\\\\infty}(\\\\ln N - H_N) = -\\\\gamma$ follows directly from the definition of the Euler-Mascheroni constant. The final answer $1 - \\\\gamma$ is correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and rigorous throughout. Key verifications: (1) The expansion $\\\\zeta(n)-1 = \\\\sum_{k=2}^{\\\\infty} \\\\frac{1}{k^n}$ is correct. (2) The interchange of summation is properly justified by Tonelli's theorem since all terms are non-negative and the double sum converges absolutely (as the answer implicitly establishes). (3) The Maclaurin series for $-\\\\ln(1-x)$ is correctly applied with $x=1/k$ where $|x| \\\\leq 1/2 < 1$. (4) The algebraic simplification $-\\\\ln(1-1/k) = \\\\ln k - \\\\ln(k-1)$ is correct. (5) The partial sum analysis correctly handles the divergent parts by combining them: the telescoping sum $\\\\sum_{k=2}^{N}(\\\\ln k - \\\\ln(k-1)) = \\\\ln N$ and the harmonic sum $\\\\sum_{k=2}^{N}\\\\frac{1}{k} = H_N - 1$. (6) The limit $\\\\lim_{N\\\\to\\\\infty}(\\\\ln N - H_N) = -\\\\gamma$ follows directly from the definition of the Euler-Mascheroni constant. The final answer $1 - \\\\gamma$ is correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and rigorous throughout. Key verifications: (1) The expansion $\\zeta(n)-1 = \\sum_{k=2}^{\\infty} \\frac{1}{k^n}$ is correct. (2) The interchange of summation is properly justified by Tonelli's theorem since all terms are non-negative and the double sum converges absolutely (as the answer implicitly establishes). (3) The Maclaurin series for $-\\ln(1-x)$ is correctly applied with $x=1/k$ where $|x| \\leq 1/2 < 1$. (4) The algebraic simplification $-\\ln(1-1/k) = \\ln k - \\ln(k-1)$ is correct. (5) The partial sum analysis correctly handles the divergent parts by combining them: the telescoping sum $\\sum_{k=2}^{N}(\\ln k - \\ln(k-1)) = \\ln N$ and the harmonic sum $\\sum_{k=2}^{N}\\frac{1}{k} = H_N - 1$. (6) The limit $\\lim_{N\\to\\infty}(\\ln N - H_N) = -\\gamma$ follows directly from the definition of the Euler-Mascheroni constant. The final answer $1 - \\gamma$ is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. It correctly verifies all key mathematical steps: (1) the expansion of \u03b6(n)-1, (2) the validity of interchanging summation via Tonelli's theorem, (3) the correct application of the Maclaurin series for -ln(1-x), (4) the algebraic simplification, (5) the partial sum analysis handling divergent pieces correctly, and (6) the proper application of the Euler-Mascheroni constant definition. The final answer 1-\u03b3 is indeed correct. The critique format is valid JSON with appropriate verdict and notes fields."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the autonomous system of ordinary differential equations defined for $(x(t), y(t)) \\in \\mathbb{R}^2$:\n$$\\frac{dx}{dt} = y, \\quad \\frac{dy}{dt} = x - x^3.$$\n\n(a) Find all equilibrium points of this system.\n\n(b) For each equilibrium point, compute the eigenvalues of the Jacobian matrix and determine the type indicated by linearization (saddle, node, spiral, or center).\n\n(c) Find a function $H: \\mathbb{R}^2 \\to \\mathbb{R}$ that is constant along all solution trajectories (a first integral).\n\n(d) Using the first integral from part (c), prove that any equilibrium point whose linearization indicates a center is indeed a center for the full nonlinear system (i.e., it is surrounded by closed periodic orbits rather than spirals).",
+    "run_id": "22",
+    "topic_slug": "ordinary_differential_equations",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"All parts of the solution are mathematically sound and complete.\\n\\n(a) Correctly identifies all three equilibrium points $(0,0)$, $(1,0)$, and $(-1,0)$ by solving $y=0$ and $x(1-x^2)=0$.\\n\\n(b) The Jacobian $J = \\\\begin{pmatrix} 0 & 1 \\\\\\\\ 1-3x^2 & 0 \\\\end{pmatrix}$ is correctly computed. Eigenvalue calculations are verified: at $(0,0)$ we get $\\\\lambda = \\\\pm 1$ (saddle), and at $(\\\\pm 1, 0)$ we get $\\\\lambda = \\\\pm i\\\\sqrt{2}$ (center by linearization).\\n\\n(c) The first integral $H(x,y) = \\\\frac{1}{2}y^2 - \\\\frac{1}{2}x^2 + \\\\frac{1}{4}x^4$ is correctly verified: $\\\\frac{dH}{dt} = (-x+x^3)y + y(x-x^3) = 0$.\\n\\n(d) The proof that linear centers are true nonlinear centers is rigorous. The Hessian computation showing positive definiteness at $(1,0)$ (and by symmetry at $(-1,0)$) is correct. The argument that level sets near a strict local minimum form closed curves, and that trajectories on these curves are periodic (since the non-vanishing vector field is tangent to compact 1-manifolds), is valid and complete. There is a minor LaTeX formatting error in the Hessian matrix display, but this does not affect the mathematical content.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"All parts of the solution are mathematically sound and complete.\\n\\n(a) Correctly identifies all three equilibrium points $(0,0)$, $(1,0)$, and $(-1,0)$ by solving $y=0$ and $x(1-x^2)=0$.\\n\\n(b) The Jacobian $J = \\\\begin{pmatrix} 0 & 1 \\\\\\\\ 1-3x^2 & 0 \\\\end{pmatrix}$ is correctly computed. Eigenvalue calculations are verified: at $(0,0)$ we get $\\\\lambda = \\\\pm 1$ (saddle), and at $(\\\\pm 1, 0)$ we get $\\\\lambda = \\\\pm i\\\\sqrt{2}$ (center by linearization).\\n\\n(c) The first integral $H(x,y) = \\\\frac{1}{2}y^2 - \\\\frac{1}{2}x^2 + \\\\frac{1}{4}x^4$ is correctly verified: $\\\\frac{dH}{dt} = (-x+x^3)y + y(x-x^3) = 0$.\\n\\n(d) The proof that linear centers are true nonlinear centers is rigorous. The Hessian computation showing positive definiteness at $(1,0)$ (and by symmetry at $(-1,0)$) is correct. The argument that level sets near a strict local minimum form closed curves, and that trajectories on these curves are periodic (since the non-vanishing vector field is tangent to compact 1-manifolds), is valid and complete. There is a minor LaTeX formatting error in the Hessian matrix display, but this does not affect the mathematical content.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "All parts of the solution are mathematically sound and complete.\n\n(a) Correctly identifies all three equilibrium points $(0,0)$, $(1,0)$, and $(-1,0)$ by solving $y=0$ and $x(1-x^2)=0$.\n\n(b) The Jacobian $J = \\begin{pmatrix} 0 & 1 \\\\ 1-3x^2 & 0 \\end{pmatrix}$ is correctly computed. Eigenvalue calculations are verified: at $(0,0)$ we get $\\lambda = \\pm 1$ (saddle), and at $(\\pm 1, 0)$ we get $\\lambda = \\pm i\\sqrt{2}$ (center by linearization).\n\n(c) The first integral $H(x,y) = \\frac{1}{2}y^2 - \\frac{1}{2}x^2 + \\frac{1}{4}x^4$ is correctly verified: $\\frac{dH}{dt} = (-x+x^3)y + y(x-x^3) = 0$.\n\n(d) The proof that linear centers are true nonlinear centers is rigorous. The Hessian computation showing positive definiteness at $(1,0)$ (and by symmetry at $(-1,0)$) is correct. The argument that level sets near a strict local minimum form closed curves, and that trajectories on these curves are periodic (since the non-vanishing vector field is tangent to compact 1-manifolds), is valid and complete. There is a minor LaTeX formatting error in the Hessian matrix display, but this does not affect the mathematical content.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $T: [0,1] \\to [0,1]$ be the tent map defined by:\n$$T(x) = \\begin{cases} 2x & \\text{if } 0 \\leq x \\leq \\frac{1}{2} \\\\ 2 - 2x & \\text{if } \\frac{1}{2} < x \\leq 1 \\end{cases}$$\n\n(a) Prove that Lebesgue measure $\\lambda$ on $[0,1]$ is $T$-invariant, i.e., $\\lambda(T^{-1}(A)) = \\lambda(A)$ for every Lebesgue measurable set $A \\subseteq [0,1]$.\n\n(b) Determine the number of fixed points of $T$ and the number of points of minimal period 2 (i.e., points $x$ satisfying $T^2(x) = x$ but $T(x) \\neq x$).\n\n(c) Compute the topological entropy $h_{\\text{top}}(T)$.",
+    "run_id": "24",
+    "topic_slug": "dynamical_systems_and_ergodic_theory",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\"verdict\": \"correct\", \"notes\": \"The solution correctly addresses all three parts:\\n\\n**Part (a):** The proof that Lebesgue measure is $T$-invariant is complete and correct. The solution properly splits the integral over the two branches, performs the substitutions $y=2x$ and $y=2-2x$ with correct Jacobians, and obtains $\\\\lambda(T^{-1}(A)) = \\\\frac{1}{2}\\\\lambda(A) + \\\\frac{1}{2}\\\\lambda(A) = \\\\lambda(A)$.\\n\\n**Part (b):** The fixed point analysis is correct: $x=0$ from $2x=x$ on $[0,1/2]$ and $x=2/3$ from $2-2x=x$ on $(1/2,1]$. The computation of $T^2(x)$ piecewise is accurate, and solving $T^2(x)=x$ correctly yields $\\\\{0, 2/5, 2/3, 4/5\\\\}$. The verification that $T(2/5)=4/5$ and $T(4/5)=2/5$ confirms these form a 2-cycle. Answers: 2 fixed points, 2 points of minimal period 2.\\n\\n**Part (c):** The application of the Misiurewicz-Szlenk theorem (relating topological entropy to lap number growth) is valid. The induction proving $L(T^n)=2^n$ is correct: each lap of $T^n$ maps surjectively onto $[0,1]$, so $T^n(x)=1/2$ has exactly one solution per lap, and composing with $T$ doubles the number of laps. The entropy calculation $h_{\\\\text{top}}(T) = \\\\lim_{n\\\\to\\\\infty}\\\\frac{1}{n}\\\\log 2^n = \\\\log 2$ is correct.\"}",
+        "raw_critique": "{\"verdict\": \"correct\", \"notes\": \"The solution correctly addresses all three parts:\\n\\n**Part (a):** The proof that Lebesgue measure is $T$-invariant is complete and correct. The solution properly splits the integral over the two branches, performs the substitutions $y=2x$ and $y=2-2x$ with correct Jacobians, and obtains $\\\\lambda(T^{-1}(A)) = \\\\frac{1}{2}\\\\lambda(A) + \\\\frac{1}{2}\\\\lambda(A) = \\\\lambda(A)$.\\n\\n**Part (b):** The fixed point analysis is correct: $x=0$ from $2x=x$ on $[0,1/2]$ and $x=2/3$ from $2-2x=x$ on $(1/2,1]$. The computation of $T^2(x)$ piecewise is accurate, and solving $T^2(x)=x$ correctly yields $\\\\{0, 2/5, 2/3, 4/5\\\\}$. The verification that $T(2/5)=4/5$ and $T(4/5)=2/5$ confirms these form a 2-cycle. Answers: 2 fixed points, 2 points of minimal period 2.\\n\\n**Part (c):** The application of the Misiurewicz-Szlenk theorem (relating topological entropy to lap number growth) is valid. The induction proving $L(T^n)=2^n$ is correct: each lap of $T^n$ maps surjectively onto $[0,1]$, so $T^n(x)=1/2$ has exactly one solution per lap, and composing with $T$ doubles the number of laps. The entropy calculation $h_{\\\\text{top}}(T) = \\\\lim_{n\\\\to\\\\infty}\\\\frac{1}{n}\\\\log 2^n = \\\\log 2$ is correct.\"}",
+        "verdict": "correct",
+        "notes": "The solution correctly addresses all three parts:\n\n**Part (a):** The proof that Lebesgue measure is $T$-invariant is complete and correct. The solution properly splits the integral over the two branches, performs the substitutions $y=2x$ and $y=2-2x$ with correct Jacobians, and obtains $\\lambda(T^{-1}(A)) = \\frac{1}{2}\\lambda(A) + \\frac{1}{2}\\lambda(A) = \\lambda(A)$.\n\n**Part (b):** The fixed point analysis is correct: $x=0$ from $2x=x$ on $[0,1/2]$ and $x=2/3$ from $2-2x=x$ on $(1/2,1]$. The computation of $T^2(x)$ piecewise is accurate, and solving $T^2(x)=x$ correctly yields $\\{0, 2/5, 2/3, 4/5\\}$. The verification that $T(2/5)=4/5$ and $T(4/5)=2/5$ confirms these form a 2-cycle. Answers: 2 fixed points, 2 points of minimal period 2.\n\n**Part (c):** The application of the Misiurewicz-Szlenk theorem (relating topological entropy to lap number growth) is valid. The induction proving $L(T^n)=2^n$ is correct: each lap of $T^n$ maps surjectively onto $[0,1]$, so $T^n(x)=1/2$ has exactly one solution per lap, and composing with $T$ doubles the number of laps. The entropy calculation $h_{\\text{top}}(T) = \\lim_{n\\to\\infty}\\frac{1}{n}\\log 2^n = \\log 2$ is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. It correctly verifies all three parts of the solution: (a) the measure-theoretic proof with proper substitutions and Jacobians, (b) the fixed point and period-2 analysis including verification that $T(2/5)=4/5$ and $T(4/5)=2/5$, and (c) the topological entropy calculation via lap number growth. The critique provides specific evidence for each verification and the verdict 'correct' is appropriate. Minor note: the critique could have mentioned the LaTeX formatting artifacts (like `\\$$2pt]`) in the original solution, but correctly recognized these as display issues rather than mathematical errors."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $H_n = \\sum_{k=1}^{n} \\frac{1}{k}$ denote the $n$-th harmonic number for $n \\geq 1$. Evaluate the infinite series\n$$\\sum_{n=1}^{\\infty} \\frac{H_n}{n \\cdot 2^n}.$$\nExpress your answer as a single closed-form expression involving standard mathematical constants.",
+    "run_id": "26",
+    "topic_slug": "sequences_series_and_summability",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. Key verifications: (1) The convergence argument using $H_n \\\\sim \\\\ln n + \\\\gamma$ and exponential decay is valid. (2) The generating function $\\\\sum_{n=1}^{\\\\infty} H_n x^n = \\\\frac{-\\\\ln(1-x)}{1-x}$ is correctly derived. (3) The integral representation $\\\\frac{1}{n \\\\cdot 2^n} = \\\\int_0^{1/2} t^{n-1} dt$ is correct since $\\\\int_0^{1/2} t^{n-1} dt = \\\\frac{(1/2)^n}{n}$. (4) The Tonelli justification for interchange is appropriate. (5) The evaluation of $I_2 = -\\\\frac{(\\\\ln 2)^2}{2}$ via substitution $u = 1-t$ is correct. (6) The dilogarithm definition gives $I_1 = -\\\\text{Li}_2(1/2)$. (7) The dilogarithm identity $\\\\text{Li}_2(z) + \\\\text{Li}_2(1-z) = \\\\frac{\\\\pi^2}{6} - \\\\ln z \\\\ln(1-z)$ at $z = 1/2$ correctly yields $\\\\text{Li}_2(1/2) = \\\\frac{\\\\pi^2}{12} - \\\\frac{(\\\\ln 2)^2}{2}$. (8) Final simplification: $S = \\\\text{Li}_2(1/2) + \\\\frac{(\\\\ln 2)^2}{2} = \\\\frac{\\\\pi^2}{12}$ is correct. The answer matches the known identity $\\\\sum_{n=1}^{\\\\infty} \\\\frac{H_n}{n} x^n = \\\\text{Li}_2(x) + \\\\frac{1}{2}(\\\\ln(1-x))^2$ evaluated at $x = 1/2$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. Key verifications: (1) The convergence argument using $H_n \\\\sim \\\\ln n + \\\\gamma$ and exponential decay is valid. (2) The generating function $\\\\sum_{n=1}^{\\\\infty} H_n x^n = \\\\frac{-\\\\ln(1-x)}{1-x}$ is correctly derived. (3) The integral representation $\\\\frac{1}{n \\\\cdot 2^n} = \\\\int_0^{1/2} t^{n-1} dt$ is correct since $\\\\int_0^{1/2} t^{n-1} dt = \\\\frac{(1/2)^n}{n}$. (4) The Tonelli justification for interchange is appropriate. (5) The evaluation of $I_2 = -\\\\frac{(\\\\ln 2)^2}{2}$ via substitution $u = 1-t$ is correct. (6) The dilogarithm definition gives $I_1 = -\\\\text{Li}_2(1/2)$. (7) The dilogarithm identity $\\\\text{Li}_2(z) + \\\\text{Li}_2(1-z) = \\\\frac{\\\\pi^2}{6} - \\\\ln z \\\\ln(1-z)$ at $z = 1/2$ correctly yields $\\\\text{Li}_2(1/2) = \\\\frac{\\\\pi^2}{12} - \\\\frac{(\\\\ln 2)^2}{2}$. (8) Final simplification: $S = \\\\text{Li}_2(1/2) + \\\\frac{(\\\\ln 2)^2}{2} = \\\\frac{\\\\pi^2}{12}$ is correct. The answer matches the known identity $\\\\sum_{n=1}^{\\\\infty} \\\\frac{H_n}{n} x^n = \\\\text{Li}_2(x) + \\\\frac{1}{2}(\\\\ln(1-x))^2$ evaluated at $x = 1/2$.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. Key verifications: (1) The convergence argument using $H_n \\sim \\ln n + \\gamma$ and exponential decay is valid. (2) The generating function $\\sum_{n=1}^{\\infty} H_n x^n = \\frac{-\\ln(1-x)}{1-x}$ is correctly derived. (3) The integral representation $\\frac{1}{n \\cdot 2^n} = \\int_0^{1/2} t^{n-1} dt$ is correct since $\\int_0^{1/2} t^{n-1} dt = \\frac{(1/2)^n}{n}$. (4) The Tonelli justification for interchange is appropriate. (5) The evaluation of $I_2 = -\\frac{(\\ln 2)^2}{2}$ via substitution $u = 1-t$ is correct. (6) The dilogarithm definition gives $I_1 = -\\text{Li}_2(1/2)$. (7) The dilogarithm identity $\\text{Li}_2(z) + \\text{Li}_2(1-z) = \\frac{\\pi^2}{6} - \\ln z \\ln(1-z)$ at $z = 1/2$ correctly yields $\\text{Li}_2(1/2) = \\frac{\\pi^2}{12} - \\frac{(\\ln 2)^2}{2}$. (8) Final simplification: $S = \\text{Li}_2(1/2) + \\frac{(\\ln 2)^2}{2} = \\frac{\\pi^2}{12}$ is correct. The answer matches the known identity $\\sum_{n=1}^{\\infty} \\frac{H_n}{n} x^n = \\text{Li}_2(x) + \\frac{1}{2}(\\ln(1-x))^2$ evaluated at $x = 1/2$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the integral\n$$I(x) = \\int_0^{\\infty} \\frac{e^{-xt^2}}{1+t^4} \\, dt$$\nfor $x > 0$. Determine the first two nonzero terms in the asymptotic expansion of $I(x)$ as $x \\to +\\infty$. Express your answer in terms of elementary functions and $\\pi$.",
+    "run_id": "27",
+    "topic_slug": "approximations_and_expansions",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies Watson's lemma to this Laplace-type integral. The key steps are verified:\\n\\n1. **Series expansion**: The expansion $\\\\frac{1}{1+t^4} = \\\\sum_{k=0}^\\\\infty (-1)^k t^{4k}$ for $|t|<1$ is correct.\\n\\n2. **Integral evaluation**: The substitution $s = xt^2$ correctly yields $J_k(x) = \\\\frac{1}{2}\\\\Gamma(2k+\\\\frac{1}{2})x^{-2k-1/2}$. Verified: with $t^{4k} = (s/x)^{2k}$ and $dt = \\\\frac{1}{2}s^{-1/2}x^{-1/2}ds$, the exponent of $x$ is $-2k - 1/2$ and the $s$-integral gives $\\\\Gamma(2k+1/2)$.\\n\\n3. **Gamma values**: $\\\\Gamma(1/2) = \\\\sqrt{\\\\pi}$ and $\\\\Gamma(5/2) = \\\\frac{3}{2} \\\\cdot \\\\frac{1}{2}\\\\sqrt{\\\\pi} = \\\\frac{3\\\\sqrt{\\\\pi}}{4}$ are both correct.\\n\\n4. **Final terms**: For $k=0$: $\\\\frac{1}{2}\\\\sqrt{\\\\pi}x^{-1/2}$. For $k=1$: $-\\\\frac{1}{2} \\\\cdot \\\\frac{3\\\\sqrt{\\\\pi}}{4}x^{-5/2} = -\\\\frac{3\\\\sqrt{\\\\pi}}{8}x^{-5/2}$.\\n\\nThe application of Watson's lemma is justified since contributions from $t \\\\geq 1$ are exponentially small. The final answer $I(x) \\\\sim \\\\frac{\\\\sqrt{\\\\pi}}{2}x^{-1/2} - \\\\frac{3\\\\sqrt{\\\\pi}}{8}x^{-5/2}$ is correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies Watson's lemma to this Laplace-type integral. The key steps are verified:\\n\\n1. **Series expansion**: The expansion $\\\\frac{1}{1+t^4} = \\\\sum_{k=0}^\\\\infty (-1)^k t^{4k}$ for $|t|<1$ is correct.\\n\\n2. **Integral evaluation**: The substitution $s = xt^2$ correctly yields $J_k(x) = \\\\frac{1}{2}\\\\Gamma(2k+\\\\frac{1}{2})x^{-2k-1/2}$. Verified: with $t^{4k} = (s/x)^{2k}$ and $dt = \\\\frac{1}{2}s^{-1/2}x^{-1/2}ds$, the exponent of $x$ is $-2k - 1/2$ and the $s$-integral gives $\\\\Gamma(2k+1/2)$.\\n\\n3. **Gamma values**: $\\\\Gamma(1/2) = \\\\sqrt{\\\\pi}$ and $\\\\Gamma(5/2) = \\\\frac{3}{2} \\\\cdot \\\\frac{1}{2}\\\\sqrt{\\\\pi} = \\\\frac{3\\\\sqrt{\\\\pi}}{4}$ are both correct.\\n\\n4. **Final terms**: For $k=0$: $\\\\frac{1}{2}\\\\sqrt{\\\\pi}x^{-1/2}$. For $k=1$: $-\\\\frac{1}{2} \\\\cdot \\\\frac{3\\\\sqrt{\\\\pi}}{4}x^{-5/2} = -\\\\frac{3\\\\sqrt{\\\\pi}}{8}x^{-5/2}$.\\n\\nThe application of Watson's lemma is justified since contributions from $t \\\\geq 1$ are exponentially small. The final answer $I(x) \\\\sim \\\\frac{\\\\sqrt{\\\\pi}}{2}x^{-1/2} - \\\\frac{3\\\\sqrt{\\\\pi}}{8}x^{-5/2}$ is correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly applies Watson's lemma to this Laplace-type integral. The key steps are verified:\n\n1. **Series expansion**: The expansion $\\frac{1}{1+t^4} = \\sum_{k=0}^\\infty (-1)^k t^{4k}$ for $|t|<1$ is correct.\n\n2. **Integral evaluation**: The substitution $s = xt^2$ correctly yields $J_k(x) = \\frac{1}{2}\\Gamma(2k+\\frac{1}{2})x^{-2k-1/2}$. Verified: with $t^{4k} = (s/x)^{2k}$ and $dt = \\frac{1}{2}s^{-1/2}x^{-1/2}ds$, the exponent of $x$ is $-2k - 1/2$ and the $s$-integral gives $\\Gamma(2k+1/2)$.\n\n3. **Gamma values**: $\\Gamma(1/2) = \\sqrt{\\pi}$ and $\\Gamma(5/2) = \\frac{3}{2} \\cdot \\frac{1}{2}\\sqrt{\\pi} = \\frac{3\\sqrt{\\pi}}{4}$ are both correct.\n\n4. **Final terms**: For $k=0$: $\\frac{1}{2}\\sqrt{\\pi}x^{-1/2}$. For $k=1$: $-\\frac{1}{2} \\cdot \\frac{3\\sqrt{\\pi}}{4}x^{-5/2} = -\\frac{3\\sqrt{\\pi}}{8}x^{-5/2}$.\n\nThe application of Watson's lemma is justified since contributions from $t \\geq 1$ are exponentially small. The final answer $I(x) \\sim \\frac{\\sqrt{\\pi}}{2}x^{-1/2} - \\frac{3\\sqrt{\\pi}}{8}x^{-5/2}$ is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be defined by $f(x) = e^{-|x|}$.\n\n**(a)** Compute the Fourier transform $\\hat{f}(\\xi) = \\displaystyle\\int_{\\mathbb{R}} f(x) e^{-2\\pi i x \\xi} \\, dx$ for all $\\xi \\in \\mathbb{R}$.\n\n**(b)** Using part (a) and properties of the Fourier transform, determine an explicit closed-form expression for the convolution $(f * f)(x) = \\displaystyle\\int_{\\mathbb{R}} f(x-y) f(y) \\, dy$ valid for all $x \\in \\mathbb{R}$.",
+    "run_id": "28",
+    "topic_slug": "harmonic_analysis_on_euclidean_spaces",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. Part (a) correctly uses symmetry to simplify the Fourier transform integral and properly evaluates the standard integral $\\\\int_0^{\\\\infty} e^{-x}\\\\cos(\\\\alpha x)\\\\,dx = \\\\frac{1}{1+\\\\alpha^2}$, yielding $\\\\hat{f}(\\\\xi) = \\\\frac{2}{1+4\\\\pi^2\\\\xi^2}$. Part (b) correctly applies the convolution theorem $\\\\widehat{f*f} = (\\\\hat{f})^2$, then uses the inverse Fourier transform with appropriate substitutions to reduce to the integral $I(a) = \\\\int_0^{\\\\infty} \\\\frac{\\\\cos(at)}{(1+t^2)^2}\\\\,dt$. The contour integration is executed properly: the residue calculation at the double pole $t=i$ is correct (yielding $\\\\frac{(a+1)e^{-a}}{4i}$), and the residue theorem application gives $J(a) = \\\\frac{\\\\pi}{2}(a+1)e^{-a}$. The final answer $(f*f)(x) = (1+|x|)e^{-|x|}$ is correct, and the verification at $x=0$ confirms consistency: $(f*f)(0) = 1$ matches $\\\\int_{-\\\\infty}^{\\\\infty} e^{-2|y|}\\\\,dy = 1$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. Part (a) correctly uses symmetry to simplify the Fourier transform integral and properly evaluates the standard integral $\\\\int_0^{\\\\infty} e^{-x}\\\\cos(\\\\alpha x)\\\\,dx = \\\\frac{1}{1+\\\\alpha^2}$, yielding $\\\\hat{f}(\\\\xi) = \\\\frac{2}{1+4\\\\pi^2\\\\xi^2}$. Part (b) correctly applies the convolution theorem $\\\\widehat{f*f} = (\\\\hat{f})^2$, then uses the inverse Fourier transform with appropriate substitutions to reduce to the integral $I(a) = \\\\int_0^{\\\\infty} \\\\frac{\\\\cos(at)}{(1+t^2)^2}\\\\,dt$. The contour integration is executed properly: the residue calculation at the double pole $t=i$ is correct (yielding $\\\\frac{(a+1)e^{-a}}{4i}$), and the residue theorem application gives $J(a) = \\\\frac{\\\\pi}{2}(a+1)e^{-a}$. The final answer $(f*f)(x) = (1+|x|)e^{-|x|}$ is correct, and the verification at $x=0$ confirms consistency: $(f*f)(0) = 1$ matches $\\\\int_{-\\\\infty}^{\\\\infty} e^{-2|y|}\\\\,dy = 1$.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. Part (a) correctly uses symmetry to simplify the Fourier transform integral and properly evaluates the standard integral $\\int_0^{\\infty} e^{-x}\\cos(\\alpha x)\\,dx = \\frac{1}{1+\\alpha^2}$, yielding $\\hat{f}(\\xi) = \\frac{2}{1+4\\pi^2\\xi^2}$. Part (b) correctly applies the convolution theorem $\\widehat{f*f} = (\\hat{f})^2$, then uses the inverse Fourier transform with appropriate substitutions to reduce to the integral $I(a) = \\int_0^{\\infty} \\frac{\\cos(at)}{(1+t^2)^2}\\,dt$. The contour integration is executed properly: the residue calculation at the double pole $t=i$ is correct (yielding $\\frac{(a+1)e^{-a}}{4i}$), and the residue theorem application gives $J(a) = \\frac{\\pi}{2}(a+1)e^{-a}$. The final answer $(f*f)(x) = (1+|x|)e^{-|x|}$ is correct, and the verification at $x=0$ confirms consistency: $(f*f)(0) = 1$ matches $\\int_{-\\infty}^{\\infty} e^{-2|y|}\\,dy = 1$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\ell^1(\\mathbb{Z})$ denote the Banach algebra of all functions $f: \\mathbb{Z} \\to \\mathbb{C}$ satisfying $\\|f\\|_1 = \\sum_{n \\in \\mathbb{Z}} |f(n)| < \\infty$, equipped with convolution multiplication:\n$$(f * g)(n) = \\sum_{k \\in \\mathbb{Z}} f(k) \\, g(n-k).$$\n\nDefine the element $a \\in \\ell^1(\\mathbb{Z})$ by:\n$$a(n) = \\begin{cases} 2 & \\text{if } n = 0 \\\\ -1 & \\text{if } n = 1 \\\\ 0 & \\text{otherwise} \\end{cases}$$\n\n(a) The Gelfand spectrum $\\Delta(\\ell^1(\\mathbb{Z}))$ of this commutative Banach algebra can be identified with the Pontryagin dual $\\widehat{\\mathbb{Z}}$. Describe this dual group explicitly and state the formula for the Gelfand transform $\\hat{f}: \\widehat{\\mathbb{Z}} \\to \\mathbb{C}$ for a general $f \\in \\ell^1(\\mathbb{Z})$.\n\n(b) Compute the Gelfand transform $\\hat{a}$ of the element $a$.\n\n(c) Determine whether $a$ is invertible in $\\ell^1(\\mathbb{Z})$. If invertible, find the inverse $a^{-1}$ explicitly as an element of $\\ell^1(\\mathbb{Z})$.",
+    "run_id": "29",
+    "topic_slug": "abstract_harmonic_analysis",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer is mathematically sound and complete across all three parts.\\n\\n**Part (a):** Correctly identifies $\\\\widehat{\\\\mathbb{Z}} = \\\\mathbb{T}$ and provides the correct Gelfand transform formula $\\\\hat{f}(z) = \\\\sum_{n \\\\in \\\\mathbb{Z}} f(n) z^n$. The justification that $|\\\\varphi(\\\\delta_1)| = 1$ via the invertibility of $\\\\delta_1$ is valid.\\n\\n**Part (b):** The computation $\\\\hat{a}(z) = 2 - z$ is correct, directly following from the definition of $a$.\\n\\n**Part (c):** The invertibility argument is correct: $\\\\hat{a}(z) = 2 - z = 0$ requires $z = 2 \\\\notin \\\\mathbb{T}$, so $\\\\hat{a}$ never vanishes on the spectrum. The geometric series expansion $\\\\frac{1}{2-z} = \\\\sum_{n=0}^{\\\\infty} 2^{-(n+1)} z^n$ is valid since $|z/2| = 1/2 < 1$ for $z \\\\in \\\\mathbb{T}$. The $\\\\ell^1$ norm computation $\\\\|b\\\\|_1 = 1$ is correct. The direct convolution verification $(a * b)(n) = 2b(n) - b(n-1) = \\\\delta_0(n)$ is performed correctly for all cases ($n = 0$, $n \\\\geq 1$, $n < 0$), confirming the inverse formula $a^{-1}(n) = 2^{-(n+1)}$ for $n \\\\geq 0$ and $0$ otherwise.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer is mathematically sound and complete across all three parts.\\n\\n**Part (a):** Correctly identifies $\\\\widehat{\\\\mathbb{Z}} = \\\\mathbb{T}$ and provides the correct Gelfand transform formula $\\\\hat{f}(z) = \\\\sum_{n \\\\in \\\\mathbb{Z}} f(n) z^n$. The justification that $|\\\\varphi(\\\\delta_1)| = 1$ via the invertibility of $\\\\delta_1$ is valid.\\n\\n**Part (b):** The computation $\\\\hat{a}(z) = 2 - z$ is correct, directly following from the definition of $a$.\\n\\n**Part (c):** The invertibility argument is correct: $\\\\hat{a}(z) = 2 - z = 0$ requires $z = 2 \\\\notin \\\\mathbb{T}$, so $\\\\hat{a}$ never vanishes on the spectrum. The geometric series expansion $\\\\frac{1}{2-z} = \\\\sum_{n=0}^{\\\\infty} 2^{-(n+1)} z^n$ is valid since $|z/2| = 1/2 < 1$ for $z \\\\in \\\\mathbb{T}$. The $\\\\ell^1$ norm computation $\\\\|b\\\\|_1 = 1$ is correct. The direct convolution verification $(a * b)(n) = 2b(n) - b(n-1) = \\\\delta_0(n)$ is performed correctly for all cases ($n = 0$, $n \\\\geq 1$, $n < 0$), confirming the inverse formula $a^{-1}(n) = 2^{-(n+1)}$ for $n \\\\geq 0$ and $0$ otherwise.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer is mathematically sound and complete across all three parts.\n\n**Part (a):** Correctly identifies $\\widehat{\\mathbb{Z}} = \\mathbb{T}$ and provides the correct Gelfand transform formula $\\hat{f}(z) = \\sum_{n \\in \\mathbb{Z}} f(n) z^n$. The justification that $|\\varphi(\\delta_1)| = 1$ via the invertibility of $\\delta_1$ is valid.\n\n**Part (b):** The computation $\\hat{a}(z) = 2 - z$ is correct, directly following from the definition of $a$.\n\n**Part (c):** The invertibility argument is correct: $\\hat{a}(z) = 2 - z = 0$ requires $z = 2 \\notin \\mathbb{T}$, so $\\hat{a}$ never vanishes on the spectrum. The geometric series expansion $\\frac{1}{2-z} = \\sum_{n=0}^{\\infty} 2^{-(n+1)} z^n$ is valid since $|z/2| = 1/2 < 1$ for $z \\in \\mathbb{T}$. The $\\ell^1$ norm computation $\\|b\\|_1 = 1$ is correct. The direct convolution verification $(a * b)(n) = 2b(n) - b(n-1) = \\delta_0(n)$ is performed correctly for all cases ($n = 0$, $n \\geq 1$, $n < 0$), confirming the inverse formula $a^{-1}(n) = 2^{-(n+1)}$ for $n \\geq 0$ and $0$ otherwise.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Find all continuous functions $f: [0, \\infty) \\to \\mathbb{R}$ satisfying the Volterra integral equation:\n$$f(t) + 2\\int_0^t \\cos(t-u) f(u) \\, du = e^{-t}, \\quad t \\geq 0$$",
+    "run_id": "30",
+    "topic_slug": "integral_transforms_and_operational_calculus",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\"verdict\": \"correct\", \"notes\": \"The solution is mathematically sound and complete. The Laplace transform setup is correct: transforming $f(t) + 2\\\\int_0^t \\\\cos(t-u)f(u)du = e^{-t}$ gives $F(s)(1 + \\\\frac{2s}{s^2+1}) = \\\\frac{1}{s+1}$, leading to $F(s) = \\\\frac{s^2+1}{(s+1)^3}$. The partial fraction decomposition is verified: $A=1$, $B=-2$, $C=2$ correctly satisfy $s^2+1 = A(s+1)^2 + B(s+1) + C$. The inverse Laplace transform using $\\\\mathcal{L}^{-1}\\\\{(s+a)^{-n}\\\\} = \\\\frac{t^{n-1}}{(n-1)!}e^{-at}$ correctly yields $f(t) = e^{-t} - 2te^{-t} + t^2e^{-t} = (t-1)^2e^{-t}$. The verification via Laplace transform is valid: $F(s) \\\\cdot \\\\frac{(s+1)^2}{s^2+1} = \\\\frac{s^2+1}{(s+1)^3} \\\\cdot \\\\frac{(s+1)^2}{s^2+1} = \\\\frac{1}{s+1} = \\\\mathcal{L}\\\\{e^{-t}\\\\}$. The uniqueness argument correctly appeals to standard Volterra theory for equations of the second kind with continuous kernels.\"}",
+        "raw_critique": "{\"verdict\": \"correct\", \"notes\": \"The solution is mathematically sound and complete. The Laplace transform setup is correct: transforming $f(t) + 2\\\\int_0^t \\\\cos(t-u)f(u)du = e^{-t}$ gives $F(s)(1 + \\\\frac{2s}{s^2+1}) = \\\\frac{1}{s+1}$, leading to $F(s) = \\\\frac{s^2+1}{(s+1)^3}$. The partial fraction decomposition is verified: $A=1$, $B=-2$, $C=2$ correctly satisfy $s^2+1 = A(s+1)^2 + B(s+1) + C$. The inverse Laplace transform using $\\\\mathcal{L}^{-1}\\\\{(s+a)^{-n}\\\\} = \\\\frac{t^{n-1}}{(n-1)!}e^{-at}$ correctly yields $f(t) = e^{-t} - 2te^{-t} + t^2e^{-t} = (t-1)^2e^{-t}$. The verification via Laplace transform is valid: $F(s) \\\\cdot \\\\frac{(s+1)^2}{s^2+1} = \\\\frac{s^2+1}{(s+1)^3} \\\\cdot \\\\frac{(s+1)^2}{s^2+1} = \\\\frac{1}{s+1} = \\\\mathcal{L}\\\\{e^{-t}\\\\}$. The uniqueness argument correctly appeals to standard Volterra theory for equations of the second kind with continuous kernels.\"}",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. The Laplace transform setup is correct: transforming $f(t) + 2\\int_0^t \\cos(t-u)f(u)du = e^{-t}$ gives $F(s)(1 + \\frac{2s}{s^2+1}) = \\frac{1}{s+1}$, leading to $F(s) = \\frac{s^2+1}{(s+1)^3}$. The partial fraction decomposition is verified: $A=1$, $B=-2$, $C=2$ correctly satisfy $s^2+1 = A(s+1)^2 + B(s+1) + C$. The inverse Laplace transform using $\\mathcal{L}^{-1}\\{(s+a)^{-n}\\} = \\frac{t^{n-1}}{(n-1)!}e^{-at}$ correctly yields $f(t) = e^{-t} - 2te^{-t} + t^2e^{-t} = (t-1)^2e^{-t}$. The verification via Laplace transform is valid: $F(s) \\cdot \\frac{(s+1)^2}{s^2+1} = \\frac{s^2+1}{(s+1)^3} \\cdot \\frac{(s+1)^2}{s^2+1} = \\frac{1}{s+1} = \\mathcal{L}\\{e^{-t}\\}$. The uniqueness argument correctly appeals to standard Volterra theory for equations of the second kind with continuous kernels.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. It correctly verifies all key steps: (1) the Laplace transform setup yielding $F(s) = \frac{s^2+1}{(s+1)^3}$, (2) the partial fraction decomposition with $A=1$, $B=-2$, $C=2$, (3) the inverse Laplace transform giving $f(t) = (t-1)^2 e^{-t}$, and (4) the verification and uniqueness arguments. The mathematical checking is thorough and evidence-based, citing specific formulas and computations. The verdict of 'correct' is appropriate. Minor note: the original answer has some corrupted LaTeX display (the `\\$2pt]` fragments), but this is a formatting artifact, not a mathematical error, and the critique correctly focuses on mathematical validity rather than display issues."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Solve the Fredholm integral equation of the second kind\n$$\\phi(x) = x + 2\\int_0^1 (1 + xt)\\,\\phi(t)\\,dt$$\nfor the unknown continuous function $\\phi: [0,1] \\to \\mathbb{R}$.",
+    "run_id": "31",
+    "topic_slug": "integral_equations",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly exploits the separable (degenerate) kernel $K(x,t)=1+xt$ to reduce the integral equation to a linear system. The computation of $I_0$ and $I_1$ is accurate, the linear system is correctly derived and solved, yielding $\\\\alpha = 3/4$ and $\\\\beta = -3/4$. The verification step confirms that $\\\\phi(x) = \\\\frac{3}{4}(x-1)$ satisfies the original equation. The uniqueness argument correctly shows the homogeneous equation has only the trivial solution by deriving $\\\\alpha = -\\\\alpha/3 \\\\Rightarrow \\\\alpha = 0$. All mathematical steps are valid and the solution is complete.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly exploits the separable (degenerate) kernel $K(x,t)=1+xt$ to reduce the integral equation to a linear system. The computation of $I_0$ and $I_1$ is accurate, the linear system is correctly derived and solved, yielding $\\\\alpha = 3/4$ and $\\\\beta = -3/4$. The verification step confirms that $\\\\phi(x) = \\\\frac{3}{4}(x-1)$ satisfies the original equation. The uniqueness argument correctly shows the homogeneous equation has only the trivial solution by deriving $\\\\alpha = -\\\\alpha/3 \\\\Rightarrow \\\\alpha = 0$. All mathematical steps are valid and the solution is complete.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly exploits the separable (degenerate) kernel $K(x,t)=1+xt$ to reduce the integral equation to a linear system. The computation of $I_0$ and $I_1$ is accurate, the linear system is correctly derived and solved, yielding $\\alpha = 3/4$ and $\\beta = -3/4$. The verification step confirms that $\\phi(x) = \\frac{3}{4}(x-1)$ satisfies the original equation. The uniqueness argument correctly shows the homogeneous equation has only the trivial solution by deriving $\\alpha = -\\alpha/3 \\Rightarrow \\alpha = 0$. All mathematical steps are valid and the solution is complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $T: L^2[0,1] \\to L^2[0,1]$ be the integral operator defined by\n$$(Tf)(x) = \\int_0^1 \\min(x,y)\\, f(y) \\, dy$$\nfor $f \\in L^2[0,1]$ and $x \\in [0,1]$.\n\nDetermine all eigenvalues of $T$ and find the corresponding eigenfunctions.",
+    "run_id": "32",
+    "topic_slug": "functional_analysis",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly solves the eigenvalue problem through a well-structured approach. Key verifications:\\n\\n1. **Kernel splitting** is correct: $(Tf)(x) = \\\\int_0^x y f(y) dy + x\\\\int_x^1 f(y) dy$ follows from $\\\\min(x,y) = y$ when $y < x$ and $\\\\min(x,y) = x$ when $y > x$.\\n\\n2. **Differentiation steps** are valid: $F'(x) = \\\\int_x^1 f(y) dy$ and $F''(x) = -f(x)$ follow correctly from Leibniz rule.\\n\\n3. **Boundary conditions** $f(0) = 0$ and $f'(1) = 0$ are correctly derived from $F(0) = 0$ and $F'(1) = \\\\int_1^1 f(y)dy = 0$.\\n\\n4. **Positive definiteness**: The claim that $\\\\langle Tf, f \\\\rangle > 0$ for nonzero $f$ is correct. This can be verified using $\\\\min(x,y) = \\\\int_0^1 \\\\mathbf{1}_{t<x}\\\\mathbf{1}_{t<y} dt$, which gives $\\\\langle Tf, f \\\\rangle = \\\\int_0^1 (\\\\int_t^1 f(x)dx)^2 dt \\\\geq 0$ with equality only if $f = 0$ a.e.\\n\\n5. **Sturm-Liouville solution**: The eigenvalue condition $\\\\cos(\\\\sqrt{\\\\mu}) = 0$ correctly yields $\\\\sqrt{\\\\mu} = \\\\frac{(2n+1)\\\\pi}{2}$, giving $\\\\lambda_n = \\\\frac{4}{(2n+1)^2\\\\pi^2}$.\\n\\n6. **Completeness argument**: The answer correctly notes that any eigenfunction must satisfy the derived ODE and boundary conditions, and these are all the eigenvalues of the Sturm-Liouville problem.\\n\\nI verified the $n=0$ case by direct computation: $(T\\\\varphi_0)(x) = \\\\frac{4}{\\\\pi^2}\\\\sin(\\\\frac{\\\\pi x}{2})$, confirming the eigenvalue formula.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly solves the eigenvalue problem through a well-structured approach. Key verifications:\\n\\n1. **Kernel splitting** is correct: $(Tf)(x) = \\\\int_0^x y f(y) dy + x\\\\int_x^1 f(y) dy$ follows from $\\\\min(x,y) = y$ when $y < x$ and $\\\\min(x,y) = x$ when $y > x$.\\n\\n2. **Differentiation steps** are valid: $F'(x) = \\\\int_x^1 f(y) dy$ and $F''(x) = -f(x)$ follow correctly from Leibniz rule.\\n\\n3. **Boundary conditions** $f(0) = 0$ and $f'(1) = 0$ are correctly derived from $F(0) = 0$ and $F'(1) = \\\\int_1^1 f(y)dy = 0$.\\n\\n4. **Positive definiteness**: The claim that $\\\\langle Tf, f \\\\rangle > 0$ for nonzero $f$ is correct. This can be verified using $\\\\min(x,y) = \\\\int_0^1 \\\\mathbf{1}_{t<x}\\\\mathbf{1}_{t<y} dt$, which gives $\\\\langle Tf, f \\\\rangle = \\\\int_0^1 (\\\\int_t^1 f(x)dx)^2 dt \\\\geq 0$ with equality only if $f = 0$ a.e.\\n\\n5. **Sturm-Liouville solution**: The eigenvalue condition $\\\\cos(\\\\sqrt{\\\\mu}) = 0$ correctly yields $\\\\sqrt{\\\\mu} = \\\\frac{(2n+1)\\\\pi}{2}$, giving $\\\\lambda_n = \\\\frac{4}{(2n+1)^2\\\\pi^2}$.\\n\\n6. **Completeness argument**: The answer correctly notes that any eigenfunction must satisfy the derived ODE and boundary conditions, and these are all the eigenvalues of the Sturm-Liouville problem.\\n\\nI verified the $n=0$ case by direct computation: $(T\\\\varphi_0)(x) = \\\\frac{4}{\\\\pi^2}\\\\sin(\\\\frac{\\\\pi x}{2})$, confirming the eigenvalue formula.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly solves the eigenvalue problem through a well-structured approach. Key verifications:\n\n1. **Kernel splitting** is correct: $(Tf)(x) = \\int_0^x y f(y) dy + x\\int_x^1 f(y) dy$ follows from $\\min(x,y) = y$ when $y < x$ and $\\min(x,y) = x$ when $y > x$.\n\n2. **Differentiation steps** are valid: $F'(x) = \\int_x^1 f(y) dy$ and $F''(x) = -f(x)$ follow correctly from Leibniz rule.\n\n3. **Boundary conditions** $f(0) = 0$ and $f'(1) = 0$ are correctly derived from $F(0) = 0$ and $F'(1) = \\int_1^1 f(y)dy = 0$.\n\n4. **Positive definiteness**: The claim that $\\langle Tf, f \\rangle > 0$ for nonzero $f$ is correct. This can be verified using $\\min(x,y) = \\int_0^1 \\mathbf{1}_{t<x}\\mathbf{1}_{t<y} dt$, which gives $\\langle Tf, f \\rangle = \\int_0^1 (\\int_t^1 f(x)dx)^2 dt \\geq 0$ with equality only if $f = 0$ a.e.\n\n5. **Sturm-Liouville solution**: The eigenvalue condition $\\cos(\\sqrt{\\mu}) = 0$ correctly yields $\\sqrt{\\mu} = \\frac{(2n+1)\\pi}{2}$, giving $\\lambda_n = \\frac{4}{(2n+1)^2\\pi^2}$.\n\n6. **Completeness argument**: The answer correctly notes that any eigenfunction must satisfy the derived ODE and boundary conditions, and these are all the eigenvalues of the Sturm-Liouville problem.\n\nI verified the $n=0$ case by direct computation: $(T\\varphi_0)(x) = \\frac{4}{\\pi^2}\\sin(\\frac{\\pi x}{2})$, confirming the eigenvalue formula.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. One minor enhancement would be to note that for complex-valued functions, the positive definiteness formula should use absolute value: $\\langle Tf, f \\rangle = \\int_0^1 |\\int_t^1 f(x)dx|^2 dt$, but this doesn't affect the correctness of the assessment since the kernel $\\min(x,y)$ is real and symmetric, making the operator self-adjoint and the conclusion still valid."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $T: L^2[0,1] \\to L^2[0,1]$ be the integral operator defined by\n$$(Tf)(x) = \\int_0^1 (x+y) f(y) \\, dy.$$\n\n(a) Determine the rank of $T$.\n\n(b) Find all eigenvalues of $T$ and determine the spectrum $\\sigma(T)$.\n\n(c) Compute the operator norm $\\|T\\|$.",
+    "run_id": "33",
+    "topic_slug": "operator_theory",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete.\\n\\n**(a)** The decomposition $(Tf)(x) = x\\\\int_0^1 f(y)\\\\,dy + \\\\int_0^1 yf(y)\\\\,dy$ is correct, showing $\\\\text{Im}(T) \\\\subseteq \\\\text{span}\\\\{1,x\\\\}$. The computations $T(1)(x) = x + \\\\frac{1}{2}$ and $T(x)(x) = \\\\frac{1}{2}x + \\\\frac{1}{3}$ are verified, and the determinant calculation confirming linear independence is correct.\\n\\n**(b)** The approach is valid: non-zero eigenvalues must have eigenfunctions in $\\\\text{Im}(T)$. The system of equations is correctly derived and the characteristic equation $(\\\\frac{1}{2}-\\\\lambda)^2 - \\\\frac{1}{3} = 0$ yields eigenvalues $\\\\lambda = \\\\frac{1}{2} \\\\pm \\\\frac{1}{\\\\sqrt{3}}$. The verification that 0 is an eigenvalue (with example $f(y)=\\\\cos(2\\\\pi y)$ satisfying both moment conditions) is correct. The spectrum is correctly identified for this compact self-adjoint operator.\\n\\n**(c)** The use of $\\\\|T\\\\| = \\\\max_{\\\\lambda \\\\in \\\\sigma(T)}|\\\\lambda|$ for self-adjoint operators is valid. Since $\\\\frac{1}{2} - \\\\frac{1}{\\\\sqrt{3}} < 0$ (as $\\\\frac{1}{\\\\sqrt{3}} \\\\approx 0.577 > 0.5$), the maximum absolute value is indeed $\\\\frac{1}{2} + \\\\frac{1}{\\\\sqrt{3}}$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete.\\n\\n**(a)** The decomposition $(Tf)(x) = x\\\\int_0^1 f(y)\\\\,dy + \\\\int_0^1 yf(y)\\\\,dy$ is correct, showing $\\\\text{Im}(T) \\\\subseteq \\\\text{span}\\\\{1,x\\\\}$. The computations $T(1)(x) = x + \\\\frac{1}{2}$ and $T(x)(x) = \\\\frac{1}{2}x + \\\\frac{1}{3}$ are verified, and the determinant calculation confirming linear independence is correct.\\n\\n**(b)** The approach is valid: non-zero eigenvalues must have eigenfunctions in $\\\\text{Im}(T)$. The system of equations is correctly derived and the characteristic equation $(\\\\frac{1}{2}-\\\\lambda)^2 - \\\\frac{1}{3} = 0$ yields eigenvalues $\\\\lambda = \\\\frac{1}{2} \\\\pm \\\\frac{1}{\\\\sqrt{3}}$. The verification that 0 is an eigenvalue (with example $f(y)=\\\\cos(2\\\\pi y)$ satisfying both moment conditions) is correct. The spectrum is correctly identified for this compact self-adjoint operator.\\n\\n**(c)** The use of $\\\\|T\\\\| = \\\\max_{\\\\lambda \\\\in \\\\sigma(T)}|\\\\lambda|$ for self-adjoint operators is valid. Since $\\\\frac{1}{2} - \\\\frac{1}{\\\\sqrt{3}} < 0$ (as $\\\\frac{1}{\\\\sqrt{3}} \\\\approx 0.577 > 0.5$), the maximum absolute value is indeed $\\\\frac{1}{2} + \\\\frac{1}{\\\\sqrt{3}}$.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete.\n\n**(a)** The decomposition $(Tf)(x) = x\\int_0^1 f(y)\\,dy + \\int_0^1 yf(y)\\,dy$ is correct, showing $\\text{Im}(T) \\subseteq \\text{span}\\{1,x\\}$. The computations $T(1)(x) = x + \\frac{1}{2}$ and $T(x)(x) = \\frac{1}{2}x + \\frac{1}{3}$ are verified, and the determinant calculation confirming linear independence is correct.\n\n**(b)** The approach is valid: non-zero eigenvalues must have eigenfunctions in $\\text{Im}(T)$. The system of equations is correctly derived and the characteristic equation $(\\frac{1}{2}-\\lambda)^2 - \\frac{1}{3} = 0$ yields eigenvalues $\\lambda = \\frac{1}{2} \\pm \\frac{1}{\\sqrt{3}}$. The verification that 0 is an eigenvalue (with example $f(y)=\\cos(2\\pi y)$ satisfying both moment conditions) is correct. The spectrum is correctly identified for this compact self-adjoint operator.\n\n**(c)** The use of $\\|T\\| = \\max_{\\lambda \\in \\sigma(T)}|\\lambda|$ for self-adjoint operators is valid. Since $\\frac{1}{2} - \\frac{1}{\\sqrt{3}} < 0$ (as $\\frac{1}{\\sqrt{3}} \\approx 0.577 > 0.5$), the maximum absolute value is indeed $\\frac{1}{2} + \\frac{1}{\\sqrt{3}}$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the optimal control problem: minimize the cost functional\n$$J[u] = \\int_0^1 u(t)^2 \\, dt$$\nsubject to the dynamical constraint $\\frac{dx}{dt} = x(t) + u(t)$ for $t \\in [0, 1]$, with boundary conditions $x(0) = 1$ and $x(1) = 0$.\n\nHere $x: [0,1] \\to \\mathbb{R}$ is the state variable and $u: [0,1] \\to \\mathbb{R}$ is the control, both assumed to be piecewise continuous functions.\n\nDetermine the minimum value $J^*$ of this cost functional.",
+    "run_id": "34",
+    "topic_slug": "calculus_of_variations_and_optimization",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly reformulates the problem by substituting $u = \\\\dot{x} - x$ from the dynamics constraint. The Euler-Lagrange equation is correctly derived: $\\\\frac{\\\\partial L}{\\\\partial \\\\dot{x}} = 2(\\\\dot{x}-x)$ and $\\\\frac{\\\\partial L}{\\\\partial x} = -2(\\\\dot{x}-x)$, leading to $\\\\ddot{x} - x = 0$. The boundary value problem is solved correctly: $A = -\\\\frac{1}{e^2-1}$ and $B = \\\\frac{e^2}{e^2-1}$. The optimal control $u(t) = -\\\\frac{2e^2}{e^2-1}e^{-t}$ follows correctly from $u = \\\\dot{x} - x = -2Be^{-t}$. The integral computation is verified: $\\\\int_0^1 e^{-2t}dt = \\\\frac{1-e^{-2}}{2} = \\\\frac{e^2-1}{2e^2}$, and the simplification to $J^* = \\\\frac{2e^2}{e^2-1}$ is correct. The optimality argument is valid: for this linear-quadratic problem with convex cost in $u$, the necessary conditions are sufficient. The functional $J[x]$ is indeed strictly convex over functions satisfying the boundary conditions, since if $\\\\dot{x}_1 - x_1 = \\\\dot{x}_2 - x_2$ everywhere with same boundary conditions, then $x_1 = x_2$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly reformulates the problem by substituting $u = \\\\dot{x} - x$ from the dynamics constraint. The Euler-Lagrange equation is correctly derived: $\\\\frac{\\\\partial L}{\\\\partial \\\\dot{x}} = 2(\\\\dot{x}-x)$ and $\\\\frac{\\\\partial L}{\\\\partial x} = -2(\\\\dot{x}-x)$, leading to $\\\\ddot{x} - x = 0$. The boundary value problem is solved correctly: $A = -\\\\frac{1}{e^2-1}$ and $B = \\\\frac{e^2}{e^2-1}$. The optimal control $u(t) = -\\\\frac{2e^2}{e^2-1}e^{-t}$ follows correctly from $u = \\\\dot{x} - x = -2Be^{-t}$. The integral computation is verified: $\\\\int_0^1 e^{-2t}dt = \\\\frac{1-e^{-2}}{2} = \\\\frac{e^2-1}{2e^2}$, and the simplification to $J^* = \\\\frac{2e^2}{e^2-1}$ is correct. The optimality argument is valid: for this linear-quadratic problem with convex cost in $u$, the necessary conditions are sufficient. The functional $J[x]$ is indeed strictly convex over functions satisfying the boundary conditions, since if $\\\\dot{x}_1 - x_1 = \\\\dot{x}_2 - x_2$ everywhere with same boundary conditions, then $x_1 = x_2$.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly reformulates the problem by substituting $u = \\dot{x} - x$ from the dynamics constraint. The Euler-Lagrange equation is correctly derived: $\\frac{\\partial L}{\\partial \\dot{x}} = 2(\\dot{x}-x)$ and $\\frac{\\partial L}{\\partial x} = -2(\\dot{x}-x)$, leading to $\\ddot{x} - x = 0$. The boundary value problem is solved correctly: $A = -\\frac{1}{e^2-1}$ and $B = \\frac{e^2}{e^2-1}$. The optimal control $u(t) = -\\frac{2e^2}{e^2-1}e^{-t}$ follows correctly from $u = \\dot{x} - x = -2Be^{-t}$. The integral computation is verified: $\\int_0^1 e^{-2t}dt = \\frac{1-e^{-2}}{2} = \\frac{e^2-1}{2e^2}$, and the simplification to $J^* = \\frac{2e^2}{e^2-1}$ is correct. The optimality argument is valid: for this linear-quadratic problem with convex cost in $u$, the necessary conditions are sufficient. The functional $J[x]$ is indeed strictly convex over functions satisfying the boundary conditions, since if $\\dot{x}_1 - x_1 = \\dot{x}_2 - x_2$ everywhere with same boundary conditions, then $x_1 = x_2$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "In triangle $ABC$, let $H$ be the orthocenter. Given that $AH = 4$, $BH = 3$, and $\\angle AHB = 60\u00b0$, find the circumradius $R$ of triangle $ABC$.",
+    "run_id": "35",
+    "topic_slug": "geometry",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly establishes that $\\\\angle AHB = 180\u00b0 - C$, yielding $C = 120\u00b0$ and $A + B = 60\u00b0$. The proof that the circumradii of triangles $ABC$ and $AHB$ are equal is valid via the law of sines, since $\\\\sin(180\u00b0 - C) = \\\\sin C$. The derivations $AH = 2R\\\\cos A$ and $BH = 2R\\\\cos B$ from the law of sines in triangle $AHB$ are correct, using $\\\\angle ABH = 90\u00b0 - A$ and $\\\\angle BAH = 90\u00b0 - B$. The algebraic manipulation using $B = 60\u00b0 - A$ to derive $\\\\sin A = \\\\frac{1}{\\\\sqrt{3}R}$ is verified. The final computation using $\\\\sin^2 A + \\\\cos^2 A = 1$ correctly yields $R^2 = \\\\frac{13}{3}$, giving $R = \\\\frac{\\\\sqrt{39}}{3}$. The admissibility check confirms that $\\\\cos A$ and $\\\\cos B$ are both in $(0, 1)$, ensuring the triangle exists.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly establishes that $\\\\angle AHB = 180\u00b0 - C$, yielding $C = 120\u00b0$ and $A + B = 60\u00b0$. The proof that the circumradii of triangles $ABC$ and $AHB$ are equal is valid via the law of sines, since $\\\\sin(180\u00b0 - C) = \\\\sin C$. The derivations $AH = 2R\\\\cos A$ and $BH = 2R\\\\cos B$ from the law of sines in triangle $AHB$ are correct, using $\\\\angle ABH = 90\u00b0 - A$ and $\\\\angle BAH = 90\u00b0 - B$. The algebraic manipulation using $B = 60\u00b0 - A$ to derive $\\\\sin A = \\\\frac{1}{\\\\sqrt{3}R}$ is verified. The final computation using $\\\\sin^2 A + \\\\cos^2 A = 1$ correctly yields $R^2 = \\\\frac{13}{3}$, giving $R = \\\\frac{\\\\sqrt{39}}{3}$. The admissibility check confirms that $\\\\cos A$ and $\\\\cos B$ are both in $(0, 1)$, ensuring the triangle exists.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly establishes that $\\angle AHB = 180\u00b0 - C$, yielding $C = 120\u00b0$ and $A + B = 60\u00b0$. The proof that the circumradii of triangles $ABC$ and $AHB$ are equal is valid via the law of sines, since $\\sin(180\u00b0 - C) = \\sin C$. The derivations $AH = 2R\\cos A$ and $BH = 2R\\cos B$ from the law of sines in triangle $AHB$ are correct, using $\\angle ABH = 90\u00b0 - A$ and $\\angle BAH = 90\u00b0 - B$. The algebraic manipulation using $B = 60\u00b0 - A$ to derive $\\sin A = \\frac{1}{\\sqrt{3}R}$ is verified. The final computation using $\\sin^2 A + \\cos^2 A = 1$ correctly yields $R^2 = \\frac{13}{3}$, giving $R = \\frac{\\sqrt{39}}{3}$. The admissibility check confirms that $\\cos A$ and $\\cos B$ are both in $(0, 1)$, ensuring the triangle exists.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $P$ be the convex polygon in $\\mathbb{R}^2$ with vertices at $(0, 0)$, $(4, 1)$, $(5, 5)$, $(2, 7)$, and $(-1, 3)$, listed in counterclockwise order.\n\n(a) Compute the area of $P$.\n\n(b) Compute the number of lattice points on the boundary of $P$.\n\n(c) Using Pick's theorem, determine the number of lattice points strictly inside $P$.\n\n(d) The centroid (center of mass assuming uniform density) of a polygon with vertices $(x_1, y_1), \\ldots, (x_n, y_n)$ listed counterclockwise is given by:\n$$\\bar{x} = \\frac{1}{6A} \\sum_{i=1}^{n} (x_i + x_{i+1})(x_i y_{i+1} - x_{i+1} y_i), \\quad \\bar{y} = \\frac{1}{6A} \\sum_{i=1}^{n} (y_i + y_{i+1})(x_i y_{i+1} - x_{i+1} y_i)$$\nwhere indices are taken modulo $n$ and $A$ is the area. Determine whether the centroid of $P$ is a lattice point.",
+    "run_id": "36",
+    "topic_slug": "convex_and_discrete_geometry",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\"verdict\": \"correct\", \"notes\": \"All parts of the solution are mathematically correct. Part (a): The shoelace formula is correctly applied, yielding area $A = 53/2$. Part (b): The GCD calculations for each edge are correct (all equal 1), giving $B = 5$ boundary lattice points. Part (c): Pick's theorem is correctly applied: $I = 53/2 - 5/2 + 1 = 25$. Part (d): The centroid formula calculations are verified: $S_x = 323$, $S_y = 520$, $6A = 159$, giving $\\\\bar{x} = 323/159$ and $\\\\bar{y} = 520/159$. Since 159 divides neither 323 nor 520 (verified: $323 = 2 \\\\times 159 + 5$ and $520 = 3 \\\\times 159 + 43$), the centroid is correctly determined to not be a lattice point.\"}",
+        "raw_critique": "{\"verdict\": \"correct\", \"notes\": \"All parts of the solution are mathematically correct. Part (a): The shoelace formula is correctly applied, yielding area $A = 53/2$. Part (b): The GCD calculations for each edge are correct (all equal 1), giving $B = 5$ boundary lattice points. Part (c): Pick's theorem is correctly applied: $I = 53/2 - 5/2 + 1 = 25$. Part (d): The centroid formula calculations are verified: $S_x = 323$, $S_y = 520$, $6A = 159$, giving $\\\\bar{x} = 323/159$ and $\\\\bar{y} = 520/159$. Since 159 divides neither 323 nor 520 (verified: $323 = 2 \\\\times 159 + 5$ and $520 = 3 \\\\times 159 + 43$), the centroid is correctly determined to not be a lattice point.\"}",
+        "verdict": "correct",
+        "notes": "All parts of the solution are mathematically correct. Part (a): The shoelace formula is correctly applied, yielding area $A = 53/2$. Part (b): The GCD calculations for each edge are correct (all equal 1), giving $B = 5$ boundary lattice points. Part (c): Pick's theorem is correctly applied: $I = 53/2 - 5/2 + 1 = 25$. Part (d): The centroid formula calculations are verified: $S_x = 323$, $S_y = 520$, $6A = 159$, giving $\\bar{x} = 323/159$ and $\\bar{y} = 520/159$. Since 159 divides neither 323 nor 520 (verified: $323 = 2 \\times 159 + 5$ and $520 = 3 \\times 159 + 43$), the centroid is correctly determined to not be a lattice point.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. All mathematical verifications are correct: (a) shoelace formula yields 53/2, (b) all GCDs equal 1 giving B=5, (c) Pick's theorem gives I=25, and (d) the centroid calculations are verified with proper divisibility checks. The JSON format is valid with 'verdict' and 'notes' fields correctly populated."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $S \\subset \\mathbb{R}^3$ be the portion of the paraboloid $z = x^2 + y^2$ satisfying $0 \\leq z \\leq h$, where $h > 0$ is a given constant. Compute the total Gaussian curvature\n$$\\iint_S K \\, dA,$$\nexpressing your answer in closed form as a function of $h$.",
+    "run_id": "37",
+    "topic_slug": "differential_geometry",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\"verdict\": \"correct\", \"notes\": \"The solution is mathematically sound and complete. The formulas for Gaussian curvature $K = \\\\frac{f_{xx}f_{yy} - f_{xy}^2}{(1+f_x^2+f_y^2)^2}$ and area element $dA = \\\\sqrt{1+f_x^2+f_y^2}\\\\,dx\\\\,dy$ for a graph are correctly stated and applied. The partial derivatives ($f_x = 2x$, $f_y = 2y$, $f_{xx} = f_{yy} = 2$, $f_{xy} = 0$) are computed correctly. The simplification of $K \\\\cdot dA$ to $\\\\frac{4}{(1+4r^2)^{3/2}}$ is correct. The polar coordinate setup with $r \\\\in [0, \\\\sqrt{h}]$ correctly captures the disk $x^2 + y^2 \\\\leq h$. The substitution $u = 1+4r^2$ is executed properly, and the antiderivative evaluation yields $1 - \\\\frac{1}{\\\\sqrt{1+4h}}$. The final answer $2\\\\pi\\\\left(1 - \\\\frac{1}{\\\\sqrt{1+4h}}\\\\right)$ is correct, and the sanity check that the limit as $h \\\\to \\\\infty$ gives $2\\\\pi$ (the total curvature of the entire paraboloid) is appropriate.\"}",
+        "raw_critique": "{\"verdict\": \"correct\", \"notes\": \"The solution is mathematically sound and complete. The formulas for Gaussian curvature $K = \\\\frac{f_{xx}f_{yy} - f_{xy}^2}{(1+f_x^2+f_y^2)^2}$ and area element $dA = \\\\sqrt{1+f_x^2+f_y^2}\\\\,dx\\\\,dy$ for a graph are correctly stated and applied. The partial derivatives ($f_x = 2x$, $f_y = 2y$, $f_{xx} = f_{yy} = 2$, $f_{xy} = 0$) are computed correctly. The simplification of $K \\\\cdot dA$ to $\\\\frac{4}{(1+4r^2)^{3/2}}$ is correct. The polar coordinate setup with $r \\\\in [0, \\\\sqrt{h}]$ correctly captures the disk $x^2 + y^2 \\\\leq h$. The substitution $u = 1+4r^2$ is executed properly, and the antiderivative evaluation yields $1 - \\\\frac{1}{\\\\sqrt{1+4h}}$. The final answer $2\\\\pi\\\\left(1 - \\\\frac{1}{\\\\sqrt{1+4h}}\\\\right)$ is correct, and the sanity check that the limit as $h \\\\to \\\\infty$ gives $2\\\\pi$ (the total curvature of the entire paraboloid) is appropriate.\"}",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. The formulas for Gaussian curvature $K = \\frac{f_{xx}f_{yy} - f_{xy}^2}{(1+f_x^2+f_y^2)^2}$ and area element $dA = \\sqrt{1+f_x^2+f_y^2}\\,dx\\,dy$ for a graph are correctly stated and applied. The partial derivatives ($f_x = 2x$, $f_y = 2y$, $f_{xx} = f_{yy} = 2$, $f_{xy} = 0$) are computed correctly. The simplification of $K \\cdot dA$ to $\\frac{4}{(1+4r^2)^{3/2}}$ is correct. The polar coordinate setup with $r \\in [0, \\sqrt{h}]$ correctly captures the disk $x^2 + y^2 \\leq h$. The substitution $u = 1+4r^2$ is executed properly, and the antiderivative evaluation yields $1 - \\frac{1}{\\sqrt{1+4h}}$. The final answer $2\\pi\\left(1 - \\frac{1}{\\sqrt{1+4h}}\\right)$ is correct, and the sanity check that the limit as $h \\to \\infty$ gives $2\\pi$ (the total curvature of the entire paraboloid) is appropriate.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X = [0,1]$ with the standard (Euclidean) topology. Define an equivalence relation $\\sim$ on $X$ by: $x \\sim y$ if and only if $x = y$ or both $x, y \\in \\mathbb{Q} \\cap [0,1]$. That is, all rational numbers in $[0,1]$ are identified to a single equivalence class, while each irrational number forms its own singleton equivalence class.\n\nLet $Y = X/{\\sim}$ be the quotient space equipped with the quotient topology, and let $\\pi: X \\to Y$ denote the quotient map.\n\nProve that $Y$ is compact and connected, but not Hausdorff.",
+    "run_id": "38",
+    "topic_slug": "general_topology",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves all three claims. (1) Compactness follows from $X = [0,1]$ being compact and $\\\\pi$ being continuous. (2) Connectedness follows from $X$ being connected and $\\\\pi$ being continuous. (3) The non-Hausdorff proof is valid: assuming disjoint open neighborhoods $U \\\\ni *$ and $V \\\\ni [r]$ exist, the preimage $\\\\pi^{-1}(V)$ is open in $X$ containing $r$, hence contains an $\\\\varepsilon$-ball around $r$. By density of $\\\\mathbb{Q}$, this ball contains a rational $q$, so $\\\\pi(q) = * \\\\in V$, contradicting $U \\\\cap V = \\\\emptyset$. All reasoning is sound and complete.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves all three claims. (1) Compactness follows from $X = [0,1]$ being compact and $\\\\pi$ being continuous. (2) Connectedness follows from $X$ being connected and $\\\\pi$ being continuous. (3) The non-Hausdorff proof is valid: assuming disjoint open neighborhoods $U \\\\ni *$ and $V \\\\ni [r]$ exist, the preimage $\\\\pi^{-1}(V)$ is open in $X$ containing $r$, hence contains an $\\\\varepsilon$-ball around $r$. By density of $\\\\mathbb{Q}$, this ball contains a rational $q$, so $\\\\pi(q) = * \\\\in V$, contradicting $U \\\\cap V = \\\\emptyset$. All reasoning is sound and complete.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly proves all three claims. (1) Compactness follows from $X = [0,1]$ being compact and $\\pi$ being continuous. (2) Connectedness follows from $X$ being connected and $\\pi$ being continuous. (3) The non-Hausdorff proof is valid: assuming disjoint open neighborhoods $U \\ni *$ and $V \\ni [r]$ exist, the preimage $\\pi^{-1}(V)$ is open in $X$ containing $r$, hence contains an $\\varepsilon$-ball around $r$. By density of $\\mathbb{Q}$, this ball contains a rational $q$, so $\\pi(q) = * \\in V$, contradicting $U \\cap V = \\emptyset$. All reasoning is sound and complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. It correctly verifies: (1) Compactness via the continuous image theorem applied to the compact space $[0,1]$; (2) Connectedness via the continuous image theorem applied to the connected interval $[0,1]$; (3) The non-Hausdorff proof is valid\u2014the key steps (density of $\\mathbb{Q}$, openness of $\\pi^{-1}(V)$, and the resulting contradiction) are all correctly verified. The JSON format is valid with an appropriate verdict and explanatory notes."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be the quotient space $(S^1 \\times S^2)/{\\sim}$, where the equivalence relation is defined by $(z, p) \\sim (-z, -p)$ for all $z \\in S^1$ and $p \\in S^2$. Here $S^1 = \\{z \\in \\mathbb{C} : |z| = 1\\}$ is the unit circle, $S^2 = \\{x \\in \\mathbb{R}^3 : \\|x\\| = 1\\}$ is the unit 2-sphere, and $-p$ denotes the antipodal point of $p$ on $S^2$.\n\nCompute the integral homology groups $H_n(X; \\mathbb{Z})$ for all $n \\geq 0$.",
+    "run_id": "39",
+    "topic_slug": "algebraic_topology",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\"verdict\": \"correct\", \"notes\": \"The answer correctly identifies $X$ as the mapping torus of the antipodal map $a: S^2 \\\\to S^2$. The homeomorphism argument is valid: the map $\\\\Phi$ is shown to be a continuous bijection between compact Hausdorff spaces. The monodromy action is correctly computed ($a_* = \\\\text{id}$ on $H_0(S^2)$ and $a_* = -\\\\text{id}$ on $H_2(S^2)$ since the antipodal map on $S^2$ has degree $(-1)^3 = -1$). The Wang exact sequence is applied correctly for each degree. Key calculations: For $n=1$, the map $\\\\text{id} - a_* = 0$ on $H_0(S^2)$ gives $H_1(X) \\\\cong \\\\mathbb{Z}$. For $n=2$, the map $\\\\text{id} - a_* = 2\\\\cdot\\\\text{id}$ on $H_2(S^2)$ gives $H_2(X) \\\\cong \\\\mathbb{Z}/2\\\\mathbb{Z}$. For $n=3$, the kernel of multiplication by 2 on $\\\\mathbb{Z}$ is trivial, giving $H_3(X) = 0$. All steps are mathematically sound and complete.\"}",
+        "raw_critique": "{\"verdict\": \"correct\", \"notes\": \"The answer correctly identifies $X$ as the mapping torus of the antipodal map $a: S^2 \\\\to S^2$. The homeomorphism argument is valid: the map $\\\\Phi$ is shown to be a continuous bijection between compact Hausdorff spaces. The monodromy action is correctly computed ($a_* = \\\\text{id}$ on $H_0(S^2)$ and $a_* = -\\\\text{id}$ on $H_2(S^2)$ since the antipodal map on $S^2$ has degree $(-1)^3 = -1$). The Wang exact sequence is applied correctly for each degree. Key calculations: For $n=1$, the map $\\\\text{id} - a_* = 0$ on $H_0(S^2)$ gives $H_1(X) \\\\cong \\\\mathbb{Z}$. For $n=2$, the map $\\\\text{id} - a_* = 2\\\\cdot\\\\text{id}$ on $H_2(S^2)$ gives $H_2(X) \\\\cong \\\\mathbb{Z}/2\\\\mathbb{Z}$. For $n=3$, the kernel of multiplication by 2 on $\\\\mathbb{Z}$ is trivial, giving $H_3(X) = 0$. All steps are mathematically sound and complete.\"}",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies $X$ as the mapping torus of the antipodal map $a: S^2 \\to S^2$. The homeomorphism argument is valid: the map $\\Phi$ is shown to be a continuous bijection between compact Hausdorff spaces. The monodromy action is correctly computed ($a_* = \\text{id}$ on $H_0(S^2)$ and $a_* = -\\text{id}$ on $H_2(S^2)$ since the antipodal map on $S^2$ has degree $(-1)^3 = -1$). The Wang exact sequence is applied correctly for each degree. Key calculations: For $n=1$, the map $\\text{id} - a_* = 0$ on $H_0(S^2)$ gives $H_1(X) \\cong \\mathbb{Z}$. For $n=2$, the map $\\text{id} - a_* = 2\\cdot\\text{id}$ on $H_2(S^2)$ gives $H_2(X) \\cong \\mathbb{Z}/2\\mathbb{Z}$. For $n=3$, the kernel of multiplication by 2 on $\\mathbb{Z}$ is trivial, giving $H_3(X) = 0$. All steps are mathematically sound and complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. It correctly verifies: (1) the identification of $X$ as the mapping torus of the antipodal map via the homeomorphism $\\Phi$, (2) the monodromy action calculations ($a_* = \\text{id}$ on $H_0(S^2)$ and $a_* = -\\text{id}$ on $H_2(S^2)$ since the antipodal map on $S^2$ has degree $(-1)^{2+1} = -1$), and (3) the Wang exact sequence applications for each degree. The format is valid JSON with the required fields."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a CW complex constructed as follows:\n- One 0-cell $v$\n- Two 1-cells $a$ and $b$, each attached at both endpoints to $v$ (forming two loops based at $v$)\n- Two 2-cells $e_1$ and $e_2$ with attaching maps $\\phi_1: \\partial e_1 \\to X^{(1)}$ and $\\phi_2: \\partial e_2 \\to X^{(1)}$ determined by the words $w_1 = a^3 b^{-2}$ and $w_2 = a b^4$ respectively\n\nHere, the word $a^k$ means traversing the loop $a$ exactly $|k|$ times in the positive direction if $k > 0$, or in the negative direction if $k < 0$, and similarly for $b$.\n\nCompute the cellular homology groups $H_n(X; \\mathbb{Z})$ for all integers $n \\geq 0$.",
+    "run_id": "40",
+    "topic_slug": "manifolds_and_cell_complexes",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"obscure\",\n  \"notes\": \"The 'Answer to Evaluate' section is empty. No solution has been provided to verify. Without any mathematical content, steps, or conclusions to examine, it is impossible to assess correctness, completeness, or rigor.\",\n  \"suggestions\": \"Provide an actual solution computing the cellular homology groups. This would involve: (1) setting up the cellular chain complex with $C_0 = \\\\mathbb{Z}$, $C_1 = \\\\mathbb{Z}^2$, $C_2 = \\\\mathbb{Z}^2$; (2) computing the boundary maps, particularly $d_2$ with matrix $\\\\begin{pmatrix} 3 & 1 \\\\\\\\ -2 & 4 \\\\end{pmatrix}$; and (3) computing the homology groups via Smith normal form or equivalent methods.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"obscure\",\n  \"notes\": \"The 'Answer to Evaluate' section is empty. No solution has been provided to verify. Without any mathematical content, steps, or conclusions to examine, it is impossible to assess correctness, completeness, or rigor.\",\n  \"suggestions\": \"Provide an actual solution computing the cellular homology groups. This would involve: (1) setting up the cellular chain complex with $C_0 = \\\\mathbb{Z}$, $C_1 = \\\\mathbb{Z}^2$, $C_2 = \\\\mathbb{Z}^2$; (2) computing the boundary maps, particularly $d_2$ with matrix $\\\\begin{pmatrix} 3 & 1 \\\\\\\\ -2 & 4 \\\\end{pmatrix}$; and (3) computing the homology groups via Smith normal form or equivalent methods.\"\n}\n```",
+        "verdict": "obscure",
+        "notes": "The 'Answer to Evaluate' section is empty. No solution has been provided to verify. Without any mathematical content, steps, or conclusions to examine, it is impossible to assess correctness, completeness, or rigor.",
+        "suggestions": "Provide an actual solution computing the cellular homology groups. This would involve: (1) setting up the cellular chain complex with $C_0 = \\mathbb{Z}$, $C_1 = \\mathbb{Z}^2$, $C_2 = \\mathbb{Z}^2$; (2) computing the boundary maps, particularly $d_2$ with matrix $\\begin{pmatrix} 3 & 1 \\\\ -2 & 4 \\end{pmatrix}$; and (3) computing the homology groups via Smith normal form or equivalent methods.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\omega$ be the smooth 2-form on $\\mathbb{R}^3 \\setminus \\{0\\}$ defined by\n$$\\omega = \\frac{x \\, dy \\wedge dz + y \\, dz \\wedge dx + z \\, dx \\wedge dy}{(x^2 + y^2 + z^2)^{3/2}}.$$\n\n(a) Prove that $\\omega$ is closed, i.e., $d\\omega = 0$ on $\\mathbb{R}^3 \\setminus \\{0\\}$.\n\n(b) For any $r > 0$, compute $\\displaystyle\\int_{S_r} \\omega$, where $S_r = \\{(x,y,z) \\in \\mathbb{R}^3 : x^2 + y^2 + z^2 = r^2\\}$ is the sphere of radius $r$ centered at the origin with the outward-pointing orientation.\n\n(c) Using the results of parts (a) and (b), prove that $\\omega$ is not exact on $\\mathbb{R}^3 \\setminus \\{0\\}$.",
+    "run_id": "41",
+    "topic_slug": "global_analysis_on_manifolds",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. Part (a) correctly computes $d\\\\omega$ by calculating the partial derivatives $\\\\frac{\\\\partial P}{\\\\partial x} + \\\\frac{\\\\partial Q}{\\\\partial y} + \\\\frac{\\\\partial R}{\\\\partial z} = 3r^{-3} - 3r^{-3} = 0$. Part (b) correctly parameterizes the sphere using spherical coordinates, computes the pullbacks of $dy \\\\wedge dz$, $dz \\\\wedge dx$, and $dx \\\\wedge dy$, and arrives at $\\\\omega|_{S_r} = \\\\sin\\\\theta\\\\,d\\\\theta \\\\wedge d\\\\phi$. The integral evaluates to $4\\\\pi$, and the orientation verification (showing the parameterization gives outward-pointing normal) is implicit but correct for the standard spherical coordinate convention. Part (c) correctly applies Stokes' theorem: if $\\\\omega = d\\\\eta$, then $\\\\int_{S_r} \\\\omega = \\\\int_{\\\\partial S_r} \\\\eta = 0$ since $S_r$ has empty boundary, contradicting the result from part (b). The formatting artifacts (e.g., '[2pt]') are purely typographical and do not affect the mathematical validity.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. Part (a) correctly computes $d\\\\omega$ by calculating the partial derivatives $\\\\frac{\\\\partial P}{\\\\partial x} + \\\\frac{\\\\partial Q}{\\\\partial y} + \\\\frac{\\\\partial R}{\\\\partial z} = 3r^{-3} - 3r^{-3} = 0$. Part (b) correctly parameterizes the sphere using spherical coordinates, computes the pullbacks of $dy \\\\wedge dz$, $dz \\\\wedge dx$, and $dx \\\\wedge dy$, and arrives at $\\\\omega|_{S_r} = \\\\sin\\\\theta\\\\,d\\\\theta \\\\wedge d\\\\phi$. The integral evaluates to $4\\\\pi$, and the orientation verification (showing the parameterization gives outward-pointing normal) is implicit but correct for the standard spherical coordinate convention. Part (c) correctly applies Stokes' theorem: if $\\\\omega = d\\\\eta$, then $\\\\int_{S_r} \\\\omega = \\\\int_{\\\\partial S_r} \\\\eta = 0$ since $S_r$ has empty boundary, contradicting the result from part (b). The formatting artifacts (e.g., '[2pt]') are purely typographical and do not affect the mathematical validity.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. Part (a) correctly computes $d\\omega$ by calculating the partial derivatives $\\frac{\\partial P}{\\partial x} + \\frac{\\partial Q}{\\partial y} + \\frac{\\partial R}{\\partial z} = 3r^{-3} - 3r^{-3} = 0$. Part (b) correctly parameterizes the sphere using spherical coordinates, computes the pullbacks of $dy \\wedge dz$, $dz \\wedge dx$, and $dx \\wedge dy$, and arrives at $\\omega|_{S_r} = \\sin\\theta\\,d\\theta \\wedge d\\phi$. The integral evaluates to $4\\pi$, and the orientation verification (showing the parameterization gives outward-pointing normal) is implicit but correct for the standard spherical coordinate convention. Part (c) correctly applies Stokes' theorem: if $\\omega = d\\eta$, then $\\int_{S_r} \\omega = \\int_{\\partial S_r} \\eta = 0$ since $S_r$ has empty boundary, contradicting the result from part (b). The formatting artifacts (e.g., '[2pt]') are purely typographical and do not affect the mathematical validity.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X_1, X_2, X_3, \\ldots$ be independent random variables, each uniformly distributed on the interval $[0, 1]$. Define the stopping time\n$$N = \\min\\{n \\geq 1 : X_1 + X_2 + \\cdots + X_n > 1\\}.$$\nCompute the exact value of $\\mathbb{E}[N]$.",
+    "run_id": "42",
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. Step 1 correctly uses the tail sum formula $\\\\mathbb{E}[N] = \\\\sum_{n=0}^{\\\\infty} \\\\mathbb{P}(N > n)$ and correctly establishes that $\\\\mathbb{P}(N > n) = \\\\mathbb{P}(S_n \\\\le 1)$ since the partial sums are non-decreasing (all $X_i \\\\ge 0$). Step 2 correctly identifies that $\\\\mathbb{P}(S_n \\\\le 1)$ equals the volume of the $n$-simplex $\\\\Delta_n$, which is $\\\\frac{1}{n!}$. This follows because the constraint $\\\\sum x_i \\\\le 1$ with $x_i \\\\ge 0$ automatically implies $x_i \\\\le 1$. Step 3 correctly sums the series: $\\\\sum_{n=0}^{\\\\infty} \\\\frac{1}{n!} = e$. The final answer $\\\\mathbb{E}[N] = e$ is the well-known correct result for this classic problem.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. Step 1 correctly uses the tail sum formula $\\\\mathbb{E}[N] = \\\\sum_{n=0}^{\\\\infty} \\\\mathbb{P}(N > n)$ and correctly establishes that $\\\\mathbb{P}(N > n) = \\\\mathbb{P}(S_n \\\\le 1)$ since the partial sums are non-decreasing (all $X_i \\\\ge 0$). Step 2 correctly identifies that $\\\\mathbb{P}(S_n \\\\le 1)$ equals the volume of the $n$-simplex $\\\\Delta_n$, which is $\\\\frac{1}{n!}$. This follows because the constraint $\\\\sum x_i \\\\le 1$ with $x_i \\\\ge 0$ automatically implies $x_i \\\\le 1$. Step 3 correctly sums the series: $\\\\sum_{n=0}^{\\\\infty} \\\\frac{1}{n!} = e$. The final answer $\\\\mathbb{E}[N] = e$ is the well-known correct result for this classic problem.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. Step 1 correctly uses the tail sum formula $\\mathbb{E}[N] = \\sum_{n=0}^{\\infty} \\mathbb{P}(N > n)$ and correctly establishes that $\\mathbb{P}(N > n) = \\mathbb{P}(S_n \\le 1)$ since the partial sums are non-decreasing (all $X_i \\ge 0$). Step 2 correctly identifies that $\\mathbb{P}(S_n \\le 1)$ equals the volume of the $n$-simplex $\\Delta_n$, which is $\\frac{1}{n!}$. This follows because the constraint $\\sum x_i \\le 1$ with $x_i \\ge 0$ automatically implies $x_i \\le 1$. Step 3 correctly sums the series: $\\sum_{n=0}^{\\infty} \\frac{1}{n!} = e$. The final answer $\\mathbb{E}[N] = e$ is the well-known correct result for this classic problem.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. It correctly verifies each step of the solution: (1) the tail sum formula for expectations, (2) the equivalence $\\mathbb{P}(N > n) = \\mathbb{P}(S_n \\le 1)$, (3) the simplex volume calculation $\\frac{1}{n!}$, and (4) the series sum yielding $e$. The JSON format is valid with the required fields. No changes needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ have the standard Laplace (double exponential) distribution with probability density function\n$$f(x) = \\frac{1}{2}e^{-|x|}, \\quad x \\in \\mathbb{R}.$$\n\n(a) Compute the characteristic function $\\phi_X(t) = E[e^{itX}]$ for all $t \\in \\mathbb{R}$.\n\n(b) Let $X_1, X_2, \\ldots, X_n$ be independent and identically distributed random variables, each with the same distribution as $X$. Derive the characteristic function of the sample mean $\\bar{X}_n = \\frac{1}{n}\\sum_{i=1}^n X_i$.\n\n(c) Determine the limiting distribution of $\\sqrt{n}\\bar{X}_n$ as $n \\to \\infty$ by computing the pointwise limit of its characteristic function. Identify this limit explicitly as a named distribution with specified parameters.",
+    "run_id": "43",
+    "topic_slug": "statistics",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"All three parts are mathematically sound and complete.\\n\\n**Part (a):** The split integral computation is correct. The convergence conditions are properly verified ($\\\\text{Re}(1+it)=1>0$ and $\\\\text{Re}(1-it)=1>0$). The algebraic simplification yielding $\\\\phi_X(t) = \\\\frac{1}{1+t^2}$ is correct.\\n\\n**Part (b):** The characteristic function property for sums of independent random variables is correctly applied: $\\\\phi_{\\\\bar{X}_n}(t) = [\\\\phi_X(t/n)]^n$. The final expression $(1 + t^2/n^2)^{-n}$ is correct.\\n\\n**Part (c):** The characteristic function of $Y_n = \\\\sqrt{n}\\\\bar{X}_n$ is correctly derived as $(1 + t^2/n)^{-n}$. The limit computation using $(1 + a/n)^{-n} \\\\to e^{-a}$ is valid, giving $\\\\lim_{n\\\\to\\\\infty} \\\\phi_{Y_n}(t) = e^{-t^2}$. L\u00e9vy's continuity theorem is appropriately invoked. The identification with $\\\\mathcal{N}(0,2)$ is correct since $e^{-\\\\sigma^2 t^2/2} = e^{-t^2}$ implies $\\\\sigma^2 = 2$. The verification that $\\\\text{Var}(X) = 2$ for the standard Laplace distribution is also correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"All three parts are mathematically sound and complete.\\n\\n**Part (a):** The split integral computation is correct. The convergence conditions are properly verified ($\\\\text{Re}(1+it)=1>0$ and $\\\\text{Re}(1-it)=1>0$). The algebraic simplification yielding $\\\\phi_X(t) = \\\\frac{1}{1+t^2}$ is correct.\\n\\n**Part (b):** The characteristic function property for sums of independent random variables is correctly applied: $\\\\phi_{\\\\bar{X}_n}(t) = [\\\\phi_X(t/n)]^n$. The final expression $(1 + t^2/n^2)^{-n}$ is correct.\\n\\n**Part (c):** The characteristic function of $Y_n = \\\\sqrt{n}\\\\bar{X}_n$ is correctly derived as $(1 + t^2/n)^{-n}$. The limit computation using $(1 + a/n)^{-n} \\\\to e^{-a}$ is valid, giving $\\\\lim_{n\\\\to\\\\infty} \\\\phi_{Y_n}(t) = e^{-t^2}$. L\u00e9vy's continuity theorem is appropriately invoked. The identification with $\\\\mathcal{N}(0,2)$ is correct since $e^{-\\\\sigma^2 t^2/2} = e^{-t^2}$ implies $\\\\sigma^2 = 2$. The verification that $\\\\text{Var}(X) = 2$ for the standard Laplace distribution is also correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "All three parts are mathematically sound and complete.\n\n**Part (a):** The split integral computation is correct. The convergence conditions are properly verified ($\\text{Re}(1+it)=1>0$ and $\\text{Re}(1-it)=1>0$). The algebraic simplification yielding $\\phi_X(t) = \\frac{1}{1+t^2}$ is correct.\n\n**Part (b):** The characteristic function property for sums of independent random variables is correctly applied: $\\phi_{\\bar{X}_n}(t) = [\\phi_X(t/n)]^n$. The final expression $(1 + t^2/n^2)^{-n}$ is correct.\n\n**Part (c):** The characteristic function of $Y_n = \\sqrt{n}\\bar{X}_n$ is correctly derived as $(1 + t^2/n)^{-n}$. The limit computation using $(1 + a/n)^{-n} \\to e^{-a}$ is valid, giving $\\lim_{n\\to\\infty} \\phi_{Y_n}(t) = e^{-t^2}$. L\u00e9vy's continuity theorem is appropriately invoked. The identification with $\\mathcal{N}(0,2)$ is correct since $e^{-\\sigma^2 t^2/2} = e^{-t^2}$ implies $\\sigma^2 = 2$. The verification that $\\text{Var}(X) = 2$ for the standard Laplace distribution is also correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the two-point Gaussian quadrature rule for approximating integrals over $[-1, 1]$:\n$$\\int_{-1}^{1} f(x)\\,dx \\approx w_1 f(x_1) + w_2 f(x_2)$$\n\n**(a)** Determine the nodes $x_1, x_2 \\in [-1,1]$ and positive weights $w_1, w_2$ such that this quadrature rule is exact for all polynomials of degree at most 3.\n\n**(b)** For a function $f \\in C^4([-1,1])$, the quadrature error can be expressed as \n$$E(f) = \\int_{-1}^{1} f(x)\\,dx - w_1 f(x_1) - w_2 f(x_2) = c \\cdot f^{(4)}(\\xi)$$\nfor some $\\xi \\in (-1,1)$ and a constant $c$ independent of $f$. Find the exact value of $c$.\n\n**(c)** Use the quadrature rule from part (a) to approximate $\\displaystyle\\int_0^1 e^{-t^2}\\,dt$. Apply an appropriate linear transformation to convert the integral to the standard interval $[-1,1]$, then apply the rule. Express your answer in exact closed form.",
+    "run_id": "44",
+    "topic_slug": "numerical_analysis",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"No answer was provided to evaluate. The 'Answer to Evaluate' section is completely empty. A complete solution would need to address all three parts: (a) derive the nodes $x_1 = -1/\\\\sqrt{3}$, $x_2 = 1/\\\\sqrt{3}$ and weights $w_1 = w_2 = 1$; (b) compute the error constant $c = 1/135$; and (c) apply the transformation $x = 2t - 1$ to obtain the approximation $\\\\frac{1}{2}\\\\left(e^{-(3-\\\\sqrt{3})^2/36} + e^{-(3+\\\\sqrt{3})^2/36}\\\\right)$.\",\n  \"suggestions\": \"Provide a complete solution addressing all three parts of the question.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"No answer was provided to evaluate. The 'Answer to Evaluate' section is completely empty. A complete solution would need to address all three parts: (a) derive the nodes $x_1 = -1/\\\\sqrt{3}$, $x_2 = 1/\\\\sqrt{3}$ and weights $w_1 = w_2 = 1$; (b) compute the error constant $c = 1/135$; and (c) apply the transformation $x = 2t - 1$ to obtain the approximation $\\\\frac{1}{2}\\\\left(e^{-(3-\\\\sqrt{3})^2/36} + e^{-(3+\\\\sqrt{3})^2/36}\\\\right)$.\",\n  \"suggestions\": \"Provide a complete solution addressing all three parts of the question.\"\n}\n```",
+        "verdict": "insufficient",
+        "notes": "No answer was provided to evaluate. The 'Answer to Evaluate' section is completely empty. A complete solution would need to address all three parts: (a) derive the nodes $x_1 = -1/\\sqrt{3}$, $x_2 = 1/\\sqrt{3}$ and weights $w_1 = w_2 = 1$; (b) compute the error constant $c = 1/135$; and (c) apply the transformation $x = 2t - 1$ to obtain the approximation $\\frac{1}{2}\\left(e^{-(3-\\sqrt{3})^2/36} + e^{-(3+\\sqrt{3})^2/36}\\right)$.",
+        "suggestions": "Provide a complete solution addressing all three parts of the question.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. The format is valid JSON with an appropriate verdict. The mathematical content provided as reference is correct: (a) the nodes $x_1 = -1/\\sqrt{3}$, $x_2 = 1/\\sqrt{3}$ are indeed the roots of the Legendre polynomial $P_2(x)$, and the weights $w_1 = w_2 = 1$ follow from symmetry and exactness conditions; (b) the error constant $c = 1/135$ is correct, computed via $c = \\frac{1}{4!}\\int_{-1}^{1}(x^2 - 1/3)^2 dx = \\frac{1}{24} \\cdot \\frac{8}{45}$; (c) the transformation $t = (x+1)/2$ converts the integral correctly, and the final expression is accurate since $(3\\pm\\sqrt{3})^2/36 = (2\\pm\\sqrt{3})/6$. The verdict of 'insufficient' is the appropriate choice for an empty answer, as it captures the essential incompleteness without falsely attributing errors that don't exist."
+        }
+      }
+    ]
   }
 ]

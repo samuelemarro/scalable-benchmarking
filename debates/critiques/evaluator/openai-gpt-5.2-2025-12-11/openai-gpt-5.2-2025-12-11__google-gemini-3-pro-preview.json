@@ -1,0 +1,155 @@
+[
+  {
+    "question": "Let $R$ be a **finite** (not a priori commutative) ring with identity $1$, assumed associative and with the usual distributive laws. Suppose that\n$$\nx^2=x \\quad \\text{for all } x\\in R.\n$$\n1) Prove that $R$ is commutative and has characteristic $2$.\n\n2) Determine the isomorphism type of $R$ as a ring: show that there exists an integer $n\\ge 0$ such that\n$$\nR \\cong (\\mathbb{F}_2)^n\n$$\nwith coordinatewise addition and multiplication, and express $n$ in terms of $|R|$.",
+    "run_id": "5",
+    "topic_slug": "general_algebraic_systems",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "You are correct. I overlooked the trivial ring case ($n=0, |R|=1$). While my derivation $2x=0$ holds for the zero ring, the characteristic of the zero ring is 1 (since $1=0$), not 2. Since Part 2 allows $n \\ge 0$, the claim in Part 1 strictly holds only for non-trivial rings ($n \\ge 1$). I should have explicitly addressed this edge case.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $k$ be a field with $\\operatorname{char}(k)\\neq 2$. Let\n$$\nA \\;=\\; k\\langle x,y\\rangle \\big/ (x^2,\\;y^2,\\;xy+yx),\n$$\nand denote by $x,y\\in A$ the residue classes of the free generators. Set $w:=xy\\in A$.\n\n1. Show that $A$ is $4$-dimensional over $k$ with $k$-basis $\\{1,x,y,w\\}$, and determine the products among these basis elements.\n2. Determine the Jacobson radical $J(A)$ and its powers $J(A)^2,J(A)^3$. Deduce that $A$ is a local algebra. Classify **all** two-sided ideals of $A$.\n3. Compute the center $Z(A)$.\n4. Describe $\\operatorname{Aut}_{k\\text{-alg}}(A)$ explicitly: prove that every $k$-algebra automorphism $\\varphi$ is uniquely determined by scalars $a,b,c,d,\\alpha,\\beta\\in k$ with $\\begin{pmatrix}a&b\\\\ c&d\\end{pmatrix}\\in \\mathrm{GL}_2(k)$ via\n$$\n\\varphi(x)=ax+by+\\alpha w,\\qquad \\varphi(y)=cx+dy+\\beta w,\n$$\nand deduce a split short exact sequence\n$$\n1\\to k^2 \\to \\operatorname{Aut}_{k\\text{-alg}}(A)\\to \\mathrm{GL}_2(k)\\to 1.\n$$",
+    "run_id": "10",
+    "topic_slug": "associative_rings_and_algebras",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I concede the error regarding the specific group action in the final paragraph. You are correct that the conjugation action of $\\mathrm{GL}_2(k)$ on the kernel $k^2$ is $v \\mapsto \\det(M)M^{-1}v$ (multiplication by the adjugate matrix), not the scaled action I claimed. While the explicit formulas for the automorphisms and the derivation of the split exact sequence requested by the problem were correct, the subsequent characterization of the semidirect product structure contained this calculation error.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $k$ be a field and let $A:=k[\\varepsilon]/(\\varepsilon^2)$, viewed as an associative (ungraded) $k$-algebra. Let $S:=A/(\\varepsilon)$ be the simple left $A$-module (so $\\varepsilon$ acts by $0$ on $S\\cong k$).\n\n1. Compute $\\operatorname{Ext}^n_A(S,S)$ for all integers $n\\ge 0$ as $k$-vector spaces.\n2. Compute the **Yoneda algebra** $\\operatorname{Ext}^\\ast_A(S,S):=\\bigoplus_{n\\ge 0}\\operatorname{Ext}^n_A(S,S)$ with multiplication given by the Yoneda product (splicing of extensions), i.e. determine it up to isomorphism as a graded $k$-algebra.\n\nYour final answer should give an explicit graded $k$-algebra isomorphism $\\operatorname{Ext}^\\ast_A(S,S)\\cong \\text{(a familiar graded algebra)}$.",
+    "run_id": "12",
+    "topic_slug": "category_theory_and_homological_algebra",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I concede. You are correct that I ignored the standard sign convention for chain maps ($dX = -Xd$ for degree 1 maps), which invalidates my construction of the powers of the generator when $\\operatorname{char}(k) \\neq 2$. Due to graded commutativity, the square of the degree-1 generator must vanish if $\\operatorname{char}(k) \\neq 2$, whereas $\\operatorname{Ext}^2_A(S,S) \\cong k$. The correct Yoneda algebra structure for $\\operatorname{char}(k) \\neq 2$ is $k[x, y]/(x^2)$ with $\\deg(x)=1$ and $\\deg(y)=2$ (isomorphic to $\\Lambda(x) \\otimes_k k[y]$), while my answer of $k[t]$ holds only for $\\operatorname{char}(k) = 2$.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $Q_8=\\{\\pm 1,\\pm i,\\pm j,\\pm k\\}$ be the quaternion group with defining relations\n$$\ni^2=j^2=k^2=ijk=-1.\n$$\n(So $Q_8$ has order $8$ and is generated by $i$ and $j$ with $k=ij$.)\n\n1. Prove that any automorphism $\\varphi\\in \\operatorname{Aut}(Q_8)$ fixes $\\pm 1$, and that $\\varphi$ permutes the six elements of order $4$, namely $\\{\\pm i,\\pm j,\\pm k\\}$.\n2. Show that an automorphism of $Q_8$ is uniquely determined by the images of $i$ and $j$, and that $\\varphi(i)$ can be any element of order $4$, while $\\varphi(j)$ can be any element of order $4$ not lying in $\\langle \\varphi(i)\\rangle$. Deduce that $|\\operatorname{Aut}(Q_8)|=24$.\n3. Let $\\operatorname{Inn}(Q_8)$ be the inner automorphism group. Prove that $\\operatorname{Inn}(Q_8)\\cong V_4$ (the Klein four group), and that the induced action of $\\operatorname{Aut}(Q_8)$ on the set of the three cyclic subgroups $\\{\\langle i\\rangle,\\langle j\\rangle,\\langle k\\rangle\\}$ gives a surjective homomorphism $\\operatorname{Aut}(Q_8)\\twoheadrightarrow S_3$ with kernel $\\operatorname{Inn}(Q_8)$.\n4. Conclude that $\\operatorname{Aut}(Q_8)\\cong S_4$.",
+    "run_id": "14",
+    "topic_slug": "group_theory_and_generalizations",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I concede. Alice is correct that the condition $C_G(N) = N$ for an abelian normal subgroup $N$ does not guarantee that $G$ embeds into the holomorph $\\operatorname{Hol}(N)$; this only holds if the extension $1 \\to N \\to G \\to G/N \\to 1$ splits. Her counterexample using $G=Q_8$ and $N=\\langle i \\rangle$ effectively demonstrates this flaw, as $Q_8$ does not embed into $\\operatorname{Hol}(C_4) \\cong D_8$. To rigorously prove $\\operatorname{Aut}(Q_8) \\cong S_4$, one must explicitly show the extension splits (by finding a complement subgroup isomorphic to $S_3$) or establish the isomorphism via a faithful action on a set of 4 elements (e.g., the vertices of the tetrahedron associated with the 4 pairs of roots of $x^2+1$).",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $n\\ge 3$ and $0<a<b$. Set\n$$\n\\Omega:=\\{x\\in\\mathbb{R}^n:\\ a<|x|<b\\}.\n$$\nConsider the class\n$$\n\\mathcal A:=\\Bigl\\{u\\in C^1(\\overline{\\Omega})\\cap C^2(\\Omega):\\ u=1\\ \\text{on } \\{|x|=a\\},\\ \\ u=0\\ \\text{on } \\{|x|=b\\}\\Bigr\\},\n$$\nand the Dirichlet energy\n$$\nE[u]:=\\int_{\\Omega}|\\nabla u(x)|^2\\,dx.\n$$\n\n1. Prove that there is a unique minimizer $u_*\\in\\mathcal A$ of $E[\\cdot]$, and that $u_*$ is harmonic in $\\Omega$ (i.e. $\\Delta u_*=0$).\n2. Determine $u_*$ explicitly.\n3. Compute the minimum value\n$$\n\\inf_{u\\in\\mathcal A}E[u]\n$$\nin closed form, in terms of $a,b,n$ and $\\omega_n:=|\\mathbb{S}^{n-1}|$ (the surface area of the unit sphere in $\\mathbb{R}^n$).",
+    "run_id": "19",
+    "topic_slug": "potential_theory",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I concede. You are correct that the Existence argument was incomplete. I established that the minimizer must be harmonic (necessary condition) and constructed a harmonic function, but I did not rigorously prove this constructed function minimizes the energy over $\\mathcal{A}$. I conflated the uniqueness of harmonic functions with variational minimality. A complete proof should have invoked the convexity of $E[\\cdot]$ to state that the critical point (harmonic function) is the global minimizer, or shown it directly via the identity $E[u_*+\\phi] = E[u_*] + \\int |\\nabla \\phi|^2 \\ge E[u_*]$ for $\\phi$ vanishing at the boundary.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $0<r<1$ and $0<s<1$, and define the Hartogs figure\n$$\nD=\\Bigl\\{(z,w)\\in\\mathbb C^2:\\ |z|<1,\\ |w|<1,\\ \\text{and }(|z|>r\\ \\text{or}\\ |w|<s)\\Bigr\\}.\n$$\nEquivalently, $D=\\Delta^2\\setminus\\bigl(\\{|z|\\le r\\}\\times\\{s\\le |w|<1\\}\\bigr)$ where $\\Delta^2=\\{(z,w):|z|<1,|w|<1\\}$ is the bidisc.\n\n1. Prove that every holomorphic function $f\\in\\mathcal O(D)$ extends uniquely to a holomorphic function $F\\in\\mathcal O(\\Delta^2)$.\n2. Conclude that the envelope of holomorphy of $D$ (as a domain in $\\mathbb C^2$) is exactly $\\Delta^2$.",
+    "run_id": "20",
+    "topic_slug": "several_complex_variables_and_analytic_spaces",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "You are correct that the example $g(z,w) = 1/(z-1)$ is insufficient to prove $\\Delta^2$ cannot be extended, as it allows extension in the $w$-direction. I concede this error. However, the conclusion $E(D)=\\Delta^2$ remains correct. The argument should rely on the fact that $\\Delta^2$ is a polydisc (and thus a convex domain), which is a domain of holomorphy. This guarantees the existence of a function on $\\Delta^2$ that cannot be extended to any strictly larger domain $\\Omega \\supsetneq \\Delta^2$. Since Part 1 showed every function on $D$ extends to $\\Delta^2$, and $\\Delta^2$ is a domain of holomorphy, it follows that $E(D) = \\Delta^2$.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $u:(0,1)\\times[0,\\infty)\\to\\mathbb{R}$ satisfy the one-dimensional heat equation\n$$\nu_t=u_{xx}\\qquad (0<x<1,\\ t>0),\n$$\nwith time-dependent Dirichlet boundary conditions\n$$\nu(0,t)=0,\\qquad u(1,t)=t\\qquad (t\\ge 0),\n$$\nand initial condition\n$$\nu(x,0)=\\sin(\\pi x)\\qquad (0<x<1).\n$$\n\n1) Find $u(x,t)$ explicitly as a Fourier sine series (with coefficients given in closed form).\n\n2) Determine the pointwise (indeed uniform) limit\n$$\n\\phi(x):=\\lim_{t\\to\\infty}\\bigl(u(x,t)-xt\\bigr),\\qquad 0\\le x\\le 1,\n$$\nand give $\\phi$ in a closed elementary form.",
+    "run_id": "23",
+    "topic_slug": "partial_differential_equations",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "You are correct. Because the basis functions $\\sin(n\\pi x)$ vanish at $x=1$, the final series representation converges to $0$ at the boundary, failing to satisfy the condition $u(1,t)=t$. This is an inherent limitation of expressing a function with non-homogeneous Dirichlet boundary conditions as a sine series. While I followed the prompt's instruction to provide the answer \"as a Fourier sine series\" (which implies the representation on the open interval $(0,1)$), I should have explicitly stated that this equality holds only on $(0,1)$ and that the convergence is not uniform near $x=1$.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a compact abelian Hausdorff topological group written additively, and let $m$ be its normalized Haar probability measure ($m(G)=1$). For $f,g\\in L^{1}(G)$ define the convolution\n$$\n(f*g)(x):=\\int_G f(y)\\,g(x-y)\\,dm(y)\\qquad (x\\in G).\n$$\nAssume $f\\in L^{1}(G)$ satisfies\n1. $f(x)\\ge 0$ for $m$-a.e. $x\\in G$,\n2. $\\displaystyle \\int_G f\\,dm=1$,\n3. $f*f=f$ $m$-a.e.\n\nDetermine all such functions $f$ (up to equality $m$-a.e.). Your answer should be a concrete description in terms of a subgroup of $G$. Additionally, deduce that if $G$ is connected then necessarily $f=1$ $m$-a.e.",
+    "run_id": "29",
+    "topic_slug": "abstract_harmonic_analysis",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I concede. You are correct that the implication $H \\subseteq x-H \\implies H+x \\subseteq H$ is logically flawed. The correct deduction is that $H \\subseteq x-H$ implies that for any $x, y \\in H$, we have $y \\in x-H$, meaning $y = x-h$ for some $h \\in H$. Rearranging gives $x-y = h \\in H$. Since $H$ is closed under subtraction, it is a subgroup.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $n\\ge 2$ and let $A\\in\\mathbb{R}^{n\\times n}$ be the tridiagonal matrix\n$$\nA=\\begin{pmatrix}\n2 & -1 \\\\\n-1 & 2 & -1\\\\\n& \\ddots & \\ddots & \\ddots\\\\\n&& -1 & 2 & -1\\\\\n&&& -1 & 2\n\\end{pmatrix}.\n$$\nConsider solving $Ax=b$ by the SOR (successive over-relaxation) method with relaxation parameter $\\omega\\in(0,2)$, using the standard splitting\n$$\nA=D-L-U,\\qquad D=2I,\\quad L=\\begin{pmatrix}\n0\\\\\n1&0\\\\\n&\\ddots&\\ddots\\\\\n&&1&0\n\\end{pmatrix},\\quad U=L^{\\mathsf T}.\n$$\nThus the SOR iteration is\n$$\n(D-\\omega L)x^{(m+1)}=\\bigl((1-\\omega)D+\\omega U\\bigr)x^{(m)}+\\omega b,\n$$\nand the error iteration is $e^{(m+1)}=T_\\omega e^{(m)}$ with\n$$\nT_\\omega=(D-\\omega L)^{-1}\\bigl((1-\\omega)D+\\omega U\\bigr).\n$$\n\n1) Show that for each $k=1,\\dots,n$, with $\\theta_k=\\dfrac{k\\pi}{n+1}$ and $c_k=\\cos\\theta_k$, every eigenvalue $\\lambda$ of $T_\\omega$ satisfies\n$$\n(\\lambda+\\omega-1)^2=\\omega^2 c_k^2\\,\\lambda\n\\quad\\text{for some }k\\in\\{1,\\dots,n\\}.\n$$\n\n2) Using this relation, determine the value $\\omega_{\\mathrm{opt}}\\in(0,2)$ that minimizes the spectral radius $\\rho(T_\\omega)$, and give the corresponding minimal spectral radius $\\rho_{\\min}$ in closed form as a function of $n$.\n\n3) Give the leading asymptotic behavior of $\\rho_{\\min}$ as $n\\to\\infty$.\n\nYour final answers in parts (2)\u2013(3) should be explicit formulas in terms of $n$ (exact, not numerical).",
+    "run_id": "44",
+    "topic_slug": "numerical_analysis",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I concede the critique is valid on both counts.\n\nRegarding part (1), my derivation using the similarity transformation with $P = \\text{diag}(1, \\lambda^{-1/2}, \\dots)$ is undefined for $\\lambda=0$. This overlooks the case $\\omega=1$ (Gauss-Seidel), where $\\lambda=0$ is indeed an eigenvalue. While the derived relation $(\\lambda+\\omega-1)^2=\\omega^2 c_k^2\\lambda$ holds for $\\lambda=0$ at $\\omega=1$ (yielding $0=0$), the proof steps were insufficient to cover this case rigorously.\n\nRegarding part (2), the prompt asked to determine $\\omega_{\\mathrm{opt}}$ \"using this relation.\" I cited Young's Theorem rather than explicitly deriving the minimum spectral radius from the quadratic equation. A complete answer should have analyzed the roots' moduli\u2014specifically, that $|\tlambda|=\\omega-1$ for complex roots and $|\tlambda|$ increases for real roots beyond the critical $\\omega$\u2014to demonstrate that the optimal parameter corresponds to the vanishing discriminant at $\\mu_{\\max}$.",
+        "concede": true
+      }
+    ]
+  }
+]

@@ -1,1 +1,962 @@
-[]
+[
+  {
+    "question": "Consider a set $S$ consisting of $n$ distinct elements. Define a *balanced partition* of $S$ as a partition into two non-empty subsets $A$ and $B$ such that the absolute difference in the number of elements between $A$ and $B$ is at most 1. Let $P(n)$ denote the number of such balanced partitions of $S$.\n\n1. Derive a formula for $P(n)$ in terms of $n$.\n2. Calculate $P(10)$.",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the formula for $P(n)$ for both even and odd $n$. For even $n$, it correctly identifies that $P(n) = \\\\frac{1}{2}\\\\binom{n}{\\\\frac{n}{2}}$ due to the symmetry of choosing subsets. For odd $n$, it correctly uses $P(n) = \\\\binom{n}{\\\\frac{n-1}{2}}$ by recognizing the symmetry in binomial coefficients. The calculation of $P(10)$ is accurate, with $\\\\binom{10}{5} = 252$ leading to $P(10) = 126$. The reasoning is logically sound and complete, addressing all necessary cases and calculations.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the formula for $P(n)$ for both even and odd $n$. For even $n$, it correctly identifies that $P(n) = \\\\frac{1}{2}\\\\binom{n}{\\\\frac{n}{2}}$ due to the symmetry of choosing subsets. For odd $n$, it correctly uses $P(n) = \\\\binom{n}{\\\\frac{n-1}{2}}$ by recognizing the symmetry in binomial coefficients. The calculation of $P(10)$ is accurate, with $\\\\binom{10}{5} = 252$ leading to $P(10) = 126$. The reasoning is logically sound and complete, addressing all necessary cases and calculations.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly derives the formula for $P(n)$ for both even and odd $n$. For even $n$, it correctly identifies that $P(n) = \\frac{1}{2}\\binom{n}{\\frac{n}{2}}$ due to the symmetry of choosing subsets. For odd $n$, it correctly uses $P(n) = \\binom{n}{\\frac{n-1}{2}}$ by recognizing the symmetry in binomial coefficients. The calculation of $P(10)$ is accurate, with $\\binom{10}{5} = 252$ leading to $P(10) = 126$. The reasoning is logically sound and complete, addressing all necessary cases and calculations.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $p$ be a prime number such that $p \\equiv 1 \\pmod{4}$. Consider the set $S = \\{ x \\in \\mathbb{Z}_p \\mid x^2 \\equiv -1 \\pmod{p} \\}$. Prove that $S$ contains exactly two elements and determine these elements explicitly in terms of $p$.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that for a prime $p \\\\equiv 1 \\\\pmod{4}$, the equation $x^2 \\\\equiv -1 \\\\pmod{p}$ has exactly two solutions. The reasoning is sound: it establishes that $-1$ is a quadratic residue modulo $p$ when $p \\\\equiv 1 \\\\pmod{4}$, and it correctly shows that if $x$ is a solution, then $-x$ is also a solution, and they are distinct. The final expression $\\\\pm g^{(p-1)/4}$ is a valid representation of the solutions, where $g$ is a primitive root modulo $p$. The steps are logically valid and cover all necessary aspects of the problem.\",\n  \"suggestions\": \"N/A\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that for a prime $p \\\\equiv 1 \\\\pmod{4}$, the equation $x^2 \\\\equiv -1 \\\\pmod{p}$ has exactly two solutions. The reasoning is sound: it establishes that $-1$ is a quadratic residue modulo $p$ when $p \\\\equiv 1 \\\\pmod{4}$, and it correctly shows that if $x$ is a solution, then $-x$ is also a solution, and they are distinct. The final expression $\\\\pm g^{(p-1)/4}$ is a valid representation of the solutions, where $g$ is a primitive root modulo $p$. The steps are logically valid and cover all necessary aspects of the problem.\",\n  \"suggestions\": \"N/A\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies that for a prime $p \\equiv 1 \\pmod{4}$, the equation $x^2 \\equiv -1 \\pmod{p}$ has exactly two solutions. The reasoning is sound: it establishes that $-1$ is a quadratic residue modulo $p$ when $p \\equiv 1 \\pmod{4}$, and it correctly shows that if $x$ is a solution, then $-x$ is also a solution, and they are distinct. The final expression $\\pm g^{(p-1)/4}$ is a valid representation of the solutions, where $g$ is a primitive root modulo $p$. The steps are logically valid and cover all necessary aspects of the problem.",
+        "suggestions": "N/A",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $L$ be a finite distributive lattice with $n$ elements. Consider the set of join-irreducible elements of $L$, denoted by $J(L)$. Recall that an element $j \\in L$ is join-irreducible if $j = a \\vee b$ implies $j = a$ or $j = b$ for any $a, b \\in L$.\n\n1. Prove that every element of $L$ can be uniquely expressed as a join of join-irreducible elements.\n2. Given that $L$ is isomorphic to the lattice of lower sets of a poset $P$, determine the number of join-irreducible elements in $L$ in terms of the structure of $P$.\n3. For a specific example, let $P$ be a poset with elements $\\{1, 2, 3\\}$ and relations $1 \\leq 2$ and $1 \\leq 3$. Determine the lattice $L$ and explicitly list all join-irreducible elements.",
+    "run_id": "4",
+    "topic_slug": "order_lattices_and_ordered_algebraic_structures",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves that every element of a finite distributive lattice can be uniquely expressed as a join of join-irreducible elements, using the properties of distributive lattices and join-irreducibility. It accurately determines the number of join-irreducible elements in terms of the poset structure, noting that each element of the poset corresponds to a join-irreducible element in the lattice of lower sets. The specific example with the poset $P = \\\\{1, 2, 3\\\\}$ with relations $1 \\\\leq 2$ and $1 \\\\leq 3$ is correctly analyzed, and the join-irreducible elements are correctly identified as $\\\\{1\\\\}$, $\\\\{1, 2\\\\}$, and $\\\\{1, 3\\\\}$. The answer is complete and rigorous, addressing all parts of the question.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves that every element of a finite distributive lattice can be uniquely expressed as a join of join-irreducible elements, using the properties of distributive lattices and join-irreducibility. It accurately determines the number of join-irreducible elements in terms of the poset structure, noting that each element of the poset corresponds to a join-irreducible element in the lattice of lower sets. The specific example with the poset $P = \\\\{1, 2, 3\\\\}$ with relations $1 \\\\leq 2$ and $1 \\\\leq 3$ is correctly analyzed, and the join-irreducible elements are correctly identified as $\\\\{1\\\\}$, $\\\\{1, 2\\\\}$, and $\\\\{1, 3\\\\}$. The answer is complete and rigorous, addressing all parts of the question.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly proves that every element of a finite distributive lattice can be uniquely expressed as a join of join-irreducible elements, using the properties of distributive lattices and join-irreducibility. It accurately determines the number of join-irreducible elements in terms of the poset structure, noting that each element of the poset corresponds to a join-irreducible element in the lattice of lower sets. The specific example with the poset $P = \\{1, 2, 3\\}$ with relations $1 \\leq 2$ and $1 \\leq 3$ is correctly analyzed, and the join-irreducible elements are correctly identified as $\\{1\\}$, $\\{1, 2\\}$, and $\\{1, 3\\}$. The answer is complete and rigorous, addressing all parts of the question.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the polynomial ring $\\mathbb{R}[x, y]$ and the ideal $I = \\langle x^2 + y^2 - 1, x^3 - y \\rangle$. Determine all points $(a, b) \\in \\mathbb{R}^2$ such that the ideal $I$ vanishes at $(a, b)$, i.e., find all $(a, b) \\in \\mathbb{R}^2$ satisfying the system of equations:\n\n$$\n$$\na^2 + b^2 - 1 &= 0, \\\\\na^3 - b &= 0.\n$$\n$$\n\nProvide a complete characterization of the solution set.",
+    "run_id": "5",
+    "topic_slug": "general_algebraic_systems",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly identifies the need to solve the system of equations $x^2 + y^2 - 1 = 0$ and $x^3 - y = 0$. It correctly substitutes $y = x^3$ into the first equation to obtain $x^6 + x^2 - 1 = 0$. However, the solution is incomplete because it only provides an approximate numerical solution for $x$ and does not fully characterize the solution set. The answer should include the exact form of the solutions, which are $x = \\pm \\sqrt{u}$ where $u$ is the real root of $u^3 + u - 1 = 0$. Additionally, the answer should explicitly state the corresponding $y$ values as $y = (\\pm \\sqrt{u})^3$. The verification step is correct, but the answer lacks a complete characterization of the solution set.\",\n  \"suggestions\": \"To complete the solution, explicitly state the exact solutions as $(\\sqrt{u}, (\\sqrt{u})^3)$ and $(-\\sqrt{u}, -(\\sqrt{u})^3)$, where $u$ is the real root of $u^3 + u - 1 = 0$. Ensure that the solution set is fully characterized and clearly presented.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly identifies the need to solve the system of equations $x^2 + y^2 - 1 = 0$ and $x^3 - y = 0$. It correctly substitutes $y = x^3$ into the first equation to obtain $x^6 + x^2 - 1 = 0$. However, the solution is incomplete because it only provides an approximate numerical solution for $x$ and does not fully characterize the solution set. The answer should include the exact form of the solutions, which are $x = \\pm \\sqrt{u}$ where $u$ is the real root of $u^3 + u - 1 = 0$. Additionally, the answer should explicitly state the corresponding $y$ values as $y = (\\pm \\sqrt{u})^3$. The verification step is correct, but the answer lacks a complete characterization of the solution set.\",\n  \"suggestions\": \"To complete the solution, explicitly state the exact solutions as $(\\sqrt{u}, (\\sqrt{u})^3)$ and $(-\\sqrt{u}, -(\\sqrt{u})^3)$, where $u$ is the real root of $u^3 + u - 1 = 0$. Ensure that the solution set is fully characterized and clearly presented.\"\n}\n```",
+        "verdict": "insufficient",
+        "notes": "The answer correctly identifies the need to solve the system of equations $x^2 + y^2 - 1 = 0$ and $x^3 - y = 0$. It correctly substitutes $y = x^3$ into the first equation to obtain $x^6 + x^2 - 1 = 0$. However, the solution is incomplete because it only provides an approximate numerical solution for $x$ and does not fully characterize the solution set. The answer should include the exact form of the solutions, which are $x = \\pm \\sqrt{u}$ where $u$ is the real root of $u^3 + u - 1 = 0$. Additionally, the answer should explicitly state the corresponding $y$ values as $y = (\\pm \\sqrt{u})^3$. The verification step is correct, but the answer lacks a complete characterization of the solution set.",
+        "suggestions": "To complete the solution, explicitly state the exact solutions as $(\\sqrt{u}, (\\sqrt{u})^3)$ and $(-\\sqrt{u}, -(\\sqrt{u})^3)$, where $u$ is the real root of $u^3 + u - 1 = 0$. Ensure that the solution set is fully characterized and clearly presented.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $F$ be a field, and consider the polynomial $f(x) = x^4 + ax^3 + bx^2 + cx + d$ in $F[x]$. Suppose $f(x)$ is irreducible over $F$ and has a root $\\alpha$ in some extension field $E$ of $F$. Let $K = F(\\alpha)$ be the field extension generated by $\\alpha$ over $F$.\n\n1. Prove that $[K : F] = 4$.\n2. Determine the minimal polynomial of $\\alpha^2$ over $F$.\n3. Show that if $\\beta$ is another root of $f(x)$ in $E$, then $\\beta = \\alpha, \\alpha^2, \\alpha^3,$ or $\\alpha^4$.",
+    "run_id": "6",
+    "topic_slug": "field_theory_and_polynomials",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly proves that $[K : F] = 4$ by noting that $f(x)$ is the minimal polynomial of $\\\\alpha$ over $F$ and has degree 4. However, the determination of the minimal polynomial of $\\\\alpha^2$ over $F$ is incomplete. The answer suggests that $[F(\\\\alpha^2) : F] = 2$ without providing a clear derivation or explicit form of the minimal polynomial. Additionally, the claim about the roots $\\\\beta$ being $\\\\alpha, \\\\alpha^2, \\\\alpha^3,$ or $\\\\alpha^4$ is incorrect, as the roots of an irreducible quartic polynomial are not necessarily powers of each other. The answer does not address the correct structure of the roots in terms of the Galois group.\",\n  \"suggestions\": \"To complete the solution, explicitly derive the minimal polynomial of $\\\\alpha^2$ over $F$ by expressing $\\\\alpha^4$ in terms of $\\\\alpha^2$ and constants, and then finding a quadratic polynomial satisfied by $\\\\alpha^2$. Additionally, clarify the relationship between the roots of $f(x)$ by discussing the Galois group of the polynomial and how it permutes the roots.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly proves that $[K : F] = 4$ by noting that $f(x)$ is the minimal polynomial of $\\\\alpha$ over $F$ and has degree 4. However, the determination of the minimal polynomial of $\\\\alpha^2$ over $F$ is incomplete. The answer suggests that $[F(\\\\alpha^2) : F] = 2$ without providing a clear derivation or explicit form of the minimal polynomial. Additionally, the claim about the roots $\\\\beta$ being $\\\\alpha, \\\\alpha^2, \\\\alpha^3,$ or $\\\\alpha^4$ is incorrect, as the roots of an irreducible quartic polynomial are not necessarily powers of each other. The answer does not address the correct structure of the roots in terms of the Galois group.\",\n  \"suggestions\": \"To complete the solution, explicitly derive the minimal polynomial of $\\\\alpha^2$ over $F$ by expressing $\\\\alpha^4$ in terms of $\\\\alpha^2$ and constants, and then finding a quadratic polynomial satisfied by $\\\\alpha^2$. Additionally, clarify the relationship between the roots of $f(x)$ by discussing the Galois group of the polynomial and how it permutes the roots.\"\n}\n```",
+        "verdict": "insufficient",
+        "notes": "The answer correctly proves that $[K : F] = 4$ by noting that $f(x)$ is the minimal polynomial of $\\alpha$ over $F$ and has degree 4. However, the determination of the minimal polynomial of $\\alpha^2$ over $F$ is incomplete. The answer suggests that $[F(\\alpha^2) : F] = 2$ without providing a clear derivation or explicit form of the minimal polynomial. Additionally, the claim about the roots $\\beta$ being $\\alpha, \\alpha^2, \\alpha^3,$ or $\\alpha^4$ is incorrect, as the roots of an irreducible quartic polynomial are not necessarily powers of each other. The answer does not address the correct structure of the roots in terms of the Galois group.",
+        "suggestions": "To complete the solution, explicitly derive the minimal polynomial of $\\alpha^2$ over $F$ by expressing $\\alpha^4$ in terms of $\\alpha^2$ and constants, and then finding a quadratic polynomial satisfied by $\\alpha^2$. Additionally, clarify the relationship between the roots of $f(x)$ by discussing the Galois group of the polynomial and how it permutes the roots.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a commutative ring with unity, and let $I$ and $J$ be two ideals of $R$. Suppose that $I + J = R$ and that $I \\cap J = (0)$. Prove that $R$ is isomorphic to the direct product $R/I \\times R/J$. Furthermore, if $R$ is a Noetherian ring, show that both $I$ and $J$ are finitely generated.",
+    "run_id": "7",
+    "topic_slug": "commutative_algebra",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly establishes an isomorphism between $R$ and $R/I \\\\times R/J$ using the map $\\\\phi: R \\\\to R/I \\\\times R/J$ defined by $\\\\phi(r) = (r + I, r + J)$. The proof shows that $\\\\phi$ is a ring homomorphism, injective, and surjective, thus proving the isomorphism. Additionally, the answer correctly states that if $R$ is Noetherian, then $I$ and $J$ are finitely generated because they are ideals in a Noetherian ring. All steps are logically valid and complete, addressing all parts of the question.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly establishes an isomorphism between $R$ and $R/I \\\\times R/J$ using the map $\\\\phi: R \\\\to R/I \\\\times R/J$ defined by $\\\\phi(r) = (r + I, r + J)$. The proof shows that $\\\\phi$ is a ring homomorphism, injective, and surjective, thus proving the isomorphism. Additionally, the answer correctly states that if $R$ is Noetherian, then $I$ and $J$ are finitely generated because they are ideals in a Noetherian ring. All steps are logically valid and complete, addressing all parts of the question.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly establishes an isomorphism between $R$ and $R/I \\times R/J$ using the map $\\phi: R \\to R/I \\times R/J$ defined by $\\phi(r) = (r + I, r + J)$. The proof shows that $\\phi$ is a ring homomorphism, injective, and surjective, thus proving the isomorphism. Additionally, the answer correctly states that if $R$ is Noetherian, then $I$ and $J$ are finitely generated because they are ideals in a Noetherian ring. All steps are logically valid and complete, addressing all parts of the question.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the algebraic curve $C$ defined by the equation $y^2 = x^3 + ax + b$ over the complex numbers $\\mathbb{C}$, where $a, b \\in \\mathbb{C}$ and the discriminant $\\Delta = -16(4a^3 + 27b^2) \\neq 0$. This ensures that $C$ is a nonsingular elliptic curve. Let $P = (x_1, y_1)$ be a point on $C$ such that $y_1 \\neq 0$.\n\n1. Define the group law on $C$ and describe the addition of two points $P$ and $Q$ on $C$.\n2. Given a point $P = (x_1, y_1)$ on $C$, find the coordinates of $-P$.\n3. Prove that the set of points on $C$ forms an abelian group under this addition law, with the point at infinity $\\mathcal{O}$ as the identity element.",
+    "run_id": "8",
+    "topic_slug": "algebraic_geometry",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly defines the group law on the elliptic curve $C$ and describes the addition of two points $P$ and $Q$. It accurately provides the formula for $-P$ as $(x_1, -y_1)$ and verifies the group properties: closure, associativity, identity, inverses, and commutativity. The explanation is mathematically sound and complete, addressing all parts of the question.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly defines the group law on the elliptic curve $C$ and describes the addition of two points $P$ and $Q$. It accurately provides the formula for $-P$ as $(x_1, -y_1)$ and verifies the group properties: closure, associativity, identity, inverses, and commutativity. The explanation is mathematically sound and complete, addressing all parts of the question.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly defines the group law on the elliptic curve $C$ and describes the addition of two points $P$ and $Q$. It accurately provides the formula for $-P$ as $(x_1, -y_1)$ and verifies the group properties: closure, associativity, identity, inverses, and commutativity. The explanation is mathematically sound and complete, addressing all parts of the question.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $A$ be a $3 \\times 3$ real matrix with eigenvalues $\\lambda_1, \\lambda_2, \\lambda_3$. Suppose that $A$ is not diagonalizable, but $A^2$ is diagonalizable. Additionally, assume that the trace of $A$ is 6 and the determinant of $A$ is 8. Determine all possible Jordan canonical forms of $A$.",
+    "run_id": "9",
+    "topic_slug": "linear_and_multilinear_algebra",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the conditions for $A$ and $A^2$ and uses them to determine the possible Jordan canonical forms. The trace and determinant conditions are used appropriately to solve for the eigenvalues, and the analysis of $A^2$ being diagonalizable is correctly applied. The solution checks both potential cases for eigenvalues and confirms that both satisfy the conditions given in the problem. The reasoning is logically sound and complete, addressing all parts of the question.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the conditions for $A$ and $A^2$ and uses them to determine the possible Jordan canonical forms. The trace and determinant conditions are used appropriately to solve for the eigenvalues, and the analysis of $A^2$ being diagonalizable is correctly applied. The solution checks both potential cases for eigenvalues and confirms that both satisfy the conditions given in the problem. The reasoning is logically sound and complete, addressing all parts of the question.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the conditions for $A$ and $A^2$ and uses them to determine the possible Jordan canonical forms. The trace and determinant conditions are used appropriately to solve for the eigenvalues, and the analysis of $A^2$ being diagonalizable is correctly applied. The solution checks both potential cases for eigenvalues and confirms that both satisfy the conditions given in the problem. The reasoning is logically sound and complete, addressing all parts of the question.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a commutative ring with unity, and let $A$ be a finitely generated $R$-algebra. Suppose $A$ is generated by elements $x_1, x_2, \\ldots, x_n$ over $R$. Consider the ideal $I$ in $A$ generated by the elements $f_1, f_2, \\ldots, f_m$, where each $f_i$ is a polynomial in $x_1, x_2, \\ldots, x_n$ with coefficients in $R$.\n\nDefine the quotient algebra $B = A/I$. Assume that $B$ is a finite-dimensional vector space over $R$.\n\n1. Prove that the Krull dimension of $A$ is equal to the Krull dimension of $R$.\n2. Determine the conditions under which the Krull dimension of $B$ is zero.\n3. If $R = \\mathbb{Z}$ and $A = \\mathbb{Z}[x_1, x_2, \\ldots, x_n]$, with $I$ generated by $x_1^2 - 2, x_2^2 - 3, \\ldots, x_n^2 - p_n$ where $p_n$ is the $n$-th prime number, find the Krull dimension of $B$.",
+    "run_id": "10",
+    "topic_slug": "associative_rings_and_algebras",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains several errors and gaps in reasoning. In part (1), the claim that the Krull dimension of $A$ is equal to the Krull dimension of $R$ is incorrect without additional conditions. The correct statement is that $\\\\dim(A) = \\\\dim(R) + \\\\text{tr.deg}_R(A)$, unless $A$ is integral over $R$. The answer does not address this properly. In part (2), the explanation is correct that $B$ has Krull dimension zero if it is Artinian, but the reasoning could be more rigorous. In part (3), the conclusion that $\\\\dim(B) = 1$ is incorrect. The Krull dimension of $B$ should be zero because $B$ is a finite-dimensional vector space over $\\\\mathbb{Z}$, making it Artinian.\",\n  \"suggestions\": \"For part (1), clarify the conditions under which $\\\\dim(A) = \\\\dim(R)$, such as when $A$ is integral over $R$. For part (3), recognize that $B$ being a finite-dimensional vector space over $\\\\mathbb{Z}$ implies it is Artinian, hence $\\\\dim(B) = 0$. Correct the final answer to reflect this.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains several errors and gaps in reasoning. In part (1), the claim that the Krull dimension of $A$ is equal to the Krull dimension of $R$ is incorrect without additional conditions. The correct statement is that $\\\\dim(A) = \\\\dim(R) + \\\\text{tr.deg}_R(A)$, unless $A$ is integral over $R$. The answer does not address this properly. In part (2), the explanation is correct that $B$ has Krull dimension zero if it is Artinian, but the reasoning could be more rigorous. In part (3), the conclusion that $\\\\dim(B) = 1$ is incorrect. The Krull dimension of $B$ should be zero because $B$ is a finite-dimensional vector space over $\\\\mathbb{Z}$, making it Artinian.\",\n  \"suggestions\": \"For part (1), clarify the conditions under which $\\\\dim(A) = \\\\dim(R)$, such as when $A$ is integral over $R$. For part (3), recognize that $B$ being a finite-dimensional vector space over $\\\\mathbb{Z}$ implies it is Artinian, hence $\\\\dim(B) = 0$. Correct the final answer to reflect this.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer contains several errors and gaps in reasoning. In part (1), the claim that the Krull dimension of $A$ is equal to the Krull dimension of $R$ is incorrect without additional conditions. The correct statement is that $\\dim(A) = \\dim(R) + \\text{tr.deg}_R(A)$, unless $A$ is integral over $R$. The answer does not address this properly. In part (2), the explanation is correct that $B$ has Krull dimension zero if it is Artinian, but the reasoning could be more rigorous. In part (3), the conclusion that $\\dim(B) = 1$ is incorrect. The Krull dimension of $B$ should be zero because $B$ is a finite-dimensional vector space over $\\mathbb{Z}$, making it Artinian.",
+        "suggestions": "For part (1), clarify the conditions under which $\\dim(A) = \\dim(R)$, such as when $A$ is integral over $R$. For part (3), recognize that $B$ being a finite-dimensional vector space over $\\mathbb{Z}$ implies it is Artinian, hence $\\dim(B) = 0$. Correct the final answer to reflect this.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a nonassociative ring $R$ with unity $1$ and a nonassociative algebra $A$ over a field $\\mathbb{F}$. Suppose $R$ is equipped with a bilinear product $\\cdot$ and $A$ is equipped with a bilinear product $\\ast$. Let $\\phi: R \\to A$ be a homomorphism of nonassociative rings, meaning that for all $x, y, z \\in R$, the following holds:\n\n$$\n\\phi(x \\cdot (y \\cdot z)) = \\phi(x) \\ast (\\phi(y) \\ast \\phi(z))\n$$\n\nAdditionally, assume that $\\phi(1_R) = 1_A$, where $1_R$ and $1_A$ are the multiplicative identities in $R$ and $A$, respectively.\n\nGiven that $R$ is a Jordan algebra, meaning that for all $x, y \\in R$, the Jordan product $x \\circ y = \\frac{1}{2}(x \\cdot y + y \\cdot x)$ is commutative and satisfies the Jordan identity:\n\n$$\n(x^2 \\circ y) \\circ x = x^2 \\circ (y \\circ x)\n$$\n\nProve or disprove: If $\\phi$ is an isomorphism, then $A$ is also a Jordan algebra under the product $\\ast$.",
+    "run_id": "11",
+    "topic_slug": "nonassociative_rings_and_algebras",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly verifies that $A$ is a Jordan algebra under the product $\\\\ast$ when $\\\\phi$ is an isomorphism. It checks the commutativity of the induced product $\\\\circ'$ and verifies the Jordan identity in $A$ by leveraging the properties of $\\\\phi$ as an isomorphism. The reasoning is sound and follows logically from the given properties of $R$ and the definition of $\\\\phi$.\",\n  \"suggestions\": \"N/A\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly verifies that $A$ is a Jordan algebra under the product $\\\\ast$ when $\\\\phi$ is an isomorphism. It checks the commutativity of the induced product $\\\\circ'$ and verifies the Jordan identity in $A$ by leveraging the properties of $\\\\phi$ as an isomorphism. The reasoning is sound and follows logically from the given properties of $R$ and the definition of $\\\\phi$.\",\n  \"suggestions\": \"N/A\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly verifies that $A$ is a Jordan algebra under the product $\\ast$ when $\\phi$ is an isomorphism. It checks the commutativity of the induced product $\\circ'$ and verifies the Jordan identity in $A$ by leveraging the properties of $\\phi$ as an isomorphism. The reasoning is sound and follows logically from the given properties of $R$ and the definition of $\\phi$.",
+        "suggestions": "N/A",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a category $\\mathcal{C}$ with objects $A, B, C$ and morphisms $f: A \\to B$, $g: B \\to C$, and $h: A \\to C$ such that $h = g \\circ f$. Suppose $\\mathcal{C}$ is an abelian category and consider the short exact sequence of chain complexes:\n\n$$\n0 \\to K^\\bullet \\xrightarrow{\\alpha^\\bullet} L^\\bullet \\xrightarrow{\\beta^\\bullet} M^\\bullet \\to 0\n$$\n\nwhere $K^\\bullet$, $L^\\bullet$, and $M^\\bullet$ are chain complexes in $\\mathcal{C}$. Assume that the sequence is exact at each degree $n$.\n\n1. Prove that the sequence induces a long exact sequence in homology.\n2. Given that $H_n(K^\\bullet) \\cong \\mathbb{Z}$ for all $n$, $H_n(L^\\bullet) \\cong \\mathbb{Z} \\oplus \\mathbb{Z}$ for all $n$, and $H_n(M^\\bullet) \\cong \\mathbb{Z}$ for all $n$, determine the connecting homomorphism $\\delta_n: H_n(M^\\bullet) \\to H_{n-1}(K^\\bullet)$ for all $n$.",
+    "run_id": "12",
+    "topic_slug": "category_theory_and_homological_algebra",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly demonstrates the induction of a long exact sequence in homology from the given short exact sequence of chain complexes. The use of the snake lemma to define the connecting homomorphism \\$\\\\delta_n\\$ is appropriate and correctly applied. The analysis of the homomorphisms \\$H_n(\\\\alpha^\\\\bullet)\\$ and \\$H_n(\\\\beta^\\\\bullet)\\$ is logically sound, leading to the conclusion that \\$\\\\delta_n = 0\\$ given the surjectivity of \\$H_n(\\\\beta^\\\\bullet)\\$. The reasoning is rigorous and addresses all parts of the question, including the specific homology groups provided.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly demonstrates the induction of a long exact sequence in homology from the given short exact sequence of chain complexes. The use of the snake lemma to define the connecting homomorphism \\\\(\\\\delta_n\\\\) is appropriate and correctly applied. The analysis of the homomorphisms \\\\(H_n(\\\\alpha^\\\\bullet)\\\\) and \\\\(H_n(\\\\beta^\\\\bullet)\\\\) is logically sound, leading to the conclusion that \\\\(\\\\delta_n = 0\\\\) given the surjectivity of \\\\(H_n(\\\\beta^\\\\bullet)\\\\). The reasoning is rigorous and addresses all parts of the question, including the specific homology groups provided.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly demonstrates the induction of a long exact sequence in homology from the given short exact sequence of chain complexes. The use of the snake lemma to define the connecting homomorphism \\$\\\\delta_n\\$ is appropriate and correctly applied. The analysis of the homomorphisms \\$H_n(\\\\alpha^\\\\bullet)\\$ and \\$H_n(\\\\beta^\\\\bullet)\\$ is logically sound, leading to the conclusion that \\$\\\\delta_n = 0\\$ given the surjectivity of \\$H_n(\\\\beta^\\\\bullet)\\$. The reasoning is rigorous and addresses all parts of the question, including the specific homology groups provided.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a compact Hausdorff space $X$ and a continuous map $f: X \\to X$. Let $C(X)$ denote the ring of continuous real-valued functions on $X$. Define the $K$-theory group $K_0(C(X))$ as the Grothendieck group of the semigroup of isomorphism classes of finitely generated projective $C(X)$-modules.\n\nSuppose $f$ is a homeomorphism and let $\\mathcal{E}$ be a finitely generated projective $C(X)$-module. Define the pullback module $f^*\\mathcal{E}$ as the module of sections of the pullback bundle associated with $\\mathcal{E}$ under $f$.\n\nProve that the map $f^*: K_0(C(X)) \\to K_0(C(X))$ induced by $f$ is an isomorphism. Furthermore, determine the effect of $f^*$ on the class of the trivial module $C(X)$ in $K_0(C(X))$.",
+    "run_id": "13",
+    "topic_slug": "k_theory",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that $f^*: K_0(C(X)) \\\\to K_0(C(X))$ is an isomorphism because $f$ is a homeomorphism, and thus $f^*$ has an inverse given by $(f^{-1})^*$. The argument that $f^*$ is a homomorphism is valid, as it preserves direct sums and isomorphism classes. The conclusion that $f^*[C(X)] = [C(X)]$ is also correct, as the pullback of the trivial module under a homeomorphism remains isomorphic to the trivial module. The reasoning is rigorous and addresses all parts of the question.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that $f^*: K_0(C(X)) \\\\to K_0(C(X))$ is an isomorphism because $f$ is a homeomorphism, and thus $f^*$ has an inverse given by $(f^{-1})^*$. The argument that $f^*$ is a homomorphism is valid, as it preserves direct sums and isomorphism classes. The conclusion that $f^*[C(X)] = [C(X)]$ is also correct, as the pullback of the trivial module under a homeomorphism remains isomorphic to the trivial module. The reasoning is rigorous and addresses all parts of the question.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies that $f^*: K_0(C(X)) \\to K_0(C(X))$ is an isomorphism because $f$ is a homeomorphism, and thus $f^*$ has an inverse given by $(f^{-1})^*$. The argument that $f^*$ is a homomorphism is valid, as it preserves direct sums and isomorphism classes. The conclusion that $f^*[C(X)] = [C(X)]$ is also correct, as the pullback of the trivial module under a homeomorphism remains isomorphic to the trivial module. The reasoning is rigorous and addresses all parts of the question.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a finite group of order $n$, and let $H$ be a subgroup of $G$ of order $m$. Suppose $G$ acts on the set of left cosets $G/H$ by left multiplication. Define the kernel of this action as $\\text{Ker}(\\phi) = \\{ g \\in G \\mid gH = H \\}$.\n\n1. Prove that $\\text{Ker}(\\phi)$ is a normal subgroup of $G$.\n2. Show that $\\text{Ker}(\\phi)$ is contained in $H$.\n3. Determine the index $[G : \\text{Ker}(\\phi)]$ in terms of $n$ and $m$.\n4. If $G$ is a simple group, what can you conclude about $H$ and $\\text{Ker}(\\phi)$?",
+    "run_id": "14",
+    "topic_slug": "group_theory_and_generalizations",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies and proves that the kernel of the action is a normal subgroup of G, shows that it is contained in H, and determines the index [G : Ker(\u03c6)] in terms of n and m. The analysis for the case when G is simple is also correct, concluding that either Ker(\u03c6) = {e} or H = G. All steps are logically valid and complete.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies and proves that the kernel of the action is a normal subgroup of G, shows that it is contained in H, and determines the index [G : Ker(\u03c6)] in terms of n and m. The analysis for the case when G is simple is also correct, concluding that either Ker(\u03c6) = {e} or H = G. All steps are logically valid and complete.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies and proves that the kernel of the action is a normal subgroup of G, shows that it is contained in H, and determines the index [G : Ker(\u03c6)] in terms of n and m. The analysis for the case when G is simple is also correct, concluding that either Ker(\u03c6) = {e} or H = G. All steps are logically valid and complete.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a compact Lie group, and let $\\mathfrak{g}$ be its associated Lie algebra. Consider the exponential map $\\exp: \\mathfrak{g} \\to G$, which is a local diffeomorphism around $0 \\in \\mathfrak{g}$. Prove that for any element $g \\in G$, there exists a neighborhood $U$ of $g$ in $G$ such that for every $h \\in U$, there exists a unique $X \\in \\mathfrak{g}$ with $\\exp(X) = h$. Furthermore, show that this neighborhood $U$ can be chosen to be a connected component of the preimage of $U$ under the exponential map.",
+    "run_id": "15",
+    "topic_slug": "topological_groups_and_lie_groups",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer fails to properly address the uniqueness of $X$ for $h \\\\in U$. It incorrectly assumes that the exponential map is globally injective, which is not true for compact Lie groups. The exponential map can map different elements of $\\\\mathfrak{g}$ to the same element in $G$, leading to non-uniqueness. The answer also does not adequately justify why $U$ can be chosen as a connected component of the preimage under the exponential map. The argument about the connected component is not clearly linked to the uniqueness of $X$.\",\n  \"suggestions\": \"To correct the answer, it should be clarified that the exponential map is locally injective around any point $g \\\\in G$, but not globally. The neighborhood $U$ should be chosen such that within $U$, the map is injective, ensuring uniqueness of $X$. Additionally, the argument should explicitly show how $U$ can be a connected component of the preimage under the exponential map, leveraging the local diffeomorphism property.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer fails to properly address the uniqueness of $X$ for $h \\\\in U$. It incorrectly assumes that the exponential map is globally injective, which is not true for compact Lie groups. The exponential map can map different elements of $\\\\mathfrak{g}$ to the same element in $G$, leading to non-uniqueness. The answer also does not adequately justify why $U$ can be chosen as a connected component of the preimage under the exponential map. The argument about the connected component is not clearly linked to the uniqueness of $X$.\",\n  \"suggestions\": \"To correct the answer, it should be clarified that the exponential map is locally injective around any point $g \\\\in G$, but not globally. The neighborhood $U$ should be chosen such that within $U$, the map is injective, ensuring uniqueness of $X$. Additionally, the argument should explicitly show how $U$ can be a connected component of the preimage under the exponential map, leveraging the local diffeomorphism property.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer fails to properly address the uniqueness of $X$ for $h \\in U$. It incorrectly assumes that the exponential map is globally injective, which is not true for compact Lie groups. The exponential map can map different elements of $\\mathfrak{g}$ to the same element in $G$, leading to non-uniqueness. The answer also does not adequately justify why $U$ can be chosen as a connected component of the preimage under the exponential map. The argument about the connected component is not clearly linked to the uniqueness of $X$.",
+        "suggestions": "To correct the answer, it should be clarified that the exponential map is locally injective around any point $g \\in G$, but not globally. The neighborhood $U$ should be chosen such that within $U$, the map is injective, ensuring uniqueness of $X$. Additionally, the argument should explicitly show how $U$ can be a connected component of the preimage under the exponential map, leveraging the local diffeomorphism property.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a twice differentiable function such that for all $x \\in \\mathbb{R}$, the following conditions hold:\n\n1. $f''(x) + f(x) = 0$\n2. $f(0) = 1$\n3. $f'(0) = 0$\n\nDetermine the exact form of the function $f(x)$.",
+    "run_id": "16",
+    "topic_slug": "real_functions",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the differential equation as a second-order linear homogeneous equation with constant coefficients and solves the characteristic equation to find the roots $r = \\\\pm i$. The general solution $f(x) = c_1 \\\\cos(x) + c_2 \\\\sin(x)$ is correctly derived. The initial conditions $f(0) = 1$ and $f'(0) = 0$ are applied correctly to determine $c_1 = 1$ and $c_2 = 0$, leading to the specific solution $f(x) = \\\\cos(x)$. The solution is verified against the original conditions, confirming its correctness.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the differential equation as a second-order linear homogeneous equation with constant coefficients and solves the characteristic equation to find the roots $r = \\\\pm i$. The general solution $f(x) = c_1 \\\\cos(x) + c_2 \\\\sin(x)$ is correctly derived. The initial conditions $f(0) = 1$ and $f'(0) = 0$ are applied correctly to determine $c_1 = 1$ and $c_2 = 0$, leading to the specific solution $f(x) = \\\\cos(x)$. The solution is verified against the original conditions, confirming its correctness.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the differential equation as a second-order linear homogeneous equation with constant coefficients and solves the characteristic equation to find the roots $r = \\pm i$. The general solution $f(x) = c_1 \\cos(x) + c_2 \\sin(x)$ is correctly derived. The initial conditions $f(0) = 1$ and $f'(0) = 0$ are applied correctly to determine $c_1 = 1$ and $c_2 = 0$, leading to the specific solution $f(x) = \\cos(x)$. The solution is verified against the original conditions, confirming its correctness.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: [0, 1] \\to \\mathbb{R}$ be a measurable function such that for every $x \\in [0, 1]$, the function $f$ satisfies the integral equation\n\n$$\n\\int_0^1 f(t) \\, dt = x^2 + \\int_0^x f(t) \\, dt.\n$$\n\nDetermine all such functions $f$ that satisfy this equation for all $x \\in [0, 1]$.",
+    "run_id": "17",
+    "topic_slug": "measure_and_integration",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that the equation $\\\\int_x^1 f(t) \\\\, dt = x^2$ leads to a contradiction when $x = 1$, as it implies $0 = 1$. This contradiction shows that no such function $f$ can satisfy the given integral equation for all $x \\\\in [0, 1]$. The steps are logically valid, and the conclusion is sound.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that the equation $\\\\int_x^1 f(t) \\\\, dt = x^2$ leads to a contradiction when $x = 1$, as it implies $0 = 1$. This contradiction shows that no such function $f$ can satisfy the given integral equation for all $x \\\\in [0, 1]$. The steps are logically valid, and the conclusion is sound.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies that the equation $\\int_x^1 f(t) \\, dt = x^2$ leads to a contradiction when $x = 1$, as it implies $0 = 1$. This contradiction shows that no such function $f$ can satisfy the given integral equation for all $x \\in [0, 1]$. The steps are logically valid, and the conclusion is sound.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{C} \\to \\mathbb{C}$ be an entire function such that for all $z \\in \\mathbb{C}$, the inequality $|f(z)| \\leq |z|^2 + 1$ holds. Prove that $f(z)$ is a polynomial of degree at most 2. Furthermore, determine all such functions $f$.",
+    "run_id": "18",
+    "topic_slug": "functions_of_a_complex_variable",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies Liouville's theorem and the properties of entire functions to show that $f(z)$ must be a polynomial of degree at most 2. The steps are logically valid: \\n1. The use of Cauchy's estimates to bound the derivatives of $f(z)$ is appropriate. \\n2. The conclusion that $f^{(n)}(0) = 0$ for $n \\\\geq 3$ follows from the limit argument as $R \\\\to \\\\infty$. \\n3. The final form $f(z) = a_0 + a_1z + a_2z^2$ is consistent with the constraints derived from the inequality $|f(z)| \\\\leq |z|^2 + 1$. \\n4. The constraints on $a_0$, $a_1$, and $a_2$ are correctly deduced, with $|a_2| \\\\leq 1$ and $|a_0| \\\\leq 1$. The argument for $|a_1|$ is valid, showing it is bounded. \\nOverall, the answer is mathematically sound, complete, and adequately rigorous.\",\n  \"suggestions\": \"N/A\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies Liouville's theorem and the properties of entire functions to show that $f(z)$ must be a polynomial of degree at most 2. The steps are logically valid: \\n1. The use of Cauchy's estimates to bound the derivatives of $f(z)$ is appropriate. \\n2. The conclusion that $f^{(n)}(0) = 0$ for $n \\\\geq 3$ follows from the limit argument as $R \\\\to \\\\infty$. \\n3. The final form $f(z) = a_0 + a_1z + a_2z^2$ is consistent with the constraints derived from the inequality $|f(z)| \\\\leq |z|^2 + 1$. \\n4. The constraints on $a_0$, $a_1$, and $a_2$ are correctly deduced, with $|a_2| \\\\leq 1$ and $|a_0| \\\\leq 1$. The argument for $|a_1|$ is valid, showing it is bounded. \\nOverall, the answer is mathematically sound, complete, and adequately rigorous.\",\n  \"suggestions\": \"N/A\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies Liouville's theorem and the properties of entire functions to show that $f(z)$ must be a polynomial of degree at most 2. The steps are logically valid: \n1. The use of Cauchy's estimates to bound the derivatives of $f(z)$ is appropriate. \n2. The conclusion that $f^{(n)}(0) = 0$ for $n \\geq 3$ follows from the limit argument as $R \\to \\infty$. \n3. The final form $f(z) = a_0 + a_1z + a_2z^2$ is consistent with the constraints derived from the inequality $|f(z)| \\leq |z|^2 + 1$. \n4. The constraints on $a_0$, $a_1$, and $a_2$ are correctly deduced, with $|a_2| \\leq 1$ and $|a_0| \\leq 1$. The argument for $|a_1|$ is valid, showing it is bounded. \nOverall, the answer is mathematically sound, complete, and adequately rigorous.",
+        "suggestions": "N/A",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a bounded domain $\\Omega \\subset \\mathbb{R}^2$ with a smooth boundary $\\partial \\Omega$. Let $u: \\overline{\\Omega} \\to \\mathbb{R}$ be a harmonic function, i.e., $\\Delta u = 0$ in $\\Omega$, where $\\Delta$ denotes the Laplacian operator. Suppose $u$ satisfies the boundary condition $u = g$ on $\\partial \\Omega$, where $g: \\partial \\Omega \\to \\mathbb{R}$ is a continuous function.\n\nDefine the Green's function $G(x, y)$ for the domain $\\Omega$ with Dirichlet boundary conditions, which satisfies:\n- $\\Delta_y G(x, y) = \\delta(x - y)$ for $x, y \\in \\Omega$,\n- $G(x, y) = 0$ for $y \\in \\partial \\Omega$,\n- $G(x, y)$ is symmetric, i.e., $G(x, y) = G(y, x)$.\n\nProve that the solution $u(x)$ can be expressed as:\n$$\nu(x) = \\int_{\\partial \\Omega} \\left( g(y) \\frac{\\partial G(x, y)}{\\partial n_y} - G(x, y) \\frac{\\partial g(y)}{\\partial n_y} \\right) \\, ds_y\n$$\nwhere $\\frac{\\partial}{\\partial n_y}$ denotes the outward normal derivative on $\\partial \\Omega$, and $ds_y$ is the arc length measure on $\\partial \\Omega$.",
+    "run_id": "19",
+    "topic_slug": "potential_theory",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies Green's second identity to derive the expression for the harmonic function $u(x)$ in terms of the Green's function $G(x, y)$. The steps are logically valid, and the boundary conditions are appropriately used to simplify the expression. The symmetry of $G(x, y)$ and the boundary condition $G(x, y) = 0$ for $y \\\\in \\\\partial \\\\Omega$ are correctly applied to show that the term $G(x, y) \\\\frac{\\\\partial g(y)}{\\\\partial n_y}$ vanishes on the boundary, leading to the correct final expression. The answer is complete and rigorous, addressing all parts of the problem.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies Green's second identity to derive the expression for the harmonic function $u(x)$ in terms of the Green's function $G(x, y)$. The steps are logically valid, and the boundary conditions are appropriately used to simplify the expression. The symmetry of $G(x, y)$ and the boundary condition $G(x, y) = 0$ for $y \\\\in \\\\partial \\\\Omega$ are correctly applied to show that the term $G(x, y) \\\\frac{\\\\partial g(y)}{\\\\partial n_y}$ vanishes on the boundary, leading to the correct final expression. The answer is complete and rigorous, addressing all parts of the problem.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies Green's second identity to derive the expression for the harmonic function $u(x)$ in terms of the Green's function $G(x, y)$. The steps are logically valid, and the boundary conditions are appropriately used to simplify the expression. The symmetry of $G(x, y)$ and the boundary condition $G(x, y) = 0$ for $y \\in \\partial \\Omega$ are correctly applied to show that the term $G(x, y) \\frac{\\partial g(y)}{\\partial n_y}$ vanishes on the boundary, leading to the correct final expression. The answer is complete and rigorous, addressing all parts of the problem.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the special function known as the Gamma function, $\\Gamma(z)$, which is defined for complex numbers $z$ with $\\Re(z) > 0$ by the integral\n\n$$\n\\Gamma(z) = \\int_0^\\infty t^{z-1} e^{-t} \\, dt.\n$$\n\nThe Gamma function satisfies the functional equation $\\Gamma(z+1) = z\\Gamma(z)$ and is related to the factorial function by $\\Gamma(n) = (n-1)!$ for positive integers $n$.\n\nLet $f(z)$ be a meromorphic function on the complex plane defined by\n\n$$\nf(z) = \\frac{\\Gamma(z)}{\\Gamma(z+1/2)}.\n$$\n\n1. Determine the poles of $f(z)$ and their orders.\n2. Evaluate the limit $\\lim_{z \\to \\infty} f(z)$.\n3. Prove or disprove: There exists a constant $C$ such that for all $z$ with $\\Re(z) > 0$, the inequality $|f(z)| \\leq C$ holds.",
+    "run_id": "21",
+    "topic_slug": "special_functions",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the poles of $f(z)$ as simple poles at $z = 0, -1, -2, \\\\ldots$ and correctly evaluates the limit $\\\\lim_{z \\\\to \\\\infty} f(z) = 0$ using Stirling's approximation. The argument that $|f(z)|$ is not bounded for all $z$ with $\\\\Re(z) > 0$ is also correct, as $f(z)$ becomes unbounded near $z = 0$. The reasoning is mathematically sound, complete, and adequately rigorous.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the poles of $f(z)$ as simple poles at $z = 0, -1, -2, \\\\ldots$ and correctly evaluates the limit $\\\\lim_{z \\\\to \\\\infty} f(z) = 0$ using Stirling's approximation. The argument that $|f(z)|$ is not bounded for all $z$ with $\\\\Re(z) > 0$ is also correct, as $f(z)$ becomes unbounded near $z = 0$. The reasoning is mathematically sound, complete, and adequately rigorous.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the poles of $f(z)$ as simple poles at $z = 0, -1, -2, \\ldots$ and correctly evaluates the limit $\\lim_{z \\to \\infty} f(z) = 0$ using Stirling's approximation. The argument that $|f(z)|$ is not bounded for all $z$ with $\\Re(z) > 0$ is also correct, as $f(z)$ becomes unbounded near $z = 0$. The reasoning is mathematically sound, complete, and adequately rigorous.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the second-order linear ordinary differential equation (ODE) given by:\n\n$$\ny'' + p(x)y' + q(x)y = 0\n$$\n\nwhere $p(x) = \\frac{2}{x}$ and $q(x) = \\frac{2}{x^2}$ for $x > 0$. \n\n1. Find the general solution to this differential equation.\n2. Determine the particular solution that satisfies the initial conditions $y(1) = 1$ and $y'(1) = 0$.",
+    "run_id": "22",
+    "topic_slug": "ordinary_differential_equations",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the type of differential equation and applies the method of solving a second-order linear ODE with variable coefficients by assuming a solution of the form $y = x^m$. The characteristic equation is derived correctly, and the complex roots are found using the quadratic formula. The general solution is expressed correctly using the form for complex roots. The initial conditions are applied correctly to find the particular solution, and the constants $C_1$ and $C_2$ are determined accurately. All steps are logically valid and mathematically sound.\",\n  \"suggestions\": \"N/A\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the type of differential equation and applies the method of solving a second-order linear ODE with variable coefficients by assuming a solution of the form $y = x^m$. The characteristic equation is derived correctly, and the complex roots are found using the quadratic formula. The general solution is expressed correctly using the form for complex roots. The initial conditions are applied correctly to find the particular solution, and the constants $C_1$ and $C_2$ are determined accurately. All steps are logically valid and mathematically sound.\",\n  \"suggestions\": \"N/A\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the type of differential equation and applies the method of solving a second-order linear ODE with variable coefficients by assuming a solution of the form $y = x^m$. The characteristic equation is derived correctly, and the complex roots are found using the quadratic formula. The general solution is expressed correctly using the form for complex roots. The initial conditions are applied correctly to find the particular solution, and the constants $C_1$ and $C_2$ are determined accurately. All steps are logically valid and mathematically sound.",
+        "suggestions": "N/A",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the partial differential equation (PDE) given by:\n\n$$\n\\frac{\\partial u}{\\partial t} = \\Delta u + f(u)\n$$\n\nwhere $u = u(x, t)$ is a function defined on $\\mathbb{R}^n \\times [0, \\infty)$, $\\Delta$ is the Laplacian operator in $\\mathbb{R}^n$, and $f: \\mathbb{R} \\to \\mathbb{R}$ is a smooth function satisfying $f(0) = 0$ and $f'(0) > 0$.\n\nAssume $u(x, 0) = g(x)$ for some smooth function $g: \\mathbb{R}^n \\to \\mathbb{R}$ with compact support. Prove that there exists a unique global solution $u(x, t)$ to this PDE that remains smooth for all $t \\geq 0$.\n\nAdditionally, determine the conditions under which the solution $u(x, t)$ approaches zero as $t \\to \\infty$.",
+    "run_id": "23",
+    "topic_slug": "partial_differential_equations",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer provides a general outline for proving existence, uniqueness, and asymptotic behavior of solutions to the PDE, but it lacks detailed mathematical rigor and specific steps necessary for a complete proof. Key issues include: \\n\\n1. **Existence and Uniqueness**: The answer mentions using the contraction mapping principle or semigroup theory but does not provide the necessary details or conditions under which these methods apply. It lacks a rigorous argument or specific function spaces where the solution exists and is unique.\\n\\n2. **A Priori Estimates**: The answer suggests deriving a priori estimates but does not provide explicit calculations or inequalities that demonstrate how these estimates ensure global existence. The argument about boundedness is not fully developed.\\n\\n3. **Asymptotic Behavior**: The analysis of the condition for $u(x, t)$ to approach zero as $t \\\\to \\\\infty$ is incomplete. The answer mentions the need for small initial data but does not provide a precise condition or a detailed argument showing how the diffusive term dominates the nonlinear term for large $t$.\\n\\n4. **Linearization and Fourier Analysis**: The use of Fourier transforms is mentioned, but the argument is not fully fleshed out. The condition $-|\\\\xi|^2 + f'(0) < 0$ is not properly addressed, and the role of nonlinear effects is not rigorously analyzed.\\n\\nOverall, the answer is on the right track but stops short of providing a complete and rigorous proof.\",\n  \"suggestions\": \"To improve the answer, the following steps should be included:\\n\\n1. **Existence and Uniqueness**: Provide a detailed argument using the contraction mapping principle or semigroup theory, specifying the function spaces involved and verifying the necessary conditions for these methods.\\n\\n2. **A Priori Estimates**: Derive explicit a priori estimates, such as energy estimates or $L^p$ bounds, to show that the solution remains bounded for all $t \\\\geq 0$. Include the necessary inequalities and justify each step.\\n\\n3. **Asymptotic Behavior**: Develop a more detailed analysis of the asymptotic behavior, including precise conditions on the initial data $g(x)$ and the function $f(u)$ that ensure $u(x, t) \\\\to 0$ as $t \\\\to \\\\infty$. Consider both linear and nonlinear effects in the analysis.\\n\\n4. **Linearization and Fourier Analysis**: Complete the Fourier analysis argument, addressing the condition $-|\\\\xi|^2 + f'(0) < 0$ and explaining how the nonlinear term affects the solution's decay. Provide a rigorous justification for the dominance of the diffusive term.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer provides a general outline for proving existence, uniqueness, and asymptotic behavior of solutions to the PDE, but it lacks detailed mathematical rigor and specific steps necessary for a complete proof. Key issues include: \\n\\n1. **Existence and Uniqueness**: The answer mentions using the contraction mapping principle or semigroup theory but does not provide the necessary details or conditions under which these methods apply. It lacks a rigorous argument or specific function spaces where the solution exists and is unique.\\n\\n2. **A Priori Estimates**: The answer suggests deriving a priori estimates but does not provide explicit calculations or inequalities that demonstrate how these estimates ensure global existence. The argument about boundedness is not fully developed.\\n\\n3. **Asymptotic Behavior**: The analysis of the condition for $u(x, t)$ to approach zero as $t \\\\to \\\\infty$ is incomplete. The answer mentions the need for small initial data but does not provide a precise condition or a detailed argument showing how the diffusive term dominates the nonlinear term for large $t$.\\n\\n4. **Linearization and Fourier Analysis**: The use of Fourier transforms is mentioned, but the argument is not fully fleshed out. The condition $-|\\\\xi|^2 + f'(0) < 0$ is not properly addressed, and the role of nonlinear effects is not rigorously analyzed.\\n\\nOverall, the answer is on the right track but stops short of providing a complete and rigorous proof.\",\n  \"suggestions\": \"To improve the answer, the following steps should be included:\\n\\n1. **Existence and Uniqueness**: Provide a detailed argument using the contraction mapping principle or semigroup theory, specifying the function spaces involved and verifying the necessary conditions for these methods.\\n\\n2. **A Priori Estimates**: Derive explicit a priori estimates, such as energy estimates or $L^p$ bounds, to show that the solution remains bounded for all $t \\\\geq 0$. Include the necessary inequalities and justify each step.\\n\\n3. **Asymptotic Behavior**: Develop a more detailed analysis of the asymptotic behavior, including precise conditions on the initial data $g(x)$ and the function $f(u)$ that ensure $u(x, t) \\\\to 0$ as $t \\\\to \\\\infty$. Consider both linear and nonlinear effects in the analysis.\\n\\n4. **Linearization and Fourier Analysis**: Complete the Fourier analysis argument, addressing the condition $-|\\\\xi|^2 + f'(0) < 0$ and explaining how the nonlinear term affects the solution's decay. Provide a rigorous justification for the dominance of the diffusive term.\"\n}\n```",
+        "verdict": "insufficient",
+        "notes": "The answer provides a general outline for proving existence, uniqueness, and asymptotic behavior of solutions to the PDE, but it lacks detailed mathematical rigor and specific steps necessary for a complete proof. Key issues include: \n\n1. **Existence and Uniqueness**: The answer mentions using the contraction mapping principle or semigroup theory but does not provide the necessary details or conditions under which these methods apply. It lacks a rigorous argument or specific function spaces where the solution exists and is unique.\n\n2. **A Priori Estimates**: The answer suggests deriving a priori estimates but does not provide explicit calculations or inequalities that demonstrate how these estimates ensure global existence. The argument about boundedness is not fully developed.\n\n3. **Asymptotic Behavior**: The analysis of the condition for $u(x, t)$ to approach zero as $t \\to \\infty$ is incomplete. The answer mentions the need for small initial data but does not provide a precise condition or a detailed argument showing how the diffusive term dominates the nonlinear term for large $t$.\n\n4. **Linearization and Fourier Analysis**: The use of Fourier transforms is mentioned, but the argument is not fully fleshed out. The condition $-|\\xi|^2 + f'(0) < 0$ is not properly addressed, and the role of nonlinear effects is not rigorously analyzed.\n\nOverall, the answer is on the right track but stops short of providing a complete and rigorous proof.",
+        "suggestions": "To improve the answer, the following steps should be included:\n\n1. **Existence and Uniqueness**: Provide a detailed argument using the contraction mapping principle or semigroup theory, specifying the function spaces involved and verifying the necessary conditions for these methods.\n\n2. **A Priori Estimates**: Derive explicit a priori estimates, such as energy estimates or $L^p$ bounds, to show that the solution remains bounded for all $t \\geq 0$. Include the necessary inequalities and justify each step.\n\n3. **Asymptotic Behavior**: Develop a more detailed analysis of the asymptotic behavior, including precise conditions on the initial data $g(x)$ and the function $f(u)$ that ensure $u(x, t) \\to 0$ as $t \\to \\infty$. Consider both linear and nonlinear effects in the analysis.\n\n4. **Linearization and Fourier Analysis**: Complete the Fourier analysis argument, addressing the condition $-|\\xi|^2 + f'(0) < 0$ and explaining how the nonlinear term affects the solution's decay. Provide a rigorous justification for the dominance of the diffusive term.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique effectively identifies the main issues with the answer, such as the lack of detailed mathematical rigor, insufficient a priori estimates, incomplete asymptotic behavior analysis, and underdeveloped linearization and Fourier analysis. It provides clear suggestions for improvement, including specifying function spaces, deriving explicit estimates, and developing a more detailed asymptotic analysis. The critique is well-structured, objective, and aligns with the rubric's requirements."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a dynamical system defined on the unit interval $[0, 1]$ by the transformation $T: [0, 1] \\to [0, 1]$ given by\n\n$$\nT(x) = \n\\begin{cases} \n2x, & \\text{if } 0 \\leq x < \\frac{1}{2}, \\\\\n2x - 1, & \\text{if } \\frac{1}{2} \\leq x \\leq 1.\n\\end{cases}\n$$\n\nThis transformation is known as the tent map. Let $\\mu$ be the Lebesgue measure on $[0, 1]$.\n\n1. Prove that $T$ is ergodic with respect to $\\mu$.\n2. Determine the Lyapunov exponent of $T$ with respect to $\\mu$.",
+    "run_id": "24",
+    "topic_slug": "dynamical_systems_and_ergodic_theory",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer provided is simply '$\\\\boxed{2}$' without any explanation or justification. It does not address the two parts of the question: proving that $T$ is ergodic with respect to $\\\\mu$ and determining the Lyapunov exponent of $T$ with respect to $\\\\mu$. The answer lacks any mathematical reasoning, steps, or verification of the conditions required for ergodicity and the calculation of the Lyapunov exponent.\",\n  \"suggestions\": \"To correct the answer, provide a detailed proof of ergodicity for the tent map $T$ with respect to the Lebesgue measure $\\\\mu$. This involves showing that $T$ is measure-preserving and that any $T$-invariant set has measure 0 or 1. Additionally, calculate the Lyapunov exponent by considering the derivative of $T$ and integrating the logarithm of the absolute value of the derivative with respect to $\\\\mu$. Ensure all steps are clearly explained and justified.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer provided is simply '$\\\\boxed{2}$' without any explanation or justification. It does not address the two parts of the question: proving that $T$ is ergodic with respect to $\\\\mu$ and determining the Lyapunov exponent of $T$ with respect to $\\\\mu$. The answer lacks any mathematical reasoning, steps, or verification of the conditions required for ergodicity and the calculation of the Lyapunov exponent.\",\n  \"suggestions\": \"To correct the answer, provide a detailed proof of ergodicity for the tent map $T$ with respect to the Lebesgue measure $\\\\mu$. This involves showing that $T$ is measure-preserving and that any $T$-invariant set has measure 0 or 1. Additionally, calculate the Lyapunov exponent by considering the derivative of $T$ and integrating the logarithm of the absolute value of the derivative with respect to $\\\\mu$. Ensure all steps are clearly explained and justified.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer provided is simply '$\\boxed{2}$' without any explanation or justification. It does not address the two parts of the question: proving that $T$ is ergodic with respect to $\\mu$ and determining the Lyapunov exponent of $T$ with respect to $\\mu$. The answer lacks any mathematical reasoning, steps, or verification of the conditions required for ergodicity and the calculation of the Lyapunov exponent.",
+        "suggestions": "To correct the answer, provide a detailed proof of ergodicity for the tent map $T$ with respect to the Lebesgue measure $\\mu$. This involves showing that $T$ is measure-preserving and that any $T$-invariant set has measure 0 or 1. Additionally, calculate the Lyapunov exponent by considering the derivative of $T$ and integrating the logarithm of the absolute value of the derivative with respect to $\\mu$. Ensure all steps are clearly explained and justified.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately identifies the issues with the original response. It points out the lack of explanation and justification for the answer '$\\boxed{2}$', noting that the response does not address the two parts of the question: proving ergodicity and determining the Lyapunov exponent. The critique also correctly suggests providing a detailed proof of ergodicity and calculating the Lyapunov exponent with proper mathematical reasoning. The critique is well-structured, clear, and follows the required format."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a function satisfying the functional equation\n\n$$\nf(x+y) + f(x-y) = 2f(x)f(y)\n$$\n\nfor all $x, y \\in \\mathbb{R}$. Additionally, assume that $f(0) = 1$. Determine all possible functions $f$.",
+    "run_id": "25",
+    "topic_slug": "difference_and_functional_equations",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The final answer is given as '$\\\\boxed{2}$ and $\\\\boxed{3}$', which are numbers, not functions. The problem asks for all possible functions $f: \\\\mathbb{R} \\\\to \\\\mathbb{R}$ satisfying the functional equation. The answer does not address the functional equation or provide any functions that satisfy it. Additionally, the repeated and nonsensical listing of variables and numbers in the steps does not contribute to solving the problem.\",\n  \"suggestions\": \"To correctly solve the problem, one should analyze the functional equation $f(x+y) + f(x-y) = 2f(x)f(y)$ and use the given condition $f(0) = 1$ to derive possible forms of $f(x)$. Common approaches include checking for constant solutions, linear solutions, or other functional forms that satisfy the equation. The solution should verify that the proposed functions indeed satisfy the given functional equation for all $x, y \\\\in \\\\mathbb{R}$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The final answer is given as '$\\\\boxed{2}$ and $\\\\boxed{3}$', which are numbers, not functions. The problem asks for all possible functions $f: \\\\mathbb{R} \\\\to \\\\mathbb{R}$ satisfying the functional equation. The answer does not address the functional equation or provide any functions that satisfy it. Additionally, the repeated and nonsensical listing of variables and numbers in the steps does not contribute to solving the problem.\",\n  \"suggestions\": \"To correctly solve the problem, one should analyze the functional equation $f(x+y) + f(x-y) = 2f(x)f(y)$ and use the given condition $f(0) = 1$ to derive possible forms of $f(x)$. Common approaches include checking for constant solutions, linear solutions, or other functional forms that satisfy the equation. The solution should verify that the proposed functions indeed satisfy the given functional equation for all $x, y \\\\in \\\\mathbb{R}$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The final answer is given as '$\\boxed{2}$ and $\\boxed{3}$', which are numbers, not functions. The problem asks for all possible functions $f: \\mathbb{R} \\to \\mathbb{R}$ satisfying the functional equation. The answer does not address the functional equation or provide any functions that satisfy it. Additionally, the repeated and nonsensical listing of variables and numbers in the steps does not contribute to solving the problem.",
+        "suggestions": "To correctly solve the problem, one should analyze the functional equation $f(x+y) + f(x-y) = 2f(x)f(y)$ and use the given condition $f(0) = 1$ to derive possible forms of $f(x)$. Common approaches include checking for constant solutions, linear solutions, or other functional forms that satisfy the equation. The solution should verify that the proposed functions indeed satisfy the given functional equation for all $x, y \\in \\mathbb{R}$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the sequence $(a_n)_{n=1}^{\\infty}$ defined by the recurrence relation:\n\n$$\na_1 = 1, \\quad a_2 = 2, \\quad \\text{and} \\quad a_{n+2} = a_{n+1} + a_n + n \\quad \\text{for } n \\geq 1.\n$$\n\nDefine the series $S = \\sum_{n=1}^{\\infty} \\frac{a_n}{2^n}$.\n\nDetermine whether the series $S$ converges, and if so, find its exact value.",
+    "run_id": "26",
+    "topic_slug": "sequences_series_and_summability",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the recurrence relation and uses it to express the series $S$ in terms of itself. The steps to simplify the series using the recurrence relation are logically valid, and the known series sum $\\\\sum_{n=1}^{\\\\infty} \\\\frac{n}{2^n} = 2$ is correctly applied. The algebraic manipulation to solve for $S$ is accurate, leading to the correct conclusion that $S = 5$. The answer is complete and rigorous, addressing all necessary components of the problem.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the recurrence relation and uses it to express the series $S$ in terms of itself. The steps to simplify the series using the recurrence relation are logically valid, and the known series sum $\\\\sum_{n=1}^{\\\\infty} \\\\frac{n}{2^n} = 2$ is correctly applied. The algebraic manipulation to solve for $S$ is accurate, leading to the correct conclusion that $S = 5$. The answer is complete and rigorous, addressing all necessary components of the problem.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the recurrence relation and uses it to express the series $S$ in terms of itself. The steps to simplify the series using the recurrence relation are logically valid, and the known series sum $\\sum_{n=1}^{\\infty} \\frac{n}{2^n} = 2$ is correctly applied. The algebraic manipulation to solve for $S$ is accurate, leading to the correct conclusion that $S = 5$. The answer is complete and rigorous, addressing all necessary components of the problem.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the function $f(x) = e^{-x^2}$ defined for all $x \\in \\mathbb{R}$. We are interested in approximating $f(x)$ using a Taylor series expansion around $x = 0$.\n\n1. Determine the Taylor series expansion of $f(x)$ up to and including the term of degree 6.\n2. Using this expansion, approximate the value of the integral $I = \\int_{-\\infty}^{\\infty} e^{-x^2} \\, dx$ by integrating the Taylor series term-by-term from $-\\infty$ to $\\infty$.\n3. Compare your approximation to the known exact value of the integral $I = \\sqrt{\\pi}$ and discuss the accuracy of the approximation.",
+    "run_id": "27",
+    "topic_slug": "approximations_and_expansions",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly attempts to approximate the integral $I = \\\\int_{-\\\\infty}^{\\\\infty} e^{-x^2} \\\\, dx$ by integrating the Taylor series term-by-term from $-\\\\infty$ to $\\\\infty$. This approach is invalid because the Taylor series for $e^{-x^2}$ does not converge to $e^{-x^2}$ for all $x \\\\in \\\\mathbb{R}$, especially as $x$ becomes large. The series diverges when integrated term-by-term over an infinite interval. The correct approach is to use numerical integration over a large finite interval, as mentioned in Step 3, but the answer does not provide a detailed numerical integration process or justification for the choice of $L = 5$. Additionally, the final approximation step lacks clarity and rigor in explaining how the numerical value was obtained.\",\n  \"suggestions\": \"To correct the answer, avoid integrating the Taylor series term-by-term over an infinite interval. Instead, use numerical integration over a large finite interval, such as $[-5, 5]$, and provide a detailed explanation of the numerical method used (e.g., Simpson's rule, trapezoidal rule) to approximate the integral. Ensure that the choice of interval and method are justified and that the numerical approximation is clearly explained.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly attempts to approximate the integral $I = \\\\int_{-\\\\infty}^{\\\\infty} e^{-x^2} \\\\, dx$ by integrating the Taylor series term-by-term from $-\\\\infty$ to $\\\\infty$. This approach is invalid because the Taylor series for $e^{-x^2}$ does not converge to $e^{-x^2}$ for all $x \\\\in \\\\mathbb{R}$, especially as $x$ becomes large. The series diverges when integrated term-by-term over an infinite interval. The correct approach is to use numerical integration over a large finite interval, as mentioned in Step 3, but the answer does not provide a detailed numerical integration process or justification for the choice of $L = 5$. Additionally, the final approximation step lacks clarity and rigor in explaining how the numerical value was obtained.\",\n  \"suggestions\": \"To correct the answer, avoid integrating the Taylor series term-by-term over an infinite interval. Instead, use numerical integration over a large finite interval, such as $[-5, 5]$, and provide a detailed explanation of the numerical method used (e.g., Simpson's rule, trapezoidal rule) to approximate the integral. Ensure that the choice of interval and method are justified and that the numerical approximation is clearly explained.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly attempts to approximate the integral $I = \\int_{-\\infty}^{\\infty} e^{-x^2} \\, dx$ by integrating the Taylor series term-by-term from $-\\infty$ to $\\infty$. This approach is invalid because the Taylor series for $e^{-x^2}$ does not converge to $e^{-x^2}$ for all $x \\in \\mathbb{R}$, especially as $x$ becomes large. The series diverges when integrated term-by-term over an infinite interval. The correct approach is to use numerical integration over a large finite interval, as mentioned in Step 3, but the answer does not provide a detailed numerical integration process or justification for the choice of $L = 5$. Additionally, the final approximation step lacks clarity and rigor in explaining how the numerical value was obtained.",
+        "suggestions": "To correct the answer, avoid integrating the Taylor series term-by-term over an infinite interval. Instead, use numerical integration over a large finite interval, such as $[-5, 5]$, and provide a detailed explanation of the numerical method used (e.g., Simpson's rule, trapezoidal rule) to approximate the integral. Ensure that the choice of interval and method are justified and that the numerical approximation is clearly explained.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a locally compact abelian group, and let $\\hat{G}$ denote its dual group. Consider the Haar measure $\\mu$ on $G$ and the normalized Haar measure $\\nu$ on $\\hat{G}$. Define the Fourier transform $\\mathcal{F}: L^1(G, \\mu) \\to C_0(\\hat{G}, \\nu)$ by\n\n$$\n\\mathcal{F}(f)(\\chi) = \\int_G f(x) \\overline{\\chi(x)} \\, d\\mu(x)\n$$\n\nfor $f \\in L^1(G, \\mu)$ and $\\chi \\in \\hat{G}$.\n\nProve that the Fourier transform $\\mathcal{F}$ is an isometry from $L^1(G, \\mu)$ onto $C_0(\\hat{G}, \\nu)$ when equipped with the $L^1$-norm on $G$ and the supremum norm on $\\hat{G}$. Specifically, show that for any $f \\in L^1(G, \\mu)$,\n\n$$\n\\|\\mathcal{F}(f)\\|_\\infty = \\|f\\|_1\n$$\n\nwhere $\\|f\\|_1 = \\int_G |f(x)| \\, d\\mu(x)$ and $\\|\\mathcal{F}(f)\\|_\\infty = \\sup_{\\chi \\in \\hat{G}} |\\mathcal{F}(f)(\\chi)|$.",
+    "run_id": "29",
+    "topic_slug": "abstract_harmonic_analysis",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly claims that the Fourier transform is an isometry from $L^1(G, \\\\mu)$ onto $C_0(\\\\hat{G}, \\\\nu)$, asserting that $\\\\|\\\\mathcal{F}(f)\\\\|_\\\\infty = \\\\|f\\\\|_1$ for all $f \\\\in L^1(G, \\\\mu)$. This is a fundamental misunderstanding of the properties of the Fourier transform. The correct property is that $\\\\|\\\\mathcal{F}(f)\\\\|_\\\\infty \\\\leq \\\\|f\\\\|_1$, indicating that the Fourier transform is a contraction, not an isometry. The answer correctly identifies the inequality but fails to recognize that the statement to be proven is false.\",\n  \"suggestions\": \"Clarify that the Fourier transform is not an isometry from $L^1(G, \\\\mu)$ to $C_0(\\\\hat{G}, \\\\nu)$, and instead, it is a contraction. Emphasize the correct inequality $\\\\|\\\\mathcal{F}(f)\\\\|_\\\\infty \\\\leq \\\\|f\\\\|_1$ and explain why the equality does not hold in general.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly claims that the Fourier transform is an isometry from $L^1(G, \\\\mu)$ onto $C_0(\\\\hat{G}, \\\\nu)$, asserting that $\\\\|\\\\mathcal{F}(f)\\\\|_\\\\infty = \\\\|f\\\\|_1$ for all $f \\\\in L^1(G, \\\\mu)$. This is a fundamental misunderstanding of the properties of the Fourier transform. The correct property is that $\\\\|\\\\mathcal{F}(f)\\\\|_\\\\infty \\\\leq \\\\|f\\\\|_1$, indicating that the Fourier transform is a contraction, not an isometry. The answer correctly identifies the inequality but fails to recognize that the statement to be proven is false.\",\n  \"suggestions\": \"Clarify that the Fourier transform is not an isometry from $L^1(G, \\\\mu)$ to $C_0(\\\\hat{G}, \\\\nu)$, and instead, it is a contraction. Emphasize the correct inequality $\\\\|\\\\mathcal{F}(f)\\\\|_\\\\infty \\\\leq \\\\|f\\\\|_1$ and explain why the equality does not hold in general.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly claims that the Fourier transform is an isometry from $L^1(G, \\mu)$ onto $C_0(\\hat{G}, \\nu)$, asserting that $\\|\\mathcal{F}(f)\\|_\\infty = \\|f\\|_1$ for all $f \\in L^1(G, \\mu)$. This is a fundamental misunderstanding of the properties of the Fourier transform. The correct property is that $\\|\\mathcal{F}(f)\\|_\\infty \\leq \\|f\\|_1$, indicating that the Fourier transform is a contraction, not an isometry. The answer correctly identifies the inequality but fails to recognize that the statement to be proven is false.",
+        "suggestions": "Clarify that the Fourier transform is not an isometry from $L^1(G, \\mu)$ to $C_0(\\hat{G}, \\nu)$, and instead, it is a contraction. Emphasize the correct inequality $\\|\\mathcal{F}(f)\\|_\\infty \\leq \\|f\\|_1$ and explain why the equality does not hold in general.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately identifies the main error in the answer, which is the incorrect claim that the Fourier transform is an isometry from $L^1(G, \\mu)$ to $C_0(\\hat{G}, \\nu)$. The critique correctly points out that the Fourier transform is a contraction, not an isometry, and emphasizes the correct inequality $\\|\\mathcal{F}(f)\\|_\\infty \\leq \\|f\\|_1$. The critique is well-structured, providing a clear explanation of the error and suggesting the correct interpretation. No improvements are necessary as the critique is thorough and precise."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the function $f(t) = e^{-t^2}$ for $t \\in \\mathbb{R}$. Define the Laplace transform of $f$ as $\\mathcal{L}\\{f\\}(s) = \\int_0^\\infty e^{-st} f(t) \\, dt$ for $s \\in \\mathbb{C}$ with $\\Re(s) > 0$.\n\n1. Show that the Laplace transform $\\mathcal{L}\\{f\\}(s)$ can be expressed in terms of the error function $\\operatorname{erf}(z)$, defined by\n   $$\n   \\operatorname{erf}(z) = \\frac{2}{\\sqrt{\\pi}} \\int_0^z e^{-u^2} \\, du.\n   $$\n\n2. Using the expression from part 1, evaluate $\\mathcal{L}\\{f\\}(s)$ explicitly for $s = 1$.",
+    "run_id": "30",
+    "topic_slug": "integral_transforms_and_operational_calculus",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the Laplace transform of the function $f(t) = e^{-t^2}$ in terms of the error function. The steps include completing the square, changing variables, and relating the integral to the error function. The final expression for $\\\\mathcal{L}\\\\{f\\\\}(s)$ is correctly given as $e^{\\\\frac{s^2}{4}} \\\\frac{\\\\sqrt{\\\\pi}}{2} (1 - \\\\operatorname{erf}(\\\\frac{s}{2}))$. The evaluation for $s = 1$ is also correctly performed, with the final expression $e^{\\\\frac{1}{4}} \\\\frac{\\\\sqrt{\\\\pi}}{2} (1 - \\\\operatorname{erf}(\\\\frac{1}{2}))$ being accurate. The numerical approximation for $\\\\operatorname{erf}(\\\\frac{1}{2})$ is correctly used, and the final numerical result is consistent with the derived expression.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the Laplace transform of the function $f(t) = e^{-t^2}$ in terms of the error function. The steps include completing the square, changing variables, and relating the integral to the error function. The final expression for $\\\\mathcal{L}\\\\{f\\\\}(s)$ is correctly given as $e^{\\\\frac{s^2}{4}} \\\\frac{\\\\sqrt{\\\\pi}}{2} (1 - \\\\operatorname{erf}(\\\\frac{s}{2}))$. The evaluation for $s = 1$ is also correctly performed, with the final expression $e^{\\\\frac{1}{4}} \\\\frac{\\\\sqrt{\\\\pi}}{2} (1 - \\\\operatorname{erf}(\\\\frac{1}{2}))$ being accurate. The numerical approximation for $\\\\operatorname{erf}(\\\\frac{1}{2})$ is correctly used, and the final numerical result is consistent with the derived expression.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly derives the Laplace transform of the function $f(t) = e^{-t^2}$ in terms of the error function. The steps include completing the square, changing variables, and relating the integral to the error function. The final expression for $\\mathcal{L}\\{f\\}(s)$ is correctly given as $e^{\\frac{s^2}{4}} \\frac{\\sqrt{\\pi}}{2} (1 - \\operatorname{erf}(\\frac{s}{2}))$. The evaluation for $s = 1$ is also correctly performed, with the final expression $e^{\\frac{1}{4}} \\frac{\\sqrt{\\pi}}{2} (1 - \\operatorname{erf}(\\frac{1}{2}))$ being accurate. The numerical approximation for $\\operatorname{erf}(\\frac{1}{2})$ is correctly used, and the final numerical result is consistent with the derived expression.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the integral equation\n\n$$\nf(x) = \\int_0^1 (x + t) f(t) \\, dt + x^2\n$$\n\nfor $f: [0, 1] \\to \\mathbb{R}$. Determine all continuous functions $f$ that satisfy this equation.",
+    "run_id": "31",
+    "topic_slug": "integral_equations",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the integral equation and simplifies it to a system of linear equations for $I$ and $J$. The steps to solve for $I$ and $J$ are logically valid, and the substitution back into $f(x)$ is correctly executed. The final expression for $f(x)$ is consistent with the integral equation, and all steps are justified with appropriate calculations. The solution is complete and rigorous, addressing all parts of the problem.\",\n  \"suggestions\": \"N/A\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the integral equation and simplifies it to a system of linear equations for $I$ and $J$. The steps to solve for $I$ and $J$ are logically valid, and the substitution back into $f(x)$ is correctly executed. The final expression for $f(x)$ is consistent with the integral equation, and all steps are justified with appropriate calculations. The solution is complete and rigorous, addressing all parts of the problem.\",\n  \"suggestions\": \"N/A\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the integral equation and simplifies it to a system of linear equations for $I$ and $J$. The steps to solve for $I$ and $J$ are logically valid, and the substitution back into $f(x)$ is correctly executed. The final expression for $f(x)$ is consistent with the integral equation, and all steps are justified with appropriate calculations. The solution is complete and rigorous, addressing all parts of the problem.",
+        "suggestions": "N/A",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathcal{H}$ be a separable Hilbert space, and let $T: \\mathcal{H} \\to \\mathcal{H}$ be a bounded linear operator. Suppose $T$ is compact and self-adjoint. Define the spectral decomposition of $T$ as $T = \\sum_{n=1}^{\\infty} \\lambda_n \\langle \\cdot, e_n \\rangle e_n$, where $\\{e_n\\}$ is an orthonormal basis of $\\mathcal{H}$ consisting of eigenvectors of $T$, and $\\{\\lambda_n\\}$ are the corresponding eigenvalues.\n\nProve that the sequence $\\{\\lambda_n\\}$ converges to zero. Furthermore, determine the conditions under which the series $\\sum_{n=1}^{\\infty} |\\lambda_n|^2$ converges, and explain the significance of this convergence in the context of the operator $T$.",
+    "run_id": "33",
+    "topic_slug": "operator_theory",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves that the sequence of eigenvalues \\$\\\\{\\\\lambda_n\\\\}\\$ converges to zero by leveraging the compactness of the operator \\$T\\$. It correctly identifies that if \\$\\\\lambda_n\\$ did not converge to zero, it would contradict the compactness of \\$T\\$. The answer also correctly states that the series \\$\\\\sum_{n=1}^{\\\\infty} |\\\\lambda_n|^2\\$ converges if and only if \\$T\\$ is a Hilbert-Schmidt operator, and explains the significance of this convergence in terms of the operator's properties. The reasoning is rigorous and addresses all parts of the question.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves that the sequence of eigenvalues \\\\(\\\\{\\\\lambda_n\\\\}\\\\) converges to zero by leveraging the compactness of the operator \\\\(T\\\\). It correctly identifies that if \\\\(\\\\lambda_n\\\\) did not converge to zero, it would contradict the compactness of \\\\(T\\\\). The answer also correctly states that the series \\\\(\\\\sum_{n=1}^{\\\\infty} |\\\\lambda_n|^2\\\\) converges if and only if \\\\(T\\\\) is a Hilbert-Schmidt operator, and explains the significance of this convergence in terms of the operator's properties. The reasoning is rigorous and addresses all parts of the question.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly proves that the sequence of eigenvalues $\\{\\lambda_n\\}$ converges to zero by leveraging the compactness of the operator $T$. It correctly identifies that if $\\lambda_n$ did not converge to zero, it would contradict the compactness of $T$. The answer also correctly states that the series $\\sum_{n=1}^{\\infty} |\\lambda_n|^2$ converges if and only if $T$ is a Hilbert-Schmidt operator, and explains the significance of this convergence in terms of the operator's properties. The reasoning is rigorous and addresses all parts of the question.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a smooth curve $y(x)$ that connects the points $(0, 0)$ and $(1, 1)$ in the plane. The curve is subject to the constraint that its length is exactly 2. Find the curve $y(x)$ that minimizes the functional\n\n$$\nJ[y] = \\int_0^1 (y')^2 \\, dx\n$$\n\nwhere $y' = \\frac{dy}{dx}$. Provide a detailed derivation of the solution, including any necessary conditions and verifications.",
+    "run_id": "34",
+    "topic_slug": "calculus_of_variations_and_optimization",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly concludes that $y = x$ is the solution. The curve $y = x$ does not satisfy the length constraint $L = 2$, as its length is $\\\\sqrt{2}$. The problem requires finding a curve that satisfies both the length constraint and minimizes the functional $J[y]$. The answer fails to address the need to find a curve that meets the length constraint while minimizing $J[y]$. Additionally, the answer does not explore alternative curves that could satisfy both conditions.\",\n  \"suggestions\": \"Re-evaluate the problem by considering curves that satisfy the length constraint $L = 2$ and then minimize $J[y]$ among these curves. Use the method of Lagrange multipliers to incorporate the constraint into the minimization problem, or explore parametric representations of curves that satisfy the length condition.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly concludes that $y = x$ is the solution. The curve $y = x$ does not satisfy the length constraint $L = 2$, as its length is $\\\\sqrt{2}$. The problem requires finding a curve that satisfies both the length constraint and minimizes the functional $J[y]$. The answer fails to address the need to find a curve that meets the length constraint while minimizing $J[y]$. Additionally, the answer does not explore alternative curves that could satisfy both conditions.\",\n  \"suggestions\": \"Re-evaluate the problem by considering curves that satisfy the length constraint $L = 2$ and then minimize $J[y]$ among these curves. Use the method of Lagrange multipliers to incorporate the constraint into the minimization problem, or explore parametric representations of curves that satisfy the length condition.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly concludes that $y = x$ is the solution. The curve $y = x$ does not satisfy the length constraint $L = 2$, as its length is $\\sqrt{2}$. The problem requires finding a curve that satisfies both the length constraint and minimizes the functional $J[y]$. The answer fails to address the need to find a curve that meets the length constraint while minimizing $J[y]$. Additionally, the answer does not explore alternative curves that could satisfy both conditions.",
+        "suggestions": "Re-evaluate the problem by considering curves that satisfy the length constraint $L = 2$ and then minimize $J[y]$ among these curves. Use the method of Lagrange multipliers to incorporate the constraint into the minimization problem, or explore parametric representations of curves that satisfy the length condition.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a convex quadrilateral $ABCD$ inscribed in a circle with center $O$. Let $E$ and $F$ be the midpoints of diagonals $AC$ and $BD$, respectively. Suppose the line $EF$ is parallel to the line $AB$. Prove that the quadrilateral $ABCD$ is an isosceles trapezoid, and find the ratio of the lengths of the diagonals $AC$ and $BD$.",
+    "run_id": "35",
+    "topic_slug": "geometry",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer claims that $ABCD$ is an isosceles trapezoid and that $AC = BD$ based on the condition $EF \\\\parallel AB$. However, it fails to rigorously prove that $AB \\\\parallel CD$ or that $AD = BC$. The argument that $AC = BD$ because $ABCD$ is an isosceles trapezoid is circular, as it assumes what it needs to prove. The solution does not adequately use properties of cyclic quadrilaterals or midpoints to establish these parallelisms or equalities.\",\n  \"suggestions\": \"To correct the proof, first establish that $AB \\\\parallel CD$ using properties of cyclic quadrilaterals and the given condition $EF \\\\parallel AB$. Then, show that $AD = BC$ to confirm $ABCD$ is an isosceles trapezoid. Finally, use these properties to determine the relationship between $AC$ and $BD$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer claims that $ABCD$ is an isosceles trapezoid and that $AC = BD$ based on the condition $EF \\\\parallel AB$. However, it fails to rigorously prove that $AB \\\\parallel CD$ or that $AD = BC$. The argument that $AC = BD$ because $ABCD$ is an isosceles trapezoid is circular, as it assumes what it needs to prove. The solution does not adequately use properties of cyclic quadrilaterals or midpoints to establish these parallelisms or equalities.\",\n  \"suggestions\": \"To correct the proof, first establish that $AB \\\\parallel CD$ using properties of cyclic quadrilaterals and the given condition $EF \\\\parallel AB$. Then, show that $AD = BC$ to confirm $ABCD$ is an isosceles trapezoid. Finally, use these properties to determine the relationship between $AC$ and $BD$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer claims that $ABCD$ is an isosceles trapezoid and that $AC = BD$ based on the condition $EF \\parallel AB$. However, it fails to rigorously prove that $AB \\parallel CD$ or that $AD = BC$. The argument that $AC = BD$ because $ABCD$ is an isosceles trapezoid is circular, as it assumes what it needs to prove. The solution does not adequately use properties of cyclic quadrilaterals or midpoints to establish these parallelisms or equalities.",
+        "suggestions": "To correct the proof, first establish that $AB \\parallel CD$ using properties of cyclic quadrilaterals and the given condition $EF \\parallel AB$. Then, show that $AD = BC$ to confirm $ABCD$ is an isosceles trapezoid. Finally, use these properties to determine the relationship between $AC$ and $BD$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a convex polytope $P$ in $\\mathbb{R}^3$ defined as the convex hull of the points $A = (1, 0, 0)$, $B = (0, 1, 0)$, $C = (0, 0, 1)$, and $D = (1, 1, 1)$. Let $Q$ be a point inside $P$ such that the sum of the distances from $Q$ to the faces of $P$ is minimized. Determine the coordinates of $Q$.",
+    "run_id": "36",
+    "topic_slug": "convex_and_discrete_geometry",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the point $Q$ that minimizes the sum of distances to the faces of the tetrahedron $P$. The solution correctly calculates the centroid of the tetrahedron $ABCD$ and verifies that it lies within $P$. The reasoning is mathematically sound, and the steps are complete and rigorous. The solution correctly applies the concept that for a tetrahedron, the point minimizing the sum of distances to its faces is its centroid, provided it lies inside the tetrahedron.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the point $Q$ that minimizes the sum of distances to the faces of the tetrahedron $P$. The solution correctly calculates the centroid of the tetrahedron $ABCD$ and verifies that it lies within $P$. The reasoning is mathematically sound, and the steps are complete and rigorous. The solution correctly applies the concept that for a tetrahedron, the point minimizing the sum of distances to its faces is its centroid, provided it lies inside the tetrahedron.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the point $Q$ that minimizes the sum of distances to the faces of the tetrahedron $P$. The solution correctly calculates the centroid of the tetrahedron $ABCD$ and verifies that it lies within $P$. The reasoning is mathematically sound, and the steps are complete and rigorous. The solution correctly applies the concept that for a tetrahedron, the point minimizing the sum of distances to its faces is its centroid, provided it lies inside the tetrahedron.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a smooth, compact, orientable 2-dimensional manifold $M$ without boundary, embedded in $\\mathbb{R}^3$. Let $g$ be the Riemannian metric induced on $M$ by the standard Euclidean metric of $\\mathbb{R}^3$. Suppose $M$ has constant Gaussian curvature $K$.\n\n1. Prove that if $K > 0$, then $M$ is diffeomorphic to the 2-sphere $S^2$.\n2. Determine the total Gaussian curvature of $M$ in terms of $K$ and the area of $M$.",
+    "run_id": "37",
+    "topic_slug": "differential_geometry",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies the Gauss-Bonnet theorem to show that if $K > 0$, then $M$ is diffeomorphic to $S^2$. The reasoning that $\\\\chi(M) > 0$ implies $g = 0$ is valid, leading to the conclusion that $M$ is diffeomorphic to $S^2$. The total Gaussian curvature is correctly expressed as $K \\\\cdot A(M)$, and the specific case for $K > 0$ is correctly noted as $4\\\\pi$. The answer is mathematically sound, complete, and adequately rigorous.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies the Gauss-Bonnet theorem to show that if $K > 0$, then $M$ is diffeomorphic to $S^2$. The reasoning that $\\\\chi(M) > 0$ implies $g = 0$ is valid, leading to the conclusion that $M$ is diffeomorphic to $S^2$. The total Gaussian curvature is correctly expressed as $K \\\\cdot A(M)$, and the specific case for $K > 0$ is correctly noted as $4\\\\pi$. The answer is mathematically sound, complete, and adequately rigorous.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies the Gauss-Bonnet theorem to show that if $K > 0$, then $M$ is diffeomorphic to $S^2$. The reasoning that $\\chi(M) > 0$ implies $g = 0$ is valid, leading to the conclusion that $M$ is diffeomorphic to $S^2$. The total Gaussian curvature is correctly expressed as $K \\cdot A(M)$, and the specific case for $K > 0$ is correctly noted as $4\\pi$. The answer is mathematically sound, complete, and adequately rigorous.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a compact Hausdorff space, and let $C(X)$ denote the space of continuous real-valued functions on $X$ equipped with the supremum norm $\\|f\\| = \\sup_{x \\in X} |f(x)|$. Consider the set $A \\subseteq C(X)$ defined by\n\n$$\nA = \\{ f \\in C(X) \\mid f(x) \\geq 0 \\text{ for all } x \\in X \\}.\n$$\n\nProve that the closure of $A$ in $C(X)$, denoted by $\\overline{A}$, is equal to the set\n\n$$\nB = \\{ f \\in C(X) \\mid f(x) \\geq 0 \\text{ for all } x \\in X \\text{ or } f \\text{ is identically } -1 \\}.\n$$",
+    "run_id": "38",
+    "topic_slug": "general_topology",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly concludes that $\\\\overline{A} = A$. It fails to account for the possibility of functions in $\\\\overline{A}$ that are not strictly non-negative but can be approximated by non-negative functions. Specifically, the function identically $-1$ can be approximated by functions in $A$ (e.g., $f_n(x) = -1 + \\\\frac{1}{n}$), which means $-1 \\\\in \\\\overline{A}$. Therefore, $\\\\overline{A}$ should include the function identically $-1$, making $\\\\overline{A} = B$ as stated in the problem.\",\n  \"suggestions\": \"To correct the answer, recognize that $\\\\overline{A}$ includes functions that can be uniformly approximated by non-negative functions, including the function identically $-1$. Thus, $\\\\overline{A} = B = \\\\{ f \\\\in C(X) \\\\mid f(x) \\\\geq 0 \\\\text{ for all } x \\\\in X \\\\text{ or } f \\\\text{ is identically } -1 \\\\}$. Provide a proof that $-1 \\\\in \\\\overline{A}$ by constructing a sequence in $A$ converging to $-1$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly concludes that $\\\\overline{A} = A$. It fails to account for the possibility of functions in $\\\\overline{A}$ that are not strictly non-negative but can be approximated by non-negative functions. Specifically, the function identically $-1$ can be approximated by functions in $A$ (e.g., $f_n(x) = -1 + \\\\frac{1}{n}$), which means $-1 \\\\in \\\\overline{A}$. Therefore, $\\\\overline{A}$ should include the function identically $-1$, making $\\\\overline{A} = B$ as stated in the problem.\",\n  \"suggestions\": \"To correct the answer, recognize that $\\\\overline{A}$ includes functions that can be uniformly approximated by non-negative functions, including the function identically $-1$. Thus, $\\\\overline{A} = B = \\\\{ f \\\\in C(X) \\\\mid f(x) \\\\geq 0 \\\\text{ for all } x \\\\in X \\\\text{ or } f \\\\text{ is identically } -1 \\\\}$. Provide a proof that $-1 \\\\in \\\\overline{A}$ by constructing a sequence in $A$ converging to $-1$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly concludes that $\\overline{A} = A$. It fails to account for the possibility of functions in $\\overline{A}$ that are not strictly non-negative but can be approximated by non-negative functions. Specifically, the function identically $-1$ can be approximated by functions in $A$ (e.g., $f_n(x) = -1 + \\frac{1}{n}$), which means $-1 \\in \\overline{A}$. Therefore, $\\overline{A}$ should include the function identically $-1$, making $\\overline{A} = B$ as stated in the problem.",
+        "suggestions": "To correct the answer, recognize that $\\overline{A}$ includes functions that can be uniformly approximated by non-negative functions, including the function identically $-1$. Thus, $\\overline{A} = B = \\{ f \\in C(X) \\mid f(x) \\geq 0 \\text{ for all } x \\in X \\text{ or } f \\text{ is identically } -1 \\}$. Provide a proof that $-1 \\in \\overline{A}$ by constructing a sequence in $A$ converging to $-1$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a compact, connected, orientable 3-manifold $M$ with a non-trivial fundamental group $\\pi_1(M)$. Suppose $M$ admits a Heegaard splitting of genus 2. Let $H_1(M; \\mathbb{Z})$ denote the first homology group of $M$ with integer coefficients. \n\n1. Determine the possible ranks of $H_1(M; \\mathbb{Z})$.\n2. Prove that if $M$ is a homology 3-sphere, then $H_1(M; \\mathbb{Z})$ is trivial.\n3. Given that $M$ is not a homology 3-sphere, find an example of such a manifold $M$ and compute $H_1(M; \\mathbb{Z})$.",
+    "run_id": "39",
+    "topic_slug": "algebraic_topology",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly identifies that $H_1(M; \\\\mathbb{Z})$ is trivial for a homology 3-sphere and provides an example of a manifold $M = S^1 \\\\times S^2$ with $H_1(M; \\\\mathbb{Z}) = \\\\mathbb{Z}$. However, it fails to fully address the first part of the question regarding the possible ranks of $H_1(M; \\\\mathbb{Z})$ for a genus 2 Heegaard splitting. The answer does not provide a comprehensive analysis of all possible ranks, nor does it justify why ranks 0, 1, and 2 are the only possibilities. Additionally, the example $S^1 \\\\times S^2$ does not have a genus 2 Heegaard splitting, which is a requirement of the problem.\",\n  \"suggestions\": \"To improve the answer, provide a detailed analysis of the possible ranks of $H_1(M; \\\\mathbb{Z})$ for a genus 2 Heegaard splitting, considering the presentation of $\\\\pi_1(M)$ and its abelianization. Ensure that the example manifold used to illustrate a non-homology 3-sphere has a genus 2 Heegaard splitting. A suitable example could be a specific lens space or a 3-manifold obtained by Dehn surgery on a knot with a genus 2 Heegaard splitting.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly identifies that $H_1(M; \\\\mathbb{Z})$ is trivial for a homology 3-sphere and provides an example of a manifold $M = S^1 \\\\times S^2$ with $H_1(M; \\\\mathbb{Z}) = \\\\mathbb{Z}$. However, it fails to fully address the first part of the question regarding the possible ranks of $H_1(M; \\\\mathbb{Z})$ for a genus 2 Heegaard splitting. The answer does not provide a comprehensive analysis of all possible ranks, nor does it justify why ranks 0, 1, and 2 are the only possibilities. Additionally, the example $S^1 \\\\times S^2$ does not have a genus 2 Heegaard splitting, which is a requirement of the problem.\",\n  \"suggestions\": \"To improve the answer, provide a detailed analysis of the possible ranks of $H_1(M; \\\\mathbb{Z})$ for a genus 2 Heegaard splitting, considering the presentation of $\\\\pi_1(M)$ and its abelianization. Ensure that the example manifold used to illustrate a non-homology 3-sphere has a genus 2 Heegaard splitting. A suitable example could be a specific lens space or a 3-manifold obtained by Dehn surgery on a knot with a genus 2 Heegaard splitting.\"\n}\n```",
+        "verdict": "insufficient",
+        "notes": "The answer correctly identifies that $H_1(M; \\mathbb{Z})$ is trivial for a homology 3-sphere and provides an example of a manifold $M = S^1 \\times S^2$ with $H_1(M; \\mathbb{Z}) = \\mathbb{Z}$. However, it fails to fully address the first part of the question regarding the possible ranks of $H_1(M; \\mathbb{Z})$ for a genus 2 Heegaard splitting. The answer does not provide a comprehensive analysis of all possible ranks, nor does it justify why ranks 0, 1, and 2 are the only possibilities. Additionally, the example $S^1 \\times S^2$ does not have a genus 2 Heegaard splitting, which is a requirement of the problem.",
+        "suggestions": "To improve the answer, provide a detailed analysis of the possible ranks of $H_1(M; \\mathbb{Z})$ for a genus 2 Heegaard splitting, considering the presentation of $\\pi_1(M)$ and its abelianization. Ensure that the example manifold used to illustrate a non-homology 3-sphere has a genus 2 Heegaard splitting. A suitable example could be a specific lens space or a 3-manifold obtained by Dehn surgery on a knot with a genus 2 Heegaard splitting.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately identifies the main issues with the answer. It points out that the answer does not fully address the possible ranks of $H_1(M; \\mathbb{Z})$ for a genus 2 Heegaard splitting and incorrectly uses $S^1 \\times S^2$ as an example, which does not have a genus 2 Heegaard splitting. The critique also correctly suggests providing a detailed analysis of the possible ranks and using a suitable example with a genus 2 Heegaard splitting, such as a specific lens space or a 3-manifold obtained by Dehn surgery."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a smooth manifold $M$ of dimension $n$ and a continuous map $f: M \\to \\mathbb{R}^n$. Suppose $f$ is a Morse function, meaning all its critical points are non-degenerate. Let $C_k$ denote the number of critical points of $f$ with index $k$. Prove that the Euler characteristic $\\chi(M)$ of the manifold $M$ is given by the alternating sum of the critical points:\n\n$$\n\\chi(M) = \\sum_{k=0}^{n} (-1)^k C_k.\n$$\n\nAdditionally, consider a cell complex $X$ that is homotopy equivalent to $M$. Show that the Euler characteristic of $X$ is the same as that of $M$.",
+    "run_id": "40",
+    "topic_slug": "manifolds_and_cell_complexes",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer does not address the main task of proving that the Euler characteristic of a smooth manifold $M$ with a Morse function $f$ is given by the alternating sum of the critical points. Instead, it discusses the Euler characteristic of a cell complex $X$ homotopy equivalent to $M$, which is a related but separate topic. The proof of the Morse inequalities and the relationship between critical points and the Euler characteristic is missing. Additionally, the final answer '$\\\\boxed{2, 3}$' is unrelated to the problem statement.\",\n  \"suggestions\": \"To correct the answer, provide a proof that the Euler characteristic $\\\\chi(M)$ is given by $\\\\sum_{k=0}^{n} (-1)^k C_k$ using Morse theory. This involves showing that each critical point contributes to the Euler characteristic according to its index. Additionally, explain why the Euler characteristic of a cell complex $X$ homotopy equivalent to $M$ is the same as that of $M$, using the fact that homotopy equivalence preserves the Euler characteristic.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer does not address the main task of proving that the Euler characteristic of a smooth manifold $M$ with a Morse function $f$ is given by the alternating sum of the critical points. Instead, it discusses the Euler characteristic of a cell complex $X$ homotopy equivalent to $M$, which is a related but separate topic. The proof of the Morse inequalities and the relationship between critical points and the Euler characteristic is missing. Additionally, the final answer '$\\\\boxed{2, 3}$' is unrelated to the problem statement.\",\n  \"suggestions\": \"To correct the answer, provide a proof that the Euler characteristic $\\\\chi(M)$ is given by $\\\\sum_{k=0}^{n} (-1)^k C_k$ using Morse theory. This involves showing that each critical point contributes to the Euler characteristic according to its index. Additionally, explain why the Euler characteristic of a cell complex $X$ homotopy equivalent to $M$ is the same as that of $M$, using the fact that homotopy equivalence preserves the Euler characteristic.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer does not address the main task of proving that the Euler characteristic of a smooth manifold $M$ with a Morse function $f$ is given by the alternating sum of the critical points. Instead, it discusses the Euler characteristic of a cell complex $X$ homotopy equivalent to $M$, which is a related but separate topic. The proof of the Morse inequalities and the relationship between critical points and the Euler characteristic is missing. Additionally, the final answer '$\\boxed{2, 3}$' is unrelated to the problem statement.",
+        "suggestions": "To correct the answer, provide a proof that the Euler characteristic $\\chi(M)$ is given by $\\sum_{k=0}^{n} (-1)^k C_k$ using Morse theory. This involves showing that each critical point contributes to the Euler characteristic according to its index. Additionally, explain why the Euler characteristic of a cell complex $X$ homotopy equivalent to $M$ is the same as that of $M$, using the fact that homotopy equivalence preserves the Euler characteristic.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a smooth, compact, oriented 2-dimensional manifold $M$ without boundary. Let $\\omega$ be a smooth 2-form on $M$ such that $\\int_M \\omega = 1$. Suppose $\\omega$ can be expressed locally as $\\omega = f \\, dx \\wedge dy$ in some coordinate chart, where $f$ is a smooth function. \n\nProve that there exists a smooth vector field $X$ on $M$ such that the divergence of $X$ with respect to the volume form $\\omega$ is equal to 1 everywhere on $M$. \n\nAdditionally, determine the conditions under which such a vector field $X$ is unique up to a divergence-free vector field.",
+    "run_id": "41",
+    "topic_slug": "global_analysis_on_manifolds",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly concludes with '$\\\\boxed{1}$', which is not a valid conclusion for the problem. The problem asks for a proof of existence and conditions for uniqueness of a vector field $X$ with a specific divergence, not for a numerical answer. The steps provided do not rigorously construct a global vector field $X$ or address the uniqueness condition in detail. Specifically, the local construction of $X^y$ as $\\\\frac{\\\\int f \\\\, dy}{f}$ is not justified, and the use of a partition of unity to combine local solutions is not explicitly shown. Additionally, the uniqueness argument is not fully developed, as it does not consider the role of harmonic 1-forms or the topology of $M$.\",\n  \"suggestions\": \"To correct the answer, explicitly construct a global vector field $X$ using a partition of unity, ensuring that the local solutions are compatible. For uniqueness, provide a detailed argument involving the space of divergence-free vector fields and their relation to harmonic 1-forms, considering the topology of $M$. Ensure that all steps are rigorously justified and clearly explained.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly concludes with '$\\\\boxed{1}$', which is not a valid conclusion for the problem. The problem asks for a proof of existence and conditions for uniqueness of a vector field $X$ with a specific divergence, not for a numerical answer. The steps provided do not rigorously construct a global vector field $X$ or address the uniqueness condition in detail. Specifically, the local construction of $X^y$ as $\\\\frac{\\\\int f \\\\, dy}{f}$ is not justified, and the use of a partition of unity to combine local solutions is not explicitly shown. Additionally, the uniqueness argument is not fully developed, as it does not consider the role of harmonic 1-forms or the topology of $M$.\",\n  \"suggestions\": \"To correct the answer, explicitly construct a global vector field $X$ using a partition of unity, ensuring that the local solutions are compatible. For uniqueness, provide a detailed argument involving the space of divergence-free vector fields and their relation to harmonic 1-forms, considering the topology of $M$. Ensure that all steps are rigorously justified and clearly explained.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly concludes with '$\\boxed{1}$', which is not a valid conclusion for the problem. The problem asks for a proof of existence and conditions for uniqueness of a vector field $X$ with a specific divergence, not for a numerical answer. The steps provided do not rigorously construct a global vector field $X$ or address the uniqueness condition in detail. Specifically, the local construction of $X^y$ as $\\frac{\\int f \\, dy}{f}$ is not justified, and the use of a partition of unity to combine local solutions is not explicitly shown. Additionally, the uniqueness argument is not fully developed, as it does not consider the role of harmonic 1-forms or the topology of $M$.",
+        "suggestions": "To correct the answer, explicitly construct a global vector field $X$ using a partition of unity, ensuring that the local solutions are compatible. For uniqueness, provide a detailed argument involving the space of divergence-free vector fields and their relation to harmonic 1-forms, considering the topology of $M$. Ensure that all steps are rigorously justified and clearly explained.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a continuous-time Markov chain $\\{X(t) : t \\geq 0\\}$ with state space $S = \\{0, 1, 2\\}$ and generator matrix $Q$ given by:\n\n$$\nQ = \\begin{bmatrix}\n-2 & 1 & 1 \\\\\n2 & -3 & 1 \\\\\n0 & 2 & -2\n\\end{bmatrix}\n$$\n\nAssume the process starts in state 0 at time $t = 0$. Determine the probability that the process is in state 2 at time $t = 1$.",
+    "run_id": "42",
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the eigenvalues and eigenvectors of the generator matrix Q, diagonalizes Q, and computes the matrix exponential e^Q using the diagonalization method. The calculation of the transition probability P_{02}(1) is accurate, and the final result is correctly expressed as 1 - e^{-3}. The steps are logically valid, and the reasoning is rigorous, with all necessary conditions and computations verified.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the eigenvalues and eigenvectors of the generator matrix Q, diagonalizes Q, and computes the matrix exponential e^Q using the diagonalization method. The calculation of the transition probability P_{02}(1) is accurate, and the final result is correctly expressed as 1 - e^{-3}. The steps are logically valid, and the reasoning is rigorous, with all necessary conditions and computations verified.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the eigenvalues and eigenvectors of the generator matrix Q, diagonalizes Q, and computes the matrix exponential e^Q using the diagonalization method. The calculation of the transition probability P_{02}(1) is accurate, and the final result is correctly expressed as 1 - e^{-3}. The steps are logically valid, and the reasoning is rigorous, with all necessary conditions and computations verified.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a random variable $X$ that follows a normal distribution with mean $\\mu$ and variance $\\sigma^2$. Let $Y = aX + b$ where $a$ and $b$ are constants. Suppose you are given that the probability $P(Y > c) = 0.05$ for some constant $c$.\n\n1. Express the mean and variance of $Y$ in terms of $a$, $b$, $\\mu$, and $\\sigma^2$.\n2. Derive an expression for $c$ in terms of $a$, $b$, $\\mu$, $\\sigma$, and the standard normal distribution quantile $z_{0.95}$.\n3. Given $\\mu = 10$, $\\sigma^2 = 4$, $a = 2$, $b = 3$, and $z_{0.95} \\approx 1.645$, calculate the value of $c$.",
+    "run_id": "43",
+    "topic_slug": "statistics",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the mean and variance of Y as a linear transformation of X. The derivation of c using the standard normal distribution quantile is accurate, and the arithmetic calculation of c with the given parameters is correct. All steps are logically valid and complete.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the mean and variance of Y as a linear transformation of X. The derivation of c using the standard normal distribution quantile is accurate, and the arithmetic calculation of c with the given parameters is correct. All steps are logically valid and complete.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly derives the mean and variance of Y as a linear transformation of X. The derivation of c using the standard normal distribution quantile is accurate, and the arithmetic calculation of c with the given parameters is correct. All steps are logically valid and complete.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the function $f: \\mathbb{R} \\to \\mathbb{R}$ defined by $f(x) = e^{-x^2}$. You are tasked with approximating the integral $I = \\int_{0}^{1} f(x) \\, dx$ using numerical methods. \n\n1. Use the trapezoidal rule with $n = 4$ subintervals to approximate $I$. Provide the approximation and the error bound for this method.\n\n2. Use Simpson's rule with $n = 4$ subintervals to approximate $I$. Provide the approximation and the error bound for this method.\n\n3. Compare the results from the trapezoidal rule and Simpson's rule. Discuss which method provides a better approximation and why, based on the error bounds.\n\n**Note:** The error bound for the trapezoidal rule is given by $E_T = -\\frac{(b-a)^3}{12n^2} f''(\\xi)$ for some $\\xi \\in [a, b]$, and for Simpson's rule, it is $E_S = -\\frac{(b-a)^5}{180n^4} f^{(4)}(\\eta)$ for some $\\eta \\in [a, b]$.",
+    "run_id": "44",
+    "topic_slug": "numerical_analysis",
+    "question_author": "microsoft-phi-4-reasoning-plus",
+    "critic": "microsoft-phi-4-reasoning-plus",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies both the trapezoidal rule and Simpson's rule to approximate the integral. The calculations for the function values and the approximations are accurate. The error bounds are derived using the correct formulas, and the maximum values of the second and fourth derivatives are appropriately estimated. The comparison between the two methods is valid, with Simpson's rule providing a better approximation due to its smaller error bound.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies both the trapezoidal rule and Simpson's rule to approximate the integral. The calculations for the function values and the approximations are accurate. The error bounds are derived using the correct formulas, and the maximum values of the second and fourth derivatives are appropriately estimated. The comparison between the two methods is valid, with Simpson's rule providing a better approximation due to its smaller error bound.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies both the trapezoidal rule and Simpson's rule to approximate the integral. The calculations for the function values and the approximations are accurate. The error bounds are derived using the correct formulas, and the maximum values of the second and fourth derivatives are appropriately estimated. The comparison between the two methods is valid, with Simpson's rule providing a better approximation due to its smaller error bound.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  }
+]

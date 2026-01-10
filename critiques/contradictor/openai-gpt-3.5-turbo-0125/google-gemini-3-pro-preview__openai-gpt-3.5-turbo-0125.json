@@ -69,5 +69,984 @@
         }
       }
     ]
+  },
+  {
+    "question": "Let $L$ be a lattice with elements $a, b, c \\in L$. Suppose that $a \\vee b = a \\wedge c$ and $a \\wedge b = a \\vee c$. Prove that $a = b = c$.",
+    "run_id": "4",
+    "topic_slug": "order_lattices_and_ordered_algebraic_structures",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof relies on invalid algebraic substitutions. In the first part, the answer substitutes $c$ with $a \\\\wedge b$ based on the equation $a \\\\wedge b = a \\\\vee c$. This substitution is only valid if $c = a \\\\vee c$ (i.e., $a \\\\le c$), but this condition is not established. Similarly, the second part substitutes $c$ with $a \\\\vee b$ based on $a \\\\vee b = a \\\\wedge c$, which presumes $c = a \\\\wedge c$ (i.e., $c \\\\le a$). Without proving $a \\\\le c$ and $c \\\\le a$ first, these steps are logically flawed.\",\n  \"suggestions\": \"First prove that $a \\\\le c$ (from $a \\\\le a \\\\vee b = a \\\\wedge c \\\\le c$) and $c \\\\le a$ (from $c \\\\le a \\\\vee c = a \\\\wedge b \\\\le a$). These imply $a = c$. Then substitute $c = a$ into the given equations to show $a = b$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof relies on invalid algebraic substitutions. In the first part, the answer substitutes $c$ with $a \\\\wedge b$ based on the equation $a \\\\wedge b = a \\\\vee c$. This substitution is only valid if $c = a \\\\vee c$ (i.e., $a \\\\le c$), but this condition is not established. Similarly, the second part substitutes $c$ with $a \\\\vee b$ based on $a \\\\vee b = a \\\\wedge c$, which presumes $c = a \\\\wedge c$ (i.e., $c \\\\le a$). Without proving $a \\\\le c$ and $c \\\\le a$ first, these steps are logically flawed.\",\n  \"suggestions\": \"First prove that $a \\\\le c$ (from $a \\\\le a \\\\vee b = a \\\\wedge c \\\\le c$) and $c \\\\le a$ (from $c \\\\le a \\\\vee c = a \\\\wedge b \\\\le a$). These imply $a = c$. Then substitute $c = a$ into the given equations to show $a = b$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The proof relies on invalid algebraic substitutions. In the first part, the answer substitutes $c$ with $a \\wedge b$ based on the equation $a \\wedge b = a \\vee c$. This substitution is only valid if $c = a \\vee c$ (i.e., $a \\le c$), but this condition is not established. Similarly, the second part substitutes $c$ with $a \\vee b$ based on $a \\vee b = a \\wedge c$, which presumes $c = a \\wedge c$ (i.e., $c \\le a$). Without proving $a \\le c$ and $c \\le a$ first, these steps are logically flawed.",
+        "suggestions": "First prove that $a \\le c$ (from $a \\le a \\vee b = a \\wedge c \\le c$) and $c \\le a$ (from $c \\le a \\vee c = a \\wedge b \\le a$). These imply $a = c$. Then substitute $c = a$ into the given equations to show $a = b$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a group with identity element $e$. Consider two elements $a, b \\in G$ such that $ab = ba$ and $a^3 = b^2$. Prove that $ab$ is also an element of order $6$ in $G$.",
+    "run_id": "5",
+    "topic_slug": "general_algebraic_systems",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is mathematically unsound and contains multiple fatal errors. \\n\\n1. **Invalid Premise/Result**: The statement to be proved is false under the given conditions ($ab=ba, a^3=b^2$). For example, in the additive group of integers $\\\\mathbb{Z}$, let $a=2$ and $b=3$. Then $3a=6=2b$, but $a+b=5$, which has infinite order. The calculation $(ab)^6 = e$ does not follow from the premises.\\n\\n2. **Algebraic Errors**: The expansion of $(ab)^6$ is incorrect. The answer writes $a^6b^6 = a^3a^3a^3b^2b^2$, which simplifies to $a^9b^4$, not $a^6b^6$. Furthermore, concluding this product equals $e$ is unjustified.\\n\\n3. **Logical Fallacies**: In the second part, the answer claims $a^k = b^{-k}$ implies $b^{-k} = b^k$ \\\"since $ab=ba$,\\\" which is false; commutativity does not imply elements are their own inverses. Additionally, deducing $k=k+4$ from $b^k = b^{k+4}$ incorrectly assumes the exponents can be equated directly, which is not valid in group theory (unless the element has infinite order, in which case the contradiction proves the equality impossible, but the initial assumption $(ab)^k=e$ would also be impossible).\",\n  \"suggestions\": \"The question likely intended to include the conditions $a^3=e$ and $b^2=e$. If so, the proof should use commutativity to show $(ab)^6 = (a^3)^2(b^2)^3 = e^2e^3 = e$. Then, check smaller powers $(ab)^2$ and $(ab)^3$ to confirm the order is exactly 6 (assuming $a, b \\\\neq e$).\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is mathematically unsound and contains multiple fatal errors. \\n\\n1. **Invalid Premise/Result**: The statement to be proved is false under the given conditions ($ab=ba, a^3=b^2$). For example, in the additive group of integers $\\\\mathbb{Z}$, let $a=2$ and $b=3$. Then $3a=6=2b$, but $a+b=5$, which has infinite order. The calculation $(ab)^6 = e$ does not follow from the premises.\\n\\n2. **Algebraic Errors**: The expansion of $(ab)^6$ is incorrect. The answer writes $a^6b^6 = a^3a^3a^3b^2b^2$, which simplifies to $a^9b^4$, not $a^6b^6$. Furthermore, concluding this product equals $e$ is unjustified.\\n\\n3. **Logical Fallacies**: In the second part, the answer claims $a^k = b^{-k}$ implies $b^{-k} = b^k$ \\\"since $ab=ba$,\\\" which is false; commutativity does not imply elements are their own inverses. Additionally, deducing $k=k+4$ from $b^k = b^{k+4}$ incorrectly assumes the exponents can be equated directly, which is not valid in group theory (unless the element has infinite order, in which case the contradiction proves the equality impossible, but the initial assumption $(ab)^k=e$ would also be impossible).\",\n  \"suggestions\": \"The question likely intended to include the conditions $a^3=e$ and $b^2=e$. If so, the proof should use commutativity to show $(ab)^6 = (a^3)^2(b^2)^3 = e^2e^3 = e$. Then, check smaller powers $(ab)^2$ and $(ab)^3$ to confirm the order is exactly 6 (assuming $a, b \\\\neq e$).\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer is mathematically unsound and contains multiple fatal errors. \n\n1. **Invalid Premise/Result**: The statement to be proved is false under the given conditions ($ab=ba, a^3=b^2$). For example, in the additive group of integers $\\mathbb{Z}$, let $a=2$ and $b=3$. Then $3a=6=2b$, but $a+b=5$, which has infinite order. The calculation $(ab)^6 = e$ does not follow from the premises.\n\n2. **Algebraic Errors**: The expansion of $(ab)^6$ is incorrect. The answer writes $a^6b^6 = a^3a^3a^3b^2b^2$, which simplifies to $a^9b^4$, not $a^6b^6$. Furthermore, concluding this product equals $e$ is unjustified.\n\n3. **Logical Fallacies**: In the second part, the answer claims $a^k = b^{-k}$ implies $b^{-k} = b^k$ \"since $ab=ba$,\" which is false; commutativity does not imply elements are their own inverses. Additionally, deducing $k=k+4$ from $b^k = b^{k+4}$ incorrectly assumes the exponents can be equated directly, which is not valid in group theory (unless the element has infinite order, in which case the contradiction proves the equality impossible, but the initial assumption $(ab)^k=e$ would also be impossible).",
+        "suggestions": "The question likely intended to include the conditions $a^3=e$ and $b^2=e$. If so, the proof should use commutativity to show $(ab)^6 = (a^3)^2(b^2)^3 = e^2e^3 = e$. Then, check smaller powers $(ab)^2$ and $(ab)^3$ to confirm the order is exactly 6 (assuming $a, b \\neq e$).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $F$ be a field and consider the polynomial $f(x) = x^4 - 3x^3 + 4x^2 - 6x + 2$ in $F[x]$, the ring of polynomials over $F$. Define $K$ as the splitting field of $f(x)$ over $F$. Determine the degree $[K:F]$ of the field extension $K$ over $F$.",
+    "run_id": "6",
+    "topic_slug": "field_theory_and_polynomials",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer relies on a factorization of $f(x)$ that is arithmetically incorrect. Expanding the claimed factors $(x^2 - 3x + 1)(x^2 + 1)$ results in $x^4 - 3x^3 + 2x^2 - 3x + 1$, which does not match the given polynomial $f(x) = x^4 - 3x^3 + 4x^2 - 6x + 2$. Because the factorization is wrong, the subsequent identification of roots and analysis of the splitting field degree are also invalid.\",\n  \"suggestions\": \"Begin by correctly analyzing the irreducibility of $f(x)$. Over $\\\\mathbb{Q}$, for example, the polynomial is irreducible. The degree of the splitting field depends on the Galois group of the polynomial over $F$, which requires correct root analysis or discriminant calculations.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer relies on a factorization of $f(x)$ that is arithmetically incorrect. Expanding the claimed factors $(x^2 - 3x + 1)(x^2 + 1)$ results in $x^4 - 3x^3 + 2x^2 - 3x + 1$, which does not match the given polynomial $f(x) = x^4 - 3x^3 + 4x^2 - 6x + 2$. Because the factorization is wrong, the subsequent identification of roots and analysis of the splitting field degree are also invalid.\",\n  \"suggestions\": \"Begin by correctly analyzing the irreducibility of $f(x)$. Over $\\\\mathbb{Q}$, for example, the polynomial is irreducible. The degree of the splitting field depends on the Galois group of the polynomial over $F$, which requires correct root analysis or discriminant calculations.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer relies on a factorization of $f(x)$ that is arithmetically incorrect. Expanding the claimed factors $(x^2 - 3x + 1)(x^2 + 1)$ results in $x^4 - 3x^3 + 2x^2 - 3x + 1$, which does not match the given polynomial $f(x) = x^4 - 3x^3 + 4x^2 - 6x + 2$. Because the factorization is wrong, the subsequent identification of roots and analysis of the splitting field degree are also invalid.",
+        "suggestions": "Begin by correctly analyzing the irreducibility of $f(x)$. Over $\\mathbb{Q}$, for example, the polynomial is irreducible. The degree of the splitting field depends on the Galois group of the polynomial over $F$, which requires correct root analysis or discriminant calculations.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a commutative ring with unity and let $I$ be an ideal in $R$. Define the radical of $I$, denoted $\\sqrt{I}$, as the set of all elements $r \\in R$ such that there exists a positive integer $n$ satisfying $r^n \\in I$. \n\nConsider the ring $R = \\mathbb{Z}[x]$ of polynomials with integer coefficients and the ideal $I = \\langle 2, x^2 - 3x + 2 \\rangle$ generated by $2$ and $x^2 - 3x + 2$. Determine the radical $\\sqrt{I}$ of the ideal $I$ in $R$.",
+    "run_id": "7",
+    "topic_slug": "commutative_algebra",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer provides an incorrect radical and contains multiple fundamental mathematical errors.\\n\\n1. **Incorrect Final Answer**: The radical of $I = \\\\langle 2, x^2 - 3x + 2 \\\\rangle$ is $I$ itself (or equivalently $\\\\langle 2, x^2+x \\\\rangle$), not $\\\\langle 2, x - 1 \\\\rangle$. The ideal $\\\\langle 2, x - 1 \\\\rangle$ is a prime ideal strictly containing $\\\\sqrt{I}$. The radical is the intersection of the minimal primes $\\\\langle 2, x \\\\rangle$ and $\\\\langle 2, x-1 \\\\rangle$.\\n\\n2. **False Claims about Membership**: The answer claims \\\"any element of the form $a + bx$ ... is in $I$\\\". This is false; for example, $1 \\\\notin I$. It later states \\\"Since $2, x - 1 \\\\in I$\\\", which is also false; $x-1 \\\\notin I$.\\n\\n3. **Logical Errors**: The derivation \\\"$(x - 1)^2 = (x^2 - 3x + 2) + x - 1 \\\\in I$\\\" assumes that the term $x-1$ is already in $I$ to prove the sum is in $I$. Since $x-1 \\\\notin I$, $(x-1)^2 \\\\notin I$.\\n\\n4. **Algebraic Errors**: The step $r^n = \\\\sum_{i=0}^{m} a_i^n x^i$ is mathematically invalid for polynomials; $(a+b)^n \\\\neq a^n + b^n$ generally, and certainly $(\\\\sum a_i x^i)^n \\\\neq \\\\sum a_i^n x^i$.\",\n  \"suggestions\": \"To find the radical, analyze the quotient ring $R/I$. Observe that $R/I \\\\cong (\\\\mathbb{Z}/2\\\\mathbb{Z})[x] / \\\\langle x(x+1) \\\\rangle \\\\cong \\\\mathbb{Z}_2 \\\\times \\\\mathbb{Z}_2$. Since this quotient ring has no non-zero nilpotent elements, the ideal $I$ is already a radical ideal.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer provides an incorrect radical and contains multiple fundamental mathematical errors.\\n\\n1. **Incorrect Final Answer**: The radical of $I = \\\\langle 2, x^2 - 3x + 2 \\\\rangle$ is $I$ itself (or equivalently $\\\\langle 2, x^2+x \\\\rangle$), not $\\\\langle 2, x - 1 \\\\rangle$. The ideal $\\\\langle 2, x - 1 \\\\rangle$ is a prime ideal strictly containing $\\\\sqrt{I}$. The radical is the intersection of the minimal primes $\\\\langle 2, x \\\\rangle$ and $\\\\langle 2, x-1 \\\\rangle$.\\n\\n2. **False Claims about Membership**: The answer claims \\\"any element of the form $a + bx$ ... is in $I$\\\". This is false; for example, $1 \\\\notin I$. It later states \\\"Since $2, x - 1 \\\\in I$\\\", which is also false; $x-1 \\\\notin I$.\\n\\n3. **Logical Errors**: The derivation \\\"$(x - 1)^2 = (x^2 - 3x + 2) + x - 1 \\\\in I$\\\" assumes that the term $x-1$ is already in $I$ to prove the sum is in $I$. Since $x-1 \\\\notin I$, $(x-1)^2 \\\\notin I$.\\n\\n4. **Algebraic Errors**: The step $r^n = \\\\sum_{i=0}^{m} a_i^n x^i$ is mathematically invalid for polynomials; $(a+b)^n \\\\neq a^n + b^n$ generally, and certainly $(\\\\sum a_i x^i)^n \\\\neq \\\\sum a_i^n x^i$.\",\n  \"suggestions\": \"To find the radical, analyze the quotient ring $R/I$. Observe that $R/I \\\\cong (\\\\mathbb{Z}/2\\\\mathbb{Z})[x] / \\\\langle x(x+1) \\\\rangle \\\\cong \\\\mathbb{Z}_2 \\\\times \\\\mathbb{Z}_2$. Since this quotient ring has no non-zero nilpotent elements, the ideal $I$ is already a radical ideal.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer provides an incorrect radical and contains multiple fundamental mathematical errors.\n\n1. **Incorrect Final Answer**: The radical of $I = \\langle 2, x^2 - 3x + 2 \\rangle$ is $I$ itself (or equivalently $\\langle 2, x^2+x \\rangle$), not $\\langle 2, x - 1 \\rangle$. The ideal $\\langle 2, x - 1 \\rangle$ is a prime ideal strictly containing $\\sqrt{I}$. The radical is the intersection of the minimal primes $\\langle 2, x \\rangle$ and $\\langle 2, x-1 \\rangle$.\n\n2. **False Claims about Membership**: The answer claims \"any element of the form $a + bx$ ... is in $I$\". This is false; for example, $1 \\notin I$. It later states \"Since $2, x - 1 \\in I$\", which is also false; $x-1 \\notin I$.\n\n3. **Logical Errors**: The derivation \"$(x - 1)^2 = (x^2 - 3x + 2) + x - 1 \\in I$\" assumes that the term $x-1$ is already in $I$ to prove the sum is in $I$. Since $x-1 \\notin I$, $(x-1)^2 \\notin I$.\n\n4. **Algebraic Errors**: The step $r^n = \\sum_{i=0}^{m} a_i^n x^i$ is mathematically invalid for polynomials; $(a+b)^n \\neq a^n + b^n$ generally, and certainly $(\\sum a_i x^i)^n \\neq \\sum a_i^n x^i$.",
+        "suggestions": "To find the radical, analyze the quotient ring $R/I$. Observe that $R/I \\cong (\\mathbb{Z}/2\\mathbb{Z})[x] / \\langle x(x+1) \\rangle \\cong \\mathbb{Z}_2 \\times \\mathbb{Z}_2$. Since this quotient ring has no non-zero nilpotent elements, the ideal $I$ is already a radical ideal.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $C$ be the curve defined by the equation $y^2 = x^3 - 3x + 2$. Consider the point $P = (1, 0)$ on $C$. Find the equation of the tangent line to $C$ at point $P$.",
+    "run_id": "8",
+    "topic_slug": "algebraic_geometry",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly evaluates the derivative at the point $(1,0)$. Substituting the coordinates into the implicit derivative expression yields $\\\\frac{3(1)^2 - 3}{2(0)} = \\\\frac{0}{0}$, which is an indeterminate form, not $-3$. Mathematically, the point $(1,0)$ is a singular point (a node) where the curve crosses itself, meaning there is no unique tangent line defined by the standard derivative. Instead, there are two tangent lines at this crossing with slopes $\\\\pm\\\\sqrt{3}$.\",\n  \"suggestions\": \"Recognize that the derivative results in $\\\\frac{0}{0}$, indicating a singular point. To handle this, analyze the limit of the slope as $x \\\\to 1$ or factor the equation as $y^2 = (x-1)^2(x+2)$ to determine the slopes of the two branches passing through the node.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly evaluates the derivative at the point $(1,0)$. Substituting the coordinates into the implicit derivative expression yields $\\\\frac{3(1)^2 - 3}{2(0)} = \\\\frac{0}{0}$, which is an indeterminate form, not $-3$. Mathematically, the point $(1,0)$ is a singular point (a node) where the curve crosses itself, meaning there is no unique tangent line defined by the standard derivative. Instead, there are two tangent lines at this crossing with slopes $\\\\pm\\\\sqrt{3}$.\",\n  \"suggestions\": \"Recognize that the derivative results in $\\\\frac{0}{0}$, indicating a singular point. To handle this, analyze the limit of the slope as $x \\\\to 1$ or factor the equation as $y^2 = (x-1)^2(x+2)$ to determine the slopes of the two branches passing through the node.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly evaluates the derivative at the point $(1,0)$. Substituting the coordinates into the implicit derivative expression yields $\\frac{3(1)^2 - 3}{2(0)} = \\frac{0}{0}$, which is an indeterminate form, not $-3$. Mathematically, the point $(1,0)$ is a singular point (a node) where the curve crosses itself, meaning there is no unique tangent line defined by the standard derivative. Instead, there are two tangent lines at this crossing with slopes $\\pm\\sqrt{3}$.",
+        "suggestions": "Recognize that the derivative results in $\\frac{0}{0}$, indicating a singular point. To handle this, analyze the limit of the slope as $x \\to 1$ or factor the equation as $y^2 = (x-1)^2(x+2)$ to determine the slopes of the two branches passing through the node.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $A$ be a square matrix of size $n \\times n$ with real entries. Define the matrix $B$ as the matrix obtained by replacing each entry of $A$ with its absolute value. Prove or disprove the following statement:\n\n\"If $A$ is invertible, then $B$ is also invertible.\"",
+    "run_id": "9",
+    "topic_slug": "linear_and_multilinear_algebra",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly claims the statement is true based on a single example ($A = \\\\begin{pmatrix} 1 & -1 \\\\\\\\ 0 & 2 \\\\end{pmatrix}$). Proving a universal statement requires showing it holds for all cases, whereas disproving it requires only one counterexample. In fact, the statement is false. Consider $A = \\\\begin{pmatrix} 1 & 1 \\\\\\\\ 1 & -1 \\\\end{pmatrix}$. Here $\\\\det(A) = -2 \\\\neq 0$, so $A$ is invertible. However, $B = \\\\begin{pmatrix} 1 & 1 \\\\\\\\ 1 & 1 \\\\end{pmatrix}$, which has $\\\\det(B) = 0$, so $B$ is not invertible.\",\n  \"suggestions\": \"To evaluate the statement correctly, attempt to find a counterexample. Since one exists (as shown in the notes), conclude that the statement is false.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly claims the statement is true based on a single example ($A = \\\\begin{pmatrix} 1 & -1 \\\\\\\\ 0 & 2 \\\\end{pmatrix}$). Proving a universal statement requires showing it holds for all cases, whereas disproving it requires only one counterexample. In fact, the statement is false. Consider $A = \\\\begin{pmatrix} 1 & 1 \\\\\\\\ 1 & -1 \\\\end{pmatrix}$. Here $\\\\det(A) = -2 \\\\neq 0$, so $A$ is invertible. However, $B = \\\\begin{pmatrix} 1 & 1 \\\\\\\\ 1 & 1 \\\\end{pmatrix}$, which has $\\\\det(B) = 0$, so $B$ is not invertible.\",\n  \"suggestions\": \"To evaluate the statement correctly, attempt to find a counterexample. Since one exists (as shown in the notes), conclude that the statement is false.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly claims the statement is true based on a single example ($A = \\begin{pmatrix} 1 & -1 \\\\ 0 & 2 \\end{pmatrix}$). Proving a universal statement requires showing it holds for all cases, whereas disproving it requires only one counterexample. In fact, the statement is false. Consider $A = \\begin{pmatrix} 1 & 1 \\\\ 1 & -1 \\end{pmatrix}$. Here $\\det(A) = -2 \\neq 0$, so $A$ is invertible. However, $B = \\begin{pmatrix} 1 & 1 \\\\ 1 & 1 \\end{pmatrix}$, which has $\\det(B) = 0$, so $B$ is not invertible.",
+        "suggestions": "To evaluate the statement correctly, attempt to find a counterexample. Since one exists (as shown in the notes), conclude that the statement is false.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a commutative ring with unity and let $M$ be a finitely generated $R$-module. Consider the set $S = \\{n \\in \\mathbb{N} \\mid \\text{there exists a surjective } R\\text{-module homomorphism } R^n \\to M\\}$.\n\nProve that $S$ is a finite set.",
+    "run_id": "10",
+    "topic_slug": "associative_rings_and_algebras",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof attempts to justify a false statement. For a finitely generated module $M$, the set $S$ is infinite, not finite. If there exists a surjective homomorphism $R^k \\to M$, then for any $n > k$, one can construct a surjective homomorphism $R^n \\to M$ by mapping the extra basis elements to zero. Thus, $S$ contains all integers greater than or equal to the minimum number of generators.\\n\\nFurthermore, the provided proof contains significant mathematical errors:\\n1. Step 2 invokes the Structure Theorem for finitely generated modules, which applies to PIDs (Principal Ideal Domains), not general commutative rings.\\n2. Step 4 asserts that $R^m$ has finitely many elements, which unjustifiably assumes the ring $R$ is finite.\\n3. The logic in Step 5 is flawed: even if there were finitely many homomorphisms for a fixed $n$, this would not imply that the set of feasible dimensions $n$ (the set $S$) is finite.\",\n  \"suggestions\": \"Recognize that the statement to be proven is false. $S$ is the set of all integers $n$ such that $n$ is greater than or equal to the minimal number of generators of $M$, making $S$ an infinite set.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof attempts to justify a false statement. For a finitely generated module $M$, the set $S$ is infinite, not finite. If there exists a surjective homomorphism $R^k \\to M$, then for any $n > k$, one can construct a surjective homomorphism $R^n \\to M$ by mapping the extra basis elements to zero. Thus, $S$ contains all integers greater than or equal to the minimum number of generators.\\n\\nFurthermore, the provided proof contains significant mathematical errors:\\n1. Step 2 invokes the Structure Theorem for finitely generated modules, which applies to PIDs (Principal Ideal Domains), not general commutative rings.\\n2. Step 4 asserts that $R^m$ has finitely many elements, which unjustifiably assumes the ring $R$ is finite.\\n3. The logic in Step 5 is flawed: even if there were finitely many homomorphisms for a fixed $n$, this would not imply that the set of feasible dimensions $n$ (the set $S$) is finite.\",\n  \"suggestions\": \"Recognize that the statement to be proven is false. $S$ is the set of all integers $n$ such that $n$ is greater than or equal to the minimal number of generators of $M$, making $S$ an infinite set.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The proof attempts to justify a false statement. For a finitely generated module $M$, the set $S$ is infinite, not finite. If there exists a surjective homomorphism $R^k \to M$, then for any $n > k$, one can construct a surjective homomorphism $R^n \to M$ by mapping the extra basis elements to zero. Thus, $S$ contains all integers greater than or equal to the minimum number of generators.\n\nFurthermore, the provided proof contains significant mathematical errors:\n1. Step 2 invokes the Structure Theorem for finitely generated modules, which applies to PIDs (Principal Ideal Domains), not general commutative rings.\n2. Step 4 asserts that $R^m$ has finitely many elements, which unjustifiably assumes the ring $R$ is finite.\n3. The logic in Step 5 is flawed: even if there were finitely many homomorphisms for a fixed $n$, this would not imply that the set of feasible dimensions $n$ (the set $S$) is finite.",
+        "suggestions": "Recognize that the statement to be proven is false. $S$ is the set of all integers $n$ such that $n$ is greater than or equal to the minimal number of generators of $M$, making $S$ an infinite set.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a nonassociative ring with the following properties:\n1. There exists an element $a \\in R$ such that for all $x \\in R$, $ax = xa$.\n2. For any $x, y \\in R$, the following identity holds: $(xy)a = x(ya)$.\n\nGiven that $a^2 = a$, prove that for any $x \\in R$, $x^2 = x$.",
+    "run_id": "11",
+    "topic_slug": "nonassociative_rings_and_algebras",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer relies on invalid logical steps and attempts to prove a statement that is generally false. Specifically: \\n1. The claim 'Given $a^2 = a$, we can rewrite the property (1) as $ax = xa = a$' is false. For example, in the ring of integers with $a=1$, $1x = x \\neq 1$.\\n2. The step $x^2 = (x^2)a$ is unjustified without assuming $a$ is a multiplicative identity, which contradicts the previous claim that $ax=a$ (unless $x=a$).\\n3. The derived conclusion $x^2 = a = x$ implies $x=a$ for all $x$, suggesting the ring contains only a single element, which is not given.\\n4. The theorem itself is false (counterexample: $R=\\\\mathbb{R}, a=1$ satisfies all conditions but $x^2 \\\\neq x$ generally).\",\n  \"suggestions\": \"Identify that the statement to be proven is false by providing a counterexample (e.g., real numbers with $a=1$). Do not fabricate algebraic steps to reach the requested conclusion.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer relies on invalid logical steps and attempts to prove a statement that is generally false. Specifically: \\n1. The claim 'Given $a^2 = a$, we can rewrite the property (1) as $ax = xa = a$' is false. For example, in the ring of integers with $a=1$, $1x = x \\neq 1$.\\n2. The step $x^2 = (x^2)a$ is unjustified without assuming $a$ is a multiplicative identity, which contradicts the previous claim that $ax=a$ (unless $x=a$).\\n3. The derived conclusion $x^2 = a = x$ implies $x=a$ for all $x$, suggesting the ring contains only a single element, which is not given.\\n4. The theorem itself is false (counterexample: $R=\\\\mathbb{R}, a=1$ satisfies all conditions but $x^2 \\\\neq x$ generally).\",\n  \"suggestions\": \"Identify that the statement to be proven is false by providing a counterexample (e.g., real numbers with $a=1$). Do not fabricate algebraic steps to reach the requested conclusion.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer relies on invalid logical steps and attempts to prove a statement that is generally false. Specifically: \n1. The claim 'Given $a^2 = a$, we can rewrite the property (1) as $ax = xa = a$' is false. For example, in the ring of integers with $a=1$, $1x = x \neq 1$.\n2. The step $x^2 = (x^2)a$ is unjustified without assuming $a$ is a multiplicative identity, which contradicts the previous claim that $ax=a$ (unless $x=a$).\n3. The derived conclusion $x^2 = a = x$ implies $x=a$ for all $x$, suggesting the ring contains only a single element, which is not given.\n4. The theorem itself is false (counterexample: $R=\\mathbb{R}, a=1$ satisfies all conditions but $x^2 \\neq x$ generally).",
+        "suggestions": "Identify that the statement to be proven is false by providing a counterexample (e.g., real numbers with $a=1$). Do not fabricate algebraic steps to reach the requested conclusion.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a commutative ring with unity. Consider a chain complex $C_{\\bullet}: \\cdots \\rightarrow C_{n+1} \\xrightarrow{d_{n+1}} C_n \\xrightarrow{d_n} C_{n-1} \\rightarrow \\cdots$ in the category of $R$-modules, where each $C_n$ is a finitely generated $R$-module for all $n \\in \\mathbb{Z}$. Suppose that $H_n(C_{\\bullet})$ denotes the $n$-th homology module of $C_{\\bullet}$.\n\nProve that if $H_n(C_{\\bullet}) = 0$ for all $n \\in \\mathbb{Z}$, then the chain complex $C_{\\bullet}$ is acyclic, i.e., $C_n \\cong \\text{ker}(d_n) \\oplus \\text{im}(d_{n+1})$ for all $n \\in \\mathbb{Z}$.",
+    "run_id": "12",
+    "topic_slug": "category_theory_and_homological_algebra",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer relies on a fundamentally flawed construction and invalid logic. First, the sequence $0 \\\\rightarrow \\\\text{im}(d_{n+1}) \\\\rightarrow C_n \\\\xrightarrow{d_n} \\\\text{ker}(d_n) \\\\rightarrow 0$ is nonsensical because the map $d_n$ has codomain $C_{n-1}$, not $\\\\text{ker}(d_n)$ (which is a submodule of $C_n$). Second, even if corrected to a valid short exact sequence, the condition $H_n(C_\\\\bullet) = 0$ (which implies $\\\\text{im}(d_{n+1}) = \\\\text{ker}(d_n)$) does not imply that the sequence splits over a general commutative ring. Finally, the conclusion $C_n \\\\cong \\\\text{ker}(d_n) \\\\oplus \\\\text{im}(d_{n+1})$ (which under exactness becomes $C_n \\\\cong \\\\text{ker}(d_n) \\\\oplus \\\\text{ker}(d_n)$) is false for general exact complexes (e.g., $0 \\\\to \\\\mathbb{Z} \\\\xrightarrow{1} \\\\mathbb{Z} \\\\to 0$).\",\n  \"suggestions\": \"Identify that the statement to be proven is false for general rings (exactness does not imply split exactness). Point out that the decomposition $C_n \\\\cong \\\\text{ker}(d_n) \\\\oplus \\\\text{im}(d_{n+1})$ is not a consequence of vanishing homology without additional assumptions (like $R$ being a field or the modules being projective/injective).\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer relies on a fundamentally flawed construction and invalid logic. First, the sequence $0 \\\\rightarrow \\\\text{im}(d_{n+1}) \\\\rightarrow C_n \\\\xrightarrow{d_n} \\\\text{ker}(d_n) \\\\rightarrow 0$ is nonsensical because the map $d_n$ has codomain $C_{n-1}$, not $\\\\text{ker}(d_n)$ (which is a submodule of $C_n$). Second, even if corrected to a valid short exact sequence, the condition $H_n(C_\\\\bullet) = 0$ (which implies $\\\\text{im}(d_{n+1}) = \\\\text{ker}(d_n)$) does not imply that the sequence splits over a general commutative ring. Finally, the conclusion $C_n \\\\cong \\\\text{ker}(d_n) \\\\oplus \\\\text{im}(d_{n+1})$ (which under exactness becomes $C_n \\\\cong \\\\text{ker}(d_n) \\\\oplus \\\\text{ker}(d_n)$) is false for general exact complexes (e.g., $0 \\\\to \\\\mathbb{Z} \\\\xrightarrow{1} \\\\mathbb{Z} \\\\to 0$).\",\n  \"suggestions\": \"Identify that the statement to be proven is false for general rings (exactness does not imply split exactness). Point out that the decomposition $C_n \\\\cong \\\\text{ker}(d_n) \\\\oplus \\\\text{im}(d_{n+1})$ is not a consequence of vanishing homology without additional assumptions (like $R$ being a field or the modules being projective/injective).\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer relies on a fundamentally flawed construction and invalid logic. First, the sequence $0 \\rightarrow \\text{im}(d_{n+1}) \\rightarrow C_n \\xrightarrow{d_n} \\text{ker}(d_n) \\rightarrow 0$ is nonsensical because the map $d_n$ has codomain $C_{n-1}$, not $\\text{ker}(d_n)$ (which is a submodule of $C_n$). Second, even if corrected to a valid short exact sequence, the condition $H_n(C_\\bullet) = 0$ (which implies $\\text{im}(d_{n+1}) = \\text{ker}(d_n)$) does not imply that the sequence splits over a general commutative ring. Finally, the conclusion $C_n \\cong \\text{ker}(d_n) \\oplus \\text{im}(d_{n+1})$ (which under exactness becomes $C_n \\cong \\text{ker}(d_n) \\oplus \\text{ker}(d_n)$) is false for general exact complexes (e.g., $0 \\to \\mathbb{Z} \\xrightarrow{1} \\mathbb{Z} \\to 0$).",
+        "suggestions": "Identify that the statement to be proven is false for general rings (exactness does not imply split exactness). Point out that the decomposition $C_n \\cong \\text{ker}(d_n) \\oplus \\text{im}(d_{n+1})$ is not a consequence of vanishing homology without additional assumptions (like $R$ being a field or the modules being projective/injective).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a compact Hausdorff space and $A$ be a separable $C^*$-algebra. Consider the $K_0$-group of $A$, denoted by $K_0(A)$. Define the map $\\phi: K_0(A) \\to K(X, A)$ by $\\phi([p]) = [p \\otimes 1_X]$, where $p$ is a projection in $M_n(A)$ for some $n \\in \\mathbb{N}$, $1_X$ is the identity function on $X$, and $K(X, A)$ denotes the $K$-theory group of $X$ with coefficients in $A$. \n\nProve that $\\phi$ is a well-defined group homomorphism.",
+    "run_id": "13",
+    "topic_slug": "k_theory",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer is meaningfully incomplete because it treats $K_0(A)$ as the semigroup of projection classes $V(A)$, ignoring that elements of $K_0(A)$ are formal differences $[p] - [q]$ (Grothendieck group construction). The proof verifies that the map is a well-defined semigroup homomorphism on the positive cone $V(A)$, but fails to address the extension to the full group $K_0(A)$ (e.g., handling inverses or checking well-definedness for differences like $[p]-[q] = [p']-[q']$).\",\n  \"suggestions\": \"Acknowledge that $K_0(A)$ consists of formal differences. Complete the proof by either (1) invoking the universal property of the Grothendieck group to show the homomorphism on $V(A)$ extends uniquely to $K_0(A)$, or (2) explicitly defining $\\\\phi([p]-[q]) = [p \\\\otimes 1_X] - [q \\\\otimes 1_X]$ and verifying it is well-defined. Alternatively, one could simply note that the map is induced by the *-homomorphism $A \\\\to C(X) \\\\otimes A$ given by $a \\\\mapsto a \\\\otimes 1_X$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer is meaningfully incomplete because it treats $K_0(A)$ as the semigroup of projection classes $V(A)$, ignoring that elements of $K_0(A)$ are formal differences $[p] - [q]$ (Grothendieck group construction). The proof verifies that the map is a well-defined semigroup homomorphism on the positive cone $V(A)$, but fails to address the extension to the full group $K_0(A)$ (e.g., handling inverses or checking well-definedness for differences like $[p]-[q] = [p']-[q']$).\",\n  \"suggestions\": \"Acknowledge that $K_0(A)$ consists of formal differences. Complete the proof by either (1) invoking the universal property of the Grothendieck group to show the homomorphism on $V(A)$ extends uniquely to $K_0(A)$, or (2) explicitly defining $\\\\phi([p]-[q]) = [p \\\\otimes 1_X] - [q \\\\otimes 1_X]$ and verifying it is well-defined. Alternatively, one could simply note that the map is induced by the *-homomorphism $A \\\\to C(X) \\\\otimes A$ given by $a \\\\mapsto a \\\\otimes 1_X$.\"\n}",
+        "verdict": "insufficient",
+        "notes": "The answer is meaningfully incomplete because it treats $K_0(A)$ as the semigroup of projection classes $V(A)$, ignoring that elements of $K_0(A)$ are formal differences $[p] - [q]$ (Grothendieck group construction). The proof verifies that the map is a well-defined semigroup homomorphism on the positive cone $V(A)$, but fails to address the extension to the full group $K_0(A)$ (e.g., handling inverses or checking well-definedness for differences like $[p]-[q] = [p']-[q']$).",
+        "suggestions": "Acknowledge that $K_0(A)$ consists of formal differences. Complete the proof by either (1) invoking the universal property of the Grothendieck group to show the homomorphism on $V(A)$ extends uniquely to $K_0(A)$, or (2) explicitly defining $\\phi([p]-[q]) = [p \\otimes 1_X] - [q \\otimes 1_X]$ and verifying it is well-defined. Alternatively, one could simply note that the map is induced by the *-homomorphism $A \\to C(X) \\otimes A$ given by $a \\mapsto a \\otimes 1_X$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a group with identity element $e$. Consider two elements $a, b \\in G$ such that $ab = ba$ and $a^3 = b^2 = e$. Prove that $ba = ab$.",
+    "run_id": "14",
+    "topic_slug": "group_theory_and_generalizations",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer attempts to derive a conclusion that is already explicitly given as a premise ($ab=ba$). In doing so, it employs invalid algebraic steps. Specifically, the transition from $abab = baba$ to $a^2b = b^2a$ is mathematically false. Given $ab=ba$ and $b^2=e$, the left side $abab$ simplifies to $a^2b^2 = a^2$, which is not equal to $a^2b$ unless $b=e$. Thus, the reasoning provided is logically flawed.\",\n  \"suggestions\": \"Simply state that the conclusion $ba=ab$ follows directly from the given assumption $ab=ba$. Avoid constructing a derivation with invalid algebraic operations.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer attempts to derive a conclusion that is already explicitly given as a premise ($ab=ba$). In doing so, it employs invalid algebraic steps. Specifically, the transition from $abab = baba$ to $a^2b = b^2a$ is mathematically false. Given $ab=ba$ and $b^2=e$, the left side $abab$ simplifies to $a^2b^2 = a^2$, which is not equal to $a^2b$ unless $b=e$. Thus, the reasoning provided is logically flawed.\",\n  \"suggestions\": \"Simply state that the conclusion $ba=ab$ follows directly from the given assumption $ab=ba$. Avoid constructing a derivation with invalid algebraic operations.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer attempts to derive a conclusion that is already explicitly given as a premise ($ab=ba$). In doing so, it employs invalid algebraic steps. Specifically, the transition from $abab = baba$ to $a^2b = b^2a$ is mathematically false. Given $ab=ba$ and $b^2=e$, the left side $abab$ simplifies to $a^2b^2 = a^2$, which is not equal to $a^2b$ unless $b=e$. Thus, the reasoning provided is logically flawed.",
+        "suggestions": "Simply state that the conclusion $ba=ab$ follows directly from the given assumption $ab=ba$. Avoid constructing a derivation with invalid algebraic operations.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a topological group and $H$ be a closed subgroup of $G$. Prove that the quotient space $G/H$ equipped with the quotient topology is a topological space.",
+    "run_id": "15",
+    "topic_slug": "topological_groups_and_lie_groups",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains fundamental logical errors and incorrect definitions:\\n1. **Definition of Topology**: It defines the quotient topology as $\\\\mathcal{T} = \\\\{\\\\pi(U) \\\\mid U \\\\text{ open in } G\\\\}$. The standard definition is that $V \\\\subseteq G/H$ is open if and only if $\\\\pi^{-1}(V)$ is open in $G$. While these coincide for topological groups (because $\\\\pi$ is an open map), the answer simply asserts this non-standard definition without justification.\\n2. **Intersection Axiom Logic**: The verification of the intersection axiom is invalid. The answer argues that the image of an intersection is open ($\\\\pi(\\\\cap U_i)$). However, to prove the topology is closed under intersection, one must show that the intersection of two open sets *in the quotient* is open. Since $\\\\pi(U) \\\\cap \\\\pi(V) \\\\neq \\\\pi(U \\\\cap V)$ in general, the reasoning provided fails to prove the axiom.\\n3. **Continuity Misunderstanding**: In step 3(i), the answer claims $\\\\pi(G)$ is open because $\\\\pi$ is continuous. Continuity ensures inverse images of open sets are open, not forward images. This reasoning is false.\",\n  \"suggestions\": \"Use the standard definition of the quotient topology: a set $V \\\\subseteq G/H$ is open if and only if $\\\\pi^{-1}(V)$ is open in $G$. Verify the topological axioms using the properties of the inverse image operator $\\\\pi^{-1}$, which preserves unions and intersections exactly (e.g., $\\\\pi^{-1}(A \\\\cap B) = \\\\pi^{-1}(A) \\\\cap \\\\pi^{-1}(B)$).\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains fundamental logical errors and incorrect definitions:\\n1. **Definition of Topology**: It defines the quotient topology as $\\\\mathcal{T} = \\\\{\\\\pi(U) \\\\mid U \\\\text{ open in } G\\\\}$. The standard definition is that $V \\\\subseteq G/H$ is open if and only if $\\\\pi^{-1}(V)$ is open in $G$. While these coincide for topological groups (because $\\\\pi$ is an open map), the answer simply asserts this non-standard definition without justification.\\n2. **Intersection Axiom Logic**: The verification of the intersection axiom is invalid. The answer argues that the image of an intersection is open ($\\\\pi(\\\\cap U_i)$). However, to prove the topology is closed under intersection, one must show that the intersection of two open sets *in the quotient* is open. Since $\\\\pi(U) \\\\cap \\\\pi(V) \\\\neq \\\\pi(U \\\\cap V)$ in general, the reasoning provided fails to prove the axiom.\\n3. **Continuity Misunderstanding**: In step 3(i), the answer claims $\\\\pi(G)$ is open because $\\\\pi$ is continuous. Continuity ensures inverse images of open sets are open, not forward images. This reasoning is false.\",\n  \"suggestions\": \"Use the standard definition of the quotient topology: a set $V \\\\subseteq G/H$ is open if and only if $\\\\pi^{-1}(V)$ is open in $G$. Verify the topological axioms using the properties of the inverse image operator $\\\\pi^{-1}$, which preserves unions and intersections exactly (e.g., $\\\\pi^{-1}(A \\\\cap B) = \\\\pi^{-1}(A) \\\\cap \\\\pi^{-1}(B)$).\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains fundamental logical errors and incorrect definitions:\n1. **Definition of Topology**: It defines the quotient topology as $\\mathcal{T} = \\{\\pi(U) \\mid U \\text{ open in } G\\}$. The standard definition is that $V \\subseteq G/H$ is open if and only if $\\pi^{-1}(V)$ is open in $G$. While these coincide for topological groups (because $\\pi$ is an open map), the answer simply asserts this non-standard definition without justification.\n2. **Intersection Axiom Logic**: The verification of the intersection axiom is invalid. The answer argues that the image of an intersection is open ($\\pi(\\cap U_i)$). However, to prove the topology is closed under intersection, one must show that the intersection of two open sets *in the quotient* is open. Since $\\pi(U) \\cap \\pi(V) \\neq \\pi(U \\cap V)$ in general, the reasoning provided fails to prove the axiom.\n3. **Continuity Misunderstanding**: In step 3(i), the answer claims $\\pi(G)$ is open because $\\pi$ is continuous. Continuity ensures inverse images of open sets are open, not forward images. This reasoning is false.",
+        "suggestions": "Use the standard definition of the quotient topology: a set $V \\subseteq G/H$ is open if and only if $\\pi^{-1}(V)$ is open in $G$. Verify the topological axioms using the properties of the inverse image operator $\\pi^{-1}$, which preserves unions and intersections exactly (e.g., $\\pi^{-1}(A \\cap B) = \\pi^{-1}(A) \\cap \\pi^{-1}(B)$).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a continuous function that satisfies the following functional equation:\n$$f(x+y) = f(x) + f(y) + 2xy$$\nfor all real numbers $x$ and $y$. If $f(1) = 3$, find the value of $f(2022)$.",
+    "run_id": "16",
+    "topic_slug": "real_functions",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The derivation of the functional form $f(x) = x^2 + 2x$ is correct. However, the final arithmetic calculation contains a significant error. $f(2022) = 2022^2 + 2(2022) = 4088484 + 4044 = 4092528$, whereas the provided answer is $4088488$.\",\n  \"suggestions\": \"Perform the arithmetic calculation $2022^2 + 4044$ carefully.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The derivation of the functional form $f(x) = x^2 + 2x$ is correct. However, the final arithmetic calculation contains a significant error. $f(2022) = 2022^2 + 2(2022) = 4088484 + 4044 = 4092528$, whereas the provided answer is $4088488$.\",\n  \"suggestions\": \"Perform the arithmetic calculation $2022^2 + 4044$ carefully.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The derivation of the functional form $f(x) = x^2 + 2x$ is correct. However, the final arithmetic calculation contains a significant error. $f(2022) = 2022^2 + 2(2022) = 4088484 + 4044 = 4092528$, whereas the provided answer is $4088488$.",
+        "suggestions": "Perform the arithmetic calculation $2022^2 + 4044$ carefully.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: [0, 1] \\to \\mathbb{R}$ be a continuous function such that $\\int_{0}^{1} f(x) \\, dx = 5$. Define $g(x) = \\int_{0}^{x} f(t) \\, dt$. Find the value of $\\int_{0}^{1} g(x) \\, dx$.",
+    "run_id": "17",
+    "topic_slug": "measure_and_integration",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution contains a fundamental logical error in the step claiming \\\"Therefore, $\\\\int_{0}^{1} g(x) \\\\, dx = \\\\int_{0}^{1} g'(x) \\\\, dx$\\\". This equality is false; the integral of a function is not equal to the integral of its derivative. Furthermore, the problem is ill-posed because the value of $\\\\int_{0}^{1} g(x) \\\\, dx$ is not uniquely determined by the condition $\\\\int_{0}^{1} f(x) \\\\, dx = 5$. Using integration by parts, $\\\\int_{0}^{1} g(x) \\\\, dx = 5 - \\\\int_{0}^{1} x f(x) \\\\, dx$, which depends on the specific function $f$.\",\n  \"suggestions\": \"Apply integration by parts on $\\\\int g(x) \\\\, dx$ with $u=g(x)$ and $dv=dx$ to correctly relate the integral to moments of $f(x)$. Acknowledge that the value cannot be determined without more information about $f(x)$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution contains a fundamental logical error in the step claiming \\\"Therefore, $\\\\int_{0}^{1} g(x) \\\\, dx = \\\\int_{0}^{1} g'(x) \\\\, dx$\\\". This equality is false; the integral of a function is not equal to the integral of its derivative. Furthermore, the problem is ill-posed because the value of $\\\\int_{0}^{1} g(x) \\\\, dx$ is not uniquely determined by the condition $\\\\int_{0}^{1} f(x) \\\\, dx = 5$. Using integration by parts, $\\\\int_{0}^{1} g(x) \\\\, dx = 5 - \\\\int_{0}^{1} x f(x) \\\\, dx$, which depends on the specific function $f$.\",\n  \"suggestions\": \"Apply integration by parts on $\\\\int g(x) \\\\, dx$ with $u=g(x)$ and $dv=dx$ to correctly relate the integral to moments of $f(x)$. Acknowledge that the value cannot be determined without more information about $f(x)$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The solution contains a fundamental logical error in the step claiming \"Therefore, $\\int_{0}^{1} g(x) \\, dx = \\int_{0}^{1} g'(x) \\, dx$\". This equality is false; the integral of a function is not equal to the integral of its derivative. Furthermore, the problem is ill-posed because the value of $\\int_{0}^{1} g(x) \\, dx$ is not uniquely determined by the condition $\\int_{0}^{1} f(x) \\, dx = 5$. Using integration by parts, $\\int_{0}^{1} g(x) \\, dx = 5 - \\int_{0}^{1} x f(x) \\, dx$, which depends on the specific function $f$.",
+        "suggestions": "Apply integration by parts on $\\int g(x) \\, dx$ with $u=g(x)$ and $dv=dx$ to correctly relate the integral to moments of $f(x)$. Acknowledge that the value cannot be determined without more information about $f(x)$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f(z)$ be a complex function defined by $f(z) = z^3 - 3z^2 + 2z$. Determine all complex numbers $z$ such that $f(z) = \\overline{z}$, where $\\overline{z}$ denotes the complex conjugate of $z$.",
+    "run_id": "18",
+    "topic_slug": "functions_of_a_complex_variable",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is incorrect and incomplete. \\n\\n1. **Mathematical Errors**: In separating the real and imaginary parts, the term $3y^2$ (resulting from the expansion of $-3(yi)^2$) is a real term. However, the answer omits it from the real part equation ($x^3 - 3x^2 - 3xy^2 + 2x = a$) and incorrectly includes it in the imaginary part equation ($3x^2y - y^3 - 6xy + 3y^2 + 2y = -b$).\\n\\n2. **Incompleteness**: The question asks to \\\"Determine all complex numbers $z$\\\". The answer derives an incorrect system of equations and stops without solving for $z$. It fails to provide the final solution set.\\n\\n3. **Variable Definition**: The answer introduces variables $a$ and $b$ for $\\\\overline{z} = a - bi$ without explicitly linking them to $x$ and $y$ (where $\\\\overline{z} = x - yi$), leaving the resulting system in terms of four variables rather than two.\",\n  \"suggestions\": \"Correct the algebraic expansion by properly grouping real and imaginary terms. Recognize that if $z=x+yi$, then $\\\\overline{z}=x-yi$, so the real part equation equals $x$ and the imaginary part equation equals $-y$. Finally, solve the resulting system of equations to find the specific values of $z$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is incorrect and incomplete. \\n\\n1. **Mathematical Errors**: In separating the real and imaginary parts, the term $3y^2$ (resulting from the expansion of $-3(yi)^2$) is a real term. However, the answer omits it from the real part equation ($x^3 - 3x^2 - 3xy^2 + 2x = a$) and incorrectly includes it in the imaginary part equation ($3x^2y - y^3 - 6xy + 3y^2 + 2y = -b$).\\n\\n2. **Incompleteness**: The question asks to \\\"Determine all complex numbers $z$\\\". The answer derives an incorrect system of equations and stops without solving for $z$. It fails to provide the final solution set.\\n\\n3. **Variable Definition**: The answer introduces variables $a$ and $b$ for $\\\\overline{z} = a - bi$ without explicitly linking them to $x$ and $y$ (where $\\\\overline{z} = x - yi$), leaving the resulting system in terms of four variables rather than two.\",\n  \"suggestions\": \"Correct the algebraic expansion by properly grouping real and imaginary terms. Recognize that if $z=x+yi$, then $\\\\overline{z}=x-yi$, so the real part equation equals $x$ and the imaginary part equation equals $-y$. Finally, solve the resulting system of equations to find the specific values of $z$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer is incorrect and incomplete. \n\n1. **Mathematical Errors**: In separating the real and imaginary parts, the term $3y^2$ (resulting from the expansion of $-3(yi)^2$) is a real term. However, the answer omits it from the real part equation ($x^3 - 3x^2 - 3xy^2 + 2x = a$) and incorrectly includes it in the imaginary part equation ($3x^2y - y^3 - 6xy + 3y^2 + 2y = -b$).\n\n2. **Incompleteness**: The question asks to \"Determine all complex numbers $z$\". The answer derives an incorrect system of equations and stops without solving for $z$. It fails to provide the final solution set.\n\n3. **Variable Definition**: The answer introduces variables $a$ and $b$ for $\\overline{z} = a - bi$ without explicitly linking them to $x$ and $y$ (where $\\overline{z} = x - yi$), leaving the resulting system in terms of four variables rather than two.",
+        "suggestions": "Correct the algebraic expansion by properly grouping real and imaginary terms. Recognize that if $z=x+yi$, then $\\overline{z}=x-yi$, so the real part equation equals $x$ and the imaginary part equation equals $-y$. Finally, solve the resulting system of equations to find the specific values of $z$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a continuous function such that for any real numbers $a$ and $b$, the following equation holds:\n\n$$\\int_{a}^{b} f(x) \\, dx = f(a) + f(b).$$\n\nIf $f(0) = 1$, determine the value of $f(1)$.",
+    "run_id": "19",
+    "topic_slug": "potential_theory",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer identifies a function $f(x) = e^x$ that does not satisfy the original integral equation. Substituting $f(x) = e^x$ into the condition $\\\\int_0^1 f(x) dx = f(0) + f(1)$ yields $\\\\int_0^1 e^x dx = e - 1$ on the left, but $1 + e$ on the right. Since $e - 1 \\\\neq e + 1$, the solution is invalid. Furthermore, the problem itself is ill-posed: setting $a=b$ in the given equation implies $\\\\int_a^a f(x) dx = 0 = 2f(a)$, requiring $f(x) = 0$ for all $x$, which contradicts the initial condition $f(0)=1$.\",\n  \"suggestions\": \"Always verify the candidate solution against the original equation. In this case, the contradiction implies no such function exists.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer identifies a function $f(x) = e^x$ that does not satisfy the original integral equation. Substituting $f(x) = e^x$ into the condition $\\\\int_0^1 f(x) dx = f(0) + f(1)$ yields $\\\\int_0^1 e^x dx = e - 1$ on the left, but $1 + e$ on the right. Since $e - 1 \\\\neq e + 1$, the solution is invalid. Furthermore, the problem itself is ill-posed: setting $a=b$ in the given equation implies $\\\\int_a^a f(x) dx = 0 = 2f(a)$, requiring $f(x) = 0$ for all $x$, which contradicts the initial condition $f(0)=1$.\",\n  \"suggestions\": \"Always verify the candidate solution against the original equation. In this case, the contradiction implies no such function exists.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer identifies a function $f(x) = e^x$ that does not satisfy the original integral equation. Substituting $f(x) = e^x$ into the condition $\\int_0^1 f(x) dx = f(0) + f(1)$ yields $\\int_0^1 e^x dx = e - 1$ on the left, but $1 + e$ on the right. Since $e - 1 \\neq e + 1$, the solution is invalid. Furthermore, the problem itself is ill-posed: setting $a=b$ in the given equation implies $\\int_a^a f(x) dx = 0 = 2f(a)$, requiring $f(x) = 0$ for all $x$, which contradicts the initial condition $f(0)=1$.",
+        "suggestions": "Always verify the candidate solution against the original equation. In this case, the contradiction implies no such function exists.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate, rigorous, and clearly explains both the specific error in the proposed solution and the fundamental contradiction in the problem statement."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{C}^2 \\to \\mathbb{C}$ be a holomorphic function defined by $f(z, w) = z^3 + 2zw^2 - 3w^3$. Consider the subset $S \\subset \\mathbb{C}^2$ defined by $S = \\{(z, w) \\in \\mathbb{C}^2 \\mid |z|^2 + |w|^2 = 1\\}$. Determine all points $(z, w) \\in S$ such that $f(z, w) = 0$.",
+    "run_id": "20",
+    "topic_slug": "several_complex_variables_and_analytic_spaces",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer fails to solve the problem and contains an algebraic error. First, in the polar substitution step, the term $2zw^2$ is incorrectly expanded as $2rse^{i(\\\\theta + 2\\\\phi)}$; it should be $2rs^2e^{i(\\\\theta + 2\\\\phi)}$ (missing a factor of $s$). Second, the answer stops after setting up the system of equations and does not actually determine the points $(z, w)$ as requested.\",\n  \"suggestions\": \"To solve the problem, note that the polynomial is homogeneous. Substitute $z = uw$ (considering $w \\\\neq 0$) to obtain $w^3(u^3 + 2u - 3) = 0$. Solve the cubic equation for $u$ (one root is $u=1$) to find the ratios $z/w$. Then, use the constraint $|z|^2 + |w|^2 = 1$ to solve for the specific values of $z$ and $w$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer fails to solve the problem and contains an algebraic error. First, in the polar substitution step, the term $2zw^2$ is incorrectly expanded as $2rse^{i(\\\\theta + 2\\\\phi)}$; it should be $2rs^2e^{i(\\\\theta + 2\\\\phi)}$ (missing a factor of $s$). Second, the answer stops after setting up the system of equations and does not actually determine the points $(z, w)$ as requested.\",\n  \"suggestions\": \"To solve the problem, note that the polynomial is homogeneous. Substitute $z = uw$ (considering $w \\\\neq 0$) to obtain $w^3(u^3 + 2u - 3) = 0$. Solve the cubic equation for $u$ (one root is $u=1$) to find the ratios $z/w$. Then, use the constraint $|z|^2 + |w|^2 = 1$ to solve for the specific values of $z$ and $w$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer fails to solve the problem and contains an algebraic error. First, in the polar substitution step, the term $2zw^2$ is incorrectly expanded as $2rse^{i(\\theta + 2\\phi)}$; it should be $2rs^2e^{i(\\theta + 2\\phi)}$ (missing a factor of $s$). Second, the answer stops after setting up the system of equations and does not actually determine the points $(z, w)$ as requested.",
+        "suggestions": "To solve the problem, note that the polynomial is homogeneous. Substitute $z = uw$ (considering $w \\neq 0$) to obtain $w^3(u^3 + 2u - 3) = 0$. Solve the cubic equation for $u$ (one root is $u=1$) to find the ratios $z/w$. Then, use the constraint $|z|^2 + |w|^2 = 1$ to solve for the specific values of $z$ and $w$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f(x)$ be the Bessel function of the first kind of order $n$, denoted as $J_n(x)$. Consider the equation $J_2(x) = 0$. Find all real solutions $x$ to this equation.",
+    "run_id": "21",
+    "topic_slug": "special_functions",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains significant mathematical errors and fails to answer the question. \\n\\n1. The series expansion provided is incorrect. The Bessel function series is alternating, but the expanded form in the answer has only positive terms: $\\\\frac{1}{2^2}x^2 + \\\\frac{1}{2^3\\\\cdot 2!}x^4 + \\\\ldots$. If this were true, $x=0$ would be the only real solution. \\n2. The coefficients in the expansion are also calculated incorrectly (e.g., the first term should be $x^2/8$, not $x^2/4$).\\n3. The answer fails to identify the trivial solution $x=0$, which is immediately apparent from the series definition.\\n4. The answer fails to identify that there are infinitely many non-zero real roots (denoted $j_{2,k}$) or provide any information about them, concluding with a tautology that the solutions are \\\"values... where the [function] equals zero.\\\"\",\n  \"suggestions\": \"Identify $x=0$ as an explicit solution. Correct the series expansion (include alternating signs). State that there are infinitely many non-zero real roots (transcendental numbers), commonly denoted as $\\\\pm j_{2,k}$, and perhaps list the first few numerical approximations (e.g., $\\\\approx \\\\pm 5.136, \\\\pm 8.417$, etc.).\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains significant mathematical errors and fails to answer the question. \\n\\n1. The series expansion provided is incorrect. The Bessel function series is alternating, but the expanded form in the answer has only positive terms: $\\\\frac{1}{2^2}x^2 + \\\\frac{1}{2^3\\\\cdot 2!}x^4 + \\\\ldots$. If this were true, $x=0$ would be the only real solution. \\n2. The coefficients in the expansion are also calculated incorrectly (e.g., the first term should be $x^2/8$, not $x^2/4$).\\n3. The answer fails to identify the trivial solution $x=0$, which is immediately apparent from the series definition.\\n4. The answer fails to identify that there are infinitely many non-zero real roots (denoted $j_{2,k}$) or provide any information about them, concluding with a tautology that the solutions are \\\"values... where the [function] equals zero.\\\"\",\n  \"suggestions\": \"Identify $x=0$ as an explicit solution. Correct the series expansion (include alternating signs). State that there are infinitely many non-zero real roots (transcendental numbers), commonly denoted as $\\\\pm j_{2,k}$, and perhaps list the first few numerical approximations (e.g., $\\\\approx \\\\pm 5.136, \\\\pm 8.417$, etc.).\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer contains significant mathematical errors and fails to answer the question. \n\n1. The series expansion provided is incorrect. The Bessel function series is alternating, but the expanded form in the answer has only positive terms: $\\frac{1}{2^2}x^2 + \\frac{1}{2^3\\cdot 2!}x^4 + \\ldots$. If this were true, $x=0$ would be the only real solution. \n2. The coefficients in the expansion are also calculated incorrectly (e.g., the first term should be $x^2/8$, not $x^2/4$).\n3. The answer fails to identify the trivial solution $x=0$, which is immediately apparent from the series definition.\n4. The answer fails to identify that there are infinitely many non-zero real roots (denoted $j_{2,k}$) or provide any information about them, concluding with a tautology that the solutions are \"values... where the [function] equals zero.\"",
+        "suggestions": "Identify $x=0$ as an explicit solution. Correct the series expansion (include alternating signs). State that there are infinitely many non-zero real roots (transcendental numbers), commonly denoted as $\\pm j_{2,k}$, and perhaps list the first few numerical approximations (e.g., $\\approx \\pm 5.136, \\pm 8.417$, etc.).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the following second-order linear homogeneous ordinary differential equation:\n$$y'' - 4y' + 4y = 0$$\nwhere $y = y(x)$ is a function of $x$. Find the general solution to this differential equation.",
+    "run_id": "22",
+    "topic_slug": "ordinary_differential_equations",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the characteristic equation $r^2 - 4r + 4 = 0$, identifies the repeated root $r=2$, and applies the standard form for the general solution of a second-order linear homogeneous ODE with a repeated real root ($y = c_1 e^{rx} + c_2 x e^{rx}$).\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the characteristic equation $r^2 - 4r + 4 = 0$, identifies the repeated root $r=2$, and applies the standard form for the general solution of a second-order linear homogeneous ODE with a repeated real root ($y = c_1 e^{rx} + c_2 x e^{rx}$).\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly derives the characteristic equation $r^2 - 4r + 4 = 0$, identifies the repeated root $r=2$, and applies the standard form for the general solution of a second-order linear homogeneous ODE with a repeated real root ($y = c_1 e^{rx} + c_2 x e^{rx}$).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the following partial differential equation (PDE) defined on a domain $\\Omega \\subset \\mathbb{R}^2$:\n$$\\frac{\\partial u}{\\partial t} = k \\left( \\frac{\\partial^2 u}{\\partial x^2} + \\frac{\\partial^2 u}{\\partial y^2} \\right)$$\nsubject to the initial condition $u(x, y, 0) = f(x, y)$ for $(x, y) \\in \\Omega$, where $k$ is a positive constant and $f(x, y)$ is a given function.\n\nGiven that the domain $\\Omega$ is the unit square $[0, 1] \\times [0, 1]$ and the function $f(x, y) = x(1-x)y(1-y)$, determine the solution $u(x, y, t)$ to this PDE for $t > 0$.",
+    "run_id": "23",
+    "topic_slug": "partial_differential_equations",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly derives the general series form of the solution using separation of variables, assuming homogeneous Dirichlet boundary conditions. However, it fails to calculate the specific coefficients $c_{nm}$ for the given initial condition $f(x, y) = x(1-x)y(1-y)$. To 'determine the solution,' one must explicitly evaluate the integrals defined by the orthogonality relations rather than just stating that they can be found.\",\n  \"suggestions\": \"Compute the coefficients $c_{nm}$ by evaluating the double integral $4 \\\\int_0^1 \\\\int_0^1 x(1-x)y(1-y) \\\\sin(n\\\\pi x) \\\\sin(m\\\\pi y) \\\\, dx \\\\, dy$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly derives the general series form of the solution using separation of variables, assuming homogeneous Dirichlet boundary conditions. However, it fails to calculate the specific coefficients $c_{nm}$ for the given initial condition $f(x, y) = x(1-x)y(1-y)$. To 'determine the solution,' one must explicitly evaluate the integrals defined by the orthogonality relations rather than just stating that they can be found.\",\n  \"suggestions\": \"Compute the coefficients $c_{nm}$ by evaluating the double integral $4 \\\\int_0^1 \\\\int_0^1 x(1-x)y(1-y) \\\\sin(n\\\\pi x) \\\\sin(m\\\\pi y) \\\\, dx \\\\, dy$.\"\n}\n```",
+        "verdict": "insufficient",
+        "notes": "The answer correctly derives the general series form of the solution using separation of variables, assuming homogeneous Dirichlet boundary conditions. However, it fails to calculate the specific coefficients $c_{nm}$ for the given initial condition $f(x, y) = x(1-x)y(1-y)$. To 'determine the solution,' one must explicitly evaluate the integrals defined by the orthogonality relations rather than just stating that they can be found.",
+        "suggestions": "Compute the coefficients $c_{nm}$ by evaluating the double integral $4 \\int_0^1 \\int_0^1 x(1-x)y(1-y) \\sin(n\\pi x) \\sin(m\\pi y) \\, dx \\, dy$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a discrete dynamical system defined by the iteration $x_{n+1} = 2x_n \\mod 1$ for $n \\geq 0$, where $x_0 \\in [0, 1)$.\n\nProve that this dynamical system is ergodic.",
+    "run_id": "24",
+    "topic_slug": "dynamical_systems_and_ergodic_theory",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains significant mathematical errors and logical gaps. \\n\\n1. It claims that for the map $x_{n+1} = 2x_n \\\\mod 1$, \\\"the sequence $\\\\{x_n\\\\}$ is dense in $[0, 1)$\\\". This is false; for rational $x_0$, the orbit is eventually periodic and finite, hence not dense.\\n\\n2. The argument conflates topological transitivity (existence of a dense orbit) with ergodicity (measure-theoretic property). Even if an orbit is dense, it does not imply that the time average converges to the space average (equidistribution) for the Lebesgue measure.\\n\\n3. The reasoning relies on vague intuition (\\\"essentially counts the number of times\\\") rather than a rigorous proof method (such as Fourier analysis, Knopp's Lemma, or symbolic dynamics).\",\n  \"suggestions\": \"To prove ergodicity, use a standard rigorous approach. For example, show that the map preserves the Lebesgue measure (which is not explicitly checked here) and then prove that any invariant set has measure 0 or 1. A common method is using Fourier series to show that any $L^2$ function satisfying $f(T x) = f(x)$ must be constant almost everywhere.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains significant mathematical errors and logical gaps. \\n\\n1. It claims that for the map $x_{n+1} = 2x_n \\\\mod 1$, \\\"the sequence $\\\\{x_n\\\\}$ is dense in $[0, 1)$\\\". This is false; for rational $x_0$, the orbit is eventually periodic and finite, hence not dense.\\n\\n2. The argument conflates topological transitivity (existence of a dense orbit) with ergodicity (measure-theoretic property). Even if an orbit is dense, it does not imply that the time average converges to the space average (equidistribution) for the Lebesgue measure.\\n\\n3. The reasoning relies on vague intuition (\\\"essentially counts the number of times\\\") rather than a rigorous proof method (such as Fourier analysis, Knopp's Lemma, or symbolic dynamics).\",\n  \"suggestions\": \"To prove ergodicity, use a standard rigorous approach. For example, show that the map preserves the Lebesgue measure (which is not explicitly checked here) and then prove that any invariant set has measure 0 or 1. A common method is using Fourier series to show that any $L^2$ function satisfying $f(T x) = f(x)$ must be constant almost everywhere.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer contains significant mathematical errors and logical gaps. \n\n1. It claims that for the map $x_{n+1} = 2x_n \\mod 1$, \"the sequence $\\{x_n\\}$ is dense in $[0, 1)$\". This is false; for rational $x_0$, the orbit is eventually periodic and finite, hence not dense.\n\n2. The argument conflates topological transitivity (existence of a dense orbit) with ergodicity (measure-theoretic property). Even if an orbit is dense, it does not imply that the time average converges to the space average (equidistribution) for the Lebesgue measure.\n\n3. The reasoning relies on vague intuition (\"essentially counts the number of times\") rather than a rigorous proof method (such as Fourier analysis, Knopp's Lemma, or symbolic dynamics).",
+        "suggestions": "To prove ergodicity, use a standard rigorous approach. For example, show that the map preserves the Lebesgue measure (which is not explicitly checked here) and then prove that any invariant set has measure 0 or 1. A common method is using Fourier series to show that any $L^2$ function satisfying $f(T x) = f(x)$ must be constant almost everywhere.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a continuous function that satisfies the functional equation:\n$$f(x + y) = f(x) + f(y) + 2xy$$\nfor all real numbers $x$ and $y$. If $f(1) = 3$, find the value of $f(2022)$.",
+    "run_id": "25",
+    "topic_slug": "difference_and_functional_equations",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer correctly calculates the intermediate values $f(2)=8$, $f(3)=15$, and $f(4)=24$. However, the subsequent generalization $f(n) = 3n^2$ is incorrect and inconsistent with these values (e.g., $3(2)^2 = 12 \\neq 8$). The correct function is $f(x) = x^2 + 2x$, leading to $f(2022) = 2022^2 + 2(2022) = 4,092,528$.\",\n  \"suggestions\": \"Check that the hypothesized formula matches the calculated data points. Alternatively, solve the functional equation analytically by substituting $f(x) = x^2 + g(x)$ to obtain Cauchy's functional equation.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer correctly calculates the intermediate values $f(2)=8$, $f(3)=15$, and $f(4)=24$. However, the subsequent generalization $f(n) = 3n^2$ is incorrect and inconsistent with these values (e.g., $3(2)^2 = 12 \\neq 8$). The correct function is $f(x) = x^2 + 2x$, leading to $f(2022) = 2022^2 + 2(2022) = 4,092,528$.\",\n  \"suggestions\": \"Check that the hypothesized formula matches the calculated data points. Alternatively, solve the functional equation analytically by substituting $f(x) = x^2 + g(x)$ to obtain Cauchy's functional equation.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer correctly calculates the intermediate values $f(2)=8$, $f(3)=15$, and $f(4)=24$. However, the subsequent generalization $f(n) = 3n^2$ is incorrect and inconsistent with these values (e.g., $3(2)^2 = 12 \neq 8$). The correct function is $f(x) = x^2 + 2x$, leading to $f(2022) = 2022^2 + 2(2022) = 4,092,528$.",
+        "suggestions": "Check that the hypothesized formula matches the calculated data points. Alternatively, solve the functional equation analytically by substituting $f(x) = x^2 + g(x)$ to obtain Cauchy's functional equation.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\{a_n\\}$ be a sequence defined as $a_1 = 1$ and $a_{n+1} = \\frac{1}{2}a_n + \\frac{1}{n}$ for $n \\geq 1$. Determine the limit of the sequence $\\{a_n\\}$ as $n$ approaches infinity.",
+    "run_id": "26",
+    "topic_slug": "sequences_series_and_summability",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is incorrect. The limit of the sequence is 0, not $\\\\ln(2)$. \\n\\n1. By taking the limit on both sides of the recurrence relation $a_{n+1} = \\\\frac{1}{2}a_n + \\\\frac{1}{n}$, assuming the limit $L$ exists, we get $L = \\\\frac{1}{2}L + 0$, which implies $L=0$.\\n2. The model incorrectly evaluates the limit of the sum $\\\\sum_{k=1}^{n}\\\\frac{1}{k2^{n-k}}$. The substitution of the limit results in a mathematically nonsensical series $\\\\sum_{k=1}^{\\\\infty}\\\\frac{1}{k2^{-k}} = \\\\sum_{k=1}^{\\\\infty}\\\\frac{2^k}{k}$, which diverges to infinity, whereas the actual sum converges to 0.\\n3. The claim that $\\\\sum_{k=1}^{\\\\infty}\\\\frac{1}{k2^{-k}} = \\\\ln(2)$ is false; $\\\\ln(2) = \\\\sum_{k=1}^{\\\\infty}\\\\frac{1}{k2^k}$.\",\n  \"suggestions\": \"To find the limit, assume the sequence converges to a limit $L$, take the limit of both sides of the recurrence relation ($L = \\\\frac{1}{2}L + 0$), and solve for $L$. Alternatively, show that the summation term vanishes as $n \\\\to \\\\infty$ using bounds.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is incorrect. The limit of the sequence is 0, not $\\\\ln(2)$. \\n\\n1. By taking the limit on both sides of the recurrence relation $a_{n+1} = \\\\frac{1}{2}a_n + \\\\frac{1}{n}$, assuming the limit $L$ exists, we get $L = \\\\frac{1}{2}L + 0$, which implies $L=0$.\\n2. The model incorrectly evaluates the limit of the sum $\\\\sum_{k=1}^{n}\\\\frac{1}{k2^{n-k}}$. The substitution of the limit results in a mathematically nonsensical series $\\\\sum_{k=1}^{\\\\infty}\\\\frac{1}{k2^{-k}} = \\\\sum_{k=1}^{\\\\infty}\\\\frac{2^k}{k}$, which diverges to infinity, whereas the actual sum converges to 0.\\n3. The claim that $\\\\sum_{k=1}^{\\\\infty}\\\\frac{1}{k2^{-k}} = \\\\ln(2)$ is false; $\\\\ln(2) = \\\\sum_{k=1}^{\\\\infty}\\\\frac{1}{k2^k}$.\",\n  \"suggestions\": \"To find the limit, assume the sequence converges to a limit $L$, take the limit of both sides of the recurrence relation ($L = \\\\frac{1}{2}L + 0$), and solve for $L$. Alternatively, show that the summation term vanishes as $n \\\\to \\\\infty$ using bounds.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer is incorrect. The limit of the sequence is 0, not $\\ln(2)$. \n\n1. By taking the limit on both sides of the recurrence relation $a_{n+1} = \\frac{1}{2}a_n + \\frac{1}{n}$, assuming the limit $L$ exists, we get $L = \\frac{1}{2}L + 0$, which implies $L=0$.\n2. The model incorrectly evaluates the limit of the sum $\\sum_{k=1}^{n}\\frac{1}{k2^{n-k}}$. The substitution of the limit results in a mathematically nonsensical series $\\sum_{k=1}^{\\infty}\\frac{1}{k2^{-k}} = \\sum_{k=1}^{\\infty}\\frac{2^k}{k}$, which diverges to infinity, whereas the actual sum converges to 0.\n3. The claim that $\\sum_{k=1}^{\\infty}\\frac{1}{k2^{-k}} = \\ln(2)$ is false; $\\ln(2) = \\sum_{k=1}^{\\infty}\\frac{1}{k2^k}$.",
+        "suggestions": "To find the limit, assume the sequence converges to a limit $L$, take the limit of both sides of the recurrence relation ($L = \\frac{1}{2}L + 0$), and solve for $L$. Alternatively, show that the summation term vanishes as $n \\to \\infty$ using bounds.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f(x) = \\sin(x)$. Consider the Taylor series expansion of $f(x)$ centered at $x = 0$:\n$$f(x) = \\sum_{n=0}^{\\infty} a_n x^n.$$\nDetermine the coefficient $a_{10}$ of the $x^{10}$ term in the Taylor series expansion of $f(x)$.",
+    "run_id": "27",
+    "topic_slug": "approximations_and_expansions",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly identifies the term corresponding to the coefficient $a_{10}$. The Taylor series for $\\\\sin(x)$ contains only odd powers of $x$ (i.e., $x, x^3, x^5, \\\\dots$). The term calculated in the answer corresponds to $n=5$ in the summation $\\\\sum \\\\frac{(-1)^n x^{2n+1}}{(2n+1)!}$, which yields the power $x^{2(5)+1} = x^{11}$. Since 10 is even, there is no $x^{10}$ term in the expansion, so $a_{10} = 0$.\",\n  \"suggestions\": \"Recognize that the Taylor series for $\\\\sin(x)$ includes only odd degree terms. Check if the desired power (10) can be written in the form $2n+1$ for an integer $n$. Since it cannot, the coefficient is zero.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly identifies the term corresponding to the coefficient $a_{10}$. The Taylor series for $\\\\sin(x)$ contains only odd powers of $x$ (i.e., $x, x^3, x^5, \\\\dots$). The term calculated in the answer corresponds to $n=5$ in the summation $\\\\sum \\\\frac{(-1)^n x^{2n+1}}{(2n+1)!}$, which yields the power $x^{2(5)+1} = x^{11}$. Since 10 is even, there is no $x^{10}$ term in the expansion, so $a_{10} = 0$.\",\n  \"suggestions\": \"Recognize that the Taylor series for $\\\\sin(x)$ includes only odd degree terms. Check if the desired power (10) can be written in the form $2n+1$ for an integer $n$. Since it cannot, the coefficient is zero.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly identifies the term corresponding to the coefficient $a_{10}$. The Taylor series for $\\sin(x)$ contains only odd powers of $x$ (i.e., $x, x^3, x^5, \\dots$). The term calculated in the answer corresponds to $n=5$ in the summation $\\sum \\frac{(-1)^n x^{2n+1}}{(2n+1)!}$, which yields the power $x^{2(5)+1} = x^{11}$. Since 10 is even, there is no $x^{10}$ term in the expansion, so $a_{10} = 0$.",
+        "suggestions": "Recognize that the Taylor series for $\\sin(x)$ includes only odd degree terms. Check if the desired power (10) can be written in the form $2n+1$ for an integer $n$. Since it cannot, the coefficient is zero.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a continuous function such that for all $x, y \\in \\mathbb{R}$, the following equation holds:\n$$f(x+y) = f(x) + f(y) + xy.$$\n\nGiven that $f(1) = 2$, find the value of $f(2022)$.",
+    "run_id": "28",
+    "topic_slug": "harmonic_analysis_on_euclidean_spaces",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer correctly calculates $f(2)=5$ and $f(3)=9$. However, it then claims the pattern is $f(n) = n^2 + 1$. This is incorrect because $3^2 + 1 = 10$, which contradicts the calculated value $f(3)=9$. Consequently, the final answer for $f(2022)$ is incorrect.\",\n  \"suggestions\": \"Notice that the condition $f(x+y) - f(x) - f(y) = xy$ suggests $f(x)$ is a quadratic polynomial. Specifically, substituting $g(x) = f(x) - \\\\frac{1}{2}x^2$ leads to Cauchy's functional equation $g(x+y) = g(x) + g(y)$. Solving this yields $f(x) = \\\\frac{x^2+3x}{2}$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer correctly calculates $f(2)=5$ and $f(3)=9$. However, it then claims the pattern is $f(n) = n^2 + 1$. This is incorrect because $3^2 + 1 = 10$, which contradicts the calculated value $f(3)=9$. Consequently, the final answer for $f(2022)$ is incorrect.\",\n  \"suggestions\": \"Notice that the condition $f(x+y) - f(x) - f(y) = xy$ suggests $f(x)$ is a quadratic polynomial. Specifically, substituting $g(x) = f(x) - \\\\frac{1}{2}x^2$ leads to Cauchy's functional equation $g(x+y) = g(x) + g(y)$. Solving this yields $f(x) = \\\\frac{x^2+3x}{2}$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer correctly calculates $f(2)=5$ and $f(3)=9$. However, it then claims the pattern is $f(n) = n^2 + 1$. This is incorrect because $3^2 + 1 = 10$, which contradicts the calculated value $f(3)=9$. Consequently, the final answer for $f(2022)$ is incorrect.",
+        "suggestions": "Notice that the condition $f(x+y) - f(x) - f(y) = xy$ suggests $f(x)$ is a quadratic polynomial. Specifically, substituting $g(x) = f(x) - \\frac{1}{2}x^2$ leads to Cauchy's functional equation $g(x+y) = g(x) + g(y)$. Solving this yields $f(x) = \\frac{x^2+3x}{2}$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a locally compact abelian group and $\\widehat{G}$ be its dual group. Consider a function $f: G \\to \\mathbb{C}$ that is continuous and has compact support. Define the Fourier transform of $f$ as $\\mathcal{F}(f)(\\xi) = \\int_{G} f(x) \\overline{\\chi(\\xi, x)} \\, dx$, where $\\chi(\\xi, x) = e^{2\\pi i \\langle \\xi, x \\rangle}$ for $\\xi \\in \\widehat{G}$ and $x \\in G$.\n\nProve that the Fourier transform of $f$ is a continuous function on $\\widehat{G}$.",
+    "run_id": "29",
+    "topic_slug": "abstract_harmonic_analysis",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The proof is mathematically sound. It correctly utilizes the compact support of $f$ and the boundedness of continuous functions on compact sets. The key step\u2014existence of a neighborhood $U$ where the character difference is uniformly small on $K$\u2014is valid because the standard topology on the dual group $\\\\widehat{G}$ is the compact-open topology (topology of uniform convergence on compact sets). The minor edge case where $M \\\\cdot \\\\text{vol}(K) = 0$ (implying $f=0$ almost everywhere) is trivial and does not undermine the validity of the argument.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The proof is mathematically sound. It correctly utilizes the compact support of $f$ and the boundedness of continuous functions on compact sets. The key step\u2014existence of a neighborhood $U$ where the character difference is uniformly small on $K$\u2014is valid because the standard topology on the dual group $\\\\widehat{G}$ is the compact-open topology (topology of uniform convergence on compact sets). The minor edge case where $M \\\\cdot \\\\text{vol}(K) = 0$ (implying $f=0$ almost everywhere) is trivial and does not undermine the validity of the argument.\"\n}",
+        "verdict": "correct",
+        "notes": "The proof is mathematically sound. It correctly utilizes the compact support of $f$ and the boundedness of continuous functions on compact sets. The key step\u2014existence of a neighborhood $U$ where the character difference is uniformly small on $K$\u2014is valid because the standard topology on the dual group $\\widehat{G}$ is the compact-open topology (topology of uniform convergence on compact sets). The minor edge case where $M \\cdot \\text{vol}(K) = 0$ (implying $f=0$ almost everywhere) is trivial and does not undermine the validity of the argument.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f(x)$ be a continuous function defined on the interval $[0, 1]$. Given that the Laplace transform of $f(x)$ is $\\mathcal{L}\\{f(x)\\} = \\frac{1}{s^2 + 1}$, find the value of the definite integral $\\int_{0}^{1} f(x) \\sin(x) \\, dx$.",
+    "run_id": "30",
+    "topic_slug": "integral_transforms_and_operational_calculus",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains fundamental mathematical errors regarding Laplace transform properties. Specifically:\\n\\n1. It incorrectly claims that $\\\\mathcal{L}\\\\{f(x) \\\\sin(x)\\\\} = \\\\mathcal{L}\\\\{f(x)\\\\} * \\\\mathcal{L}\\\\{\\\\sin(x)\\\\}$ (treating $*$ as multiplication). The product of Laplace transforms $F(s)G(s)$ corresponds to the convolution of functions in the time domain $(f * g)(t) = \\\\int_0^t f(\\\\tau)g(t-\\\\tau) d\\\\tau$, not the pointwise product $f(t)g(t)$.\\n2. It incorrectly identifies the inverse Laplace transform of $\\\\frac{1}{(s^2+1)^2}$ as $t \\\\sin(t)$. The correct inverse transform involves $\\\\sin(t) - t \\\\cos(t)$. \\n3. Since $f(x) = \\\\sin(x)$ (derived correctly from the transform), the integral should be $\\\\int_0^1 \\\\sin^2(x) dx$, not $\\\\int_0^1 x \\\\sin(x) dx$.\",\n  \"suggestions\": \"Identify $f(x) = \\\\sin(x)$ from the given Laplace transform. Then, substitute this into the integral to evaluate $\\\\int_{0}^{1} \\\\sin^2(x) \\\\, dx$ using the identity $\\\\sin^2(x) = \\\\frac{1 - \\cos(2x)}{2}$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains fundamental mathematical errors regarding Laplace transform properties. Specifically:\\n\\n1. It incorrectly claims that $\\\\mathcal{L}\\\\{f(x) \\\\sin(x)\\\\} = \\\\mathcal{L}\\\\{f(x)\\\\} * \\\\mathcal{L}\\\\{\\\\sin(x)\\\\}$ (treating $*$ as multiplication). The product of Laplace transforms $F(s)G(s)$ corresponds to the convolution of functions in the time domain $(f * g)(t) = \\\\int_0^t f(\\\\tau)g(t-\\\\tau) d\\\\tau$, not the pointwise product $f(t)g(t)$.\\n2. It incorrectly identifies the inverse Laplace transform of $\\\\frac{1}{(s^2+1)^2}$ as $t \\\\sin(t)$. The correct inverse transform involves $\\\\sin(t) - t \\\\cos(t)$. \\n3. Since $f(x) = \\\\sin(x)$ (derived correctly from the transform), the integral should be $\\\\int_0^1 \\\\sin^2(x) dx$, not $\\\\int_0^1 x \\\\sin(x) dx$.\",\n  \"suggestions\": \"Identify $f(x) = \\\\sin(x)$ from the given Laplace transform. Then, substitute this into the integral to evaluate $\\\\int_{0}^{1} \\\\sin^2(x) \\\\, dx$ using the identity $\\\\sin^2(x) = \\\\frac{1 - \\cos(2x)}{2}$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer contains fundamental mathematical errors regarding Laplace transform properties. Specifically:\n\n1. It incorrectly claims that $\\mathcal{L}\\{f(x) \\sin(x)\\} = \\mathcal{L}\\{f(x)\\} * \\mathcal{L}\\{\\sin(x)\\}$ (treating $*$ as multiplication). The product of Laplace transforms $F(s)G(s)$ corresponds to the convolution of functions in the time domain $(f * g)(t) = \\int_0^t f(\\tau)g(t-\\tau) d\\tau$, not the pointwise product $f(t)g(t)$.\n2. It incorrectly identifies the inverse Laplace transform of $\\frac{1}{(s^2+1)^2}$ as $t \\sin(t)$. The correct inverse transform involves $\\sin(t) - t \\cos(t)$. \n3. Since $f(x) = \\sin(x)$ (derived correctly from the transform), the integral should be $\\int_0^1 \\sin^2(x) dx$, not $\\int_0^1 x \\sin(x) dx$.",
+        "suggestions": "Identify $f(x) = \\sin(x)$ from the given Laplace transform. Then, substitute this into the integral to evaluate $\\int_{0}^{1} \\sin^2(x) \\, dx$ using the identity $\\sin^2(x) = \\frac{1 - \\cos(2x)}{2}$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the following integral equation:\n\n$$f(x) = 1 + \\lambda \\int_{0}^{1} \\frac{e^{-xy}}{1 + f(y)} \\, dy$$\n\nwhere $f$ is the unknown function to be determined and $\\lambda$ is a positive constant. Find the function $f(x)$ in terms of $\\lambda$.",
+    "run_id": "31",
+    "topic_slug": "integral_equations",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple fatal errors. \\n\\n1. The differentiation of the integral equation with respect to $x$ is incorrect. The derivative of the integral term $\\\\int_{0}^{1} \\frac{e^{-xy}}{1 + f(y)} \\, dy$ with respect to $x$ is simply $-\\\\int_{0}^{1} \\frac{ye^{-xy}}{1 + f(y)} \\, dy$. The answer adds a spurious second integral term involving $f'(y)$ which has no mathematical justification.\\n\\n2. The subsequent reduction to the differential equation $f'(x) + \\\\lambda f(x) = 0$ is baseless.\\n\\n3. The claim that $f(0) = 1$ is incorrect. From the original equation, $f(0) = 1 + \\\\lambda \\\\int_{0}^{1} \\frac{1}{1 + f(y)} \\, dy$, which is strictly greater than 1 for $\\\\lambda > 0$ and $f(y) > -1$.\\n\\n4. The proposed solution $f(x) = e^{-\\\\lambda x}$ fails to satisfy the original integral equation. Substituting $x=0$ into the proposed solution yields $f(0)=1$, while the equation requires $f(0) > 1$.\",\n  \"suggestions\": \"To solve this nonlinear Hammerstein integral equation, one typically expands the kernel or uses iteration methods/series expansion (e.g., Adomian Decomposition Method) for small $\\\\lambda$. There is likely no simple closed-form solution in terms of elementary functions for general $\\\\lambda$. Verify the solution by substituting it back into the original equation.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple fatal errors. \\n\\n1. The differentiation of the integral equation with respect to $x$ is incorrect. The derivative of the integral term $\\\\int_{0}^{1} \\frac{e^{-xy}}{1 + f(y)} \\, dy$ with respect to $x$ is simply $-\\\\int_{0}^{1} \\frac{ye^{-xy}}{1 + f(y)} \\, dy$. The answer adds a spurious second integral term involving $f'(y)$ which has no mathematical justification.\\n\\n2. The subsequent reduction to the differential equation $f'(x) + \\\\lambda f(x) = 0$ is baseless.\\n\\n3. The claim that $f(0) = 1$ is incorrect. From the original equation, $f(0) = 1 + \\\\lambda \\\\int_{0}^{1} \\frac{1}{1 + f(y)} \\, dy$, which is strictly greater than 1 for $\\\\lambda > 0$ and $f(y) > -1$.\\n\\n4. The proposed solution $f(x) = e^{-\\\\lambda x}$ fails to satisfy the original integral equation. Substituting $x=0$ into the proposed solution yields $f(0)=1$, while the equation requires $f(0) > 1$.\",\n  \"suggestions\": \"To solve this nonlinear Hammerstein integral equation, one typically expands the kernel or uses iteration methods/series expansion (e.g., Adomian Decomposition Method) for small $\\\\lambda$. There is likely no simple closed-form solution in terms of elementary functions for general $\\\\lambda$. Verify the solution by substituting it back into the original equation.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer contains multiple fatal errors. \n\n1. The differentiation of the integral equation with respect to $x$ is incorrect. The derivative of the integral term $\\int_{0}^{1} \\frac{e^{-xy}}{1 + f(y)} \\, dy$ with respect to $x$ is simply $-\\int_{0}^{1} \\frac{ye^{-xy}}{1 + f(y)} \\, dy$. The answer adds a spurious second integral term involving $f'(y)$ which has no mathematical justification.\n\n2. The subsequent reduction to the differential equation $f'(x) + \\lambda f(x) = 0$ is baseless.\n\n3. The claim that $f(0) = 1$ is incorrect. From the original equation, $f(0) = 1 + \\lambda \\int_{0}^{1} \\frac{1}{1 + f(y)} \\, dy$, which is strictly greater than 1 for $\\lambda > 0$ and $f(y) > -1$.\n\n4. The proposed solution $f(x) = e^{-\\lambda x}$ fails to satisfy the original integral equation. Substituting $x=0$ into the proposed solution yields $f(0)=1$, while the equation requires $f(0) > 1$.",
+        "suggestions": "To solve this nonlinear Hammerstein integral equation, one typically expands the kernel or uses iteration methods/series expansion (e.g., Adomian Decomposition Method) for small $\\lambda$. There is likely no simple closed-form solution in terms of elementary functions for general $\\lambda$. Verify the solution by substituting it back into the original equation.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a Banach space and $T: X \\to X$ be a bounded linear operator. Define the set $A = \\{x \\in X : \\|Tx\\| = \\|x\\|\\}$. Prove that $A$ is a closed subspace of $X$.",
+    "run_id": "32",
+    "topic_slug": "functional_analysis",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains fundamental mathematical errors. First, the proof of closure under addition relies on the false assertion that $\\\\|x\\\\| + \\\\|y\\\\| = \\\\|x+y\\\\|$. By the triangle inequality, $\\\\|x+y\\\\| \\\\le \\\\|x\\\\| + \\\\|y\\\\|$, so showing $\\\\|T(x+y)\\\\| \\\\le \\\\|x\\\\| + \\\\|y\\\\|$ does not prove $\\\\|T(x+y)\\\\| = \\\\|x+y\\\\|$. Second, the statement to be proven is false for general Banach spaces (e.g., in $\\\\mathbb{R}^2$ with the $\\\\ell_\\\\infty$ norm and $T(x,y)=(x,0)$, the set $A = \\\\{(x,y) : |y| \\\\le |x|\\\\}$ is not a subspace). Third, the answer confuses 'closed under operations' (algebraic subspace) with being a 'closed subspace' (topologically closed set), failing to check topological closure.\",\n  \"suggestions\": \"Recognize that the set $A$ is not necessarily a linear subspace in a general Banach space. If proving a related true statement (e.g., for strictly convex spaces or specific operators), ensure triangle inequality steps are handled correctly. Additionally, distinguishing between algebraic closure and topological closure is necessary.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains fundamental mathematical errors. First, the proof of closure under addition relies on the false assertion that $\\\\|x\\\\| + \\\\|y\\\\| = \\\\|x+y\\\\|$. By the triangle inequality, $\\\\|x+y\\\\| \\\\le \\\\|x\\\\| + \\\\|y\\\\|$, so showing $\\\\|T(x+y)\\\\| \\\\le \\\\|x\\\\| + \\\\|y\\\\|$ does not prove $\\\\|T(x+y)\\\\| = \\\\|x+y\\\\|$. Second, the statement to be proven is false for general Banach spaces (e.g., in $\\\\mathbb{R}^2$ with the $\\\\ell_\\\\infty$ norm and $T(x,y)=(x,0)$, the set $A = \\\\{(x,y) : |y| \\\\le |x|\\\\}$ is not a subspace). Third, the answer confuses 'closed under operations' (algebraic subspace) with being a 'closed subspace' (topologically closed set), failing to check topological closure.\",\n  \"suggestions\": \"Recognize that the set $A$ is not necessarily a linear subspace in a general Banach space. If proving a related true statement (e.g., for strictly convex spaces or specific operators), ensure triangle inequality steps are handled correctly. Additionally, distinguishing between algebraic closure and topological closure is necessary.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains fundamental mathematical errors. First, the proof of closure under addition relies on the false assertion that $\\|x\\| + \\|y\\| = \\|x+y\\|$. By the triangle inequality, $\\|x+y\\| \\le \\|x\\| + \\|y\\|$, so showing $\\|T(x+y)\\| \\le \\|x\\| + \\|y\\|$ does not prove $\\|T(x+y)\\| = \\|x+y\\|$. Second, the statement to be proven is false for general Banach spaces (e.g., in $\\mathbb{R}^2$ with the $\\ell_\\infty$ norm and $T(x,y)=(x,0)$, the set $A = \\{(x,y) : |y| \\le |x|\\}$ is not a subspace). Third, the answer confuses 'closed under operations' (algebraic subspace) with being a 'closed subspace' (topologically closed set), failing to check topological closure.",
+        "suggestions": "Recognize that the set $A$ is not necessarily a linear subspace in a general Banach space. If proving a related true statement (e.g., for strictly convex spaces or specific operators), ensure triangle inequality steps are handled correctly. Additionally, distinguishing between algebraic closure and topological closure is necessary.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $T$ be a bounded linear operator on a Hilbert space $\\mathcal{H}$ with inner product $\\langle \\cdot, \\cdot \\rangle$. Suppose that $T$ is self-adjoint, meaning $T^* = T$, where $T^*$ denotes the adjoint of $T$. \n\nGiven that $T$ has a spectral resolution, meaning there exists a projection-valued measure $E$ associated with $T$, show that the spectrum of $T$, denoted by $\\sigma(T)$, is contained in the essential range of $E$.",
+    "run_id": "33",
+    "topic_slug": "operator_theory",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer relies on vacuous and incorrect reasoning. It claims that showing $\\\\lambda \\\\in \\\\sigma(T)$ requires finding a Borel set $B$ containing $\\\\lambda$ where $E(B)$ is a projection. However, $E(B)$ is a projection for *any* Borel set $B$ by definition, and any $\\\\lambda$ belongs to some Borel set (e.g., $\\\\mathbb{C}$). Thus, the argument would imply every complex number is in the spectrum. The correct approach requires showing that for any open neighborhood $U$ of $\\\\lambda \\\\in \\\\sigma(T)$, the projection $E(U)$ is non-zero (i.e., $\\\\lambda$ is in the support of $E$).\",\n  \"suggestions\": \"To correct this, define the essential range (or support) of $E$ as the set of points $\\\\lambda$ such that $E(U) \\\\neq 0$ for every open neighborhood $U$ of $\\\\lambda$. Then, show that if $\\\\lambda$ is not in this set, $T - \\\\lambda I$ is invertible (constructing the inverse via the spectral integral), which implies $\\\\sigma(T)$ is contained in the support.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer relies on vacuous and incorrect reasoning. It claims that showing $\\\\lambda \\\\in \\\\sigma(T)$ requires finding a Borel set $B$ containing $\\\\lambda$ where $E(B)$ is a projection. However, $E(B)$ is a projection for *any* Borel set $B$ by definition, and any $\\\\lambda$ belongs to some Borel set (e.g., $\\\\mathbb{C}$). Thus, the argument would imply every complex number is in the spectrum. The correct approach requires showing that for any open neighborhood $U$ of $\\\\lambda \\\\in \\\\sigma(T)$, the projection $E(U)$ is non-zero (i.e., $\\\\lambda$ is in the support of $E$).\",\n  \"suggestions\": \"To correct this, define the essential range (or support) of $E$ as the set of points $\\\\lambda$ such that $E(U) \\\\neq 0$ for every open neighborhood $U$ of $\\\\lambda$. Then, show that if $\\\\lambda$ is not in this set, $T - \\\\lambda I$ is invertible (constructing the inverse via the spectral integral), which implies $\\\\sigma(T)$ is contained in the support.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer relies on vacuous and incorrect reasoning. It claims that showing $\\lambda \\in \\sigma(T)$ requires finding a Borel set $B$ containing $\\lambda$ where $E(B)$ is a projection. However, $E(B)$ is a projection for *any* Borel set $B$ by definition, and any $\\lambda$ belongs to some Borel set (e.g., $\\mathbb{C}$). Thus, the argument would imply every complex number is in the spectrum. The correct approach requires showing that for any open neighborhood $U$ of $\\lambda \\in \\sigma(T)$, the projection $E(U)$ is non-zero (i.e., $\\lambda$ is in the support of $E$).",
+        "suggestions": "To correct this, define the essential range (or support) of $E$ as the set of points $\\lambda$ such that $E(U) \\neq 0$ for every open neighborhood $U$ of $\\lambda$. Then, show that if $\\lambda$ is not in this set, $T - \\lambda I$ is invertible (constructing the inverse via the spectral integral), which implies $\\sigma(T)$ is contained in the support.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the following optimization problem in the calculus of variations:\n\nGiven the functional $J[y] = \\int_{0}^{1} (y^2 + y'^2) \\, dx$ subject to the boundary conditions $y(0) = 0$ and $y(1) = 1$, where $y = y(x)$ and $y' = \\frac{dy}{dx}$.\n\nDetermine the function $y(x)$ that minimizes the functional $J[y]$.",
+    "run_id": "34",
+    "topic_slug": "calculus_of_variations_and_optimization",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is incorrect for several reasons:\\n1. The Euler-Lagrange equation for the functional $J[y] = \\\\int (y^2 + y'^2) dx$ is $y'' - y = 0$, which yields general solutions of the form $y(x) = c_1 e^x + c_2 e^{-x}$. The provided answer uses terms involving $e^{\\\\pi x}$, which corresponds to the differential equation $y'' - \\\\pi^2 y = 0$.\\n2. The provided function does not satisfy the boundary condition $y(0) = 0$. Evaluating the function at $x=0$ gives $y(0) = \\\\frac{2(1) - 1}{2e^\\\\pi - e^{-\\\\pi}} = \\\\frac{1}{2e^\\\\pi - e^{-\\\\pi}} \\\\neq 0$. The text incorrectly asserts that $2-1=0$.\",\n  \"suggestions\": \"Derive the Euler-Lagrange equation $\\\\frac{\\\\partial L}{\\\\partial y} - \\\\frac{d}{dx}\\\\frac{\\\\partial L}{\\\\partial y'} = 0$ correctly to get $y'' - y = 0$. Solve this ODE using the boundary conditions to find $y(x) = \\\\frac{\\\\sinh(x)}{\\\\sinh(1)}$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is incorrect for several reasons:\\n1. The Euler-Lagrange equation for the functional $J[y] = \\\\int (y^2 + y'^2) dx$ is $y'' - y = 0$, which yields general solutions of the form $y(x) = c_1 e^x + c_2 e^{-x}$. The provided answer uses terms involving $e^{\\\\pi x}$, which corresponds to the differential equation $y'' - \\\\pi^2 y = 0$.\\n2. The provided function does not satisfy the boundary condition $y(0) = 0$. Evaluating the function at $x=0$ gives $y(0) = \\\\frac{2(1) - 1}{2e^\\\\pi - e^{-\\\\pi}} = \\\\frac{1}{2e^\\\\pi - e^{-\\\\pi}} \\\\neq 0$. The text incorrectly asserts that $2-1=0$.\",\n  \"suggestions\": \"Derive the Euler-Lagrange equation $\\\\frac{\\\\partial L}{\\\\partial y} - \\\\frac{d}{dx}\\\\frac{\\\\partial L}{\\\\partial y'} = 0$ correctly to get $y'' - y = 0$. Solve this ODE using the boundary conditions to find $y(x) = \\\\frac{\\\\sinh(x)}{\\\\sinh(1)}$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer is incorrect for several reasons:\n1. The Euler-Lagrange equation for the functional $J[y] = \\int (y^2 + y'^2) dx$ is $y'' - y = 0$, which yields general solutions of the form $y(x) = c_1 e^x + c_2 e^{-x}$. The provided answer uses terms involving $e^{\\pi x}$, which corresponds to the differential equation $y'' - \\pi^2 y = 0$.\n2. The provided function does not satisfy the boundary condition $y(0) = 0$. Evaluating the function at $x=0$ gives $y(0) = \\frac{2(1) - 1}{2e^\\pi - e^{-\\pi}} = \\frac{1}{2e^\\pi - e^{-\\pi}} \\neq 0$. The text incorrectly asserts that $2-1=0$.",
+        "suggestions": "Derive the Euler-Lagrange equation $\\frac{\\partial L}{\\partial y} - \\frac{d}{dx}\\frac{\\partial L}{\\partial y'} = 0$ correctly to get $y'' - y = 0$. Solve this ODE using the boundary conditions to find $y(x) = \\frac{\\sinh(x)}{\\sinh(1)}$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $ABC$ be a triangle with side lengths $AB = 13$, $BC = 14$, and $CA = 15$. Let $D$ be a point on side $BC$ such that $AD$ is the angle bisector of $\\angle BAC$. If the incircle of triangle $ABC$ is tangent to $BC$ at point $E$, find the length of $DE$.",
+    "run_id": "35",
+    "topic_slug": "geometry",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple fundamental errors. First, it attempts to calculate the length $DE$ using the Pythagorean theorem on triangle $ADE$, assuming $\\\\angle AED = 90^\\\\circ$ or similar relations without justification, whereas $D$ and $E$ are simply two points on the line segment $BC$. The distance $DE$ is the absolute difference between the distances of $D$ and $E$ from a vertex (e.g., $|BD - BE|$). Second, the calculation of the angle bisector length $AD$ uses an incorrect formula ($AD = \\\\sqrt{BD \\\\cdot DC}$ is not generally true; the correct formula is $AD^2 = AB \\\\cdot AC - BD \\\\cdot DC$). Third, the calculation of $AE$ is nonsensical ($AE = AF - EF$ is geometrically invalid as $A, F, E$ are not collinear). The correct value is $DE = |6.5 - 6| = 0.5$.\",\n  \"suggestions\": \"Identify that both points $D$ and $E$ lie on the side $BC$. Calculate $BD$ using the Angle Bisector Theorem and $BE$ using the formula for the distance from a vertex to the incircle tangency point ($BE = s - AC$). Then find $DE = |BD - BE|$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple fundamental errors. First, it attempts to calculate the length $DE$ using the Pythagorean theorem on triangle $ADE$, assuming $\\\\angle AED = 90^\\\\circ$ or similar relations without justification, whereas $D$ and $E$ are simply two points on the line segment $BC$. The distance $DE$ is the absolute difference between the distances of $D$ and $E$ from a vertex (e.g., $|BD - BE|$). Second, the calculation of the angle bisector length $AD$ uses an incorrect formula ($AD = \\\\sqrt{BD \\\\cdot DC}$ is not generally true; the correct formula is $AD^2 = AB \\\\cdot AC - BD \\\\cdot DC$). Third, the calculation of $AE$ is nonsensical ($AE = AF - EF$ is geometrically invalid as $A, F, E$ are not collinear). The correct value is $DE = |6.5 - 6| = 0.5$.\",\n  \"suggestions\": \"Identify that both points $D$ and $E$ lie on the side $BC$. Calculate $BD$ using the Angle Bisector Theorem and $BE$ using the formula for the distance from a vertex to the incircle tangency point ($BE = s - AC$). Then find $DE = |BD - BE|$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains multiple fundamental errors. First, it attempts to calculate the length $DE$ using the Pythagorean theorem on triangle $ADE$, assuming $\\angle AED = 90^\\circ$ or similar relations without justification, whereas $D$ and $E$ are simply two points on the line segment $BC$. The distance $DE$ is the absolute difference between the distances of $D$ and $E$ from a vertex (e.g., $|BD - BE|$). Second, the calculation of the angle bisector length $AD$ uses an incorrect formula ($AD = \\sqrt{BD \\cdot DC}$ is not generally true; the correct formula is $AD^2 = AB \\cdot AC - BD \\cdot DC$). Third, the calculation of $AE$ is nonsensical ($AE = AF - EF$ is geometrically invalid as $A, F, E$ are not collinear). The correct value is $DE = |6.5 - 6| = 0.5$.",
+        "suggestions": "Identify that both points $D$ and $E$ lie on the side $BC$. Calculate $BD$ using the Angle Bisector Theorem and $BE$ using the formula for the distance from a vertex to the incircle tangency point ($BE = s - AC$). Then find $DE = |BD - BE|$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $P$ be a convex polygon with $n$ sides, where $n \\geq 3$. Each vertex of $P$ is colored either red or blue. Prove that there exists a diagonal of $P$ (a line segment connecting two non-adjacent vertices) such that its endpoints have the same color.",
+    "run_id": "36",
+    "topic_slug": "convex_and_discrete_geometry",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is mathematically incorrect for several reasons. First, the statement to be proven is false for $n=4$: a square with vertices colored Red, Red, Blue, Blue in cyclic order has two diagonals (connecting Red-Blue and Red-Blue), neither of which is monochromatic. Second, the proof logic is flawed: it assumes adjacent vertices $A$ and $B$ are Blue and Red respectively, but then claims a contradiction because they 'have the same color'. Third, it incorrectly assumes that for a convex polygon, the triangle formed by three consecutive vertices ($V$ and its neighbors) contains other vertices, which violates the definition of convexity.\",\n  \"suggestions\": \"Check the validity of the problem statement for small $n$ (specifically $n=4$) and provide a counter-example. For $n \\\\ge 5$, a different approach (such as analyzing the graph of diagonals or using the Pigeonhole Principle on specific sub-structures) is required.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is mathematically incorrect for several reasons. First, the statement to be proven is false for $n=4$: a square with vertices colored Red, Red, Blue, Blue in cyclic order has two diagonals (connecting Red-Blue and Red-Blue), neither of which is monochromatic. Second, the proof logic is flawed: it assumes adjacent vertices $A$ and $B$ are Blue and Red respectively, but then claims a contradiction because they 'have the same color'. Third, it incorrectly assumes that for a convex polygon, the triangle formed by three consecutive vertices ($V$ and its neighbors) contains other vertices, which violates the definition of convexity.\",\n  \"suggestions\": \"Check the validity of the problem statement for small $n$ (specifically $n=4$) and provide a counter-example. For $n \\\\ge 5$, a different approach (such as analyzing the graph of diagonals or using the Pigeonhole Principle on specific sub-structures) is required.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer is mathematically incorrect for several reasons. First, the statement to be proven is false for $n=4$: a square with vertices colored Red, Red, Blue, Blue in cyclic order has two diagonals (connecting Red-Blue and Red-Blue), neither of which is monochromatic. Second, the proof logic is flawed: it assumes adjacent vertices $A$ and $B$ are Blue and Red respectively, but then claims a contradiction because they 'have the same color'. Third, it incorrectly assumes that for a convex polygon, the triangle formed by three consecutive vertices ($V$ and its neighbors) contains other vertices, which violates the definition of convexity.",
+        "suggestions": "Check the validity of the problem statement for small $n$ (specifically $n=4$) and provide a counter-example. For $n \\ge 5$, a different approach (such as analyzing the graph of diagonals or using the Pigeonhole Principle on specific sub-structures) is required.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $C$ be a smooth curve in $\\mathbb{R}^3$ parametrized by $\\mathbf{r}(t) = (x(t), y(t), z(t))$. Suppose that the curve $C$ lies on the surface of a sphere of radius $R$ centered at the origin. Prove that the tangent vector $\\mathbf{T}(t)$ to the curve $C$ is orthogonal to the position vector $\\mathbf{r}(t)$ at each point $t$ on the curve.",
+    "run_id": "37",
+    "topic_slug": "differential_geometry",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly uses the property that the position vector has constant magnitude ($R$) to show that its derivative (the velocity vector) is orthogonal to it. Specifically, differentiating $\\\\mathbf{r}(t) \\\\cdot \\\\mathbf{r}(t) = R^2$ leads to $2\\\\mathbf{r}(t) \\\\cdot \\\\mathbf{r}'(t) = 0$. Since the unit tangent vector $\\\\mathbf{T}(t)$ is a scalar multiple of $\\\\mathbf{r}'(t)$, the orthogonality holds. The steps are logical and mathematically sound.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly uses the property that the position vector has constant magnitude ($R$) to show that its derivative (the velocity vector) is orthogonal to it. Specifically, differentiating $\\\\mathbf{r}(t) \\\\cdot \\\\mathbf{r}(t) = R^2$ leads to $2\\\\mathbf{r}(t) \\\\cdot \\\\mathbf{r}'(t) = 0$. Since the unit tangent vector $\\\\mathbf{T}(t)$ is a scalar multiple of $\\\\mathbf{r}'(t)$, the orthogonality holds. The steps are logical and mathematically sound.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly uses the property that the position vector has constant magnitude ($R$) to show that its derivative (the velocity vector) is orthogonal to it. Specifically, differentiating $\\mathbf{r}(t) \\cdot \\mathbf{r}(t) = R^2$ leads to $2\\mathbf{r}(t) \\cdot \\mathbf{r}'(t) = 0$. Since the unit tangent vector $\\mathbf{T}(t)$ is a scalar multiple of $\\mathbf{r}'(t)$, the orthogonality holds. The steps are logical and mathematically sound.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a topological space and $A, B \\subseteq X$ be closed sets. Prove or disprove the following statement:\n\n\"If $A \\cap B = \\varnothing$, then there exist disjoint open sets $U$ and $V$ in $X$ such that $A \\subseteq U$ and $B \\subseteq V$.\"",
+    "run_id": "38",
+    "topic_slug": "general_topology",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is incorrect for two main reasons. First, the statement itself is false for a general topological space; the property described is the definition of a 'normal' space, and there exist non-normal spaces (e.g., the Moore Plane) where disjoint closed sets cannot be separated by disjoint open sets. Second, the proof provided contains a fundamental set-theoretic error. It defines $U = X \\\\setminus B$ and $V = X \\\\setminus A$, then claims these are disjoint. However, $U \\\\cap V = (X \\\\setminus B) \\\\cap (X \\\\setminus A) = X \\\\setminus (A \\\\cup B)$, which is not empty unless $A \\\\cup B = X$.\",\n  \"suggestions\": \"Identify that the statement is false in general by recognizing that not all topological spaces are normal. Provide a counterexample (such as the Moore Plane or the K-topology on the real line). Correct the set logic: complements of disjoint sets are not disjoint (they overlap everywhere outside the union of the sets).\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is incorrect for two main reasons. First, the statement itself is false for a general topological space; the property described is the definition of a 'normal' space, and there exist non-normal spaces (e.g., the Moore Plane) where disjoint closed sets cannot be separated by disjoint open sets. Second, the proof provided contains a fundamental set-theoretic error. It defines $U = X \\\\setminus B$ and $V = X \\\\setminus A$, then claims these are disjoint. However, $U \\\\cap V = (X \\\\setminus B) \\\\cap (X \\\\setminus A) = X \\\\setminus (A \\\\cup B)$, which is not empty unless $A \\\\cup B = X$.\",\n  \"suggestions\": \"Identify that the statement is false in general by recognizing that not all topological spaces are normal. Provide a counterexample (such as the Moore Plane or the K-topology on the real line). Correct the set logic: complements of disjoint sets are not disjoint (they overlap everywhere outside the union of the sets).\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer is incorrect for two main reasons. First, the statement itself is false for a general topological space; the property described is the definition of a 'normal' space, and there exist non-normal spaces (e.g., the Moore Plane) where disjoint closed sets cannot be separated by disjoint open sets. Second, the proof provided contains a fundamental set-theoretic error. It defines $U = X \\setminus B$ and $V = X \\setminus A$, then claims these are disjoint. However, $U \\cap V = (X \\setminus B) \\cap (X \\setminus A) = X \\setminus (A \\cup B)$, which is not empty unless $A \\cup B = X$.",
+        "suggestions": "Identify that the statement is false in general by recognizing that not all topological spaces are normal. Provide a counterexample (such as the Moore Plane or the K-topology on the real line). Correct the set logic: complements of disjoint sets are not disjoint (they overlap everywhere outside the union of the sets).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a topological space and $A \\subset X$ a subspace. Define the **reduced homology group** $\\tilde{H}_n(X, A)$ as the $n$-th homology group of the pair $(X, A)$ with the basepoint $A$ removed. \n\nConsider the pair $(S^2, S^1)$ where $S^2$ is the 2-dimensional sphere and $S^1$ is the circle in $S^2$.\n\nDetermine the reduced homology groups $\\tilde{H}_0(S^2, S^1)$, $\\tilde{H}_1(S^2, S^1)$, and $\\tilde{H}_2(S^2, S^1)$.",
+    "run_id": "39",
+    "topic_slug": "algebraic_topology",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains fundamental errors regarding the homology of spheres. It claims that '$\\\\tilde{H}_n(S^1) = 0$ for all $n$' and '$\\\\tilde{H}_n(S^2) = 0$ for all $n$', which implies that spheres are contractible. In reality, $\\\\tilde{H}_1(S^1) \\\\cong \\\\mathbb{Z}$ and $\\\\tilde{H}_2(S^2) \\\\cong \\\\mathbb{Z}$. Consequently, the application of the long exact sequence yields incorrect results; for the standard embedding of $S^1$ as the equator of $S^2$, $H_2(S^2, S^1) \\\\cong \\\\mathbb{Z} \\\\oplus \\\\mathbb{Z}$, not $0$.\",\n  \"suggestions\": \"Correctly identify the reduced homology groups of $S^1$ and $S^2$ (specifically non-zero in dimensions 1 and 2, respectively). Then, re-evaluate the long exact sequence of the pair to find the correct relative homology groups.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains fundamental errors regarding the homology of spheres. It claims that '$\\\\tilde{H}_n(S^1) = 0$ for all $n$' and '$\\\\tilde{H}_n(S^2) = 0$ for all $n$', which implies that spheres are contractible. In reality, $\\\\tilde{H}_1(S^1) \\\\cong \\\\mathbb{Z}$ and $\\\\tilde{H}_2(S^2) \\\\cong \\\\mathbb{Z}$. Consequently, the application of the long exact sequence yields incorrect results; for the standard embedding of $S^1$ as the equator of $S^2$, $H_2(S^2, S^1) \\\\cong \\\\mathbb{Z} \\\\oplus \\\\mathbb{Z}$, not $0$.\",\n  \"suggestions\": \"Correctly identify the reduced homology groups of $S^1$ and $S^2$ (specifically non-zero in dimensions 1 and 2, respectively). Then, re-evaluate the long exact sequence of the pair to find the correct relative homology groups.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer contains fundamental errors regarding the homology of spheres. It claims that '$\\tilde{H}_n(S^1) = 0$ for all $n$' and '$\\tilde{H}_n(S^2) = 0$ for all $n$', which implies that spheres are contractible. In reality, $\\tilde{H}_1(S^1) \\cong \\mathbb{Z}$ and $\\tilde{H}_2(S^2) \\cong \\mathbb{Z}$. Consequently, the application of the long exact sequence yields incorrect results; for the standard embedding of $S^1$ as the equator of $S^2$, $H_2(S^2, S^1) \\cong \\mathbb{Z} \\oplus \\mathbb{Z}$, not $0$.",
+        "suggestions": "Correctly identify the reduced homology groups of $S^1$ and $S^2$ (specifically non-zero in dimensions 1 and 2, respectively). Then, re-evaluate the long exact sequence of the pair to find the correct relative homology groups.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $M$ be a smooth $n$-dimensional manifold and $f: M \\to \\mathbb{R}$ a smooth function. Define the set $S = \\{p \\in M \\mid f(p) = 0\\}$. Prove that $S$ is a closed subset of $M$.",
+    "run_id": "40",
+    "topic_slug": "manifolds_and_cell_complexes",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that $S$ is closed if and only if its complement $M \\\\setminus S$ is open. It correctly uses the continuity (implied by smoothness) of $f$ to establish that for any point $p$ where $f(p) \\\\neq 0$, there exists a neighborhood $U$ where $f$ remains non-zero. This implies $U \\\\subseteq M \\\\setminus S$, proving openness. While the introduction of the auxiliary function $g(x) = 1/f(x)$ is unnecessary to establish that $f$ is non-zero on $U$, the reasoning remains logically valid.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that $S$ is closed if and only if its complement $M \\\\setminus S$ is open. It correctly uses the continuity (implied by smoothness) of $f$ to establish that for any point $p$ where $f(p) \\\\neq 0$, there exists a neighborhood $U$ where $f$ remains non-zero. This implies $U \\\\subseteq M \\\\setminus S$, proving openness. While the introduction of the auxiliary function $g(x) = 1/f(x)$ is unnecessary to establish that $f$ is non-zero on $U$, the reasoning remains logically valid.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies that $S$ is closed if and only if its complement $M \\setminus S$ is open. It correctly uses the continuity (implied by smoothness) of $f$ to establish that for any point $p$ where $f(p) \\neq 0$, there exists a neighborhood $U$ where $f$ remains non-zero. This implies $U \\subseteq M \\setminus S$, proving openness. While the introduction of the auxiliary function $g(x) = 1/f(x)$ is unnecessary to establish that $f$ is non-zero on $U$, the reasoning remains logically valid.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $M$ be a smooth manifold and $f: M \\to \\mathbb{R}$ a smooth function. Consider the set $S = \\{p \\in M \\mid f(p) = 0\\}$.\n\nProve that if $S$ is a compact subset of $M$, then there exists a smooth function $g: M \\to \\mathbb{R}$ such that $f = g^2$.",
+    "run_id": "41",
+    "topic_slug": "global_analysis_on_manifolds",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains fundamental algebraic and logical errors. First, the constructed function $g = hf$ satisfies $g^2 = h^2 f^2$, not $f$. There is no justification for why $h^2 f^2$ would equal $f$; in fact, outside the neighborhood $U$, $g$ vanishes while $f$ is non-zero, making equality impossible. Second, the problem statement itself is false as written (e.g., if $f(x) = x$ on $\\\\mathbb{R}$, $S=\\\\{0\\\\}$ is compact, but $f$ takes negative values and cannot be a square of a real-valued function). The answer fails to recognize this ill-posedness and provides a flawed proof.\",\n  \"suggestions\": \"Check the validity of the statement before attempting a proof; $f$ must at minimum be non-negative. If constructing a function, verify that the algebraic operations yield the desired equality (here, $g^2 = f$). The equality $h^2 f^2 = f$ holds only if $h^2 f = 1$, which contradicts the definition of $h$ as a cutoff function.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains fundamental algebraic and logical errors. First, the constructed function $g = hf$ satisfies $g^2 = h^2 f^2$, not $f$. There is no justification for why $h^2 f^2$ would equal $f$; in fact, outside the neighborhood $U$, $g$ vanishes while $f$ is non-zero, making equality impossible. Second, the problem statement itself is false as written (e.g., if $f(x) = x$ on $\\\\mathbb{R}$, $S=\\\\{0\\\\}$ is compact, but $f$ takes negative values and cannot be a square of a real-valued function). The answer fails to recognize this ill-posedness and provides a flawed proof.\",\n  \"suggestions\": \"Check the validity of the statement before attempting a proof; $f$ must at minimum be non-negative. If constructing a function, verify that the algebraic operations yield the desired equality (here, $g^2 = f$). The equality $h^2 f^2 = f$ holds only if $h^2 f = 1$, which contradicts the definition of $h$ as a cutoff function.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains fundamental algebraic and logical errors. First, the constructed function $g = hf$ satisfies $g^2 = h^2 f^2$, not $f$. There is no justification for why $h^2 f^2$ would equal $f$; in fact, outside the neighborhood $U$, $g$ vanishes while $f$ is non-zero, making equality impossible. Second, the problem statement itself is false as written (e.g., if $f(x) = x$ on $\\mathbb{R}$, $S=\\{0\\}$ is compact, but $f$ takes negative values and cannot be a square of a real-valued function). The answer fails to recognize this ill-posedness and provides a flawed proof.",
+        "suggestions": "Check the validity of the statement before attempting a proof; $f$ must at minimum be non-negative. If constructing a function, verify that the algebraic operations yield the desired equality (here, $g^2 = f$). The equality $h^2 f^2 = f$ holds only if $h^2 f = 1$, which contradicts the definition of $h$ as a cutoff function.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a random variable following a Poisson distribution with parameter $\\lambda = 3$. Define a new random variable $Y$ as $Y = e^{X}$. Determine the probability mass function of $Y$, i.e., find $P(Y = y)$ for all possible values of $y$.",
+    "run_id": "42",
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer fails to correctly identify the support of the random variable $Y$. Since $X$ is a discrete random variable taking values in $\\{0, 1, 2, \\dots\\}$, $Y = e^X$ is also discrete and only takes values in the set $\\{e^0, e^1, e^2, \\dots\\}$. The provided formula suggests that the probability density/mass is defined for all real $y > 0$, involving $\\\\ln(y)!$, which is undefined or requires the Gamma function for non-integers. Furthermore, for values like $y=2$, $P(Y=y)$ should be 0, but the formula yields a non-zero value.\",\n  \"suggestions\": \"Specify the support of $Y$ explicitly as $S_Y = \\\\{1, e, e^2, \\\\dots\\\\}$. Define the PMF piecewise: for $y = e^k$ where $k \\\\in \\\\{0, 1, 2, \\\\dots\\\\}$, $P(Y=y) = \\\\frac{e^{-3} 3^k}{k!}$, and $P(Y=y) = 0$ otherwise.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer fails to correctly identify the support of the random variable $Y$. Since $X$ is a discrete random variable taking values in $\\{0, 1, 2, \\dots\\}$, $Y = e^X$ is also discrete and only takes values in the set $\\{e^0, e^1, e^2, \\dots\\}$. The provided formula suggests that the probability density/mass is defined for all real $y > 0$, involving $\\\\ln(y)!$, which is undefined or requires the Gamma function for non-integers. Furthermore, for values like $y=2$, $P(Y=y)$ should be 0, but the formula yields a non-zero value.\",\n  \"suggestions\": \"Specify the support of $Y$ explicitly as $S_Y = \\\\{1, e, e^2, \\\\dots\\\\}$. Define the PMF piecewise: for $y = e^k$ where $k \\\\in \\\\{0, 1, 2, \\\\dots\\\\}$, $P(Y=y) = \\\\frac{e^{-3} 3^k}{k!}$, and $P(Y=y) = 0$ otherwise.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer fails to correctly identify the support of the random variable $Y$. Since $X$ is a discrete random variable taking values in $\\{0, 1, 2, \\dots\\}$, $Y = e^X$ is also discrete and only takes values in the set $\\{e^0, e^1, e^2, \\dots\\}$. The provided formula suggests that the probability density/mass is defined for all real $y > 0$, involving $\\\\ln(y)!$, which is undefined or requires the Gamma function for non-integers. Furthermore, for values like $y=2$, $P(Y=y)$ should be 0, but the formula yields a non-zero value.",
+        "suggestions": "Specify the support of $Y$ explicitly as $S_Y = \\\\{1, e, e^2, \\\\dots\\\\}$. Define the PMF piecewise: for $y = e^k$ where $k \\\\in \\\\{0, 1, 2, \\\\dots\\\\}$, $P(Y=y) = \\\\frac{e^{-3} 3^k}{k!}$, and $P(Y=y) = 0$ otherwise.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Suppose you have a dataset of 100 observations on a single variable $X$, which is known to follow a normal distribution with an unknown mean $\\mu$ and a known standard deviation of 5. You want to test the null hypothesis $H_0: \\mu = 20$ against the alternative hypothesis $H_1: \\mu \\neq 20$ at a significance level of 0.05. \n\nDetermine the critical values for a two-tailed hypothesis test using the standard normal distribution table.",
+    "run_id": "43",
+    "topic_slug": "statistics",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the significance level, splits it for a two-tailed test ($\\\\\\\\alpha/2 = 0.025$), and retrieves the correct critical values ($\\\\\\\\pm 1.96$) from the standard normal distribution.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the significance level, splits it for a two-tailed test ($\\\\\\\\alpha/2 = 0.025$), and retrieves the correct critical values ($\\\\\\\\pm 1.96$) from the standard normal distribution.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the significance level, splits it for a two-tailed test ($\\\\alpha/2 = 0.025$), and retrieves the correct critical values ($\\\\pm 1.96$) from the standard normal distribution.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the following integral:\n\n$$\\int_{0}^{1} \\frac{x^3}{1 + x^2} \\, dx$$\n\nDetermine the exact value of this integral.",
+    "run_id": "44",
+    "topic_slug": "numerical_analysis",
+    "question_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple fundamental errors. First, it attempts partial fraction decomposition on an improper fraction (numerator degree > denominator degree) without first performing polynomial long division. The claim that $\\\\frac{x^3}{1+x^2} = \\\\frac{1}{1+x^2}$ is algebraically false. Second, even working with the incorrect expression $\\\\frac{1}{1+x^2}$, the substitution $u = 1+x^2$ is invalid because there is no $x$ term in the numerator to form $du = 2x\\\\,dx$. The correct evaluation involves writing $\\\\frac{x^3}{1+x^2} = x - \\\\frac{x}{1+x^2}$, leading to a result of $\\\\frac{1}{2}(1 - \\\\ln 2)$.\",\n  \"suggestions\": \"Perform polynomial division first to rewrite the integrand as $x - \\\\frac{x}{1+x^2}$. Then integrate term by term.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple fundamental errors. First, it attempts partial fraction decomposition on an improper fraction (numerator degree > denominator degree) without first performing polynomial long division. The claim that $\\\\frac{x^3}{1+x^2} = \\\\frac{1}{1+x^2}$ is algebraically false. Second, even working with the incorrect expression $\\\\frac{1}{1+x^2}$, the substitution $u = 1+x^2$ is invalid because there is no $x$ term in the numerator to form $du = 2x\\\\,dx$. The correct evaluation involves writing $\\\\frac{x^3}{1+x^2} = x - \\\\frac{x}{1+x^2}$, leading to a result of $\\\\frac{1}{2}(1 - \\\\ln 2)$.\",\n  \"suggestions\": \"Perform polynomial division first to rewrite the integrand as $x - \\\\frac{x}{1+x^2}$. Then integrate term by term.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer contains multiple fundamental errors. First, it attempts partial fraction decomposition on an improper fraction (numerator degree > denominator degree) without first performing polynomial long division. The claim that $\\frac{x^3}{1+x^2} = \\frac{1}{1+x^2}$ is algebraically false. Second, even working with the incorrect expression $\\frac{1}{1+x^2}$, the substitution $u = 1+x^2$ is invalid because there is no $x$ term in the numerator to form $du = 2x\\,dx$. The correct evaluation involves writing $\\frac{x^3}{1+x^2} = x - \\frac{x}{1+x^2}$, leading to a result of $\\frac{1}{2}(1 - \\ln 2)$.",
+        "suggestions": "Perform polynomial division first to rewrite the integrand as $x - \\frac{x}{1+x^2}$. Then integrate term by term.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
   }
 ]
