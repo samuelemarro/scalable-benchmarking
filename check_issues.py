@@ -400,7 +400,13 @@ def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
     return issues
 
 
-def check_answer_issues(file_path: Path, failed_answer_min_attempts: int = 5) -> Dict[str, int]:
+def check_answer_issues(
+    file_path: Path,
+    failed_answer_min_attempts: int = 5,
+    benchmark_index: Optional[
+        Dict[str, Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]]
+    ] = None,
+) -> Dict[str, int]:
     """Check for issues in answer files."""
     issues = defaultdict(int)
 
@@ -421,15 +427,32 @@ def check_answer_issues(file_path: Path, failed_answer_min_attempts: int = 5) ->
             if not entry:
                 continue
             _merge_issue_counts(issues, _answer_entry_issue_counts(entry, failed_answer_min_attempts))
+            if benchmark_index is not None:
+                q_slug = _get_value(entry, "question_model") or file_path.parent.name
+                question_keys = benchmark_index.get(q_slug)
+                if question_keys:
+                    key = _entry_key_from_entry(entry)
+                    if key and not _key_in_index(question_keys, key):
+                        issues["missing_question_reference"] += 1
     except Exception:
         issues["parse_error"] += 1
 
     return issues
 
 
-def check_critique_issues(file_path: Path) -> Dict[str, int]:
+def check_critique_issues(
+    file_path: Path,
+    answer_index: Optional[Dict[Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]]] = None,
+) -> Dict[str, int]:
     """Check for issues in critique files."""
     issues = defaultdict(int)
+    answer_keys = None
+    if answer_index is not None:
+        pair = _parse_pair_file(file_path)
+        if pair:
+            q_slug = file_path.parent.name
+            _, answer_slug = pair
+            answer_keys = answer_index.get((q_slug, answer_slug))
 
     try:
         try:
@@ -448,6 +471,10 @@ def check_critique_issues(file_path: Path) -> Dict[str, int]:
             if not entry:
                 continue
             _merge_issue_counts(issues, _critique_entry_issue_counts(entry))
+            if answer_index is not None:
+                key = _entry_key_from_entry(entry)
+                if key and (not answer_keys or not _key_in_index(answer_keys, key)):
+                    issues["missing_answer_reference"] += 1
     except Exception:
         issues["parse_error"] += 1
 
@@ -457,9 +484,25 @@ def check_critique_issues(file_path: Path) -> Dict[str, int]:
 def check_debate_issues(
     file_path: Path,
     incomplete_min_rounds: int = 5,
+    critique_index: Optional[
+        Dict[
+            Tuple[str, str, str, str],
+            Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]],
+        ]
+    ] = None,
 ) -> Dict[str, int]:
     """Check for issues in debate files."""
     issues = defaultdict(int)
+    critique_keys = None
+    check_missing_critique = False
+    if critique_index is not None and file_path.parent.parent.parent.name == "critiques":
+        mode = file_path.parent.parent.name
+        q_slug = file_path.parent.name
+        pair = _parse_pair_file(file_path)
+        if pair:
+            critic_slug, answer_slug = pair
+            critique_keys = critique_index.get((mode, q_slug, critic_slug, answer_slug))
+            check_missing_critique = True
 
     try:
         try:
@@ -492,13 +535,28 @@ def check_debate_issues(
             if not entry:
                 continue
             _merge_issue_counts(issues, _debate_entry_issue_counts(entry, incomplete_min_rounds))
+            if check_missing_critique:
+                key = _entry_key_from_entry(entry)
+                if key and (not critique_keys or not _key_in_index(critique_keys, key)):
+                    issues["missing_critique_reference"] += 1
     except Exception:
         issues["parse_error"] += 1
 
     return issues
 
 
-def check_evaluation_issues(file_path: Path) -> Dict[str, int]:
+def check_evaluation_issues(
+    file_path: Path,
+    illposed_debate_index: Optional[
+        Dict[Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]]
+    ] = None,
+    critique_debate_index: Optional[
+        Dict[
+            Tuple[str, str, str, str],
+            Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]],
+        ]
+    ] = None,
+) -> Dict[str, int]:
     """Check for issues in automated evaluation files."""
     issues = defaultdict(int)
 
@@ -519,6 +577,36 @@ def check_evaluation_issues(file_path: Path) -> Dict[str, int]:
 
         for evaluation in decisions:
             _merge_issue_counts(issues, _evaluation_entry_issue_counts(evaluation))
+            if illposed_debate_index is not None or critique_debate_index is not None:
+                eval_type = _get_value(evaluation, "type")
+                q_slug = _get_value(evaluation, "question_model")
+                answer_slug = _get_value(evaluation, "answer_model")
+                critic_slug = _get_value(evaluation, "critic_model")
+                mode = _get_value(evaluation, "mode")
+                key = _entry_key_from_fields(
+                    _get_value(evaluation, "run_id"),
+                    _get_value(evaluation, "topic_slug"),
+                    _get_value(evaluation, "question"),
+                )
+                missing_debate = False
+                if eval_type == "illposed":
+                    debate_keys = (
+                        illposed_debate_index.get((q_slug, answer_slug))
+                        if illposed_debate_index and q_slug and answer_slug
+                        else None
+                    )
+                    if not debate_keys or not _key_in_index(debate_keys, key):
+                        missing_debate = True
+                elif eval_type in {"critique", "critique_debate"}:
+                    debate_keys = (
+                        critique_debate_index.get((mode, q_slug, critic_slug, answer_slug))
+                        if critique_debate_index and mode and q_slug and critic_slug and answer_slug
+                        else None
+                    )
+                    if not debate_keys or not _key_in_index(debate_keys, key):
+                        missing_debate = True
+                if missing_debate:
+                    issues["missing_debate_reference"] += 1
     except Exception:
         issues["parse_error"] += 1
 
@@ -598,6 +686,167 @@ def _benchmark_entry_key(entry: Any) -> Optional[Tuple[Optional[str], Optional[s
         _get_value(entry, "topic_slug"),
         final_benchmark_question(entry),
     )
+
+
+def _build_answer_reference_index(
+    answers_dir: Path,
+    benchmarks_dir: Path,
+) -> Dict[Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]]:
+    index: Dict[Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]] = defaultdict(
+        _make_key_index
+    )
+    if answers_dir.exists():
+        for file_path in answers_dir.glob("*/*.json"):
+            data = _load_json_list(file_path)
+            if data is None:
+                continue
+            q_slug = file_path.parent.name
+            answer_slug = file_path.stem
+            for entry in data:
+                if not entry:
+                    continue
+                key = _entry_key_from_entry(entry)
+                _add_key_to_index(index[(q_slug, answer_slug)], key)
+
+    if benchmarks_dir.exists():
+        for bench_path in benchmarks_dir.glob("*.json"):
+            q_slug = bench_path.stem
+            fallback_path = answers_dir / q_slug / f"{q_slug}.json"
+            if fallback_path.exists():
+                continue
+            data = _load_json_list(bench_path)
+            if data is None:
+                continue
+            for entry in data:
+                if not entry:
+                    continue
+                question = final_benchmark_question(entry)
+                if not question or not str(question).strip():
+                    continue
+                key = _entry_key_from_fields(
+                    _get_value(entry, "run_id"),
+                    _get_value(entry, "topic_slug"),
+                    question,
+                )
+                _add_key_to_index(index[(q_slug, q_slug)], key)
+    return index
+
+
+def _build_benchmark_reference_index(
+    benchmarks_dir: Path,
+) -> Dict[str, Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]]:
+    index: Dict[str, Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]] = defaultdict(_make_key_index)
+    if not benchmarks_dir.exists():
+        return index
+    for bench_path in benchmarks_dir.glob("*.json"):
+        q_slug = bench_path.stem
+        data = _load_json_list(bench_path)
+        if data is None:
+            continue
+        for entry in data:
+            if not entry:
+                continue
+            question = final_benchmark_question(entry)
+            if not question or not str(question).strip():
+                continue
+            key = _entry_key_from_fields(
+                _get_value(entry, "run_id"),
+                _get_value(entry, "topic_slug"),
+                question,
+            )
+            _add_key_to_index(index[q_slug], key)
+    return index
+
+
+def _build_critique_reference_index(
+    critiques_dir: Path,
+) -> Dict[Tuple[str, str, str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]]:
+    index: Dict[Tuple[str, str, str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]] = (
+        defaultdict(_make_key_index)
+    )
+    if not critiques_dir.exists():
+        return index
+    for mode_dir in critiques_dir.iterdir():
+        if not mode_dir.is_dir():
+            continue
+        mode = mode_dir.name
+        for q_dir in mode_dir.iterdir():
+            if not q_dir.is_dir():
+                continue
+            q_slug = q_dir.name
+            for file_path in q_dir.glob("*.json"):
+                pair = _parse_pair_file(file_path)
+                if not pair:
+                    continue
+                critic_slug, answer_slug = pair
+                data = _load_json_list(file_path)
+                if data is None:
+                    continue
+                for entry in data:
+                    if not entry:
+                        continue
+                    key = _entry_key_from_entry(entry)
+                    _add_key_to_index(index[(mode, q_slug, critic_slug, answer_slug)], key)
+    return index
+
+
+def _build_debate_reference_indexes(
+    debates_dir: Path,
+) -> Tuple[
+    Dict[Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]],
+    Dict[Tuple[str, str, str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]],
+]:
+    illposed_index: Dict[Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]] = defaultdict(
+        _make_key_index
+    )
+    critique_index: Dict[
+        Tuple[str, str, str, str],
+        Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]],
+    ] = defaultdict(_make_key_index)
+    if not debates_dir.exists():
+        return illposed_index, critique_index
+
+    illposed_dir = debates_dir / "illposed"
+    if illposed_dir.exists():
+        for q_dir in illposed_dir.iterdir():
+            if not q_dir.is_dir():
+                continue
+            q_slug = q_dir.name
+            for file_path in q_dir.glob("*.json"):
+                answer_slug = file_path.stem
+                data = _load_json_list(file_path)
+                if data is None:
+                    continue
+                for entry in data:
+                    if not entry:
+                        continue
+                    key = _entry_key_from_entry(entry)
+                    _add_key_to_index(illposed_index[(q_slug, answer_slug)], key)
+
+    critique_dir = debates_dir / "critiques"
+    if critique_dir.exists():
+        for mode_dir in critique_dir.iterdir():
+            if not mode_dir.is_dir():
+                continue
+            mode = mode_dir.name
+            for q_dir in mode_dir.iterdir():
+                if not q_dir.is_dir():
+                    continue
+                q_slug = q_dir.name
+                for file_path in q_dir.glob("*.json"):
+                    pair = _parse_pair_file(file_path)
+                    if not pair:
+                        continue
+                    critic_slug, answer_slug = pair
+                    data = _load_json_list(file_path)
+                    if data is None:
+                        continue
+                    for entry in data:
+                        if not entry:
+                            continue
+                        key = _entry_key_from_entry(entry)
+                        _add_key_to_index(critique_index[(mode, q_slug, critic_slug, answer_slug)], key)
+    return illposed_index, critique_index
 
 
 def _drop_entries(
@@ -920,6 +1169,11 @@ def main():
     )
     args = parser.parse_args()
     drop_codes = _parse_drop_codes(args.drop)
+    benchmarks_dir = Path("benchmarks")
+    answer_index = _build_answer_reference_index(Path("answers"), benchmarks_dir)
+    benchmark_index = _build_benchmark_reference_index(benchmarks_dir)
+    critique_index = _build_critique_reference_index(Path("critiques"))
+    illposed_debate_index, critique_debate_index = _build_debate_reference_indexes(Path("debates"))
 
     print("=" * 80)
     print("OUTPUT FILE ISSUE REPORT")
@@ -950,7 +1204,7 @@ def main():
     print("-" * 80)
     answer_issues = scan_directory(
         Path("answers"),
-        lambda path: check_answer_issues(path, args.failed_answer_min_attempts),
+        lambda path: check_answer_issues(path, args.failed_answer_min_attempts, benchmark_index),
     )
     if answer_issues:
         for file_path, issues in sorted(answer_issues.items()):
@@ -967,7 +1221,10 @@ def main():
     # Check critiques
     print("CRITIQUES")
     print("-" * 80)
-    critique_issues = scan_directory(Path("critiques"), check_critique_issues)
+    critique_issues = scan_directory(
+        Path("critiques"),
+        lambda path: check_critique_issues(path, answer_index),
+    )
     if critique_issues:
         for file_path, issues in sorted(critique_issues.items()):
             issue_count = sum(issues.values())
@@ -985,7 +1242,7 @@ def main():
     print("-" * 80)
     debate_issues = scan_directory(
         Path("debates"),
-        lambda path: check_debate_issues(path, args.incomplete_debate_min_rounds),
+        lambda path: check_debate_issues(path, args.incomplete_debate_min_rounds, critique_index),
     )
     if debate_issues:
         for file_path, issues in sorted(debate_issues.items()):
@@ -1002,7 +1259,10 @@ def main():
     # Check automated evaluations
     print("AUTOMATED EVALUATIONS")
     print("-" * 80)
-    eval_issues = scan_directory(Path("automated_evaluations"), check_evaluation_issues)
+    eval_issues = scan_directory(
+        Path("automated_evaluations"),
+        lambda path: check_evaluation_issues(path, illposed_debate_index, critique_debate_index),
+    )
     if eval_issues:
         for file_path, issues in sorted(eval_issues.items()):
             issue_count = sum(issues.values())
