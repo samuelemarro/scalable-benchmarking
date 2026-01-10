@@ -1,5 +1,7 @@
 import argparse
 import logging
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
@@ -262,6 +264,7 @@ def main():
     parser.add_argument("--rounds", type=int, default=5)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--no-allow-concede", action="store_true", help="Disable early stop on concession.")
+    parser.add_argument("--parallel", action="store_true", help="Process debates in parallel per task.")
     parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL).")
     args = parser.parse_args()
 
@@ -280,83 +283,77 @@ def main():
     debates = 0
 
     if args.mode == "ill-posed":
-        # Count total tasks for progress bar
-        total_tasks = 0
-        for bench_path in args.benchmark_dir.glob("*.json"):
-            q_slug = bench_path.stem
-            question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
-            if not question_model:
-                continue
-            answers_dir = args.answers_dir / q_slug
-            for answer_file in answers_dir.glob("*.json"):
-                answer_model_slug = answer_file.stem
-                answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_model_slug), None)
-                if not answer_model:
+        if args.parallel:
+            tasks = []
+            for bench_path in args.benchmark_dir.glob("*.json"):
+                q_slug = bench_path.stem
+                question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
+                if not question_model:
                     continue
-                if answer_model_slug == q_slug:
-                    raise RuntimeError(
-                        f"Self-answer file exists for {q_slug}. Remove {answer_file} to use benchmark answers."
-                    )
-                records = load_answer_entries(answer_file)
-                for idx, rec in enumerate(records):
-                    if args.limit is not None and total_tasks >= args.limit:
-                        break
-                    if not rec or rec.status != STATUS_ILL_POSED:
+                answers_dir = args.answers_dir / q_slug
+                for answer_file in answers_dir.glob("*.json"):
+                    answer_model_slug = answer_file.stem
+                    answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_model_slug), None)
+                    if not answer_model:
                         continue
+                    if answer_model_slug == q_slug:
+                        raise RuntimeError(
+                            f"Self-answer file exists for {q_slug}. Remove {answer_file} to use benchmark answers."
+                        )
+                    records = load_answer_entries(answer_file)
                     debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
                     existing = load_debate_entries(debate_path)
                     existing_keys = collect_debate_keys(existing)
-                    if len(existing) > idx and existing[idx]:
-                        continue
-                    key = debate_key(rec.run_id, rec.topic_slug, rec.question)
-                    if key and key in existing_keys:
-                        continue
-                    total_tasks += 1
-                if args.limit is not None and total_tasks >= args.limit:
-                    break
-            if args.limit is not None and total_tasks >= args.limit:
-                break
-
-        # Process with progress bar
-        pbar = tqdm(total=total_tasks, desc="Ill-posed debates")
-        for bench_path in args.benchmark_dir.glob("*.json"):
-            q_slug = bench_path.stem
-            question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
-            if not question_model:
-                continue
-            answers_dir = args.answers_dir / q_slug
-            for answer_file in answers_dir.glob("*.json"):
-                answer_model_slug = answer_file.stem
-                answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_model_slug), None)
-                if not answer_model:
-                    continue
-                if answer_model_slug == q_slug:
-                    raise RuntimeError(
-                        f"Self-answer file exists for {q_slug}. Remove {answer_file} to use benchmark answers."
-                    )
-                records = load_answer_entries(answer_file)
-
-                # Load debate file once per answer_file instead of per record
-                debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
-                existing = load_debate_entries(debate_path)
-                existing_keys = collect_debate_keys(existing)
-
-                for idx, rec in enumerate(records):
-                    if args.limit is not None and debates >= args.limit:
+                    for idx, rec in enumerate(records):
+                        if args.limit is not None and len(tasks) >= args.limit:
+                            break
+                        if not rec or rec.status != STATUS_ILL_POSED:
+                            continue
+                        if len(existing) > idx and existing[idx]:
+                            continue
+                        key = debate_key(rec.run_id, rec.topic_slug, rec.question)
+                        if key and key in existing_keys:
+                            continue
+                        tasks.append(
+                            (
+                                question_model,
+                                answer_model,
+                                answer_model_slug,
+                                q_slug,
+                                rec,
+                                idx,
+                                debate_path,
+                            )
+                        )
+                    if args.limit is not None and len(tasks) >= args.limit:
                         break
-                    if not rec or rec.status != STATUS_ILL_POSED:
-                        continue
-                    claim = rec.ill_posed_claim or {}
+                if args.limit is not None and len(tasks) >= args.limit:
+                    break
+
+            if tasks:
+                path_locks: Dict[Path, threading.Lock] = {}
+                locks_guard = threading.Lock()
+
+                def lock_for(path: Path) -> threading.Lock:
+                    with locks_guard:
+                        lock = path_locks.get(path)
+                        if lock is None:
+                            lock = threading.Lock()
+                            path_locks[path] = lock
+                        return lock
+
+                def process_task(
+                    question_model,
+                    answer_model,
+                    answer_model_slug: str,
+                    q_slug: str,
+                    rec: AnswerEntry,
+                    idx: int,
+                    debate_path: Path,
+                ) -> bool:
                     context = f"{q_slug}/{answer_model_slug}/{idx}"
-                    claim_summary = format_illposed_claim(claim, context)
-
-                    if len(existing) > idx and existing[idx]:
-                        continue
-                    key = debate_key(rec.run_id, rec.topic_slug, rec.question)
-                    if key and key in existing_keys:
-                        continue
-
                     try:
+                        claim_summary = format_illposed_claim(rec.ill_posed_claim or {}, context)
                         history = illposed_debate(
                             question_model.name,
                             answer_model.name,
@@ -371,6 +368,21 @@ def main():
                             answer_model.reasoning,
                             not args.no_allow_concede,
                         )
+                    except Exception as exc:
+                        logger.error(
+                            f"Failed to generate ill-posed debate for {q_slug}/{answer_model_slug}/{idx}: {exc}"
+                        )
+                        return False
+
+                    lock = lock_for(debate_path)
+                    with lock:
+                        existing = load_debate_entries(debate_path)
+                        existing_keys = collect_debate_keys(existing)
+                        if len(existing) > idx and existing[idx]:
+                            return False
+                        key = debate_key(rec.run_id, rec.topic_slug, rec.question)
+                        if key and key in existing_keys:
+                            return False
                         if len(existing) <= idx:
                             existing.extend([None for _ in range(idx - len(existing) + 1)])
                         existing[idx] = DebateEntry(
@@ -383,67 +395,55 @@ def main():
                             history=history,
                         )
                         save_debate_entries(debate_path, existing)
-                        if key:
-                            existing_keys.add(key)
-                        debates += 1
-                        pbar.update(1)
-                    except Exception as e:
-                        logger.error(f"Failed to generate ill-posed debate for {q_slug}/{answer_model_slug}/{idx}: {e}")
-                        pbar.update(1)
-                        continue
-                if args.limit is not None and debates >= args.limit:
-                    break
-            if args.limit is not None and debates >= args.limit:
-                break
-        pbar.close()
-    else:
-        # critique debates
-        # Count total tasks for progress bar
-        total_tasks = 0
-        for crit_mode_dir in args.critiques_dir.glob("*"):
-            mode = crit_mode_dir.name
-            for q_dir in crit_mode_dir.glob("*"):
-                q_slug = q_dir.name
+                    return True
+
+                with ThreadPoolExecutor(max_workers=min(32, max(4, len(tasks)))) as pool:
+                    futures = [
+                        pool.submit(process_task, *task)
+                        for task in tasks
+                    ]
+                    pbar = tqdm(total=len(futures), desc="Ill-posed debates")
+                    for fut in as_completed(futures):
+                        try:
+                            if fut.result():
+                                debates += 1
+                        except Exception as exc:
+                            logger.error(f"Ill-posed debate task failed: {exc}")
+                        finally:
+                            pbar.update(1)
+                    pbar.close()
+            else:
+                logger.info("No ill-posed debates to generate.")
+        else:
+            # Count total tasks for progress bar
+            total_tasks = 0
+            for bench_path in args.benchmark_dir.glob("*.json"):
+                q_slug = bench_path.stem
                 question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
                 if not question_model:
                     continue
-                benchmark_entries = load_benchmark_entries(args.benchmark_dir / f"{q_slug}.json")
-                for crit_file in q_dir.glob("*.json"):
-                    parts = crit_file.stem.split("__")
-                    if len(parts) != 2:
+                answers_dir = args.answers_dir / q_slug
+                for answer_file in answers_dir.glob("*.json"):
+                    answer_model_slug = answer_file.stem
+                    answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_model_slug), None)
+                    if not answer_model:
                         continue
-                    critic_slug, answer_slug = parts
-                    critic_model = next((spec for spec in registry.models.values() if spec.slug == critic_slug), None)
-                    answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_slug), None)
-                    if not critic_model or not answer_model:
-                        continue
-                    critiques = load_critique_entries(crit_file)
-                    answers = load_answers_for_critique_debates(
-                        args.answers_dir,
-                        q_slug,
-                        answer_slug,
-                        benchmark_entries,
-                    )
-                    for idx, crit_entry in enumerate(critiques):
+                    if answer_model_slug == q_slug:
+                        raise RuntimeError(
+                            f"Self-answer file exists for {q_slug}. Remove {answer_file} to use benchmark answers."
+                        )
+                    records = load_answer_entries(answer_file)
+                    for idx, rec in enumerate(records):
                         if args.limit is not None and total_tasks >= args.limit:
                             break
-                        if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
-                            logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: not succeeded")
+                        if not rec or rec.status != STATUS_ILL_POSED:
                             continue
-                        verdict = final_critique_verdict(crit_entry)
-                        if verdict in {None, CRITIQUE_VERDICT_UNKNOWN}:
-                            logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: unknown final verdict")
-                            continue
-                        if final_critique_verdict(crit_entry) == CRITIQUE_VERDICT_CORRECT:
-                            continue
-                        if idx >= len(answers):
-                            continue
-                        debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
+                        debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
                         existing = load_debate_entries(debate_path)
                         existing_keys = collect_debate_keys(existing)
                         if len(existing) > idx and existing[idx]:
                             continue
-                        key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
+                        key = debate_key(rec.run_id, rec.topic_slug, rec.question)
                         if key and key in existing_keys:
                             continue
                         total_tasks += 1
@@ -451,94 +451,70 @@ def main():
                         break
                 if args.limit is not None and total_tasks >= args.limit:
                     break
-            if args.limit is not None and total_tasks >= args.limit:
-                break
 
-        # Process with progress bar
-        pbar = tqdm(total=total_tasks, desc="Critique debates")
-        for crit_mode_dir in args.critiques_dir.glob("*"):
-            mode = crit_mode_dir.name
-            for q_dir in crit_mode_dir.glob("*"):
-                q_slug = q_dir.name
+            # Process with progress bar
+            pbar = tqdm(total=total_tasks, desc="Ill-posed debates")
+            for bench_path in args.benchmark_dir.glob("*.json"):
+                q_slug = bench_path.stem
                 question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
                 if not question_model:
                     continue
-                benchmark_entries = load_benchmark_entries(args.benchmark_dir / f"{q_slug}.json")
-                for crit_file in q_dir.glob("*.json"):
-                    parts = crit_file.stem.split("__")
-                    if len(parts) != 2:
+                answers_dir = args.answers_dir / q_slug
+                for answer_file in answers_dir.glob("*.json"):
+                    answer_model_slug = answer_file.stem
+                    answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_model_slug), None)
+                    if not answer_model:
                         continue
-                    critic_slug, answer_slug = parts
-                    critic_model = next((spec for spec in registry.models.values() if spec.slug == critic_slug), None)
-                    answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_slug), None)
-                    if not critic_model or not answer_model:
-                        continue
-                    critiques = load_critique_entries(crit_file)
-                    answers = load_answers_for_critique_debates(
-                        args.answers_dir,
-                        q_slug,
-                        answer_slug,
-                        benchmark_entries,
-                    )
+                    if answer_model_slug == q_slug:
+                        raise RuntimeError(
+                            f"Self-answer file exists for {q_slug}. Remove {answer_file} to use benchmark answers."
+                        )
+                    records = load_answer_entries(answer_file)
 
-                    # Load debate file once per critique file instead of per record
-                    debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
+                    # Load debate file once per answer_file instead of per record
+                    debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
                     existing = load_debate_entries(debate_path)
                     existing_keys = collect_debate_keys(existing)
 
-                    for idx, crit_entry in enumerate(critiques):
+                    for idx, rec in enumerate(records):
                         if args.limit is not None and debates >= args.limit:
                             break
-                        if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
+                        if not rec or rec.status != STATUS_ILL_POSED:
                             continue
-                        verdict = final_critique_verdict(crit_entry)
-                        if verdict in {None, CRITIQUE_VERDICT_UNKNOWN}:
-                            logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: unknown final verdict")
-                            continue
-                        if verdict == CRITIQUE_VERDICT_CORRECT:
-                            continue
-                        if idx >= len(answers):
-                            continue
-                        answer_entry = answers[idx]
+                        claim = rec.ill_posed_claim or {}
+                        context = f"{q_slug}/{answer_model_slug}/{idx}"
+                        claim_summary = format_illposed_claim(claim, context)
 
                         if len(existing) > idx and existing[idx]:
                             continue
-                        key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
+                        key = debate_key(rec.run_id, rec.topic_slug, rec.question)
                         if key and key in existing_keys:
                             continue
-                        if not answer_entry:
-                            continue
-                        answer_text = final_answer(answer_entry) or ""
-                        context = f"{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}"
-                        critique_text = format_critique_for_debate(crit_entry, context)
 
                         try:
-                            history = critique_debate(
+                            history = illposed_debate(
+                                question_model.name,
                                 answer_model.name,
-                                critic_model.name,
-                                crit_entry.question,
-                                answer_text,
-                                critique_text,
+                                rec.question,
+                                claim_summary,
                                 args.rounds,
-                                guidance_a,
-                                guidance_c,
-                                guidance_d_critique,
+                                guidance_q,
+                                guidance_d_illposed,
+                                question_model.temperature,
+                                question_model.reasoning,
                                 answer_model.temperature,
                                 answer_model.reasoning,
-                                critic_model.temperature,
-                                critic_model.reasoning,
                                 not args.no_allow_concede,
                             )
                             if len(existing) <= idx:
                                 existing.extend([None for _ in range(idx - len(existing) + 1)])
                             existing[idx] = DebateEntry(
-                                question=crit_entry.question,
-                                alice_model=critic_model.slug,
-                                bob_model=answer_model.slug,
-                                run_id=crit_entry.run_id,
-                                topic_slug=crit_entry.topic_slug,
-                                answer_author=answer_model.slug,
-                                critic=critic_model.slug,
+                                question=rec.question,
+                                alice_model=answer_model.slug,
+                                bob_model=question_model.slug,
+                                claimant=answer_model.slug,
+                                run_id=rec.run_id,
+                                topic_slug=rec.topic_slug,
                                 history=history,
                             )
                             save_debate_entries(debate_path, existing)
@@ -547,16 +523,343 @@ def main():
                             debates += 1
                             pbar.update(1)
                         except Exception as e:
-                            logger.error(f"Failed to generate critique debate for {mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: {e}")
+                            logger.error(f"Failed to generate ill-posed debate for {q_slug}/{answer_model_slug}/{idx}: {e}")
                             pbar.update(1)
                             continue
                     if args.limit is not None and debates >= args.limit:
                         break
                 if args.limit is not None and debates >= args.limit:
                     break
-            if args.limit is not None and debates >= args.limit:
-                break
-        pbar.close()
+            pbar.close()
+    else:
+        # critique debates
+        if args.parallel:
+            tasks = []
+            for crit_mode_dir in args.critiques_dir.glob("*"):
+                mode = crit_mode_dir.name
+                for q_dir in crit_mode_dir.glob("*"):
+                    q_slug = q_dir.name
+                    question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
+                    if not question_model:
+                        continue
+                    benchmark_entries = load_benchmark_entries(args.benchmark_dir / f"{q_slug}.json")
+                    for crit_file in q_dir.glob("*.json"):
+                        parts = crit_file.stem.split("__")
+                        if len(parts) != 2:
+                            continue
+                        critic_slug, answer_slug = parts
+                        critic_model = next((spec for spec in registry.models.values() if spec.slug == critic_slug), None)
+                        answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_slug), None)
+                        if not critic_model or not answer_model:
+                            continue
+                        critiques = load_critique_entries(crit_file)
+                        answers = load_answers_for_critique_debates(
+                            args.answers_dir,
+                            q_slug,
+                            answer_slug,
+                            benchmark_entries,
+                        )
+                        debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
+                        existing = load_debate_entries(debate_path)
+                        existing_keys = collect_debate_keys(existing)
+                        for idx, crit_entry in enumerate(critiques):
+                            if args.limit is not None and len(tasks) >= args.limit:
+                                break
+                            if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
+                                logger.warning(
+                                    f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: not succeeded"
+                                )
+                                continue
+                            verdict = final_critique_verdict(crit_entry)
+                            if verdict in {None, CRITIQUE_VERDICT_UNKNOWN}:
+                                logger.warning(
+                                    f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: unknown final verdict"
+                                )
+                                continue
+                            if verdict == CRITIQUE_VERDICT_CORRECT:
+                                continue
+                            if idx >= len(answers):
+                                continue
+                            if len(existing) > idx and existing[idx]:
+                                continue
+                            key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
+                            if key and key in existing_keys:
+                                continue
+                            answer_entry = answers[idx]
+                            if not answer_entry:
+                                continue
+                            answer_text = final_answer(answer_entry) or ""
+                            tasks.append(
+                                (
+                                    mode,
+                                    q_slug,
+                                    critic_slug,
+                                    answer_slug,
+                                    critic_model,
+                                    answer_model,
+                                    crit_entry,
+                                    answer_text,
+                                    idx,
+                                    debate_path,
+                                )
+                            )
+                        if args.limit is not None and len(tasks) >= args.limit:
+                            break
+                    if args.limit is not None and len(tasks) >= args.limit:
+                        break
+                if args.limit is not None and len(tasks) >= args.limit:
+                    break
+
+            if tasks:
+                path_locks: Dict[Path, threading.Lock] = {}
+                locks_guard = threading.Lock()
+
+                def lock_for(path: Path) -> threading.Lock:
+                    with locks_guard:
+                        lock = path_locks.get(path)
+                        if lock is None:
+                            lock = threading.Lock()
+                            path_locks[path] = lock
+                        return lock
+
+                def process_task(
+                    mode: str,
+                    q_slug: str,
+                    critic_slug: str,
+                    answer_slug: str,
+                    critic_model,
+                    answer_model,
+                    crit_entry: CritiqueEntry,
+                    answer_text: str,
+                    idx: int,
+                    debate_path: Path,
+                ) -> bool:
+                    context = f"{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}"
+                    try:
+                        critique_text = format_critique_for_debate(crit_entry, context)
+                        history = critique_debate(
+                            answer_model.name,
+                            critic_model.name,
+                            crit_entry.question,
+                            answer_text,
+                            critique_text,
+                            args.rounds,
+                            guidance_a,
+                            guidance_c,
+                            guidance_d_critique,
+                            answer_model.temperature,
+                            answer_model.reasoning,
+                            critic_model.temperature,
+                            critic_model.reasoning,
+                            not args.no_allow_concede,
+                        )
+                    except Exception as exc:
+                        logger.error(
+                            f"Failed to generate critique debate for {mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: {exc}"
+                        )
+                        return False
+
+                    lock = lock_for(debate_path)
+                    with lock:
+                        existing = load_debate_entries(debate_path)
+                        existing_keys = collect_debate_keys(existing)
+                        if len(existing) > idx and existing[idx]:
+                            return False
+                        key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
+                        if key and key in existing_keys:
+                            return False
+                        if len(existing) <= idx:
+                            existing.extend([None for _ in range(idx - len(existing) + 1)])
+                        existing[idx] = DebateEntry(
+                            question=crit_entry.question,
+                            alice_model=critic_model.slug,
+                            bob_model=answer_model.slug,
+                            run_id=crit_entry.run_id,
+                            topic_slug=crit_entry.topic_slug,
+                            answer_author=answer_model.slug,
+                            critic=critic_model.slug,
+                            history=history,
+                        )
+                        save_debate_entries(debate_path, existing)
+                    return True
+
+                with ThreadPoolExecutor(max_workers=min(32, max(4, len(tasks)))) as pool:
+                    futures = [
+                        pool.submit(process_task, *task)
+                        for task in tasks
+                    ]
+                    pbar = tqdm(total=len(futures), desc="Critique debates")
+                    for fut in as_completed(futures):
+                        try:
+                            if fut.result():
+                                debates += 1
+                        except Exception as exc:
+                            logger.error(f"Critique debate task failed: {exc}")
+                        finally:
+                            pbar.update(1)
+                    pbar.close()
+            else:
+                logger.info("No critique debates to generate.")
+        else:
+            # Count total tasks for progress bar
+            total_tasks = 0
+            for crit_mode_dir in args.critiques_dir.glob("*"):
+                mode = crit_mode_dir.name
+                for q_dir in crit_mode_dir.glob("*"):
+                    q_slug = q_dir.name
+                    question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
+                    if not question_model:
+                        continue
+                    benchmark_entries = load_benchmark_entries(args.benchmark_dir / f"{q_slug}.json")
+                    for crit_file in q_dir.glob("*.json"):
+                        parts = crit_file.stem.split("__")
+                        if len(parts) != 2:
+                            continue
+                        critic_slug, answer_slug = parts
+                        critic_model = next((spec for spec in registry.models.values() if spec.slug == critic_slug), None)
+                        answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_slug), None)
+                        if not critic_model or not answer_model:
+                            continue
+                        critiques = load_critique_entries(crit_file)
+                        answers = load_answers_for_critique_debates(
+                            args.answers_dir,
+                            q_slug,
+                            answer_slug,
+                            benchmark_entries,
+                        )
+                        for idx, crit_entry in enumerate(critiques):
+                            if args.limit is not None and total_tasks >= args.limit:
+                                break
+                            if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
+                                logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: not succeeded")
+                                continue
+                            verdict = final_critique_verdict(crit_entry)
+                            if verdict in {None, CRITIQUE_VERDICT_UNKNOWN}:
+                                logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: unknown final verdict")
+                                continue
+                            if final_critique_verdict(crit_entry) == CRITIQUE_VERDICT_CORRECT:
+                                continue
+                            if idx >= len(answers):
+                                continue
+                            debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
+                            existing = load_debate_entries(debate_path)
+                            existing_keys = collect_debate_keys(existing)
+                            if len(existing) > idx and existing[idx]:
+                                continue
+                            key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
+                            if key and key in existing_keys:
+                                continue
+                            total_tasks += 1
+                        if args.limit is not None and total_tasks >= args.limit:
+                            break
+                    if args.limit is not None and total_tasks >= args.limit:
+                        break
+                if args.limit is not None and total_tasks >= args.limit:
+                    break
+
+            # Process with progress bar
+            pbar = tqdm(total=total_tasks, desc="Critique debates")
+            for crit_mode_dir in args.critiques_dir.glob("*"):
+                mode = crit_mode_dir.name
+                for q_dir in crit_mode_dir.glob("*"):
+                    q_slug = q_dir.name
+                    question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
+                    if not question_model:
+                        continue
+                    benchmark_entries = load_benchmark_entries(args.benchmark_dir / f"{q_slug}.json")
+                    for crit_file in q_dir.glob("*.json"):
+                        parts = crit_file.stem.split("__")
+                        if len(parts) != 2:
+                            continue
+                        critic_slug, answer_slug = parts
+                        critic_model = next((spec for spec in registry.models.values() if spec.slug == critic_slug), None)
+                        answer_model = next((spec for spec in registry.models.values() if spec.slug == answer_slug), None)
+                        if not critic_model or not answer_model:
+                            continue
+                        critiques = load_critique_entries(crit_file)
+                        answers = load_answers_for_critique_debates(
+                            args.answers_dir,
+                            q_slug,
+                            answer_slug,
+                            benchmark_entries,
+                        )
+
+                        # Load debate file once per critique file instead of per record
+                        debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
+                        existing = load_debate_entries(debate_path)
+                        existing_keys = collect_debate_keys(existing)
+
+                        for idx, crit_entry in enumerate(critiques):
+                            if args.limit is not None and debates >= args.limit:
+                                break
+                            if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
+                                continue
+                            verdict = final_critique_verdict(crit_entry)
+                            if verdict in {None, CRITIQUE_VERDICT_UNKNOWN}:
+                                logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: unknown final verdict")
+                                continue
+                            if verdict == CRITIQUE_VERDICT_CORRECT:
+                                continue
+                            if idx >= len(answers):
+                                continue
+                            answer_entry = answers[idx]
+
+                            if len(existing) > idx and existing[idx]:
+                                continue
+                            key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
+                            if key and key in existing_keys:
+                                continue
+                            if not answer_entry:
+                                continue
+                            answer_text = final_answer(answer_entry) or ""
+                            context = f"{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}"
+                            critique_text = format_critique_for_debate(crit_entry, context)
+
+                            try:
+                                history = critique_debate(
+                                    answer_model.name,
+                                    critic_model.name,
+                                    crit_entry.question,
+                                    answer_text,
+                                    critique_text,
+                                    args.rounds,
+                                    guidance_a,
+                                    guidance_c,
+                                    guidance_d_critique,
+                                    answer_model.temperature,
+                                    answer_model.reasoning,
+                                    critic_model.temperature,
+                                    critic_model.reasoning,
+                                    not args.no_allow_concede,
+                                )
+                                if len(existing) <= idx:
+                                    existing.extend([None for _ in range(idx - len(existing) + 1)])
+                                existing[idx] = DebateEntry(
+                                    question=crit_entry.question,
+                                    alice_model=critic_model.slug,
+                                    bob_model=answer_model.slug,
+                                    run_id=crit_entry.run_id,
+                                    topic_slug=crit_entry.topic_slug,
+                                    answer_author=answer_model.slug,
+                                    critic=critic_model.slug,
+                                    history=history,
+                                )
+                                save_debate_entries(debate_path, existing)
+                                if key:
+                                    existing_keys.add(key)
+                                debates += 1
+                                pbar.update(1)
+                            except Exception as e:
+                                logger.error(f"Failed to generate critique debate for {mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: {e}")
+                                pbar.update(1)
+                                continue
+                        if args.limit is not None and debates >= args.limit:
+                            break
+                    if args.limit is not None and debates >= args.limit:
+                        break
+                if args.limit is not None and debates >= args.limit:
+                    break
+            pbar.close()
 
     logger.info(f"Generated {debates} debate transcripts.")
 
