@@ -91,6 +91,7 @@ ANTHROPIC_MAX_TOKENS = {
 }
 
 ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages/batches"
+ANTHROPIC_MESSAGES_URL = "https://api.anthropic.com/v1/messages"
 OPENAI_FILES_URL = f"{OPENAI_API_URL}/files"
 OPENAI_BATCH_URL = f"{OPENAI_API_URL}/batches"
 OPENAI_CONTENT_URL = f"{OPENAI_API_URL}/files/{{output_file_id}}/content"
@@ -120,6 +121,41 @@ def anthropic_effort_to_tokens(model: str, effort: str):
     max_tokens = ANTHROPIC_MAX_TOKENS[model]
 
     return int(max(1024, min(32000, EFFORT_RATIOS[effort] * max_tokens)))
+
+def _get_anthropic_max_tokens(model: str) -> int:
+    max_tokens = ANTHROPIC_MAX_TOKENS.get(model)
+    if max_tokens is None:
+        for key in ANTHROPIC_MAX_TOKENS:
+            if model.startswith(key):
+                max_tokens = ANTHROPIC_MAX_TOKENS[key]
+                break
+    if max_tokens is None:
+        raise ValueError(f"Model '{model}' not found in ANTHROPIC_MAX_TOKENS")
+    return max_tokens
+
+
+def _normalize_message_content(content: object) -> str:
+    if isinstance(content, list):
+        text_parts = [part.get("text", "") for part in content if part.get("type") == "text"]
+        return "".join(text_parts)
+    if content is None:
+        return ""
+    return str(content)
+
+
+def _anthropic_messages_from_messages(messages: List[Dict]) -> Tuple[List[Dict], Optional[str]]:
+    system_parts = []
+    out_messages = []
+    for msg in messages:
+        role = msg.get("role", "user")
+        content = _normalize_message_content(msg.get("content", ""))
+        if role == "system":
+            if content:
+                system_parts.append(content)
+            continue
+        out_messages.append({"role": role, "content": content})
+    system = "\n".join(system_parts) if system_parts else None
+    return out_messages, system
 
 
 def _query_openai_single(model: str, messages: List[Dict], response_format: Optional[Dict], temperature: Optional[float], api_kwargs: Optional[Dict], reasoning: Optional[str]) -> str:
@@ -166,10 +202,57 @@ def _query_openai_single(model: str, messages: List[Dict], response_format: Opti
         return "".join(text_parts)
     return content or ""
 
+def _query_anthropic_single(model: str, messages: List[Dict], response_format: Optional[Dict], temperature: Optional[float], api_kwargs: Optional[Dict], reasoning: Optional[str]) -> str:
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise RuntimeError("ANTHROPIC_API_KEY not set in environment")
+
+    anthropic_messages, system = _anthropic_messages_from_messages(messages)
+    max_tokens = _get_anthropic_max_tokens(model)
+    payload = {
+        "model": model,
+        "messages": anthropic_messages,
+        "max_tokens": max_tokens,
+    }
+    if system:
+        payload["system"] = system
+    if temperature is not None:
+        payload["temperature"] = temperature
+    if reasoning in ["medium", "high"]:
+        thinking_tokens = anthropic_effort_to_tokens(model, reasoning)
+        payload["thinking"] = {"type": "enabled", "budget_tokens": thinking_tokens}
+    if response_format:
+        payload["response_format"] = response_format
+    if api_kwargs:
+        for key, value in api_kwargs.items():
+            if key not in ["reasoning", "thinking"]:
+                payload[key] = value
+
+    headers = {
+        "x-api-key": api_key,
+        "anthropic-version": "2023-06-01",
+        "Content-Type": "application/json",
+    }
+    session = get_http_session()
+    resp = _request_with_retries(
+        session,
+        "POST",
+        ANTHROPIC_MESSAGES_URL,
+        headers=headers,
+        json=payload,
+    )
+    if resp.status_code != 200:
+        raise RuntimeError(f"Anthropic error: {resp.status_code} - {resp.text}")
+    data = resp.json()
+    content = data.get("content") or []
+    for item in content:
+        if item.get("type") == "text":
+            return item.get("text", "")
+    raise RuntimeError(f"Anthropic error: No text content found in response: {data}")
 
 def query_llm(model: str, messages: List[Dict], response_format: Optional[Dict] = None, temperature: Optional[float] = None, api_kwargs: Optional[Dict] = None, reasoning: Optional[str] = None) -> str:
     """
-    Query a single LLM endpoint (OpenRouter).
+    Query a single LLM endpoint.
     """
     _validate_response_format(response_format)
 
@@ -188,6 +271,10 @@ def query_llm(model: str, messages: List[Dict], response_format: Optional[Dict] 
 
     if 'anthropic' in model and temperature is not None and reasoning is not None:
         raise ValueError("Cannot set both temperature and reasoning in Anthropic requests")
+
+    if "anthropic" in model:
+        norm_model = ANTHROPIC_INTERNAL_NAMES.get(model.replace("anthropic/", ""), model.replace("anthropic/", ""))
+        return _query_anthropic_single(norm_model, messages, response_format, temperature, api_kwargs, reasoning)
 
     json_kwargs = {}
 
@@ -264,16 +351,7 @@ def _build_batch_requests(model: str, messages_list: List[str], prompt: str, res
         if prompt:
             body["system"] = prompt
         norm_model = ANTHROPIC_INTERNAL_NAMES.get(model, model)
-        max_tokens = ANTHROPIC_MAX_TOKENS.get(norm_model)
-        if max_tokens is None:
-            for k in ANTHROPIC_MAX_TOKENS:
-                if norm_model.startswith(k):
-                    max_tokens = ANTHROPIC_MAX_TOKENS[k]
-                    break
-        if max_tokens:
-            body["max_tokens"] = max_tokens
-        else:
-            raise ValueError(f"Model '{model}' not found in ANTHROPIC_MAX_TOKENS")
+        body["max_tokens"] = _get_anthropic_max_tokens(norm_model)
         # Enable thinking if reasoning is set
         if reasoning in ["medium", "high"]:
             effort = reasoning

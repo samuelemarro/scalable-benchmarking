@@ -12,6 +12,8 @@ def _required_api_key(model: str) -> str:
         return "OPENAI_API_KEY"
     if "gemini" in model:
         return "GEMINI_API_KEY"
+    if "anthropic" in model:
+        return "ANTHROPIC_API_KEY"
     return "OPENROUTER_API_KEY"
 
 
