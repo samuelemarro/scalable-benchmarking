@@ -5,6 +5,7 @@ Check for issues in output files across the pipeline.
 Reports files with failed statuses, unknown verdicts, parsing errors, etc.
 """
 
+import argparse
 import json
 from pathlib import Path
 from collections import defaultdict
@@ -123,7 +124,7 @@ def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
     return issues
 
 
-def check_answer_issues(file_path: Path) -> Dict[str, int]:
+def check_answer_issues(file_path: Path, failed_answer_min_attempts: int = 5) -> Dict[str, int]:
     """Check for issues in answer files."""
     issues = defaultdict(int)
 
@@ -144,13 +145,14 @@ def check_answer_issues(file_path: Path) -> Dict[str, int]:
             if not entry:
                 continue
 
+            attempts = entry.attempts or []
             status = entry.status
             if status == STATUS_FAILED:
-                issues["failed_answer"] += 1
+                if len(attempts) < failed_answer_min_attempts:
+                    issues["failed_answer"] += 1
             elif status not in VALID_STATUSES:
                 issues["unknown_status"] += 1
 
-            attempts = entry.attempts or []
             if attempts and _has_unknown_self_check(attempts[-1].evaluation):
                 issues["unknown_self_check"] += 1
 
@@ -320,6 +322,15 @@ def scan_directory(base_path: Path, check_func, pattern: str = "**/*.json") -> D
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Check output files for common issues.")
+    parser.add_argument(
+        "--failed-answer-min-attempts",
+        type=int,
+        default=5,
+        help="Only flag failed answers with fewer than this many attempts.",
+    )
+    args = parser.parse_args()
+
     print("=" * 80)
     print("OUTPUT FILE ISSUE REPORT")
     print("=" * 80)
@@ -347,7 +358,10 @@ def main():
     # Check answers
     print("ANSWERS")
     print("-" * 80)
-    answer_issues = scan_directory(Path("answers"), check_answer_issues)
+    answer_issues = scan_directory(
+        Path("answers"),
+        lambda path: check_answer_issues(path, args.failed_answer_min_attempts),
+    )
     if answer_issues:
         for file_path, issues in sorted(answer_issues.items()):
             issue_count = sum(issues.values())
