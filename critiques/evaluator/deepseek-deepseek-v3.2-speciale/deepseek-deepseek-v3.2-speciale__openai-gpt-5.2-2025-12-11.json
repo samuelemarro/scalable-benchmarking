@@ -113,5 +113,122 @@
         }
       }
     ]
+  },
+  {
+    "question": "Find the minimal polynomial of $\\alpha = \\sqrt{2} + \\sqrt{3} + \\sqrt{5}$ over $\\mathbb{Q}$. Prove that your polynomial is indeed the minimal polynomial.",
+    "run_id": "6",
+    "topic_slug": "field_theory_and_polynomials",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-5.2-2025-12-11",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof that $[\\\\mathbb{Q}(\\\\sqrt{2},\\\\sqrt{3},\\\\sqrt{5}):\\\\mathbb{Q}(\\\\sqrt{2},\\\\sqrt{3})]=2$ contains a logical error. When assuming $\\\\sqrt{5}=a+b\\\\sqrt{2}+c\\\\sqrt{3}+d\\\\sqrt{6}$ and applying the automorphism $\\\\tau_2$ (flipping $\\\\sqrt{2}$ and fixing $\\\\sqrt{3}$), the solution states \\\"noting $\\\\tau_2(\\\\sqrt{5})=\\\\sqrt{5}$\\\". This is unjustified; if $\\\\sqrt{5}\\\\in\\\\mathbb{Q}(\\\\sqrt{2},\\\\sqrt{3})$, $\\\\tau_2(\\\\sqrt{5})$ could be $\\\\pm\\\\sqrt{5}$, and the sign is not known a priori. The subsequent deduction that $b=d=0$ relies on this incorrect assumption, invalidating the degree computation. Since the minimality argument depends on the degree being $8$, the proof is flawed.\",\n  \"suggestions\": \"To correct, one can prove $\\\\sqrt{5}\\\\notin\\\\mathbb{Q}(\\\\sqrt{2},\\\\sqrt{3})$ by a different method, e.g., using the fact that the squares are linearly independent over $\\\\mathbb{Q}$, or by considering the automorphism $\\\\tau_2$ and also its composition with other automorphisms to handle the $\\\\pm$ ambiguity. Alternatively, note that if $\\\\sqrt{5}\\\\in\\\\mathbb{Q}(\\\\sqrt{2},\\\\sqrt{3})$, then $\\\\mathbb{Q}(\\\\sqrt{2},\\\\sqrt{3},\\\\sqrt{5})$ would have degree $4$, but one can show that $\\\\sqrt{2}+\\\\sqrt{3}+\\\\sqrt{5}$ has degree $8$ directly via the constructed polynomial and irreducibility checks.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof that $[\\\\mathbb{Q}(\\\\sqrt{2},\\\\sqrt{3},\\\\sqrt{5}):\\\\mathbb{Q}(\\\\sqrt{2},\\\\sqrt{3})]=2$ contains a logical error. When assuming $\\\\sqrt{5}=a+b\\\\sqrt{2}+c\\\\sqrt{3}+d\\\\sqrt{6}$ and applying the automorphism $\\\\tau_2$ (flipping $\\\\sqrt{2}$ and fixing $\\\\sqrt{3}$), the solution states \\\"noting $\\\\tau_2(\\\\sqrt{5})=\\\\sqrt{5}$\\\". This is unjustified; if $\\\\sqrt{5}\\\\in\\\\mathbb{Q}(\\\\sqrt{2},\\\\sqrt{3})$, $\\\\tau_2(\\\\sqrt{5})$ could be $\\\\pm\\\\sqrt{5}$, and the sign is not known a priori. The subsequent deduction that $b=d=0$ relies on this incorrect assumption, invalidating the degree computation. Since the minimality argument depends on the degree being $8$, the proof is flawed.\",\n  \"suggestions\": \"To correct, one can prove $\\\\sqrt{5}\\\\notin\\\\mathbb{Q}(\\\\sqrt{2},\\\\sqrt{3})$ by a different method, e.g., using the fact that the squares are linearly independent over $\\\\mathbb{Q}$, or by considering the automorphism $\\\\tau_2$ and also its composition with other automorphisms to handle the $\\\\pm$ ambiguity. Alternatively, note that if $\\\\sqrt{5}\\\\in\\\\mathbb{Q}(\\\\sqrt{2},\\\\sqrt{3})$, then $\\\\mathbb{Q}(\\\\sqrt{2},\\\\sqrt{3},\\\\sqrt{5})$ would have degree $4$, but one can show that $\\\\sqrt{2}+\\\\sqrt{3}+\\\\sqrt{5}$ has degree $8$ directly via the constructed polynomial and irreducibility checks.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The proof that $[\\mathbb{Q}(\\sqrt{2},\\sqrt{3},\\sqrt{5}):\\mathbb{Q}(\\sqrt{2},\\sqrt{3})]=2$ contains a logical error. When assuming $\\sqrt{5}=a+b\\sqrt{2}+c\\sqrt{3}+d\\sqrt{6}$ and applying the automorphism $\\tau_2$ (flipping $\\sqrt{2}$ and fixing $\\sqrt{3}$), the solution states \"noting $\\tau_2(\\sqrt{5})=\\sqrt{5}$\". This is unjustified; if $\\sqrt{5}\\in\\mathbb{Q}(\\sqrt{2},\\sqrt{3})$, $\\tau_2(\\sqrt{5})$ could be $\\pm\\sqrt{5}$, and the sign is not known a priori. The subsequent deduction that $b=d=0$ relies on this incorrect assumption, invalidating the degree computation. Since the minimality argument depends on the degree being $8$, the proof is flawed.",
+        "suggestions": "To correct, one can prove $\\sqrt{5}\\notin\\mathbb{Q}(\\sqrt{2},\\sqrt{3})$ by a different method, e.g., using the fact that the squares are linearly independent over $\\mathbb{Q}$, or by considering the automorphism $\\tau_2$ and also its composition with other automorphisms to handle the $\\pm$ ambiguity. Alternatively, note that if $\\sqrt{5}\\in\\mathbb{Q}(\\sqrt{2},\\sqrt{3})$, then $\\mathbb{Q}(\\sqrt{2},\\sqrt{3},\\sqrt{5})$ would have degree $4$, but one can show that $\\sqrt{2}+\\sqrt{3}+\\sqrt{5}$ has degree $8$ directly via the constructed polynomial and irreducibility checks.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a Noetherian commutative ring with identity. An element $r \\in R$ is called a **zero-divisor** if there exists a nonzero $s \\in R$ such that $rs = 0$. An **associated prime** of $R$ is a prime ideal that can be written as $\\operatorname{Ann}(x) = \\{ r \\in R \\mid r x = 0\\}$ for some nonzero $x \\in R$. Prove that the set of zero-divisors of $R$ is exactly the union of all associated primes of $R$.",
+    "run_id": "7",
+    "topic_slug": "commutative_algebra",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-5.2-2025-12-11",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer is mathematically sound, complete, and rigorous. The forward inclusion is straightforward and correct. For the reverse inclusion, the construction of a maximal annihilator from the set of annihilators of elements of M correctly uses the Noetherian condition, and the proof that this maximal annihilator is prime is valid. All steps are justified, and the argument covers all cases. Therefore the answer is correct.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer is mathematically sound, complete, and rigorous. The forward inclusion is straightforward and correct. For the reverse inclusion, the construction of a maximal annihilator from the set of annihilators of elements of M correctly uses the Noetherian condition, and the proof that this maximal annihilator is prime is valid. All steps are justified, and the argument covers all cases. Therefore the answer is correct.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer is mathematically sound, complete, and rigorous. The forward inclusion is straightforward and correct. For the reverse inclusion, the construction of a maximal annihilator from the set of annihilators of elements of M correctly uses the Noetherian condition, and the proof that this maximal annihilator is prime is valid. All steps are justified, and the argument covers all cases. Therefore the answer is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the rational map $\\varphi: \\mathbb{P}^2 \\to \\mathbb{P}^2$ over $\\mathbb{C}$ given in homogeneous coordinates by\n$$\n\\varphi(x:y:z) = (yz : xz : xy).\n$$\nLet $X$ be the blow-up of $\\mathbb{P}^2$ at the three points \n$$\nP_1 = (1:0:0),\\quad P_2 = (0:1:0),\\quad P_3 = (0:0:1).\n$$\nDenote by $\\pi: X \\to \\mathbb{P}^2$ the blow-down morphism, and let $E_1, E_2, E_3$ be the exceptional divisors over $P_1, P_2, P_3$ respectively. Let $H = \\pi^* \\mathcal{O}_{\\mathbb{P}^2}(1)$ be the pullback of the hyperplane class.\n\n(a) Show that $\\varphi$ lifts to a morphism $\\Phi: X \\to \\mathbb{P}^2$ (i.e., $\\Phi = \\varphi \\circ \\pi$ is a morphism).\n(b) Compute the class of the line bundle $\\Phi^* \\mathcal{O}_{\\mathbb{P}^2}(1)$ in $\\operatorname{Pic}(X)$ in terms of $H, E_1, E_2, E_3$.\n(c) Prove that $\\varphi$ is birational and determine its inverse rational map.",
+    "run_id": "8",
+    "topic_slug": "algebraic_geometry",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-5.2-2025-12-11",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer is mathematically correct in parts (b) and (c), and the approach in (a) is sound. However, the verification that the lifted map is a morphism is incomplete: for each exceptional divisor, only one of the two standard charts of the blow-up is checked. For example, on $E_1$, the chart with coordinates $(s,t)$ where $u=s$, $v=st$ covers all points except the direction $(0:1)$. The answer does not verify that the map is defined at that missing point. A similar omission occurs for $E_2$ and $E_3$. Since the proof does not establish the absence of common zeros on the entire exceptional divisors, it does not fully show that $\\\\Phi$ is a morphism everywhere.\",\n  \"suggestions\": \"Add the verification in the other blow-up chart (e.g., for $E_1$ use the chart $u = u' t', v = t'$) to cover the missing point, or argue that the expression obtained gives a morphism on the whole $\\\\mathbb{P}^1$ (e.g., by noting that the map $t \\\\mapsto (0:t:1)$ extends to a morphism from $\\\\mathbb{P}^1$).\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer is mathematically correct in parts (b) and (c), and the approach in (a) is sound. However, the verification that the lifted map is a morphism is incomplete: for each exceptional divisor, only one of the two standard charts of the blow-up is checked. For example, on $E_1$, the chart with coordinates $(s,t)$ where $u=s$, $v=st$ covers all points except the direction $(0:1)$. The answer does not verify that the map is defined at that missing point. A similar omission occurs for $E_2$ and $E_3$. Since the proof does not establish the absence of common zeros on the entire exceptional divisors, it does not fully show that $\\\\Phi$ is a morphism everywhere.\",\n  \"suggestions\": \"Add the verification in the other blow-up chart (e.g., for $E_1$ use the chart $u = u' t', v = t'$) to cover the missing point, or argue that the expression obtained gives a morphism on the whole $\\\\mathbb{P}^1$ (e.g., by noting that the map $t \\\\mapsto (0:t:1)$ extends to a morphism from $\\\\mathbb{P}^1$).\"\n}",
+        "verdict": "insufficient",
+        "notes": "The answer is mathematically correct in parts (b) and (c), and the approach in (a) is sound. However, the verification that the lifted map is a morphism is incomplete: for each exceptional divisor, only one of the two standard charts of the blow-up is checked. For example, on $E_1$, the chart with coordinates $(s,t)$ where $u=s$, $v=st$ covers all points except the direction $(0:1)$. The answer does not verify that the map is defined at that missing point. A similar omission occurs for $E_2$ and $E_3$. Since the proof does not establish the absence of common zeros on the entire exceptional divisors, it does not fully show that $\\Phi$ is a morphism everywhere.",
+        "suggestions": "Add the verification in the other blow-up chart (e.g., for $E_1$ use the chart $u = u' t', v = t'$) to cover the missing point, or argue that the expression obtained gives a morphism on the whole $\\mathbb{P}^1$ (e.g., by noting that the map $t \\mapsto (0:t:1)$ extends to a morphism from $\\mathbb{P}^1$).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "None"
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $A$ be an $n \\times n$ complex matrix. Prove that $e^A = I$ (where $I$ is the identity matrix) if and only if $A$ is diagonalizable and every eigenvalue of $A$ is an integer multiple of $2\\pi i$.",
+    "run_id": "9",
+    "topic_slug": "linear_and_multilinear_algebra",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-5.2-2025-12-11",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The proof is correct and complete. It uses Jordan canonical form, shows that any Jordan block of size >1 cannot have exponential identity, thus $A$ must be diagonalizable, and then eigenvalues must satisfy $e^\\\\lambda=1$, i.e., $\\\\lambda\\\\in2\\\\pi i\\\\mathbb Z$. The converse is straightforward. All steps are rigorous and well-justified.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The proof is correct and complete. It uses Jordan canonical form, shows that any Jordan block of size >1 cannot have exponential identity, thus $A$ must be diagonalizable, and then eigenvalues must satisfy $e^\\\\lambda=1$, i.e., $\\\\lambda\\\\in2\\\\pi i\\\\mathbb Z$. The converse is straightforward. All steps are rigorous and well-justified.\"\n}",
+        "verdict": "correct",
+        "notes": "The proof is correct and complete. It uses Jordan canonical form, shows that any Jordan block of size >1 cannot have exponential identity, thus $A$ must be diagonalizable, and then eigenvalues must satisfy $e^\\lambda=1$, i.e., $\\lambda\\in2\\pi i\\mathbb Z$. The converse is straightforward. All steps are rigorous and well-justified.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a commutative ring with identity. Denote by $T_n(R)$ the ring of $n \\times n$ upper triangular matrices over $R$, i.e., matrices $(a_{ij})$ with $a_{ij} \\in R$ for $i \\le j$ and $a_{ij}=0$ for $i > j$. Prove that the Jacobson radical $J(T_n(R))$ is exactly the set\n$$\n\\{ A = (a_{ij}) \\in T_n(R) \\mid a_{ii} \\in J(R) \\text{ for all } i = 1,\\dots,n \\}.\n$$",
+    "run_id": "10",
+    "topic_slug": "associative_rings_and_algebras",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-5.2-2025-12-11",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The proof is mathematically sound, complete, and rigorous. It correctly shows that the nilpotent ideal N is contained in J(S), uses the isomorphism S/N \u2245 R^n, and applies the property J(A/I)=J(A)/I when I\u2286J(A). All steps are justified, and the final characterization is correctly derived.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The proof is mathematically sound, complete, and rigorous. It correctly shows that the nilpotent ideal N is contained in J(S), uses the isomorphism S/N \u2245 R^n, and applies the property J(A/I)=J(A)/I when I\u2286J(A). All steps are justified, and the final characterization is correctly derived.\"\n}",
+        "verdict": "correct",
+        "notes": "The proof is mathematically sound, complete, and rigorous. It correctly shows that the nilpotent ideal N is contained in J(S), uses the isomorphism S/N \u2245 R^n, and applies the property J(A/I)=J(A)/I when I\u2286J(A). All steps are justified, and the final characterization is correctly derived.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
   }
 ]
