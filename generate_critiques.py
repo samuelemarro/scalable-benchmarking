@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
 from dotenv import load_dotenv
+from tqdm import tqdm
 
 from model_config import ModelSpec, _slugify, load_registry
 from prompt_library import (
@@ -507,11 +508,17 @@ def main():
                     continue
                 futures.append(pool.submit(process_batch, spec, jobs))
 
+            pbar = tqdm(total=len(futures), desc="Generate critiques") if futures else None
             for fut in as_completed(futures):
                 try:
                     fut.result()
                 except Exception as exc:
                     logger.error(f"Critique batch failed: {exc}")
+                finally:
+                    if pbar:
+                        pbar.update(1)
+            if pbar:
+                pbar.close()
 
 
 if __name__ == "__main__":

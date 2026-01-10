@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv
+from tqdm import tqdm
 
 from model_config import _slugify, load_registry
 from prompt_library import (
@@ -294,12 +295,18 @@ def main():
 
     with ThreadPoolExecutor(max_workers=max(4, len(models))) as pool:
         futures = [pool.submit(process_model, spec) for spec in models]
+        pbar = tqdm(total=len(futures), desc="Generate benchmarks") if futures else None
         for fut in as_completed(futures):
             try:
                 msg = fut.result()
                 logger.info(msg)
             except Exception as exc:
                 logger.error(f"Generation task failed: {exc}")
+            finally:
+                if pbar:
+                    pbar.update(1)
+        if pbar:
+            pbar.close()
 
 
 if __name__ == "__main__":

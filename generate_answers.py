@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv
+from tqdm import tqdm
 
 from model_config import _slugify, load_registry
 from prompt_library import (
@@ -119,9 +120,12 @@ def run_generation(
     a_slug = _slugify(answer_model)
 
     if len(prompts) == 1 or disable_batch:
+        prompt_iter = prompts
+        if len(prompts) > 1:
+            prompt_iter = tqdm(prompts, desc=f"{a_slug} answers", leave=False)
         raw_answers = [
             query_llm_single(answer_model, prompt, temperature=temperature, reasoning=reasoning)
-            for prompt in prompts
+            for prompt in prompt_iter
         ]
     else:
         raw_answers = query_llm_batch(answer_model, prompts, temperature=temperature, reasoning=reasoning)
@@ -263,12 +267,18 @@ def main():
 
                 tasks.append(pool.submit(run_task))
 
+        pbar = tqdm(total=len(tasks), desc="Generate answers") if tasks else None
         for fut in as_completed(tasks):
             try:
                 qm, am, count = fut.result()
                 logger.info(f"Finished {count} answers for {am} on {qm}")
             except Exception as exc:
                 logger.error(f"Task failed: {exc}")
+            finally:
+                if pbar:
+                    pbar.update(1)
+        if pbar:
+            pbar.close()
 
 
 if __name__ == "__main__":
