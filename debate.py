@@ -190,6 +190,8 @@ def run_round(
         reasoning=reasoning,
         response_format={"type": "json_object"} if 'anthropic' not in speaker_model else None,
     )
+    if reply is None or not reply.strip():
+        raise ValueError(f"LLM reply empty for {speaker_model}")
     parsed = safe_load_json(reply)
     if isinstance(parsed, dict) and "message" in parsed:
         return clean_math(parsed["message"]), parsed.get("concede", False)

@@ -27,7 +27,7 @@ from data_models import (
     load_benchmark_entries,
     save_benchmark_entries,
 )
-from utils import _load_parsing_config, clean_math, setup_logging
+from utils import _ensure_non_empty_responses, _load_parsing_config, clean_math, setup_logging
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +74,7 @@ def _format_question_answer_with_llm(text: str) -> Optional[str]:
         "treat the first paragraph as the question and the rest as the answer. Output only the tagged text."
     )
     try:
-        return query_llm_single(
+        response = query_llm_single(
             model,
             text,
             prompt=prompt,
@@ -84,6 +84,9 @@ def _format_question_answer_with_llm(text: str) -> Optional[str]:
     except Exception:
         logger.exception("Failed to add [QUESTION] and [ANSWER] tags with LLM.")
         return None
+    if response is None or not response.strip():
+        raise ValueError("LLM reply empty when adding [QUESTION]/[ANSWER] tags")
+    return response
 
 
 def _parse_tagged_question_answer(text: str) -> Optional[Tuple[str, str]]:
@@ -157,15 +160,20 @@ def generate_questions(
         prompts.append(build_question_prompt(topic_name, guidance, previous_attempts if previous_attempts else None))
 
     if len(prompts) == 1:
-        return [query_llm_single(model, prompts[0], temperature=temperature, reasoning=reasoning)]
+        responses = [query_llm_single(model, prompts[0], temperature=temperature, reasoning=reasoning)]
+        _ensure_non_empty_responses(responses, f"LLM reply empty for {model}")
+        return responses
     if disable_batch:
-        return query_llm_parallel(
+        responses = query_llm_parallel(
             model,
             prompts,
             temperature=temperature,
             reasoning=reasoning,
         )
-    return query_llm_batch(model, prompts, temperature=temperature, reasoning=reasoning)
+    else:
+        responses = query_llm_batch(model, prompts, temperature=temperature, reasoning=reasoning)
+    _ensure_non_empty_responses(responses, f"LLM reply empty for {model}")
+    return responses
 
 
 def main():

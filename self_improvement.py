@@ -4,7 +4,7 @@ from typing import Callable, Dict, List, Optional, Sequence
 from tqdm import tqdm
 
 from model_api import query_llm_batch, query_llm_parallel, query_llm_single
-from utils import safe_load_json
+from utils import _ensure_non_empty_responses, safe_load_json
 from constants import STATUS_FAILED, STATUS_ILL_POSED, STATUS_SUCCEEDED
 
 
@@ -29,10 +29,15 @@ def _batched_query(model: str, prompts: Sequence[str], disable_batch: bool, **kw
     if not prompts:
         return []
     if len(prompts) == 1:
-        return [query_llm_single(model, prompts[0], **kwargs)]
+        responses = [query_llm_single(model, prompts[0], **kwargs)]
+        _ensure_non_empty_responses(responses, f"LLM reply empty for {model}")
+        return responses
     if disable_batch:
-        return query_llm_parallel(model, list(prompts), **kwargs)
-    return query_llm_batch(model, prompts, **kwargs)
+        responses = query_llm_parallel(model, list(prompts), **kwargs)
+    else:
+        responses = query_llm_batch(model, prompts, **kwargs)
+    _ensure_non_empty_responses(responses, f"LLM reply empty for {model}")
+    return responses
 
 
 def self_improve_answers(

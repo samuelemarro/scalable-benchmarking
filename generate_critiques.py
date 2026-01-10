@@ -18,7 +18,7 @@ from prompt_library import (
     load_critique_guidance,
 )
 from self_improvement import self_improve_critiques
-from utils import benchmark_answers_from_entries, clean_math, entry_key, safe_load_json, setup_logging
+from utils import _ensure_non_empty_responses, benchmark_answers_from_entries, clean_math, entry_key, safe_load_json, setup_logging
 from model_api import query_llm_batch, query_llm_parallel, query_llm_single
 from constants import (
     CRITIQUE_VERDICT_UNKNOWN,
@@ -137,15 +137,20 @@ def _batched_query(model: str, prompts: List[str], disable_batch: bool, temperat
     if not prompts:
         return []
     if len(prompts) == 1:
-        return [query_llm_single(model, prompts[0], temperature=temperature, reasoning=reasoning)]
+        responses = [query_llm_single(model, prompts[0], temperature=temperature, reasoning=reasoning)]
+        _ensure_non_empty_responses(responses, f"LLM reply empty for {model}")
+        return responses
     if disable_batch:
-        return query_llm_parallel(
+        responses = query_llm_parallel(
             model,
             prompts,
             temperature=temperature,
             reasoning=reasoning,
         )
-    return query_llm_batch(model, prompts, temperature=temperature, reasoning=reasoning)
+    else:
+        responses = query_llm_batch(model, prompts, temperature=temperature, reasoning=reasoning)
+    _ensure_non_empty_responses(responses, f"LLM reply empty for {model}")
+    return responses
 
 
 def build_entry_map(entries: List[Optional[AnswerEntry]]) -> Dict[Tuple[Optional[str], Optional[str], Optional[str]], AnswerEntry]:

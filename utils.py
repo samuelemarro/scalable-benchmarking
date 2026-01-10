@@ -2,7 +2,7 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 
 from model_api import query_llm_single
@@ -57,6 +57,12 @@ def save_json(path: Path, payload):
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w") as f:
         json.dump(payload, f, indent=2)
+
+
+def _ensure_non_empty_responses(responses: Sequence[Optional[str]], context: str) -> None:
+    for idx, response in enumerate(responses):
+        if response is None or (isinstance(response, str) and not response.strip()):
+            raise ValueError(f"{context} at index {idx}")
 
 
 def clean_math(text: str) -> str:

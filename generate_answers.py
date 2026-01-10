@@ -27,7 +27,7 @@ from data_models import (
     load_benchmark_entries,
     save_answer_entries,
 )
-from utils import clean_math, entry_key, setup_logging
+from utils import _ensure_non_empty_responses, clean_math, entry_key, setup_logging
 
 logger = logging.getLogger(__name__)
 
@@ -134,6 +134,7 @@ def run_generation(
     else:
         raw_answers = query_llm_batch(answer_model, prompts, temperature=temperature, reasoning=reasoning)
 
+    _ensure_non_empty_responses(raw_answers, f"LLM reply empty for {a_slug}")
     cleaned_answers = [clean_math(r) for r in raw_answers]
 
     def eval_prompt(question: str, answer: str, local_idx: int):
