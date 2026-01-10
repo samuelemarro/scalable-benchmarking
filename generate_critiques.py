@@ -4,6 +4,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
+import threading
 from typing import Dict, List, Optional, Set, Tuple
 
 from dotenv import load_dotenv
@@ -326,6 +327,76 @@ def generate_critiques_batch(
     return enriched_all
 
 
+def generate_critique_single(
+    spec: ModelSpec,
+    job: CritiqueJob,
+    guidance: str,
+    max_rounds: int,
+    self_improve: bool,
+) -> List[CritiqueAttempt]:
+    prompt = build_critique_prompt(job.question, job.answer_author, job.answer_text, guidance)
+    raw_critique = query_llm_single(
+        spec.name,
+        prompt,
+        temperature=spec.temperature,
+        reasoning=spec.reasoning,
+    )
+    cleaned_critique = clean_math(raw_critique)
+
+    if not self_improve:
+        verdict, notes, suggestions = extract_structured_critique(cleaned_critique)
+        return [
+            CritiqueAttempt(
+                round=1,
+                cleaned_critique=cleaned_critique,
+                raw_critique=raw_critique,
+                verdict=verdict,
+                notes=notes,
+                suggestions=suggestions,
+                evaluation=None,
+            )
+        ]
+
+    question = job.question
+    answer_text = job.answer_text
+
+    def eval_prompt(q: str, crit: str, _idx: int) -> str:
+        return build_critique_self_check(q, answer_text, crit, guidance)
+
+    def refine_prompt(q: str, crit: str, fb: str) -> str:
+        return build_critique_refine(q, answer_text, crit, fb)
+
+    results = self_improve_critiques(
+        spec.name,
+        [question],
+        [cleaned_critique],
+        eval_prompt,
+        refine_prompt,
+        temperature=spec.temperature,
+        reasoning=spec.reasoning,
+        max_rounds=max_rounds,
+        disable_batch=True,
+        raw_initial_critiques=[raw_critique],
+    )
+
+    enriched_attempts: List[CritiqueAttempt] = []
+    for att in (results[0].attempts if results else []):
+        verdict, notes, suggestions = extract_structured_critique(att.answer)
+        enriched_attempts.append(
+            CritiqueAttempt(
+                round=att.round,
+                cleaned_critique=att.answer,
+                raw_critique=att.raw_answer or "",
+                verdict=verdict,
+                notes=notes,
+                suggestions=suggestions,
+                evaluation=att.evaluation,
+            )
+        )
+
+    return enriched_attempts
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate critiques for answers.")
     parser.add_argument(
@@ -340,6 +411,7 @@ def main():
     parser.add_argument("--max-rounds", type=int, default=5, help="Max self-improvement rounds. Ignored if self-improve disabled.")
     parser.add_argument("--no-self-improve", action="store_false", dest="self_improve", help="Disable critique self-improvement.",)
     parser.add_argument("--disable-batch", action="store_true")
+    parser.add_argument("--parallel", action="store_true", help="Process critiques in parallel per task (no batch APIs).")
     parser.add_argument("--limit", type=int, default=None, help="Limit number of critiques per pair.")
     parser.add_argument("--custom-map", type=Path, help="JSON for custom mode: list of {question_author, answer_author, critic}.")
     parser.add_argument("--models", nargs="*", help="Subset of models to involve (default: all critique-capable).")
@@ -464,21 +536,30 @@ def main():
             bucket = jobs_by_critic.setdefault(critic_spec.name, {"spec": critic_spec, "jobs": []})
             bucket["jobs"].append(job)
 
-        with ThreadPoolExecutor(max_workers=max(4, len(jobs_by_critic))) as pool:
-            futures = []
+        if args.parallel:
+            tasks: List[Tuple[ModelSpec, CritiqueJob]] = []
+            for payload in jobs_by_critic.values():
+                spec = payload["spec"]
+                for job in payload["jobs"]:
+                    tasks.append((spec, job))
 
-            def process_batch(spec: ModelSpec, jobs: List[CritiqueJob]):
-                attempts_list = generate_critiques_batch(
-                    spec.name,
-                    jobs,
-                    guidance,
-                    args.max_rounds,
-                    args.self_improve,
-                    args.disable_batch,
-                    spec.temperature,
-                    spec.reasoning,
-                )
-                for job, attempts in zip(jobs, attempts_list):
+            if not tasks:
+                continue
+
+            path_locks: Dict[Path, threading.Lock] = {}
+            locks_guard = threading.Lock()
+
+            def lock_for(path: Path) -> threading.Lock:
+                with locks_guard:
+                    lock = path_locks.get(path)
+                    if lock is None:
+                        lock = threading.Lock()
+                        path_locks[path] = lock
+                    return lock
+
+            def write_record(spec: ModelSpec, job: CritiqueJob, attempts: List[CritiqueAttempt]):
+                lock = lock_for(job.output_path)
+                with lock:
                     records = load_critique_entries(job.output_path)
                     index_by_key: Dict[Tuple[Optional[str], Optional[str], Optional[str]], int] = {}
                     for rec_idx, rec in enumerate(records):
@@ -508,26 +589,101 @@ def main():
                     else:
                         records.append(record)
                     save_critique_entries(job.output_path, records)
-                    logger.info(f"Critique done by {spec.name} for run {job.run_id}")
 
-            for critic_name, payload in jobs_by_critic.items():
-                spec: ModelSpec = payload["spec"]
-                jobs = payload["jobs"]
-                if not jobs:
-                    continue
-                futures.append(pool.submit(process_batch, spec, jobs))
-
-            pbar = tqdm(total=len(futures), desc="Generate critiques") if futures else None
-            for fut in as_completed(futures):
+            def process_task(spec: ModelSpec, job: CritiqueJob):
                 try:
-                    fut.result()
+                    attempts = generate_critique_single(
+                        spec,
+                        job,
+                        guidance,
+                        args.max_rounds,
+                        args.self_improve,
+                    )
+                    write_record(spec, job, attempts)
+                    logger.info(f"Critique done by {spec.name} for run {job.run_id}")
                 except Exception as exc:
-                    logger.error(f"Critique batch failed: {exc}")
-                finally:
-                    if pbar:
-                        pbar.update(1)
-            if pbar:
-                pbar.close()
+                    logger.error(
+                        f"Critique failed for {spec.name} run {job.run_id}: {exc}"
+                    )
+
+            with ThreadPoolExecutor(max_workers=min(32, max(4, len(tasks)))) as pool:
+                futures = [pool.submit(process_task, spec, job) for spec, job in tasks]
+                pbar = tqdm(total=len(futures), desc="Generate critiques") if futures else None
+                for fut in as_completed(futures):
+                    try:
+                        fut.result()
+                    except Exception as exc:
+                        logger.error(f"Critique task failed: {exc}")
+                    finally:
+                        if pbar:
+                            pbar.update(1)
+                if pbar:
+                    pbar.close()
+        else:
+            with ThreadPoolExecutor(max_workers=max(4, len(jobs_by_critic))) as pool:
+                futures = []
+
+                def process_batch(spec: ModelSpec, jobs: List[CritiqueJob]):
+                    attempts_list = generate_critiques_batch(
+                        spec.name,
+                        jobs,
+                        guidance,
+                        args.max_rounds,
+                        args.self_improve,
+                        args.disable_batch,
+                        spec.temperature,
+                        spec.reasoning,
+                    )
+                    for job, attempts in zip(jobs, attempts_list):
+                        records = load_critique_entries(job.output_path)
+                        index_by_key: Dict[Tuple[Optional[str], Optional[str], Optional[str]], int] = {}
+                        for rec_idx, rec in enumerate(records):
+                            if not rec:
+                                continue
+                            rec_key = entry_key(rec.run_id, rec.topic_slug, rec.question)
+                            if rec_key and rec_key not in index_by_key:
+                                index_by_key[rec_key] = rec_idx
+                        final_verdict = attempts[-1].verdict if attempts else None
+                        status = (
+                            STATUS_SUCCEEDED
+                            if final_verdict and final_verdict != CRITIQUE_VERDICT_UNKNOWN
+                            else STATUS_FAILED
+                        )
+                        record = CritiqueEntry(
+                            question=job.question,
+                            run_id=job.run_id,
+                            topic_slug=job.topic_slug,
+                            question_author=_slugify(job.question_author),
+                            critic=spec.slug,
+                            answer_author=_slugify(job.answer_author),
+                            status=status,
+                            attempts=attempts,
+                        )
+                        if job.record_key and job.record_key in index_by_key:
+                            records[index_by_key[job.record_key]] = record
+                        else:
+                            records.append(record)
+                        save_critique_entries(job.output_path, records)
+                        logger.info(f"Critique done by {spec.name} for run {job.run_id}")
+
+                for payload in jobs_by_critic.values():
+                    spec = payload["spec"]
+                    jobs = payload["jobs"]
+                    if not jobs:
+                        continue
+                    futures.append(pool.submit(process_batch, spec, jobs))
+
+                pbar = tqdm(total=len(futures), desc="Generate critiques") if futures else None
+                for fut in as_completed(futures):
+                    try:
+                        fut.result()
+                    except Exception as exc:
+                        logger.error(f"Critique batch failed: {exc}")
+                    finally:
+                        if pbar:
+                            pbar.update(1)
+                if pbar:
+                    pbar.close()
 
 
 if __name__ == "__main__":

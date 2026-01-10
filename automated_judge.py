@@ -4,6 +4,7 @@ import logging
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+import threading
 from typing import Dict, Iterable, List, Optional, Tuple
 
 from dotenv import load_dotenv
@@ -591,6 +592,7 @@ def main():
     parser.add_argument("--output-dir", type=Path, default=Path("automated_evaluations"))
     parser.add_argument("--batch-size", type=int, default=None)
     parser.add_argument("--disable-batch", action="store_true")
+    parser.add_argument("--parallel", action="store_true", help="Process judgments in parallel per task (no batch APIs).")
     parser.add_argument("--limit", type=int, default=None, help="Limit tasks per judge.")
     parser.add_argument("--models", nargs="*", help="Subset of judge models to use (default: all).")
     parser.add_argument("--overwrite", action="store_true")
@@ -680,19 +682,94 @@ def main():
             save_decisions(out_path, decisions)
         return len(pending)
 
-    with ThreadPoolExecutor(max_workers=max(4, len(jobs_by_judge))) as pool:
-        futures = []
+    if args.parallel:
+        jobs: List[Tuple[ModelSpec, JudgingTask, Path]] = []
         for payload in jobs_by_judge.values():
             spec = payload["spec"]
             tasks_for_judge = payload["tasks"]
             if not tasks_for_judge:
                 continue
-            futures.append(pool.submit(process_judge, spec, tasks_for_judge))
-        for fut in as_completed(futures):
-            try:
-                fut.result()
-            except Exception as exc:
-                logger.error(f"Judge worker failed: {exc}")
+            out_path = args.output_dir / f"{spec.slug}.json"
+            decisions = load_decisions(out_path)
+            decisions_by_key = {decision_key(decision): decision for decision in decisions.values() if decision_key(decision)}
+            pending = []
+            for task in tasks_for_judge:
+                key = task_key(task)
+                if not args.overwrite and (task.id in decisions or (key and key in decisions_by_key)):
+                    continue
+                pending.append(task)
+                if args.limit is not None and len(pending) >= args.limit:
+                    break
+            for task in pending:
+                jobs.append((spec, task, out_path))
+
+        if jobs:
+            path_locks: Dict[Path, threading.Lock] = {}
+            locks_guard = threading.Lock()
+
+            def lock_for(path: Path) -> threading.Lock:
+                with locks_guard:
+                    lock = path_locks.get(path)
+                    if lock is None:
+                        lock = threading.Lock()
+                        path_locks[path] = lock
+                    return lock
+
+            def process_task(spec: ModelSpec, task: JudgingTask, out_path: Path):
+                try:
+                    if task.type == "illposed":
+                        prompt = build_illposed_prompt(task, guidance_q, guidance_j_illposed, registry)
+                    else:
+                        prompt = build_critique_prompt(task, guidance_a, guidance_c, guidance_j_critique, registry)
+                    response = query_llm_single(
+                        spec.name,
+                        prompt,
+                        temperature=spec.temperature,
+                        reasoning=spec.reasoning,
+                    )
+                    decision = parse_judgment(response, task, spec.slug)
+                except Exception as exc:
+                    logger.error(f"Judge task failed for {spec.name} {task.id}: {exc}")
+                    return
+
+                lock = lock_for(out_path)
+                with lock:
+                    decisions = load_decisions(out_path)
+                    decisions_by_key = {
+                        decision_key(decision): decision
+                        for decision in decisions.values()
+                        if decision_key(decision)
+                    }
+                    key = task_key(task)
+                    if not args.overwrite and (task.id in decisions or (key and key in decisions_by_key)):
+                        return
+                    decisions[task.id] = decision
+                    if key:
+                        decisions_by_key[key] = decision
+                    save_decisions(out_path, decisions)
+                logger.info(f"{spec.pretty}: processed evaluation {task.id}")
+
+            with ThreadPoolExecutor(max_workers=min(32, max(4, len(jobs)))) as pool:
+                futures = [pool.submit(process_task, spec, task, out_path) for spec, task, out_path in jobs]
+                for fut in as_completed(futures):
+                    try:
+                        fut.result()
+                    except Exception as exc:
+                        logger.error(f"Judge task failed: {exc}")
+    else:
+        with ThreadPoolExecutor(max_workers=max(4, len(jobs_by_judge))) as pool:
+            futures = []
+            for payload in jobs_by_judge.values():
+                spec = payload["spec"]
+                tasks_for_judge = payload["tasks"]
+                if not tasks_for_judge:
+                    continue
+                futures.append(pool.submit(process_judge, spec, tasks_for_judge))
+            for fut in as_completed(futures):
+                try:
+                    fut.result()
+                except Exception as exc:
+                    logger.error(f"Judge worker failed: {exc}")
 
 
 if __name__ == "__main__":
