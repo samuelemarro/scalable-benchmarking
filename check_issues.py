@@ -7,6 +7,7 @@ Reports files with failed statuses, unknown verdicts, parsing errors, etc.
 
 import argparse
 import json
+import re
 from pathlib import Path
 from collections import defaultdict
 from typing import Any, Dict, Optional
@@ -30,6 +31,12 @@ from data_models import (
     load_critique_entries,
     load_debate_entries,
     load_evaluation_entries,
+)
+
+PARSE_ERROR_REGEX = re.compile(
+    r"(cannot parse|could not parse|can't parse|cant parse|can not parse|"
+    r"unable to parse|failed to parse|parsing error|parse error|parsing_error)",
+    re.IGNORECASE,
 )
 
 
@@ -77,6 +84,30 @@ def _has_unknown_self_check(evaluation: Optional[Dict[str, Any]]) -> bool:
     return isinstance(issues, list) and "unknown" in issues
 
 
+def _contains_parse_error_text(value: Any) -> bool:
+    if value is None:
+        return False
+    if isinstance(value, str):
+        return bool(PARSE_ERROR_REGEX.search(value))
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if isinstance(key, str) and PARSE_ERROR_REGEX.search(key):
+                return True
+            if _contains_parse_error_text(item):
+                return True
+        return False
+    if isinstance(value, (list, tuple)):
+        return any(_contains_parse_error_text(item) for item in value)
+    return False
+
+
+def _entry_has_parse_error_text(entry: Any) -> bool:
+    if entry is None:
+        return False
+    dump = entry.model_dump() if hasattr(entry, "model_dump") else entry
+    return _contains_parse_error_text(dump)
+
+
 def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
     """Check for issues in benchmark files."""
     issues = defaultdict(int)
@@ -97,6 +128,8 @@ def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
         for entry in data:
             if not entry:
                 continue
+            if _entry_has_parse_error_text(entry):
+                issues["parse_error_text"] += 1
             status = entry.status
             if status == STATUS_FAILED:
                 issues["failed_generation"] += 1
@@ -144,6 +177,8 @@ def check_answer_issues(file_path: Path, failed_answer_min_attempts: int = 5) ->
         for entry in data:
             if not entry:
                 continue
+            if _entry_has_parse_error_text(entry):
+                issues["parse_error_text"] += 1
 
             attempts = entry.attempts or []
             status = entry.status
@@ -186,6 +221,8 @@ def check_critique_issues(file_path: Path) -> Dict[str, int]:
         for entry in data:
             if not entry:
                 continue
+            if _entry_has_parse_error_text(entry):
+                issues["parse_error_text"] += 1
 
             status = entry.status
             if status == STATUS_FAILED:
@@ -233,6 +270,8 @@ def check_debate_issues(file_path: Path) -> Dict[str, int]:
         for entry in data:
             if not entry:
                 continue
+            if _entry_has_parse_error_text(entry):
+                issues["parse_error_text"] += 1
 
             # Check for empty debates
             history = entry.history
@@ -269,6 +308,8 @@ def check_evaluation_issues(file_path: Path) -> Dict[str, int]:
         decisions = payload.decisions
 
         for evaluation in decisions:
+            if _entry_has_parse_error_text(evaluation):
+                issues["parse_error_text"] += 1
             verdict = evaluation.verdict
 
             if verdict == JUDGE_VERDICT_UNKNOWN:
