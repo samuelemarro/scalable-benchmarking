@@ -23,6 +23,7 @@ from model_api import query_llm_batch, query_llm_parallel, query_llm_single
 from constants import (
     CRITIQUE_VERDICT_UNKNOWN,
     STATUS_FAILED,
+    STATUS_ILL_POSED,
     STATUS_SUCCEEDED,
     VALID_CRITIQUE_VERDICTS,
 )
@@ -506,9 +507,11 @@ def main():
             )
             answer_map = build_entry_map(answer_records)
             answer_entry = answer_map.get(key)
-            if not answer_entry or answer_entry.status == STATUS_FAILED:
+            if not answer_entry or answer_entry.status in {STATUS_FAILED, STATUS_ILL_POSED}:
                 run_id = key[0] if key else None
-                logger.info(f"Skipping critique for failed answer {question_model}-{answer_author}-{run_id}")
+                logger.info(
+                    f"Skipping critique for failed/ill-posed answer {question_model}-{answer_author}-{run_id}"
+                )
                 continue
             question_text = answer_entry.question or benchmark_question_map.get(key)
             if not question_text:
