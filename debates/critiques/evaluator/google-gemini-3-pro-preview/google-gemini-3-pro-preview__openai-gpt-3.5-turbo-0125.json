@@ -173,5 +173,260 @@
         "concede": true
       }
     ]
+  },
+  {
+    "question": "To ensure the problem meets the rigorous standards of the benchmarking framework, I have selected a problem from Galois Theory. This problem requires synthesizing knowledge of splitting fields, degree calculations, group structure identification, and the Galois correspondence to perform a counting task. It is non-trivial, well-posed, and has a verifiable integer solution.\n\n\nLet $f(x) = x^5 - 2 \\in \\mathbb{Q}[x]$. Let $K \\subseteq \\mathbb{C}$ be the splitting field of $f(x)$ over $\\mathbb{Q}$.\n\n1. Determine the degree of the field extension $[K : \\mathbb{Q}]$.\n2. Identify the Galois group $G = \\text{Gal}(K/\\mathbb{Q})$ up to isomorphism.\n3. Using the Fundamental Theorem of Galois Theory, calculate the number of strict intermediate fields of the extension. That is, determine the number of fields $F$ such that $\\mathbb{Q} \\subsetneq F \\subsetneq K$.",
+    "run_id": "6",
+    "topic_slug": "field_theory_and_polynomials",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "Thank you for the detailed critique. I acknowledge the errors in my solution. The correct degree of the extension is 20, not 5, and the Galois group is the Frobenius group $F_{20}$, not $\text{Z}_5$. Additionally, for a group of prime order like $\text{Z}_5$, there are no proper nontrivial subgroups, leading to 0 strict intermediate fields, not 1.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $G = S_3$ be the symmetric group on 3 letters, and let $k = \\mathbb{F}_3$ be the field with 3 elements. We view $k$ as a trivial $kG$-module.\n\nDetermine the graded commutative ring structure of the group cohomology ring $H^*(G, k) = \\bigoplus_{n \\ge 0} H^n(G, k)$. Provide a presentation of this ring in terms of generators and relations, specifying the degrees of all generators.",
+    "run_id": "12",
+    "topic_slug": "category_theory_and_homological_algebra",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "Thank you for pointing out the errors in my answer. I acknowledge the mistakes made in determining the group cohomology ring structure of $H^*(S_3, \\mathbb{F}_3)$. The correct structure is isomorphic to $k[y] \\otimes \\Lambda(x)$ where $\\text{deg}(y)=4$ and $\\text{deg}(x)=3$.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Find the exact solution $u(x,t)$ to the following initial-boundary value problem for the partial differential equation:\n\n$$ \\frac{\\partial u}{\\partial t} = \\frac{\\partial^2 u}{\\partial x^2} - 2 \\frac{\\partial u}{\\partial x} $$\n\ndefined on the semi-infinite domain $x > 0$ and time $t > 0$, subject to the initial condition:\n$$ u(x, 0) = 0 \\quad \\text{for } x > 0 $$\n\nand the boundary conditions:\n$$ u(0, t) = 1 \\quad \\text{for } t > 0 $$\n$$ \\lim_{x \\to \\infty} u(x, t) = 0 \\quad \\text{for } t > 0 $$\n\nExpress your answer in terms of the complementary error function, defined as $\\text{erfc}(z) = \\frac{2}{\\sqrt{\\pi}} \\int_z^\\infty e^{-\\eta^2} \\, d\\eta$.",
+    "run_id": "23",
+    "topic_slug": "partial_differential_equations",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "Thank you for the detailed critique. I acknowledge the errors in my solution. I will reevaluate the problem and provide a corrected solution that satisfies all the boundary conditions and the partial differential equation.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathcal{C}$ denote the standard middle-thirds Cantor set on the interval $[0,1]$. Let $f: [0,1] \\to [0,1]$ be the Cantor-Lebesgue function (also known as the Devil's Staircase). The function $f$ is the unique continuous, non-decreasing function satisfying the following functional properties:\n\n1. $f(0)=0$ and $f(1)=1$.\n2. For $x \\in [0, 1/3]$, $f(x) = \\frac{1}{2}f(3x)$.\n3. For $x \\in [1/3, 2/3]$, $f(x) = 1/2$.\n4. For $x \\in [2/3, 1]$, $f(x) = \\frac{1}{2}(1 + f(3x-2))$.\n\nCalculate the exact value of the integral:\n$$ \\mathcal{I} = \\int_0^1 (f(x) - x)^2 \\, dx $$",
+    "run_id": "17",
+    "topic_slug": "measure_and_integration",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I acknowledge the critique. The Cantor-Lebesgue function was incorrectly identified in the solution, leading to an erroneous integral calculation. The approach used to determine $f(x)$ was flawed, resulting in the wrong function definition. Additionally, there were arithmetic errors in the integration steps. I will revise the solution accordingly.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{R} \\setminus \\{0, 1\\} \\to \\mathbb{R}$ be a function satisfying the functional equation\n$$ f(x) + f\\left( \\frac{1}{1-x} \\right) = 1 + \\frac{1}{x(1-x)} $$\nfor all $x \\in \\mathbb{R} \\setminus \\{0, 1\\}$.\n\nFind the explicit expression for $f(x)$ and determine the exact value of the integral\n$$ I = \\int_2^3 f(x) \\, dx $$",
+    "run_id": "16",
+    "topic_slug": "real_functions",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "Thank you for your critique. I acknowledge the errors in my solution. The correct inverse relationship should be $x = \\frac{y-1}{y}$. I also recognize the need for a system of equations due to the cycle of order 3. The correct function is $f(x) = x + \\frac{1}{x}$. I appreciate the feedback.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Determine all functions $f: \\mathbb{R} \\to \\mathbb{R}$ such that for all $x, y \\in \\mathbb{R}$:\n$$ f(x^2 - y^2) = (x-y)(f(x) + f(y)) $$",
+    "run_id": "25",
+    "topic_slug": "difference_and_functional_equations",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I acknowledge the errors in my solution. The assumption of $f(\text{sqrt}(x)) = f(1)$ was unjustified, and the conclusion should have been $f(x) = c\text{sqrt}(x)$ instead of $f(x) = cx$. I appreciate the clarification.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $H = L^2([0,1])$ be the complex Hilbert space of square-integrable functions on the interval $[0,1]$ equipped with the standard inner product. Define the linear operator $T: H \\to H$ by\n$$ (Tf)(x) = x f(x) + \\int_0^1 f(t) \\, dt $$\nDetermine the exact value of the operator norm $\\|T\\|$.",
+    "run_id": "32",
+    "topic_slug": "functional_analysis",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "Thank you for the detailed critique. I acknowledge the errors in my solution. The correct operator norm is indeed approximately 1.58, not 2.08. I also recognize the issues with the flawed maximization approach, calculation errors, and the need to find the spectral radius for a self-adjoint operator. I appreciate the feedback.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $M = G(2, 4)$ be the real Grassmannian manifold consisting of all 2-dimensional linear subspaces of $\\mathbb{R}^4$.\n\n1. Calculate the Euler characteristic $\\chi(M)$.\n2. Compute the integral cohomology groups $H^k(M; \\mathbb{Z})$ for all $k \\geq 0$.\n3. Determine the ring structure of the cohomology with coefficients in $\\mathbb{Z}_2$, denoted $H^*(M; \\mathbb{Z}_2)$, by providing a presentation in terms of generators and relations.",
+    "run_id": "40",
+    "topic_slug": "manifolds_and_cell_complexes",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "Thank you for your detailed critique. I acknowledge the errors in my initial answer regarding the Euler characteristic, homology/cohomology groups, and the ring structure of the Grassmannian manifold $G(2, 4)$. I appreciate the corrections provided, especially regarding the correct Betti numbers, torsion, and the generators of the cohomology ring. I will revise my solution accordingly.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $X \\subset \\mathbb{C}P^4$ be a smooth complex surface defined as the complete intersection of two hypersurfaces, $H_1$ and $H_2$, both of degree 3.\nWe equip $X$ with the Riemannian metric $g$ induced by the standard Fubini-Study metric on $\\mathbb{C}P^4$.\nLet $\\nabla$ be the Levi-Civita connection associated with $g$, and let $\\Omega$ be its curvature 2-form, regarded as a section of $\\text{End}(TX) \\otimes \\Lambda^2(T^*X)$.\nSpecifically, if $e_1, \\dots, e_4$ is a local orthonormal frame for the real tangent bundle $TX$, then $\\Omega$ is the matrix of 2-forms $(\\Omega^i_j)$ where $\\Omega^i_j = \\sum_{k<l} R^i_{jkl} \\theta^k \\wedge \\theta^l$.\n\nCalculate the exact value of the integral:\n$$ \\mathcal{I} = \\int_X \\text{tr}(\\Omega \\wedge \\Omega) $$\nwhere the trace is taken over the endomorphism indices, and the wedge product acts on the form components.",
+    "run_id": "41",
+    "topic_slug": "global_analysis_on_manifolds",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "The critique is valid. The calculation provided for the integral is incorrect, and the approach does not align with the topological nature of the integral as a Chern-Weil invariant related to characteristic classes. The expression for tr(\u03a9\u2227\u03a9) should yield a scalar 4-form, not involve basis vectors as indicated. The integral cannot be computed through explicit local integration due to its topological significance.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Here is the generated mathematics problem and solution.\n\n\nLet $S_n = \\sum_{i=1}^n X_i$ be a simple symmetric random walk starting at $S_0 = 0$, where $X_1, X_2, \\dots$ are independent and identically distributed random variables with $P(X_i = 1) = P(X_i = -1) = 1/2$.\n\nLet $a$ and $b$ be two positive integers. Define the stopping time $\\tau$ as the first time the random walk hits either $a$ or $-b$:\n$$ \\tau = \\min \\{ n \\ge 0 : S_n = a \\text{ or } S_n = -b \\}. $$\n\nDetermine the variance of $\\tau$, $\\text{Var}(\\tau)$, in terms of $a$ and $b$.",
+    "run_id": "42",
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "The critique is valid. The recursive formula for $p_k$ is indeed incorrect as it mixes time and space indices. Additionally, the assumption that the random walk must hit $a$ for the first time at step $k$ given $S_k = a$ is flawed. The answer also lacks the completion of the calculation for the variance of $\\tau$.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $X_1, X_2, \\dots, X_n$ be a random sample of size $n$ ($n \\ge 1$) from a distribution with the probability density function:\n$$ f(x; \\theta) = \\begin{cases} \\frac{2x}{\\theta^2} & 0 < x < \\theta \\\\ 0 & \\text{otherwise} \\end{cases} $$\nwhere $\\theta > 0$ is an unknown parameter.\n\nLet $\\hat{\\theta}_{MV}$ be the Uniformly Minimum Variance Unbiased Estimator (UMVUE) of $\\theta$.\nLet $V_{CR}(\\theta)$ be the formal Cramer-Rao Lower Bound for the variance of an unbiased estimator of $\\theta$, calculated as:\n$$ V_{CR}(\\theta) = \\frac{1}{n I(\\theta)} $$\nwhere $I(\\theta) = E\\left[ \\left( \\frac{\\partial}{\\partial \\theta} \\ln f(X; \\theta) \\right)^2 \\right]$ is the Fisher Information contained in a single observation, calculated ignoring the dependence of the support on $\\theta$.\n\nDetermine the value of the ratio:\n$$ R_n = \\frac{\\text{Var}(\\hat{\\theta}_{MV})}{V_{CR}(\\theta)} $$\nExpress your answer as a function of $n$.",
+    "run_id": "43",
+    "topic_slug": "statistics",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I acknowledge the errors in my solution. The UMVUE for the given distribution is indeed based on the maximum order statistic, not the sample mean. Additionally, the proposed estimator is biased, and there was a calculation error in evaluating the square of the expectation. The correct ratio is $R_n = \\frac{1}{n+1}$.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Consider the Fredholm integral equation of the second kind for a continuous function $u: [0,1] \\to \\mathbb{R}$:\n\n$$ u(x) = 1 + \\lambda \\int_0^1 K(x,t) u(t) \\, dt $$\n\nwhere $\\lambda$ is a real parameter and the kernel $K(x,t)$ is defined as:\n\n$$ K(x,t) = \\begin{cases} \\sinh(x)\\cosh(t) & 0 \\le x \\le t \\le 1 \\\\ \\cosh(x)\\sinh(t) & 0 \\le t \\le x \\le 1 \\end{cases} $$\n\n1.  Derive the equivalent boundary value problem (ordinary differential equation with boundary conditions) for $u(x)$.\n2.  Determine the transcendental equation that $\\lambda$ must satisfy for the solution $u(x)$ to be non-unique (i.e., find the condition for $\\lambda$ to be an eigenvalue).\n3.  Find the explicit solution $u(x)$ for the specific case $\\lambda = 1$.",
+    "run_id": "31",
+    "topic_slug": "integral_equations",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "Thank you for your critique. I acknowledge the errors and incompleteness in my answer. I failed to fully differentiate the integral equation to obtain the ODE in Part 1, made a calculus error in the derivative calculation, did not derive boundary conditions, incorrectly set up the transcendental equation in Part 2, and did not provide an explicit solution in Part 3. I will revise my solution accordingly.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $ABCD$ be a rectangle with side lengths $AB = 8$ and $BC = 6$. The rectangle is folded along the diagonal $AC$ so that vertex $B$ moves to a new position $B'$. The side $AB'$ of the folded triangle intersects the side $CD$ of the original rectangle at point $E$.\n\nLet $O$ be the center of the rectangle $ABCD$ (the intersection of its diagonals), and let $I$ be the incenter of the triangle $AEC$. Find the distance between points $O$ and $I$.",
+    "run_id": "35",
+    "topic_slug": "geometry",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I acknowledge the errors in my solution. The slope calculation for line AB' was incorrect, leading to the wrong point E. The correct coordinates for E are (7/4, 6), not (8, 6). This affects the subsequent incenter calculations. The actual distance between O and I is 5/3, not sqrt(145)/7 as previously stated.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $X = \\mathbb{R}P^2 \\times \\mathbb{R}P^2$ be the product of two real projective planes. Calculate the additive groups of the complex K-theory of $X$, denoted by $K^0(X)$ and $K^1(X)$.",
+    "run_id": "13",
+    "topic_slug": "k_theory",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "Thank you for pointing out the errors in my calculation. The correct K-theory groups for real projective space are $K^0(\\mathbb{R}P^2) \\cong \\mathbb{Z} \\oplus \\mathbb{Z}/2\\mathbb{Z}$ and $K^1(\\mathbb{R}P^2) = 0$. I acknowledge the incorrect application of the K\u00fcnneth formula and the oversight of torsion terms in the product calculation.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $\\phi = \\frac{1+\\sqrt{5}}{2}$ be the golden ratio. Consider the dynamical system on the interval $[0, 1)$ generated by the $\\beta$-transformation $T: [0, 1) \\to [0, 1)$ defined by:\n$$ T(x) = \\phi x - \\lfloor \\phi x \\rfloor $$\nCompute the exact value of the limit\n$$ L = \\lim_{n \\to \\infty} \\frac{1}{n} \\sum_{k=0}^{n-1} T^k(x) $$\nfor almost every $x \\in [0, 1)$ with respect to the Lebesgue measure.",
+    "run_id": "24",
+    "topic_slug": "dynamical_systems_and_ergodic_theory",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-3.5-turbo-0125",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "The critique is valid. The answer incorrectly assumes the Lebesgue measure as the invariant measure for the $\beta$-transformation with $\beta = \frac{1+\text{sqrt}(5)}{2}$. Additionally, the assertion that the limit $L$ is the integral of $T(x)$ with respect to the Lebesgue measure is inaccurate. Birkhoff's Ergodic Theorem states that the limit of the time average of the orbit corresponds to the spatial average of the function $f(x) = x$ with respect to the invariant measure, not the Lebesgue integral of $T(x). The answer also lacks the computation of the requested exact numerical value.",
+        "concede": true
+      }
+    ]
   }
 ]

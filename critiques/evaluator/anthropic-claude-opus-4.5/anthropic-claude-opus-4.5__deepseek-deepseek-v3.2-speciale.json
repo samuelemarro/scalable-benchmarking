@@ -918,5 +918,74 @@
         }
       }
     ]
+  },
+  {
+    "question": "Let $X$ be a CW complex constructed as follows:\n- One 0-cell $v$\n- Two 1-cells $a$ and $b$, each attached at both endpoints to $v$ (forming two loops based at $v$)\n- Two 2-cells $e_1$ and $e_2$ with attaching maps $\\phi_1: \\partial e_1 \\to X^{(1)}$ and $\\phi_2: \\partial e_2 \\to X^{(1)}$ determined by the words $w_1 = a^3 b^{-2}$ and $w_2 = a b^4$ respectively\n\nHere, the word $a^k$ means traversing the loop $a$ exactly $|k|$ times in the positive direction if $k > 0$, or in the negative direction if $k < 0$, and similarly for $b$.\n\nCompute the cellular homology groups $H_n(X; \\mathbb{Z})$ for all integers $n \\geq 0$.",
+    "run_id": "40",
+    "topic_slug": "manifolds_and_cell_complexes",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the cellular chain groups and computes all boundary maps. For $d_1$, both 1-cells are loops at $v$, so $d_1 = 0$. For $d_2$, the boundary map correctly sends $e_1 \\\\mapsto 3a - 2b$ and $e_2 \\\\mapsto a + 4b$ based on the exponent sums in the attaching words. The matrix $M = \\\\begin{pmatrix} 3 & 1 \\\\\\\\ -2 & 4 \\\\end{pmatrix}$ is correctly formed. The Smith normal form computation is verified: $\\\\det(M) = 12 + 2 = 14 \\\\neq 0$, confirming $\\\\ker d_2 = 0$ and thus $H_2 = 0$. The elementary operations reducing $M$ to $\\\\begin{pmatrix} 1 & 0 \\\\\\\\ 0 & 14 \\\\end{pmatrix}$ are all correct, yielding $H_1 \\\\cong \\\\mathbb{Z}/14\\\\mathbb{Z}$. The conclusions $H_0 \\\\cong \\\\mathbb{Z}$ (connected space) and $H_n = 0$ for $n \\\\geq 3$ (no higher cells) are standard and correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the cellular chain groups and computes all boundary maps. For $d_1$, both 1-cells are loops at $v$, so $d_1 = 0$. For $d_2$, the boundary map correctly sends $e_1 \\\\mapsto 3a - 2b$ and $e_2 \\\\mapsto a + 4b$ based on the exponent sums in the attaching words. The matrix $M = \\\\begin{pmatrix} 3 & 1 \\\\\\\\ -2 & 4 \\\\end{pmatrix}$ is correctly formed. The Smith normal form computation is verified: $\\\\det(M) = 12 + 2 = 14 \\\\neq 0$, confirming $\\\\ker d_2 = 0$ and thus $H_2 = 0$. The elementary operations reducing $M$ to $\\\\begin{pmatrix} 1 & 0 \\\\\\\\ 0 & 14 \\\\end{pmatrix}$ are all correct, yielding $H_1 \\\\cong \\\\mathbb{Z}/14\\\\mathbb{Z}$. The conclusions $H_0 \\\\cong \\\\mathbb{Z}$ (connected space) and $H_n = 0$ for $n \\\\geq 3$ (no higher cells) are standard and correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the cellular chain groups and computes all boundary maps. For $d_1$, both 1-cells are loops at $v$, so $d_1 = 0$. For $d_2$, the boundary map correctly sends $e_1 \\mapsto 3a - 2b$ and $e_2 \\mapsto a + 4b$ based on the exponent sums in the attaching words. The matrix $M = \\begin{pmatrix} 3 & 1 \\\\ -2 & 4 \\end{pmatrix}$ is correctly formed. The Smith normal form computation is verified: $\\det(M) = 12 + 2 = 14 \\neq 0$, confirming $\\ker d_2 = 0$ and thus $H_2 = 0$. The elementary operations reducing $M$ to $\\begin{pmatrix} 1 & 0 \\\\ 0 & 14 \\end{pmatrix}$ are all correct, yielding $H_1 \\cong \\mathbb{Z}/14\\mathbb{Z}$. The conclusions $H_0 \\cong \\mathbb{Z}$ (connected space) and $H_n = 0$ for $n \\geq 3$ (no higher cells) are standard and correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Solve the initial-boundary value problem for the heat equation:\n$$u_t = u_{xx}, \\quad 0 < x < \\pi, \\quad t > 0$$\nwith boundary conditions:\n$$u(0,t) = 0, \\quad \\frac{\\partial u}{\\partial x}(\\pi,t) = 0 \\quad \\text{for all } t > 0$$\nand initial condition:\n$$u(x,0) = x \\quad \\text{for } 0 \\leq x \\leq \\pi.$$\n\nExpress your answer as an infinite series in closed form, showing all eigenvalues, eigenfunctions, and Fourier coefficients.",
+    "run_id": "23",
+    "topic_slug": "partial_differential_equations",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies separation of variables, properly analyzes all cases for the eigenvalue problem ($\\\\lambda = 0$, $\\\\lambda < 0$, $\\\\lambda > 0$), and correctly identifies the eigenvalues $\\\\lambda_n = (n+\\\\frac{1}{2})^2$ with eigenfunctions $X_n(x) = \\\\sin((n+\\\\frac{1}{2})x)$ for $n = 0, 1, 2, \\\\ldots$. The orthogonality of eigenfunctions is correctly justified via Sturm-Liouville theory, and the norm computation $\\\\|X_n\\\\|^2 = \\\\frac{\\\\pi}{2}$ is verified. The integration by parts to compute $\\\\int_0^\\\\pi x\\\\sin((n+\\\\frac{1}{2})x)dx$ is executed correctly, with proper evaluation of $\\\\cos((n+\\\\frac{1}{2})\\\\pi) = 0$ and $\\\\sin((n+\\\\frac{1}{2})\\\\pi) = (-1)^n$. The final Fourier coefficients $C_n = \\\\frac{2}{\\\\pi}\\\\frac{(-1)^n}{(n+\\\\frac{1}{2})^2}$ are correct. The final solution satisfies both boundary conditions: $u(0,t) = 0$ (since $\\\\sin(0) = 0$) and $u_x(\\\\pi,t) = 0$ (since $\\\\cos((n+\\\\frac{1}{2})\\\\pi) = 0$). The convergence statement is appropriate.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies separation of variables, properly analyzes all cases for the eigenvalue problem ($\\\\lambda = 0$, $\\\\lambda < 0$, $\\\\lambda > 0$), and correctly identifies the eigenvalues $\\\\lambda_n = (n+\\\\frac{1}{2})^2$ with eigenfunctions $X_n(x) = \\\\sin((n+\\\\frac{1}{2})x)$ for $n = 0, 1, 2, \\\\ldots$. The orthogonality of eigenfunctions is correctly justified via Sturm-Liouville theory, and the norm computation $\\\\|X_n\\\\|^2 = \\\\frac{\\\\pi}{2}$ is verified. The integration by parts to compute $\\\\int_0^\\\\pi x\\\\sin((n+\\\\frac{1}{2})x)dx$ is executed correctly, with proper evaluation of $\\\\cos((n+\\\\frac{1}{2})\\\\pi) = 0$ and $\\\\sin((n+\\\\frac{1}{2})\\\\pi) = (-1)^n$. The final Fourier coefficients $C_n = \\\\frac{2}{\\\\pi}\\\\frac{(-1)^n}{(n+\\\\frac{1}{2})^2}$ are correct. The final solution satisfies both boundary conditions: $u(0,t) = 0$ (since $\\\\sin(0) = 0$) and $u_x(\\\\pi,t) = 0$ (since $\\\\cos((n+\\\\frac{1}{2})\\\\pi) = 0$). The convergence statement is appropriate.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly applies separation of variables, properly analyzes all cases for the eigenvalue problem ($\\lambda = 0$, $\\lambda < 0$, $\\lambda > 0$), and correctly identifies the eigenvalues $\\lambda_n = (n+\\frac{1}{2})^2$ with eigenfunctions $X_n(x) = \\sin((n+\\frac{1}{2})x)$ for $n = 0, 1, 2, \\ldots$. The orthogonality of eigenfunctions is correctly justified via Sturm-Liouville theory, and the norm computation $\\|X_n\\|^2 = \\frac{\\pi}{2}$ is verified. The integration by parts to compute $\\int_0^\\pi x\\sin((n+\\frac{1}{2})x)dx$ is executed correctly, with proper evaluation of $\\cos((n+\\frac{1}{2})\\pi) = 0$ and $\\sin((n+\\frac{1}{2})\\pi) = (-1)^n$. The final Fourier coefficients $C_n = \\frac{2}{\\pi}\\frac{(-1)^n}{(n+\\frac{1}{2})^2}$ are correct. The final solution satisfies both boundary conditions: $u(0,t) = 0$ (since $\\sin(0) = 0$) and $u_x(\\pi,t) = 0$ (since $\\cos((n+\\frac{1}{2})\\pi) = 0$). The convergence statement is appropriate.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. It correctly verifies: (1) the separation of variables procedure, (2) the eigenvalue analysis for all three cases ($\\lambda = 0$, $\\lambda < 0$, $\\lambda > 0$), (3) the eigenvalues $\\lambda_n = (n+\\frac{1}{2})^2$ and eigenfunctions $X_n(x) = \\sin((n+\\frac{1}{2})x)$, (4) the norm computation $\\|X_n\\|^2 = \\frac{\\pi}{2}$, (5) the integration by parts calculation, (6) the trigonometric evaluations $\\cos((n+\\frac{1}{2})\\pi) = 0$ and $\\sin((n+\\frac{1}{2})\\pi) = (-1)^n$, and (7) that both boundary conditions are satisfied. The verdict of 'correct' is appropriate, and the JSON format is valid."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Find all functions $f: \\mathbb{R} \\to \\mathbb{R}$ satisfying the functional equation\n$$f(x + y) + f(xy) = f(x)f(y) + 1$$\nfor all $x, y \\in \\mathbb{R}$.",
+    "run_id": "25",
+    "topic_slug": "difference_and_functional_equations",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. All steps are verified: (1) Correctly deduces $f(0) = 1$ by substituting $y = 0$. (2) The transformation to $g(x) = f(x) - 1$ correctly yields equation (1). (3) The calculation showing $a = g(1) \\\\in \\\\{0, 1, -1\\\\}$ via computing $g(4)$ two ways is correct. (4) Case $a = 0$ correctly gives the constant solution $f(x) = 1$. (5) Case $a = -1$ correctly leads to a contradiction via $g(2x) = 0$ conflicting with $g(1) = -1$. (6) Case $a = 1$ correctly derives additivity via Jensen's equation (11)-(13) and multiplicativity (14). (7) The conclusion that an additive function satisfying $g(t) \\\\geq 0$ for $t \\\\geq 0$ must be linear (since it's monotone increasing) is a standard result for Cauchy's functional equation. (8) Both solutions are verified against the original equation. The proof is rigorous and addresses all cases completely.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. All steps are verified: (1) Correctly deduces $f(0) = 1$ by substituting $y = 0$. (2) The transformation to $g(x) = f(x) - 1$ correctly yields equation (1). (3) The calculation showing $a = g(1) \\\\in \\\\{0, 1, -1\\\\}$ via computing $g(4)$ two ways is correct. (4) Case $a = 0$ correctly gives the constant solution $f(x) = 1$. (5) Case $a = -1$ correctly leads to a contradiction via $g(2x) = 0$ conflicting with $g(1) = -1$. (6) Case $a = 1$ correctly derives additivity via Jensen's equation (11)-(13) and multiplicativity (14). (7) The conclusion that an additive function satisfying $g(t) \\\\geq 0$ for $t \\\\geq 0$ must be linear (since it's monotone increasing) is a standard result for Cauchy's functional equation. (8) Both solutions are verified against the original equation. The proof is rigorous and addresses all cases completely.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. All steps are verified: (1) Correctly deduces $f(0) = 1$ by substituting $y = 0$. (2) The transformation to $g(x) = f(x) - 1$ correctly yields equation (1). (3) The calculation showing $a = g(1) \\in \\{0, 1, -1\\}$ via computing $g(4)$ two ways is correct. (4) Case $a = 0$ correctly gives the constant solution $f(x) = 1$. (5) Case $a = -1$ correctly leads to a contradiction via $g(2x) = 0$ conflicting with $g(1) = -1$. (6) Case $a = 1$ correctly derives additivity via Jensen's equation (11)-(13) and multiplicativity (14). (7) The conclusion that an additive function satisfying $g(t) \\geq 0$ for $t \\geq 0$ must be linear (since it's monotone increasing) is a standard result for Cauchy's functional equation. (8) Both solutions are verified against the original equation. The proof is rigorous and addresses all cases completely.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
   }
 ]

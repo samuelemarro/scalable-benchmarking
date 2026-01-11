@@ -933,5 +933,28 @@
         }
       }
     ]
+  },
+  {
+    "question": "Consider the integral\n$$I(x) = \\int_0^{\\infty} \\frac{e^{-xt^2}}{1+t^4} \\, dt$$\nfor $x > 0$. Determine the first two nonzero terms in the asymptotic expansion of $I(x)$ as $x \\to +\\infty$. Express your answer in terms of elementary functions and $\\pi$.",
+    "run_id": "27",
+    "topic_slug": "approximations_and_expansions",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "meta-llama-llama-4-maverick",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies Watson's lemma / Laplace's method. The key insight that for large $x$, the exponential $e^{-xt^2}$ concentrates the integral near $t=0$ is valid. The Taylor expansion $\\\\frac{1}{1+t^4} = 1 - t^4 + t^8 - \\\\cdots$ is correct. The Gaussian integral evaluations are verified: $\\\\int_0^{\\\\infty} e^{-u^2} du = \\\\frac{\\\\sqrt{\\\\pi}}{2}$ and $\\\\int_0^{\\\\infty} e^{-u^2} u^4 du = \\\\frac{1}{2}\\\\Gamma(5/2) = \\\\frac{3\\\\sqrt{\\\\pi}}{8}$. The substitution $u = \\\\sqrt{x}t$ correctly yields $\\\\int_0^{\\\\infty} e^{-xt^2} dt = \\\\frac{\\\\sqrt{\\\\pi}}{2\\\\sqrt{x}}$ and $\\\\int_0^{\\\\infty} e^{-xt^2}t^4 dt = \\\\frac{3\\\\sqrt{\\\\pi}}{8x^{5/2}}$. The final asymptotic expansion $I(x) \\\\sim \\\\frac{\\\\sqrt{\\\\pi}}{2\\\\sqrt{x}} - \\\\frac{3\\\\sqrt{\\\\pi}}{8x^{5/2}}$ is correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies Watson's lemma / Laplace's method. The key insight that for large $x$, the exponential $e^{-xt^2}$ concentrates the integral near $t=0$ is valid. The Taylor expansion $\\\\frac{1}{1+t^4} = 1 - t^4 + t^8 - \\\\cdots$ is correct. The Gaussian integral evaluations are verified: $\\\\int_0^{\\\\infty} e^{-u^2} du = \\\\frac{\\\\sqrt{\\\\pi}}{2}$ and $\\\\int_0^{\\\\infty} e^{-u^2} u^4 du = \\\\frac{1}{2}\\\\Gamma(5/2) = \\\\frac{3\\\\sqrt{\\\\pi}}{8}$. The substitution $u = \\\\sqrt{x}t$ correctly yields $\\\\int_0^{\\\\infty} e^{-xt^2} dt = \\\\frac{\\\\sqrt{\\\\pi}}{2\\\\sqrt{x}}$ and $\\\\int_0^{\\\\infty} e^{-xt^2}t^4 dt = \\\\frac{3\\\\sqrt{\\\\pi}}{8x^{5/2}}$. The final asymptotic expansion $I(x) \\\\sim \\\\frac{\\\\sqrt{\\\\pi}}{2\\\\sqrt{x}} - \\\\frac{3\\\\sqrt{\\\\pi}}{8x^{5/2}}$ is correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies Watson's lemma / Laplace's method. The key insight that for large $x$, the exponential $e^{-xt^2}$ concentrates the integral near $t=0$ is valid. The Taylor expansion $\\frac{1}{1+t^4} = 1 - t^4 + t^8 - \\cdots$ is correct. The Gaussian integral evaluations are verified: $\\int_0^{\\infty} e^{-u^2} du = \\frac{\\sqrt{\\pi}}{2}$ and $\\int_0^{\\infty} e^{-u^2} u^4 du = \\frac{1}{2}\\Gamma(5/2) = \\frac{3\\sqrt{\\pi}}{8}$. The substitution $u = \\sqrt{x}t$ correctly yields $\\int_0^{\\infty} e^{-xt^2} dt = \\frac{\\sqrt{\\pi}}{2\\sqrt{x}}$ and $\\int_0^{\\infty} e^{-xt^2}t^4 dt = \\frac{3\\sqrt{\\pi}}{8x^{5/2}}$. The final asymptotic expansion $I(x) \\sim \\frac{\\sqrt{\\pi}}{2\\sqrt{x}} - \\frac{3\\sqrt{\\pi}}{8x^{5/2}}$ is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. It correctly verifies the mathematical calculations: (1) the Taylor expansion $\\frac{1}{1+t^4} = 1 - t^4 + O(t^8)$, (2) the Gaussian integral $\\int_0^{\\infty} e^{-xt^2} dt = \\frac{\\sqrt{\\pi}}{2\\sqrt{x}}$, (3) the integral $\\int_0^{\\infty} e^{-u^2} u^4 du = \\frac{1}{2}\\Gamma(5/2) = \\frac{3\\sqrt{\\pi}}{8}$, and (4) the scaling to get $\\int_0^{\\infty} e^{-xt^2}t^4 dt = \\frac{3\\sqrt{\\pi}}{8x^{5/2}}$. The verdict 'correct' is appropriate as the answer properly applies Watson's lemma/Laplace's method and all computations are verified."
+        }
+      }
+    ]
   }
 ]

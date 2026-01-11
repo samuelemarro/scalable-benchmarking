@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "question": "Consider the viscous Burgers equation\n$$\nu_t + u u_x = \\nu u_{xx}, \\qquad x \\in \\mathbb{R},\\ t>0,\n$$\nwith constant viscosity $\\nu > 0$.  Let the initial condition be a step function:\n$$\nu(x,0) = \\begin{cases}\nU, & x < 0,\\\\\n0, & x > 0,\n\\end{cases}\n$$\nwhere $U > 0$ is a constant.\n\n(a) Introduce the Cole\u2013Hopf transformation $u = -2\\nu (\\ln \\varphi)_x$ and show that $\\varphi$ satisfies the heat equation $\\varphi_t = \\nu \\varphi_{xx}$.\n\n(b) Determine an appropriate initial condition $\\varphi(x,0)$ consistent with the given $u(x,0)$.  (Choose the constant of integration so that $\\varphi(0,0)=1$.)\n\n(c) Solve the initial value problem for $\\varphi(x,t)$ by expressing $\\varphi$ as a convolution with the heat kernel and evaluating the integrals in terms of the complementary error function\n$$\n\\operatorname{erfc}(z) = \\frac{2}{\\sqrt{\\pi}} \\int_z^\\infty e^{-s^2}\\,ds.\n$$\n\n(d) Hence find the solution $u(x,t)$ in the closed form\n$$\nu(x,t) = \\frac{U \\; e^{U^2 t/(4\\nu)}\\; \\operatorname{erfc}\\!\\left( \\dfrac{x - U t}{\\sqrt{4\\nu t}} \\right)}\n{e^{U^2 t/(4\\nu)}\\; \\operatorname{erfc}\\!\\left( \\dfrac{x - U t}{\\sqrt{4\\nu t}} \\right) + e^{U x/(2\\nu)}\\; \\operatorname{erfc}\\!\\left( -\\dfrac{x}{\\sqrt{4\\nu t}} \\right)}.\n$$\n\n(e) (Optional) Verify that this solution tends to the initial step as $t \\to 0^+$.",
+    "run_id": "23",
+    "topic_slug": "partial_differential_equations",
+    "alice_model": "deepseek-deepseek-v3.2-speciale",
+    "bob_model": "anthropic-claude-opus-4.5",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "Alice is correct. I acknowledge the logical error in part (a).\n\nThe problem asks to **derive** that \u03c6 satisfies the heat equation given that u satisfies Burgers' equation with the Cole-Hopf transformation. Instead, I assumed \u03c6 satisfies the heat equation and verified Burgers' equation - this is the converse.\n\n**The correct approach for part (a):**\n\nStarting from Burgers' equation with u = -2\u03bd \u03c6_x/\u03c6, after substitution and algebraic manipulation, one arrives at:\n\n$$\\frac{d}{dx}\\left(\\frac{\\varphi_t - \\nu \\varphi_{xx}}{\\varphi}\\right) = 0$$\n\nThis shows that (\u03c6_t - \u03bd\u03c6_{xx})/\u03c6 is independent of x. With natural boundary conditions (\u03c6 \u2192 const as |x| \u2192 \u221e), this constant must be zero, yielding:\n\n$$\\varphi_t = \\nu \\varphi_{xx}$$\n\nMy original derivation went in the wrong logical direction, which is a substantive error in the reasoning structure for part (a). The remaining parts (b)-(e) build correctly on the heat equation result, but the foundation in part (a) was not properly established.\n\nI concede this point.",
+        "concede": true
+      }
+    ]
+  }
+]

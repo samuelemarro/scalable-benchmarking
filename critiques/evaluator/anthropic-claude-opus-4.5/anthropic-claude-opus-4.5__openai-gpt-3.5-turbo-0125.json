@@ -934,5 +934,29 @@
         }
       }
     ]
+  },
+  {
+    "question": "Consider the integral\n$$I(x) = \\int_0^{\\infty} \\frac{e^{-xt^2}}{1+t^4} \\, dt$$\nfor $x > 0$. Determine the first two nonzero terms in the asymptotic expansion of $I(x)$ as $x \\to +\\infty$. Express your answer in terms of elementary functions and $\\pi$.",
+    "run_id": "27",
+    "topic_slug": "approximations_and_expansions",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "anthropic-claude-opus-4.5",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple significant errors in the substitution and subsequent calculations. When making the substitution $t = \\\\sqrt{x}u$, the exponent should become $-xt^2 = -x \\\\cdot x u^2 = -x^2 u^2$, not $-x^{3/2}u^2$ as claimed. Also, the Jacobian factor $\\\\sqrt{x}$ disappears from subsequent calculations without explanation. The correct approach using Watson's lemma is to expand $\\\\frac{1}{1+t^4} = 1 - t^4 + O(t^8)$ near $t=0$ and integrate term-by-term: $$I(x) \\\\sim \\\\int_0^{\\\\infty} e^{-xt^2}\\\\,dt - \\\\int_0^{\\\\infty} t^4 e^{-xt^2}\\\\,dt + \\\\cdots$$ The first integral equals $\\\\frac{1}{2}\\\\sqrt{\\\\frac{\\\\pi}{x}}$ and the second equals $\\\\frac{3\\\\sqrt{\\\\pi}}{8x^{5/2}}$. The correct asymptotic expansion is: $$I(x) \\\\sim \\\\frac{1}{2}\\\\sqrt{\\\\frac{\\\\pi}{x}} - \\\\frac{3\\\\sqrt{\\\\pi}}{8x^{5/2}}$$ The answer's final expression $\\\\frac{1}{2}\\\\sqrt{\\\\frac{\\\\pi}{x^{3/2}}} + \\\\frac{3}{2}x^{-1/2}$ has incorrect powers of $x$ and the second term incorrectly lacks the factor $\\\\sqrt{\\\\pi}$.\",\n  \"suggestions\": \"Apply Watson's lemma correctly by expanding $\\\\frac{1}{1+t^4}$ as a power series near $t=0$ and using standard Gaussian moment formulas: $\\\\int_0^{\\\\infty} t^{2n} e^{-xt^2}\\\\,dt = \\\\frac{\\\\Gamma(n+1/2)}{2x^{n+1/2}}$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple significant errors in the substitution and subsequent calculations. When making the substitution $t = \\\\sqrt{x}u$, the exponent should become $-xt^2 = -x \\\\cdot x u^2 = -x^2 u^2$, not $-x^{3/2}u^2$ as claimed. Also, the Jacobian factor $\\\\sqrt{x}$ disappears from subsequent calculations without explanation. The correct approach using Watson's lemma is to expand $\\\\frac{1}{1+t^4} = 1 - t^4 + O(t^8)$ near $t=0$ and integrate term-by-term: $$I(x) \\\\sim \\\\int_0^{\\\\infty} e^{-xt^2}\\\\,dt - \\\\int_0^{\\\\infty} t^4 e^{-xt^2}\\\\,dt + \\\\cdots$$ The first integral equals $\\\\frac{1}{2}\\\\sqrt{\\\\frac{\\\\pi}{x}}$ and the second equals $\\\\frac{3\\\\sqrt{\\\\pi}}{8x^{5/2}}$. The correct asymptotic expansion is: $$I(x) \\\\sim \\\\frac{1}{2}\\\\sqrt{\\\\frac{\\\\pi}{x}} - \\\\frac{3\\\\sqrt{\\\\pi}}{8x^{5/2}}$$ The answer's final expression $\\\\frac{1}{2}\\\\sqrt{\\\\frac{\\\\pi}{x^{3/2}}} + \\\\frac{3}{2}x^{-1/2}$ has incorrect powers of $x$ and the second term incorrectly lacks the factor $\\\\sqrt{\\\\pi}$.\",\n  \"suggestions\": \"Apply Watson's lemma correctly by expanding $\\\\frac{1}{1+t^4}$ as a power series near $t=0$ and using standard Gaussian moment formulas: $\\\\int_0^{\\\\infty} t^{2n} e^{-xt^2}\\\\,dt = \\\\frac{\\\\Gamma(n+1/2)}{2x^{n+1/2}}$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer contains multiple significant errors in the substitution and subsequent calculations. When making the substitution $t = \\sqrt{x}u$, the exponent should become $-xt^2 = -x \\cdot x u^2 = -x^2 u^2$, not $-x^{3/2}u^2$ as claimed. Also, the Jacobian factor $\\sqrt{x}$ disappears from subsequent calculations without explanation. The correct approach using Watson's lemma is to expand $\\frac{1}{1+t^4} = 1 - t^4 + O(t^8)$ near $t=0$ and integrate term-by-term: $$I(x) \\sim \\int_0^{\\infty} e^{-xt^2}\\,dt - \\int_0^{\\infty} t^4 e^{-xt^2}\\,dt + \\cdots$$ The first integral equals $\\frac{1}{2}\\sqrt{\\frac{\\pi}{x}}$ and the second equals $\\frac{3\\sqrt{\\pi}}{8x^{5/2}}$. The correct asymptotic expansion is: $$I(x) \\sim \\frac{1}{2}\\sqrt{\\frac{\\pi}{x}} - \\frac{3\\sqrt{\\pi}}{8x^{5/2}}$$ The answer's final expression $\\frac{1}{2}\\sqrt{\\frac{\\pi}{x^{3/2}}} + \\frac{3}{2}x^{-1/2}$ has incorrect powers of $x$ and the second term incorrectly lacks the factor $\\sqrt{\\pi}$.",
+        "suggestions": "Apply Watson's lemma correctly by expanding $\\frac{1}{1+t^4}$ as a power series near $t=0$ and using standard Gaussian moment formulas: $\\int_0^{\\infty} t^{2n} e^{-xt^2}\\,dt = \\frac{\\Gamma(n+1/2)}{2x^{n+1/2}}$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
   }
 ]

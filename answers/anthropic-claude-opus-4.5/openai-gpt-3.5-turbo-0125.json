@@ -1299,5 +1299,26 @@
         }
       }
     ]
+  },
+  {
+    "question_model": "anthropic-claude-opus-4.5",
+    "answer_model": "openai-gpt-3.5-turbo-0125",
+    "question": "Consider the integral\n$$I(x) = \\int_0^{\\infty} \\frac{e^{-xt^2}}{1+t^4} \\, dt$$\nfor $x > 0$. Determine the first two nonzero terms in the asymptotic expansion of $I(x)$ as $x \\to +\\infty$. Express your answer in terms of elementary functions and $\\pi$.",
+    "run_id": "27",
+    "topic_slug": "approximations_and_expansions",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "**Answer:**\n\nTo determine the first two nonzero terms in the asymptotic expansion of the integral\n$$I(x) = \\int_0^{\\infty} \\frac{e^{-xt^2}}{1+t^4} \\, dt$$\nas $x \\to +\\infty$, we will use the method of Laplace's method for integrals with rapidly oscillating integrands.\n\nFirst, let's rewrite the integrand in a form suitable for Laplace's method. We have:\n$$I(x) = \\int_0^{\\infty} \\frac{e^{-xt^2}}{1+t^4} \\, dt = \\int_0^{\\infty} e^{-xt^2} \\cdot \\frac{1}{1+t^4} \\, dt.$$\n\nNext, we identify the critical points of the exponent $-xt^2$, which are given by $t = 0$. We expand the integrand around this critical point by setting $t = \\sqrt{x}u$:\n$$I(x) = \\int_0^{\\infty} e^{-x(\\sqrt{x}u)^2} \\cdot \\frac{1}{1+(\\sqrt{x}u)^4} \\cdot \\sqrt{x} \\, du = \\int_0^{\\infty} e^{-x^{\\frac{3}{2}}u^2} \\cdot \\frac{1}{1+x^2u^4} \\, du.$$\n\nNow, as $x \\to +\\infty$, the main contribution to the integral comes from a neighborhood of $u = 0$. We expand the integrand around $u = 0$ using the Taylor series for the denominator:\n$$\\frac{1}{1+x^2u^4} = \\frac{1}{1} - x^2u^4 + O(x^4u^8) = 1 - x^2u^4 + O(x^4u^8).$$\n\nSubstitute this back into the integral:\n$$I(x) = \\int_0^{\\infty} e^{-x^{\\frac{3}{2}}u^2} \\cdot (1 - x^2u^4 + O(x^4u^8)) \\, du.$$\n\nIntegrating each term separately, we get:\n$$I(x) = \\int_0^{\\infty} e^{-x^{\\frac{3}{2}}u^2} \\, du - x^2 \\int_0^{\\infty} u^4 e^{-x^{\\frac{3}{2}}u^2} \\, du + O(x^4).$$\n\nThe first integral is a Gaussian integral and equals $\\frac{1}{2} \\sqrt{\\frac{\\pi}{x^{\\frac{3}{2}}}}$. For the second integral, we differentiate the Gaussian integral with respect to $x$ twice to get the desired term:\n$$- x^2 \\int_0^{\\infty} u^4 e^{-x^{\\frac{3}{2}}u^2} \\, du = - x^2 \\left(-\\frac{3}{2}x^{-\\frac{5}{2}}\\right) = \\frac{3}{2}x^{-\\frac{1}{2}}.$$\n\nTherefore, the first two nonzero terms in the asymptotic expansion of $I(x)$ as $x \\to +\\infty$ are:\n$$I(x) \\sim \\frac{1}{2} \\sqrt{\\frac{\\pi}{x^{\\frac{3}{2}}}} + \\frac{3}{2}x^{-\\frac{1}{2}}.$$",
+        "raw_answer": "**Answer:**\n\nTo determine the first two nonzero terms in the asymptotic expansion of the integral\n$$I(x) = \\int_0^{\\infty} \\frac{e^{-xt^2}}{1+t^4} \\, dt$$\nas $x \\to +\\infty$, we will use the method of Laplace's method for integrals with rapidly oscillating integrands.\n\nFirst, let's rewrite the integrand in a form suitable for Laplace's method. We have:\n$$I(x) = \\int_0^{\\infty} \\frac{e^{-xt^2}}{1+t^4} \\, dt = \\int_0^{\\infty} e^{-xt^2} \\cdot \\frac{1}{1+t^4} \\, dt.$$\n\nNext, we identify the critical points of the exponent $-xt^2$, which are given by $t = 0$. We expand the integrand around this critical point by setting $t = \\sqrt{x}u$:\n$$I(x) = \\int_0^{\\infty} e^{-x(\\sqrt{x}u)^2} \\cdot \\frac{1}{1+(\\sqrt{x}u)^4} \\cdot \\sqrt{x} \\, du = \\int_0^{\\infty} e^{-x^{\\frac{3}{2}}u^2} \\cdot \\frac{1}{1+x^2u^4} \\, du.$$\n\nNow, as $x \\to +\\infty$, the main contribution to the integral comes from a neighborhood of $u = 0$. We expand the integrand around $u = 0$ using the Taylor series for the denominator:\n$$\\frac{1}{1+x^2u^4} = \\frac{1}{1} - x^2u^4 + O(x^4u^8) = 1 - x^2u^4 + O(x^4u^8).$$\n\nSubstitute this back into the integral:\n$$I(x) = \\int_0^{\\infty} e^{-x^{\\frac{3}{2}}u^2} \\cdot (1 - x^2u^4 + O(x^4u^8)) \\, du.$$\n\nIntegrating each term separately, we get:\n$$I(x) = \\int_0^{\\infty} e^{-x^{\\frac{3}{2}}u^2} \\, du - x^2 \\int_0^{\\infty} u^4 e^{-x^{\\frac{3}{2}}u^2} \\, du + O(x^4).$$\n\nThe first integral is a Gaussian integral and equals $\\frac{1}{2} \\sqrt{\\frac{\\pi}{x^{\\frac{3}{2}}}}$. For the second integral, we differentiate the Gaussian integral with respect to $x$ twice to get the desired term:\n$$- x^2 \\int_0^{\\infty} u^4 e^{-x^{\\frac{3}{2}}u^2} \\, du = - x^2 \\left(-\\frac{3}{2}x^{-\\frac{5}{2}}\\right) = \\frac{3}{2}x^{-\\frac{1}{2}}.$$\n\nTherefore, the first two nonzero terms in the asymptotic expansion of $I(x)$ as $x \\to +\\infty$ are:\n$$I(x) \\sim \\frac{1}{2} \\sqrt{\\frac{\\pi}{x^{\\frac{3}{2}}}} + \\frac{3}{2}x^{-\\frac{1}{2}}.$$",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
   }
 ]

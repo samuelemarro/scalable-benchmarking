@@ -1032,5 +1032,29 @@
         }
       }
     ]
+  },
+  {
+    "question": "Consider the second-order linear ordinary differential equation given by:\n\n$$ y'' - 4y' + 4y = e^{2x}, $$\n\nwhere $y(x)$ is a function of $x$. Find the general solution of this differential equation.",
+    "run_id": "22",
+    "topic_slug": "ordinary_differential_equations",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains computational errors. The second derivative of the trial particular solution is incorrectly stated as $A(2+4x+4x^2)e^{2x}$; the correct derivative is $A(2+8x+4x^2)e^{2x}$. Moreover, the simplification after substitution is erroneous: combining terms yields $A(2-4x)e^{2x}$, not $2Ae^{2x}$. The final result $A=1/2$ and the general solution are correct, but the derivation is flawed.\",\n  \"suggestions\": \"Recalculate the derivatives carefully: $y_p = A x^2 e^{2x}$, then $y_p' = A(2x e^{2x} + 2x^2 e^{2x}) = A(2x+2x^2)e^{2x}$, $y_p'' = A[(2+4x)e^{2x} + (2x+2x^2)2e^{2x}] = A(2+8x+4x^2)e^{2x}$. Substituting yields $y_p''-4y_p'+4y_p = 2A e^{2x}$, leading to $A=1/2$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains computational errors. The second derivative of the trial particular solution is incorrectly stated as $A(2+4x+4x^2)e^{2x}$; the correct derivative is $A(2+8x+4x^2)e^{2x}$. Moreover, the simplification after substitution is erroneous: combining terms yields $A(2-4x)e^{2x}$, not $2Ae^{2x}$. The final result $A=1/2$ and the general solution are correct, but the derivation is flawed.\",\n  \"suggestions\": \"Recalculate the derivatives carefully: $y_p = A x^2 e^{2x}$, then $y_p' = A(2x e^{2x} + 2x^2 e^{2x}) = A(2x+2x^2)e^{2x}$, $y_p'' = A[(2+4x)e^{2x} + (2x+2x^2)2e^{2x}] = A(2+8x+4x^2)e^{2x}$. Substituting yields $y_p''-4y_p'+4y_p = 2A e^{2x}$, leading to $A=1/2$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains computational errors. The second derivative of the trial particular solution is incorrectly stated as $A(2+4x+4x^2)e^{2x}$; the correct derivative is $A(2+8x+4x^2)e^{2x}$. Moreover, the simplification after substitution is erroneous: combining terms yields $A(2-4x)e^{2x}$, not $2Ae^{2x}$. The final result $A=1/2$ and the general solution are correct, but the derivation is flawed.",
+        "suggestions": "Recalculate the derivatives carefully: $y_p = A x^2 e^{2x}$, then $y_p' = A(2x e^{2x} + 2x^2 e^{2x}) = A(2x+2x^2)e^{2x}$, $y_p'' = A[(2+4x)e^{2x} + (2x+2x^2)2e^{2x}] = A(2+8x+4x^2)e^{2x}$. Substituting yields $y_p''-4y_p'+4y_p = 2A e^{2x}$, leading to $A=1/2$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
   }
 ]
