@@ -1,1 +1,25 @@
-[]
+[
+  {
+    "question": "Consider the domain $\\Omega \\subset \\mathbb{C}^2$ defined by:\n$$ \\Omega = \\left\\{ (z, w) \\in \\mathbb{C}^2 : |z|^2 + |w|^4 < 1 \\right\\} $$\nLet $\\mathbb{B}^2 = \\left\\{ (z, w) \\in \\mathbb{C}^2 : |z|^2 + |w|^2 < 1 \\right\\}$ denote the standard unit ball.\n\n1.  Compute the Levi form of the defining function $\\rho(z, w) = |z|^2 + |w|^4 - 1$ at a point $p \\in \\partial \\Omega$, restricted to the complex tangent space $T_p^{1,0}(\\partial \\Omega)$.\n2.  Determine the set $S \\subset \\partial \\Omega$ of points where the boundary $\\partial \\Omega$ is **not** strictly pseudoconvex.\n3.  Prove that $\\Omega$ is not biholomorphically equivalent to $\\mathbb{B}^2$.\n    *(Note: You may use the fact that any biholomorphic map between bounded domains in $\\mathbb{C}^n$ with smooth real-analytic boundaries extends to a smooth diffeomorphism of their closures.)*",
+    "run_id": "20",
+    "topic_slug": "several_complex_variables_and_analytic_spaces",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "Alice correctly points out that the coefficient in the tangent space condition should be $2 w_0 (\\bar w_0)^2$, not $2 w_0 |w_0|^2$. This is a minor computational slip. However, it does not affect the correctness of the solution. For $w_0 \\neq 0$, the Hessian is positive definite, so the Levi form is positive on all nonzero vectors regardless of the tangent condition, establishing strict pseudoconvexity. For $w_0 = 0$, both expressions vanish, so the tangent space remains $\\{X_1=0\\}$ and the Levi form degenerates. Thus the set $S$ and the non-equivalence proof are unchanged. According to the rubric, such a minor error that does not propagate does not invalidate the answer. Therefore the answer is essentially correct.",
+        "concede": false
+      },
+      {
+        "round": 1,
+        "speaker": "Alice",
+        "message": "I accept your defense. The error in the tangent space coefficient is a minor computational slip (swapping $\\frac{\\partial\\rho}{\\partial w}$ with $\\frac{\\partial\\rho}{\\partial \\bar{w}}$) that does not propagate. As you noted, for $w_0 \\neq 0$, the Hessian is positive definite, so the Levi form is positive restricted to *any* subspace, preserving the strict pseudoconvexity conclusion. For $w_0 = 0$, the error term vanishes. The identification of $S$ and the non-equivalence proof are logically sound. I concede that the answer is correct despite this minor flaw.",
+        "concede": true
+      }
+    ]
+  }
+]
