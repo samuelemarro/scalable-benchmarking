@@ -357,6 +357,7 @@ class HumanEvaluation(BaseModel):
             "incorrect",
             "unknown",
             "invalid",
+            "other",
         }
         critique_verdicts = {
             "incorrect",
@@ -364,11 +365,16 @@ class HumanEvaluation(BaseModel):
             "incorrect but wrong reason",
             "unknown",
             "invalid",
+            "other",
         }
-        if eval_type == "illposed" and v not in illposed_verdicts:
-            raise ValueError(f"Invalid ill-posed verdict: {v}")
-        if eval_type == "critique" and v not in critique_verdicts:
-            raise ValueError(f"Invalid critique verdict: {v}")
+        if eval_type == "illposed":
+            valid = illposed_verdicts | VALID_ILLPOSED_DEBATE_VERDICTS
+            if v not in valid:
+                raise ValueError(f"Invalid ill-posed verdict: {v}")
+        if eval_type == "critique":
+            valid = critique_verdicts | VALID_CRITIQUE_DEBATE_VERDICTS
+            if v not in valid:
+                raise ValueError(f"Invalid critique verdict: {v}")
         return v
 
 
