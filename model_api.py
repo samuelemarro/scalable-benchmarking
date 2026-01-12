@@ -689,29 +689,51 @@ def _query_gemini_single(model: str, messages: List[Dict], response_format: Opti
 def _query_gemini_batch(model: str, messages_list: List[str], prompt: str, response_format: Optional[Dict], temperature: Optional[float], api_kwargs: Optional[Dict], reasoning: Optional[str]) -> List[str]:
     client = _get_gemini_client()
     model = _normalize_gemini_model(model)
-    requests_inline = []
-    for msg in messages_list:
+    request_key_to_index: Dict[str, int] = {}
+    requests_file_entries = []
+    for idx, msg in enumerate(messages_list):
         contents, system_instruction = _gemini_contents_from_messages([{"role": "user", "content": msg}], prompt)
+        request_payload: Dict[str, object] = {"contents": contents}
         thinking_config = None
         if reasoning in ["medium", "high"]:
             thinking_config = genai_types.ThinkingConfig(
                 include_thoughts=False,
                 thinking_level=reasoning,
             )
-        requests_inline.append(
-            genai_types.InlinedRequest(
-                contents=contents,
-                config=genai_types.GenerateContentConfig(
-                    temperature=temperature,
-                    thinking_config=thinking_config,
-                    system_instruction=system_instruction
-                )
-            )
+        generation_config = genai_types.GenerateContentConfig(
+            temperature=temperature,
+            thinking_config=thinking_config,
+        ).model_dump(by_alias=True, exclude_none=True, mode="json")
+        if generation_config:
+            request_payload["generationConfig"] = generation_config
+        if system_instruction:
+            request_payload["systemInstruction"] = {"parts": [{"text": system_instruction}]}
+        request_key = f"request-{idx}"
+        request_key_to_index[request_key] = idx
+        requests_file_entries.append({"key": request_key, "request": request_payload})
+
+    tmp_path = None
+    try:
+        with tempfile.NamedTemporaryFile("w", suffix=".jsonl", delete=False) as tmp_file:
+            tmp_path = tmp_file.name
+            for entry in requests_file_entries:
+                tmp_file.write(json.dumps(entry))
+                tmp_file.write("\n")
+        uploaded_file = client.files.upload(
+            file=tmp_path,
+            config=genai_types.UploadFileConfig(
+                display_name=f"gemini-batch-{uuid.uuid4().hex}",
+                mime_type="jsonl",
+            ),
         )
+    finally:
+        if tmp_path and os.path.exists(tmp_path):
+            os.remove(tmp_path)
 
     batch = client.batches.create(
         model=model,
-        src=requests_inline
+        src=uploaded_file.name,
+        config={"display_name": f"gemini-batch-{uuid.uuid4().hex}"},
     )
 
     with tqdm(total=1, desc="Polling Gemini batch", bar_format="{desc}: {elapsed} [{bar}]") as pbar:
@@ -740,12 +762,15 @@ def _query_gemini_batch(model: str, messages_list: List[str], prompt: str, respo
         text = content_bytes.decode("utf-8")
         line_count = len(text.strip().splitlines())
         logger.debug(f"Parsing {line_count} JSONL responses from Gemini batch file")
-
+        responses = [None] * len(messages_list)
         for idx, line in enumerate(text.strip().splitlines()):
             try:
                 obj = json.loads(line)
                 resp = obj.get("response") or obj.get("inlineResponse")
                 if not resp:
+                    error = obj.get("error") or obj.get("status")
+                    if error:
+                        raise RuntimeError(f"Gemini batch response error: {error}")
                     raise RuntimeError("Gemini batch response missing response field")
                 candidates = resp.get("candidates") or []
                 if not candidates:
@@ -754,10 +779,20 @@ def _query_gemini_batch(model: str, messages_list: List[str], prompt: str, respo
                 text_parts = [p.get("text", "") for p in parts if p.get("text")]
                 if not text_parts:
                     raise RuntimeError("Gemini batch response missing text content")
-                responses.append("".join(text_parts))
+                response_text = "".join(text_parts)
+                key = obj.get("key")
+                if key and key in request_key_to_index:
+                    responses[request_key_to_index[key]] = response_text
+                elif key:
+                    raise RuntimeError(f"Gemini batch response has unknown key: {key}")
+                else:
+                    responses[idx] = response_text
             except json.JSONDecodeError as e:
                 logger.error(f"Failed to parse Gemini batch response line {idx}: {e}")
                 raise RuntimeError(f"Failed to parse Gemini batch response: {e}")
+        if any(r is None for r in responses):
+            missing = [str(i) for i, r in enumerate(responses) if r is None]
+            raise RuntimeError(f"Gemini batch response missing outputs for indexes: {', '.join(missing)}")
         logger.debug(f"Successfully parsed {len(responses)} responses from Gemini batch file")
 
     elif job.dest and getattr(job.dest, "inlined_responses", None):
