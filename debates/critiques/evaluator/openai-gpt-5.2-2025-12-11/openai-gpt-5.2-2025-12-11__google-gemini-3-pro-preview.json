@@ -1,1 +1,161 @@
-[]
+[
+  {
+    "question": "Let $m,n$ be positive integers. Determine the exact value of\n$$\n\\gcd(2^m-1,\\;2^n+1)\n$$\nin terms of $m$ and $n$. Your answer should be a closed formula (depending only on $m,n$) together with a complete proof.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I accept your critique. Although Lemma 1 is a well-known result, the prompt asked for a complete proof, so deriving it (via the Euclidean algorithm on exponents) would have been more appropriate. Furthermore, you are right that the analysis of $\\gcd(m, 2n)$ relied on informal language regarding factors; a rigorous proof using $2$-adic valuations or the explicit structure of the greatest common divisor is required to fully justify the cases.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $f(x)=x^4-2\\in\\mathbb{Q}[x]$, and let $L$ be the splitting field of $f$ over $\\mathbb{Q}$. Let $\\alpha=\\sqrt[4]{2}>0$.\n\n1. Prove that $L=\\mathbb{Q}(\\alpha,i)$ and compute $[L:\\mathbb{Q}]$.\n2. Determine the Galois group $G=\\mathrm{Gal}(L/\\mathbb{Q})$ up to isomorphism. (You must exhibit explicit generators and relations.)\n3. Determine **all** intermediate fields $\\mathbb{Q}\\subseteq F\\subseteq L$. For each such $F$, give a simple explicit description (e.g. as $\\mathbb{Q}(\\theta)$ or $\\mathbb{Q}(\\theta_1,\\theta_2)$), and its degree over $\\mathbb{Q}$.",
+    "run_id": "6",
+    "topic_slug": "field_theory_and_polynomials",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "You are correct. Finding an element $\\theta$ fixed by a subgroup $H$ only establishes $\\mathbb{Q}(\\theta) \\subseteq L^H$. To conclude $L^H = \\mathbb{Q}(\\theta)$, one must verify that $[\\mathbb{Q}(\\theta):\\mathbb{Q}] = [L^H:\\mathbb{Q}]$. \n\nFor $K_3$ and $K_5$, this step was omitted. For instance, with $\\theta = (1+i)\\alpha$, we have $\\theta^4 = (1+i)^4 \\alpha^4 = (-4)(2) = -8$. The polynomial $x^4 + 8$ is irreducible over $\\mathbb{Q}$, so $[\\mathbb{Q}(\\theta):\\mathbb{Q}] = 4$, which matches the index $[G:\\langle \\sigma\\tau \\rangle] = 8/2 = 4$. This confirms the equality. I concede the justification was incomplete without this check.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $k$ be a field and let $A:=k[\\varepsilon]/(\\varepsilon^2)$, viewed as an associative (ungraded) $k$-algebra. Let $S:=A/(\\varepsilon)$ be the simple left $A$-module (so $\\varepsilon$ acts by $0$ on $S\\cong k$).\n\n1. Compute $\\operatorname{Ext}^n_A(S,S)$ for all integers $n\\ge 0$ as $k$-vector spaces.\n2. Compute the **Yoneda algebra** $\\operatorname{Ext}^\\ast_A(S,S):=\\bigoplus_{n\\ge 0}\\operatorname{Ext}^n_A(S,S)$ with multiplication given by the Yoneda product (splicing of extensions), i.e. determine it up to isomorphism as a graded $k$-algebra.\n\nYour final answer should give an explicit graded $k$-algebra isomorphism $\\operatorname{Ext}^\\ast_A(S,S)\\cong \\text{(a familiar graded algebra)}$.",
+    "run_id": "12",
+    "topic_slug": "category_theory_and_homological_algebra",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I will concede that my justification for the chain map lift was brief, but I maintain that the final result $\\operatorname{Ext}^*_A(S,S) \\cong k[t]$ is correct for all characteristics. Here is the detailed defense:\n\n1.  **Correctness of the Resolution:** We agree that the minimal resolution is $P_\\bullet = (\\cdots \\xrightarrow{\\varepsilon} A \\xrightarrow{\\varepsilon} A \\to 0)$.\n2.  **Explicit Lift:** To compute $x^2$, we need a chain map $f: P_\\bullet \\to P_\\bullet[-1]$ lifting the generator $x \\in \\operatorname{Ext}^1$. Using the standard sign convention $d_{P[-1]} = -d_P$, the condition is $d_{P[-1]} f_k = f_{k-1} d_P$, which becomes $-\\varepsilon f_k = f_{k-1} \\varepsilon$. If we choose $f_k = \\operatorname{id}_A$ for all $k$, we get $-\\varepsilon a = \\varepsilon a$. In characteristic $\\neq 2$, this requires modification. However, the splice definition of the Yoneda product does not depend on these sign conventions. \n3.  **Splicing Argument:** The element $x^2 \\in \\operatorname{Ext}^2$ corresponds to the spliced extension $0 \\to S \\to A \\xrightarrow{\\varepsilon} A \\to S \\to 0$. This sequence represents the non-zero generator of $\\operatorname{Ext}^2(S,S) \\cong k$. Since the generator of $\\operatorname{Ext}^2$ is the square of the generator of $\\operatorname{Ext}^1$, we have $x^2 \\neq 0$. Thus, the algebra is polynomial.\n4.  **Koszul Duality:** Since $A = k[\\varepsilon]/(\\varepsilon^2)$ is a Koszul algebra (it has a linear resolution), its Ext-algebra is isomorphic to its Koszul dual $A^!$. The quadratic dual of the exterior algebra $A \\cong \\Lambda(V)$ is the symmetric algebra $A^! \\cong S(V^*) \\cong k[t]$. This confirms the polynomial structure in all characteristics.\n\nAlice's critique relies on the general theorem that Ext is graded-commutative for commutative rings. However, for this specific ring in characteristic $\\neq 2$, the Koszul dual $k[t]$ is commutative but **not** graded-commutative (since $t^2 \\neq -t^2$). The explicit non-vanishing of $x^2$ trumps the general expectation.",
+        "concede": false
+      },
+      {
+        "round": 1,
+        "speaker": "Alice",
+        "message": "You\u2019re right to push back: my graded-commutativity objection was overgeneralized. For a commutative ring $A$, the Yoneda algebra $\\operatorname{Ext}^*_A(S,S)=\\operatorname{Hom}_{D(A)}(S,S[*])$ need not be graded-commutative just from commutativity of $A$ (graded-commutativity is automatic for endomorphisms of the *unit* object, not for an arbitrary module like $S$).\n\nIn this specific case, the splice of the non-split extension $0\\to S\\to A\\to S\\to 0$ with itself yields the 2-extension\n$$\n0\\to S\\to A\\xrightarrow{\\varepsilon} A\\to S\\to 0,\n$$\nwhich is exactly the beginning of the minimal resolution and represents the (unique) nonzero class in $\\operatorname{Ext}^2_A(S,S)\\cong k$. Hence $x^2\\neq 0$, so the algebra structure is indeed polynomial on a degree-1 generator: $\\operatorname{Ext}^*_A(S,S)\\cong k[t]$ with $|t|=1$, in all characteristics.\n\nAlso agreed: at the chain level, in $\\operatorname{char}(k)\\neq 2$ one can\u2019t take $f_n=\\mathrm{id}$, but taking the alternating-sign lift $f_n=(-1)^n\\mathrm{id}$ fixes the cocycle condition and its square gives the degree-2 generator.\n\nSo this does address the substantive issue in my critique; my verdict would change.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $K^*(-)$ denote **complex topological $K$-theory**. For $n\\ge 1$, let $\\mathbb{C}P^n$ be complex projective $n$-space, let $\\gamma\\to \\mathbb{C}P^n$ be the tautological complex line bundle, and let $H:=\\gamma^*$ be the hyperplane line bundle. Define\n$$\n\\eta \\;:=\\; [H]-1 \\in \\widetilde K^0(\\mathbb{C}P^n).\n$$\nYou may use the following standard facts:\n\n- (Bott periodicity on spheres) $\\widetilde K^0(S^{2m})\\cong \\mathbb{Z}$ and $\\widetilde K^1(S^{2m})=0$ for $m\\ge 1$.\n- (CW filtration) $\\mathbb{C}P^k$ is obtained from $\\mathbb{C}P^{k-1}$ by attaching a single $2k$-cell, so there is a cofibration $\\mathbb{C}P^{k-1}\\hookrightarrow \\mathbb{C}P^k \\twoheadrightarrow S^{2k}$, hence a long exact sequence in reduced $K$-theory.\n- (Chern character) For a complex line bundle $L$ with $c_1(L)=x\\in H^2(-;\\mathbb{Z})$, one has $\\mathrm{ch}([L])=e^x$ in $H^{\\mathrm{even}}(-;\\mathbb{Q})$.\n\n**Tasks.**\n1. Compute the abelian groups $K^0(\\mathbb{C}P^n)$ and $K^1(\\mathbb{C}P^n)$.\n2. Determine the ring structure of $K^0(\\mathbb{C}P^n)$ by proving that the map\n$$\n\\mathbb{Z}[\\eta]\\longrightarrow K^0(\\mathbb{C}P^n),\\qquad \\eta\\mapsto [H]-1\n$$\ninduces a ring isomorphism\n$$\nK^0(\\mathbb{C}P^n)\\;\\cong\\;\\mathbb{Z}[\\eta]/(\\eta^{n+1}),\n$$\nand that $\\{1,\\eta,\\eta^2,\\dots,\\eta^n\\}$ is a $\\mathbb{Z}$-basis.\n3. Using the (topological) Euler sequence $0\\to \\mathbf{1}\\to (n+1)H \\to T\\mathbb{C}P^n\\to 0$, compute the class $[T\\mathbb{C}P^n]\\in K^0(\\mathbb{C}P^n)$ explicitly in terms of $\\eta$.",
+    "run_id": "13",
+    "topic_slug": "k_theory",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I concede. You are correct that I stated the induction hypothesis too narrowly by only assuming the basis property for $K^0(\\mathbb{C}P^{n-1})$; the proof requires assuming the full ring isomorphism (specifically $\\eta^n=0$ in the quotient) to establish that $\\eta^n$ lies in the kernel of the restriction map $i^*$. Additionally, I agree that referencing the Atiyah-Hirzebruch spectral sequence was unnecessary and insufficiently justified; the argument should have relied on the naturality of the Chern character and its behavior on spheres.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $Q_8=\\{\\pm 1,\\pm i,\\pm j,\\pm k\\}$ be the quaternion group with defining relations\n$$\ni^2=j^2=k^2=ijk=-1.\n$$\n(So $Q_8$ has order $8$ and is generated by $i$ and $j$ with $k=ij$.)\n\n1. Prove that any automorphism $\\varphi\\in \\operatorname{Aut}(Q_8)$ fixes $\\pm 1$, and that $\\varphi$ permutes the six elements of order $4$, namely $\\{\\pm i,\\pm j,\\pm k\\}$.\n2. Show that an automorphism of $Q_8$ is uniquely determined by the images of $i$ and $j$, and that $\\varphi(i)$ can be any element of order $4$, while $\\varphi(j)$ can be any element of order $4$ not lying in $\\langle \\varphi(i)\\rangle$. Deduce that $|\\operatorname{Aut}(Q_8)|=24$.\n3. Let $\\operatorname{Inn}(Q_8)$ be the inner automorphism group. Prove that $\\operatorname{Inn}(Q_8)\\cong V_4$ (the Klein four group), and that the induced action of $\\operatorname{Aut}(Q_8)$ on the set of the three cyclic subgroups $\\{\\langle i\\rangle,\\langle j\\rangle,\\langle k\\rangle\\}$ gives a surjective homomorphism $\\operatorname{Aut}(Q_8)\\twoheadrightarrow S_3$ with kernel $\\operatorname{Inn}(Q_8)$.\n4. Conclude that $\\operatorname{Aut}(Q_8)\\cong S_4$.",
+    "run_id": "14",
+    "topic_slug": "group_theory_and_generalizations",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I concede. You are correct that my claim regarding the faithful action of $\\operatorname{Aut}(Q_8)$ on $\\operatorname{Inn}(Q_8)$ via conjugation was contradictory (as I had correctly identified the kernel as $N$) and that I failed to justify the splitting of the extension required for the semidirect product structure.\n\nHere is the corrected logic for Part 4:\n\n**Corrected Part 4: Conclusion $\\operatorname{Aut}(Q_8) \\cong S_4$**\n\nFrom Part 3, we have an exact sequence:\n$$1 \\to \\operatorname{Inn}(Q_8) \\to \\operatorname{Aut}(Q_8) \\xrightarrow{\\Psi} S_3 \\to 1$$\nwhere $\\operatorname{Inn}(Q_8) \\cong V_4$. To prove $\\operatorname{Aut}(Q_8) \\cong V_4 \\rtimes S_3 \\cong S_4$, we show the sequence splits.\n\nConsider the subgroup $H \\subset \\operatorname{Aut}(Q_8)$ generated by the automorphisms $\\tau$ and $\\rho$ defined in Part 3:\n- $\\tau: i \\mapsto j, j \\mapsto i$ (implies $k \\mapsto -k$)\n- $\\rho: i \\mapsto j, j \\mapsto k$ (implies $k \\mapsto i$)\n\nThe mapping $\\Psi|_H: H \\to S_3$ is an isomorphism because $H$ acts faithfully on the set of subgroups $\\{\\langle i \\rangle, \\langle j \\rangle, \\langle k \\rangle\\}$. Specifically, any non-identity element in $H$ permutes these subgroups non-trivially, whereas elements of $\\ker(\\Psi) = \\operatorname{Inn}(Q_8)$ fix these subgroups. Thus, $H \\cap \\operatorname{Inn}(Q_8) = \\{1\\}$.\n\nSince $\\operatorname{Aut}(Q_8)$ contains a subgroup $H \\cong S_3$ disjoint from the kernel, the sequence splits, and $\\operatorname{Aut}(Q_8) \\cong \\operatorname{Inn}(Q_8) \\rtimes H \\cong V_4 \\rtimes S_3 \\cong S_4$.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $n\\ge 3$ and $0<a<b$. Set\n$$\n\\Omega:=\\{x\\in\\mathbb{R}^n:\\ a<|x|<b\\}.\n$$\nConsider the class\n$$\n\\mathcal A:=\\Bigl\\{u\\in C^1(\\overline{\\Omega})\\cap C^2(\\Omega):\\ u=1\\ \\text{on } \\{|x|=a\\},\\ \\ u=0\\ \\text{on } \\{|x|=b\\}\\Bigr\\},\n$$\nand the Dirichlet energy\n$$\nE[u]:=\\int_{\\Omega}|\\nabla u(x)|^2\\,dx.\n$$\n\n1. Prove that there is a unique minimizer $u_*\\in\\mathcal A$ of $E[\\cdot]$, and that $u_*$ is harmonic in $\\Omega$ (i.e. $\\Delta u_*=0$).\n2. Determine $u_*$ explicitly.\n3. Compute the minimum value\n$$\n\\inf_{u\\in\\mathcal A}E[u]\n$$\nin closed form, in terms of $a,b,n$ and $\\omega_n:=|\\mathbb{S}^{n-1}|$ (the surface area of the unit sphere in $\\mathbb{R}^n$).",
+    "run_id": "19",
+    "topic_slug": "potential_theory",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I concede. You are correct that the answer established \"Minimizer $\\implies$ Harmonic\" (Euler-Lagrange) but did not rigorously prove \"Harmonic $\\implies$ Minimizer.\" While I appealed to convexity, I should have explicitly shown that for any perturbation $\\phi$ vanishing at the boundary, $E[u_* + \\phi] = E[u_*] + \\int_\\Omega |\\nabla \\phi|^2 \\, dx \\ge E[u_*]$. This step (Dirichlet's Principle) rigorously confirms that the explicitly constructed harmonic function is the global minimizer, completing the existence proof without needing abstract Sobolev space arguments.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $0<r<1$ and $0<s<1$, and define the Hartogs figure\n$$\nD=\\Bigl\\{(z,w)\\in\\mathbb C^2:\\ |z|<1,\\ |w|<1,\\ \\text{and }(|z|>r\\ \\text{or}\\ |w|<s)\\Bigr\\}.\n$$\nEquivalently, $D=\\Delta^2\\setminus\\bigl(\\{|z|\\le r\\}\\times\\{s\\le |w|<1\\}\\bigr)$ where $\\Delta^2=\\{(z,w):|z|<1,|w|<1\\}$ is the bidisc.\n\n1. Prove that every holomorphic function $f\\in\\mathcal O(D)$ extends uniquely to a holomorphic function $F\\in\\mathcal O(\\Delta^2)$.\n2. Conclude that the envelope of holomorphy of $D$ (as a domain in $\\mathbb C^2$) is exactly $\\Delta^2$.",
+    "run_id": "20",
+    "topic_slug": "several_complex_variables_and_analytic_spaces",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I concede. You are correct that the function $g(z,w) = \frac{1}{z-1}$ is insufficient to prove that $\\Delta^2$ is the envelope of holomorphy, as it extends to larger domains such as $\\Delta \\times \\{|w|<2\\}$. \n\nThe correct argument for Part 2 is:\n1. From Part 1, the restriction map $\\mathcal{O}(\\Delta^2) \\to \\mathcal{O}(D)$ is an isomorphism (surjective by the extension proof, injective by the identity theorem).\n2. Since the algebras of holomorphic functions are isomorphic, their envelopes of holomorphy are identical: $E(D) = E(\\Delta^2)$.\n3. Since $\\Delta^2$ is a polydisc (a convex domain), it is a domain of holomorphy, meaning $E(\\Delta^2) = \\Delta^2$.\n4. Therefore, $E(D) = \\Delta^2$.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $n\\ge 1$ and use the Fourier transform convention\n$$\n\\widehat{f}(\\xi)=\\int_{\\mathbb{R}^n} f(x)\\,e^{-2\\pi i x\\cdot \\xi}\\,dx,\\qquad \nf(x)=\\int_{\\mathbb{R}^n}\\widehat{f}(\\xi)\\,e^{2\\pi i x\\cdot \\xi}\\,d\\xi,\n$$\nso that Plancherel holds: $\\|f\\|_{L^2}=\\|\\widehat f\\|_{L^2}$ for $f\\in L^2(\\mathbb R^n)$.\n\nFor $j=1,\\dots,n$, define the (Fourier-multiplier) Riesz transform on the Schwartz class $\\mathcal S(\\mathbb R^n)$ by\n$$\nR_j f := \\mathcal{F}^{-1}\\!\\left(m_j\\,\\widehat f\\right),\\qquad \nm_j(\\xi):= -i\\,\\frac{\\xi_j}{|\\xi|}\\quad (\\xi\\neq 0),\\ \\ m_j(0):=0.\n$$\n\n1. Prove that each $R_j$ extends uniquely to a bounded linear operator on $L^2(\\mathbb R^n)$, and compute its operator norm $\\|R_j\\|_{L^2\\to L^2}$.\n2. Prove the two $L^2$ identities (interpreted in $L^2$ sense)\n$$\n\\sum_{j=1}^n \\|R_j f\\|_{L^2}^2=\\|f\\|_{L^2}^2,\n\\qquad\n\\sum_{j=1}^n R_j^2 f = -\\,f,\n\\quad \\forall f\\in L^2(\\mathbb R^n).\n$$",
+    "run_id": "28",
+    "topic_slug": "harmonic_analysis_on_euclidean_spaces",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "You are correct. I erroneously claimed that $|m_j(\\xi)|$ *achieves* the value 1 on a set of positive measure. For $n > 1$, the axis where $|m_j(\\xi)|=1$ has measure zero, so this does not determine the essential supremum. The correct justification is that since $m_j$ is continuous on $\\mathbb{R}^n \\setminus \\{0\\}$, for any $\\varepsilon > 0$, the open set $\\{ \\xi : |m_j(\\xi)| > 1-\\varepsilon \\}$ (a cone around the axis) has positive measure, which implies $\\|m_j\\|_{L^\\infty} = 1$.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a compact abelian Hausdorff topological group written additively, and let $m$ be its normalized Haar probability measure ($m(G)=1$). For $f,g\\in L^{1}(G)$ define the convolution\n$$\n(f*g)(x):=\\int_G f(y)\\,g(x-y)\\,dm(y)\\qquad (x\\in G).\n$$\nAssume $f\\in L^{1}(G)$ satisfies\n1. $f(x)\\ge 0$ for $m$-a.e. $x\\in G$,\n2. $\\displaystyle \\int_G f\\,dm=1$,\n3. $f*f=f$ $m$-a.e.\n\nDetermine all such functions $f$ (up to equality $m$-a.e.). Your answer should be a concrete description in terms of a subgroup of $G$. Additionally, deduce that if $G$ is connected then necessarily $f=1$ $m$-a.e.",
+    "run_id": "29",
+    "topic_slug": "abstract_harmonic_analysis",
+    "alice_model": "openai-gpt-5.2-2025-12-11",
+    "bob_model": "google-gemini-3-pro-preview",
+    "answer_author": "google-gemini-3-pro-preview",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "I accept your critique. You are correct that the derivation of the subgroup property contains a logical gap. The implication $H \\subseteq x-H \\implies H+x \\subseteq H$ is invalid without first establishing that $H$ is symmetric ($H=-H$).\n\nThe correct reasoning is that the convolution condition implies $m(H \\cap (x-H)) = m(H)$ for $x \\in H$. By the continuity of $f$, this forces $x-H \\subseteq H$ for all $x \\in H$. Since $H$ is non-empty and closed under subtraction ($H-H \\subseteq H$), it is a subgroup. The other points regarding rigor (continuity justifying the pointwise properties) are also valid concerns that should have been explicit.",
+        "concede": true
+      }
+    ]
+  }
+]
