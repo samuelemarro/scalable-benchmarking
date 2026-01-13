@@ -2,6 +2,7 @@ import argparse
 import hashlib
 import json
 import random
+import subprocess
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -76,6 +77,66 @@ def load_other_evaluations(evaluations_dir: Path, username: str) -> Dict[str, Li
 
 def save_evaluation(path: Path, decisions: Dict[str, HumanEvaluation]):
     save_human_evaluation_entries(path, HumanEvaluationFile(decisions=list(decisions.values())))
+
+
+def build_illposed_claim(entry: Optional[AnswerEntry]) -> str:
+    if not entry:
+        return ""
+    attempts = entry.attempts or []
+    if not attempts:
+        return ""
+    evaluation = attempts[-1].evaluation or {}
+    issues = evaluation.get("issues")
+    if not issues:
+        return ""
+    if isinstance(issues, str):
+        issue_list = [issues]
+    else:
+        try:
+            issue_list = [str(issue) for issue in issues if issue]
+        except TypeError:
+            issue_list = [str(issues)]
+    return "\n".join(f"- {issue}" for issue in issue_list)
+
+
+def run_git_sync(label_id: str, username: str, eval_path: Path) -> Tuple[bool, str, str]:
+    repo_root = Path(__file__).resolve().parent
+    try:
+        rel_path = eval_path.relative_to(repo_root)
+    except ValueError:
+        rel_path = eval_path
+    outputs: List[str] = []
+
+    def run(cmd: List[str]) -> subprocess.CompletedProcess[str]:
+        result = subprocess.run(cmd, cwd=repo_root, capture_output=True, text=True)
+        output = "\n".join(part for part in [result.stdout.strip(), result.stderr.strip()] if part)
+        if output:
+            outputs.append(f"$ {' '.join(cmd)}\n{output}")
+        return result
+
+    pull = run(["git", "pull", "--no-rebase", "--autostash"])
+    if pull.returncode != 0:
+        return False, "Git pull failed", "\n\n".join(outputs)
+
+    add = run(["git", "add", str(rel_path)])
+    if add.returncode != 0:
+        return False, "Git add failed", "\n\n".join(outputs)
+
+    diff = run(["git", "diff", "--cached", "--quiet", "--", str(rel_path)])
+    if diff.returncode == 0:
+        return True, "Saved (no changes to commit)", "\n\n".join(outputs)
+    if diff.returncode != 1:
+        return False, "Git diff failed", "\n\n".join(outputs)
+
+    commit = run(["git", "commit", "-m", f"Labelling {label_id} {username}", "--", str(rel_path)])
+    if commit.returncode != 0:
+        return False, "Git commit failed", "\n\n".join(outputs)
+
+    push = run(["git", "push"])
+    if push.returncode != 0:
+        return False, "Git push failed", "\n\n".join(outputs)
+
+    return True, "Saved and pushed", "\n\n".join(outputs)
 
 
 def verdict_choices(task_type: str) -> List[str]:
@@ -335,6 +396,7 @@ def build_task_from_key(
             answer_text = final_answer(fallback_entry) or ""
         history = debate.history if debate else []
         has_data = bool(history)
+        claim_text = build_illposed_claim(answer_entry) or build_illposed_claim(fallback_entry)
         return (
             JudgingTask(
                 id=key_entry.get("id") or _task_id(f"illposed/{q_slug}/{a_slug}", run_id, topic_slug, question_text or ""),
@@ -346,6 +408,7 @@ def build_task_from_key(
                 topic_slug=topic_slug,
                 question=question_text,
                 answer=answer_text,
+                critique=claim_text,
                 debate_history=history,
             ),
             has_data,
@@ -438,7 +501,7 @@ def render_task(
         st.subheader("Answer")
         st.write(task.answer or "")
     with cols[1]:
-        if task.type == "critique":
+        if task.type in ("critique", "illposed"):
             st.subheader("Critique")
             st.markdown(task.critique or "")
         st.subheader("Debate")
@@ -472,7 +535,7 @@ def render_task(
     with copy_cols[1]:
         markdown_block("Answer", task.answer or "")
     with copy_cols[2]:
-        if task.type == "critique":
+        if task.type in ("critique", "illposed"):
             markdown_block("Critique", task.critique or "")
 
     if auto_evals:
@@ -485,7 +548,7 @@ def render_task(
     all_fields = []
     all_fields.append(f"Question:\n{task.question or ''}")
     all_fields.append(f"Answer:\n{task.answer or ''}")
-    if task.type == "critique":
+    if task.type in ("critique", "illposed"):
         all_fields.append(f"Critique:\n{task.critique or ''}")
     if auto_evals:
         all_fields.append("Automated evaluations:")
@@ -511,7 +574,7 @@ def render_task(
     )
     comment = st.text_area("Comments", value=existing.comment if existing else "", key=f"comment-{task.id}")
     if st.button("Save", key=f"save-{task.id}"):
-        save_cb(
+        ok, message, output = save_cb(
             HumanEvaluation(
                 id=task.id,
                 type=task.type,
@@ -524,7 +587,12 @@ def render_task(
                 comment=comment,
             )
         )
-        st.success("Saved")
+        if ok:
+            st.success(message)
+        else:
+            st.error(message)
+        if output and not ok:
+            st.code(output)
 
 
 def main():
@@ -677,9 +745,11 @@ def main():
             st.session_state["task_idx"] = int(jump - 1)
             st.rerun()
 
-    def save_decision(decision: HumanEvaluation):
+    def save_decision(decision: HumanEvaluation) -> Tuple[bool, str, str]:
         decisions[decision.id] = decision
         save_evaluation(eval_path, decisions)
+        label_id = decision.id or "unknown"
+        return run_git_sync(label_id, args.username, eval_path)
 
     st.divider()
     render_task(task, existing, other_labels, evals, registry, save_decision)
