@@ -608,7 +608,6 @@ def main():
                             benchmark_entries,
                         )
                         answer_map = build_entry_map(answers)
-                        answer_map = build_entry_map(answers)
                         debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                         existing = load_debate_entries(debate_path)
                         existing_keys = collect_debate_keys(existing)
@@ -841,6 +840,7 @@ def main():
                             answer_slug,
                             benchmark_entries,
                         )
+                        answer_map = build_entry_map(answers)
 
                         # Load debate file once per critique file instead of per record
                         debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
