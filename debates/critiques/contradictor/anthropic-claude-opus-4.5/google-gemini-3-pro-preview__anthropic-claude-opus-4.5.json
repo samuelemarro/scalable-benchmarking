@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "question": "Let $\\mathbb{CP}^2$ be the complex projective plane and let $H$ denote the tautological line bundle over $\\mathbb{CP}^2$. Define $\\xi = [H] - 1 \\in K^0(\\mathbb{CP}^2)$, where $K^0$ denotes complex topological K-theory.\n\nIt is a standard result that $K^0(\\mathbb{CP}^2) \\cong \\mathbb{Z}[\\xi]/(\\xi^3)$ as rings, and that every complex vector bundle over $\\mathbb{CP}^2$ splits as a direct sum of line bundles (Grothendieck's splitting theorem). Line bundles over $\\mathbb{CP}^2$ are precisely the tensor powers $H^m$ for $m \\in \\mathbb{Z}$.\n\n**(a)** Prove that for all $n \\in \\mathbb{Z}$:\n$$(1+\\xi)^n = 1 + n\\xi + \\binom{n}{2}\\xi^2$$\nwhere $\\binom{n}{2} = \\frac{n(n-1)}{2}$ is the generalized binomial coefficient.\n\n**(b)** A class $\\alpha \\in K^0(\\mathbb{CP}^2)$ is called *effective of rank $r$* if $\\alpha = [E]$ for some complex vector bundle $E$ over $\\mathbb{CP}^2$ of rank $r$.\n\nProve that the class $2 - \\xi \\in K^0(\\mathbb{CP}^2)$ is **not** effective of rank $2$.",
+    "run_id": "13",
+    "topic_slug": "k_theory",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "anthropic-claude-opus-4.5",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "You raise a valid point. I should have scrutinized the premise more carefully. Grothendieck's splitting theorem applies to CP^1, not CP^2. Over CP^2, there exist indecomposable rank 2 bundles.\n\nFor the class 2 - \u03be, computing via the Chern character: ch(2 - \u03be) = 2 - x - x\u00b2/2, which corresponds to a rank 2 bundle with c\u2081 = -1 and c\u2082 = 1. For split bundles H^a \u2295 H^b, we'd have c\u2081\u00b2 - 4c\u2082 = (a-b)\u00b2 \u2265 0, but here c\u2081\u00b2 - 4c\u2082 = 1 - 4 = -3 < 0. This proves 2 - \u03be cannot come from a *split* bundle, but non-split bundles with negative discriminant do exist (e.g., TCP\u00b2 has c\u2081\u00b2 - 4c\u2082 = -3).\n\nBy topological classification results, rank 2 bundles on CP\u00b2 exist for all integer Chern class pairs, so 2 - \u03be IS effective via a non-split bundle. I should have identified that the problem's premise was false rather than accepting it uncritically.",
+        "concede": true
+      }
+    ]
+  }
+]
