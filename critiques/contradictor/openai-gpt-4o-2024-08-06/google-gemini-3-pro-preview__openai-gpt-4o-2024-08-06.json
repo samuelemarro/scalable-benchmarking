@@ -1,1 +1,1042 @@
-[]
+[
+  {
+    "question": "Consider the formal language of first-order logic with equality, containing a single binary relation symbol $R$. Let $\\mathcal{L}$ be the set of all sentences in this language. Define a structure $\\mathcal{M} = (M, R^{\\mathcal{M}})$ where $M = \\mathbb{Z}$ (the set of all integers) and $R^{\\mathcal{M}}(x, y)$ is interpreted as \"$x$ is less than $y$\" (i.e., $x < y$).\n\nProve or disprove: There exists a sentence $\\varphi \\in \\mathcal{L}$ such that $\\mathcal{M} \\models \\varphi$ and for any structure $\\mathcal{N} = (N, R^{\\mathcal{N}})$ with $N$ being a finite set, $\\mathcal{N} \\not\\models \\varphi$.",
+    "run_id": "1",
+    "topic_slug": "mathematical_logic_and_foundations",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains two significant errors. First, it incorrectly claims that the order $(\\\\mathbb{Z}, <)$ is dense; the integers form a discrete order. Second, it fails to provide a single fixed sentence $\\\\varphi$. Instead, it describes a family of sentences parameterized by $n$. For any fixed $n$, the proposed sentence (existence of a chain of length $n$) is satisfied by any finite strict total order of size $n+1$ or greater. Therefore, the proposed sentence does not satisfy the requirement that it be false in *every* finite structure.\",\n  \"suggestions\": \"Provide a single sentence that forces the domain to be infinite. For example, a sentence asserting that $R$ is a strict partial order (irreflexive and transitive) and has no maximal element (serial property: $\\\\forall x \\\\exists y R(x, y)$). Any structure satisfying these properties must contain an infinite chain, so the sentence is true in $\\\\mathbb{Z}$ but false in all finite structures.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains two significant errors. First, it incorrectly claims that the order $(\\\\mathbb{Z}, <)$ is dense; the integers form a discrete order. Second, it fails to provide a single fixed sentence $\\\\varphi$. Instead, it describes a family of sentences parameterized by $n$. For any fixed $n$, the proposed sentence (existence of a chain of length $n$) is satisfied by any finite strict total order of size $n+1$ or greater. Therefore, the proposed sentence does not satisfy the requirement that it be false in *every* finite structure.\",\n  \"suggestions\": \"Provide a single sentence that forces the domain to be infinite. For example, a sentence asserting that $R$ is a strict partial order (irreflexive and transitive) and has no maximal element (serial property: $\\\\forall x \\\\exists y R(x, y)$). Any structure satisfying these properties must contain an infinite chain, so the sentence is true in $\\\\mathbb{Z}$ but false in all finite structures.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains two significant errors. First, it incorrectly claims that the order $(\\mathbb{Z}, <)$ is dense; the integers form a discrete order. Second, it fails to provide a single fixed sentence $\\varphi$. Instead, it describes a family of sentences parameterized by $n$. For any fixed $n$, the proposed sentence (existence of a chain of length $n$) is satisfied by any finite strict total order of size $n+1$ or greater. Therefore, the proposed sentence does not satisfy the requirement that it be false in *every* finite structure.",
+        "suggestions": "Provide a single sentence that forces the domain to be infinite. For example, a sentence asserting that $R$ is a strict partial order (irreflexive and transitive) and has no maximal element (serial property: $\\forall x \\exists y R(x, y)$). Any structure satisfying these properties must contain an infinite chain, so the sentence is true in $\\mathbb{Z}$ but false in all finite structures.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a set $S = \\{1, 2, 3, \\ldots, 20\\}$. We want to select a subset $A \\subseteq S$ such that no two elements in $A$ are consecutive integers. Determine the number of such subsets $A$.",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the recurrence relation $a_n = a_{n-1} + a_{n-2}$ for the number of subsets containing no consecutive integers. The base cases $a_1 = 2$ and $a_2 = 3$ are correctly established. The subsequent calculation of the sequence up to $a_{20} = 17711$ is accurate.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the recurrence relation $a_n = a_{n-1} + a_{n-2}$ for the number of subsets containing no consecutive integers. The base cases $a_1 = 2$ and $a_2 = 3$ are correctly established. The subsequent calculation of the sequence up to $a_{20} = 17711$ is accurate.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the recurrence relation $a_n = a_{n-1} + a_{n-2}$ for the number of subsets containing no consecutive integers. The base cases $a_1 = 2$ and $a_2 = 3$ are correctly established. The subsequent calculation of the sequence up to $a_{20} = 17711$ is accurate.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $p$ be a prime number greater than 3. Prove that $p^2 \\equiv 1 \\pmod{24}$.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains fundamental logical errors in determining the parity of $k$. In Case 1, it claims 'Since $p = 6k + 1$ is odd, $k$ must be even'. This is false; $6k$ is even for any integer $k$, so $6k+1$ is always odd regardless of $k$ (e.g., for $p=7$, $k=1$ is odd). Similarly, in Case 2, it incorrectly claims $k$ must be odd for $p = 6k - 1$ to be odd (e.g., for $p=11$, $k=2$ is even). Because of these false constraints, the proof fails to cover all primes (effectively analyzing only $p \\\\equiv 1, 5 \\\\pmod{12}$ rather than all relevant primes).\",\n  \"suggestions\": \"Correct the parity analysis of $k$. In the expression $12k(3k+1)$, observe that if $k$ is even, the expression is clearly divisible by 24. If $k$ is odd, then $3k+1$ is even, providing the necessary factor of 2. Apply similar logic to Case 2. Alternatively, use the factorization $p^2-1 = (p-1)(p+1)$ to show divisibility by 3 and 8 separately.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains fundamental logical errors in determining the parity of $k$. In Case 1, it claims 'Since $p = 6k + 1$ is odd, $k$ must be even'. This is false; $6k$ is even for any integer $k$, so $6k+1$ is always odd regardless of $k$ (e.g., for $p=7$, $k=1$ is odd). Similarly, in Case 2, it incorrectly claims $k$ must be odd for $p = 6k - 1$ to be odd (e.g., for $p=11$, $k=2$ is even). Because of these false constraints, the proof fails to cover all primes (effectively analyzing only $p \\\\equiv 1, 5 \\\\pmod{12}$ rather than all relevant primes).\",\n  \"suggestions\": \"Correct the parity analysis of $k$. In the expression $12k(3k+1)$, observe that if $k$ is even, the expression is clearly divisible by 24. If $k$ is odd, then $3k+1$ is even, providing the necessary factor of 2. Apply similar logic to Case 2. Alternatively, use the factorization $p^2-1 = (p-1)(p+1)$ to show divisibility by 3 and 8 separately.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer contains fundamental logical errors in determining the parity of $k$. In Case 1, it claims 'Since $p = 6k + 1$ is odd, $k$ must be even'. This is false; $6k$ is even for any integer $k$, so $6k+1$ is always odd regardless of $k$ (e.g., for $p=7$, $k=1$ is odd). Similarly, in Case 2, it incorrectly claims $k$ must be odd for $p = 6k - 1$ to be odd (e.g., for $p=11$, $k=2$ is even). Because of these false constraints, the proof fails to cover all primes (effectively analyzing only $p \\equiv 1, 5 \\pmod{12}$ rather than all relevant primes).",
+        "suggestions": "Correct the parity analysis of $k$. In the expression $12k(3k+1)$, observe that if $k$ is even, the expression is clearly divisible by 24. If $k$ is odd, then $3k+1$ is even, providing the necessary factor of 2. Apply similar logic to Case 2. Alternatively, use the factorization $p^2-1 = (p-1)(p+1)$ to show divisibility by 3 and 8 separately.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $(L, \\leq)$ be a complete lattice, and let $f: L \\to L$ be an order-preserving function (i.e., if $x \\leq y$ in $L$, then $f(x) \\leq f(y)$). Prove that the set of fixed points of $f$, denoted by $F = \\{ x \\in L \\mid f(x) = x \\}$, is a complete sublattice of $L$.",
+    "run_id": "4",
+    "topic_slug": "order_lattices_and_ordered_algebraic_structures",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer attempts to prove a false statement and contains fundamental logical errors. First, the set of fixed points $F$ is not necessarily a complete sublattice of $L$; while the Knaster-Tarski theorem states that $F$ is a complete lattice under the induced order, the join and meet operations in $F$ often differ from those in $L$ (i.e., $F$ is not closed under $\\\\bigvee_L$ and $\\\\bigwedge_L$). Second, the proof relies on the invalid assumption that $f(f(x)) = f(x)$ (idempotence) in Steps 2 and 3. The claim that $f(f(\\\\bigwedge A)) = f(\\\\bigwedge A)$ 'because $f$ is a function' is logically unsound.\",\n  \"suggestions\": \"Identify that the question asks for a proof of a false claim. The correct result (Knaster-Tarski Theorem) asserts that $F$ is a complete lattice, but the supremum in $F$ is given by $\\\\bigvee_F S = \\\\bigwedge_L \\\\{ u \\\\in F \\\\mid u \\\\geq \\\\bigvee_L S \\\\}$, which is not necessarily equal to $\\\\bigvee_L S$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer attempts to prove a false statement and contains fundamental logical errors. First, the set of fixed points $F$ is not necessarily a complete sublattice of $L$; while the Knaster-Tarski theorem states that $F$ is a complete lattice under the induced order, the join and meet operations in $F$ often differ from those in $L$ (i.e., $F$ is not closed under $\\\\bigvee_L$ and $\\\\bigwedge_L$). Second, the proof relies on the invalid assumption that $f(f(x)) = f(x)$ (idempotence) in Steps 2 and 3. The claim that $f(f(\\\\bigwedge A)) = f(\\\\bigwedge A)$ 'because $f$ is a function' is logically unsound.\",\n  \"suggestions\": \"Identify that the question asks for a proof of a false claim. The correct result (Knaster-Tarski Theorem) asserts that $F$ is a complete lattice, but the supremum in $F$ is given by $\\\\bigvee_F S = \\\\bigwedge_L \\\\{ u \\\\in F \\\\mid u \\\\geq \\\\bigvee_L S \\\\}$, which is not necessarily equal to $\\\\bigvee_L S$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer attempts to prove a false statement and contains fundamental logical errors. First, the set of fixed points $F$ is not necessarily a complete sublattice of $L$; while the Knaster-Tarski theorem states that $F$ is a complete lattice under the induced order, the join and meet operations in $F$ often differ from those in $L$ (i.e., $F$ is not closed under $\\bigvee_L$ and $\\bigwedge_L$). Second, the proof relies on the invalid assumption that $f(f(x)) = f(x)$ (idempotence) in Steps 2 and 3. The claim that $f(f(\\bigwedge A)) = f(\\bigwedge A)$ 'because $f$ is a function' is logically unsound.",
+        "suggestions": "Identify that the question asks for a proof of a false claim. The correct result (Knaster-Tarski Theorem) asserts that $F$ is a complete lattice, but the supremum in $F$ is given by $\\bigvee_F S = \\bigwedge_L \\{ u \\in F \\mid u \\geq \\bigvee_L S \\}$, which is not necessarily equal to $\\bigvee_L S$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a group of order 56. Prove that $G$ has a normal subgroup of order 7.",
+    "run_id": "5",
+    "topic_slug": "general_algebraic_systems",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer attempts to prove a false statement using invalid reasoning. \\n\\n1. It is not true that every group of order 56 has a normal subgroup of order 7. For example, the semidirect product $(\\\\mathbb{Z}_2 \\\\times \\\\mathbb{Z}_2 \\\\times \\\\mathbb{Z}_2) \\\\rtimes \\\\mathbb{Z}_7$ (where the action maps a generator of $\\\\mathbb{Z}_7$ to a permutation of the basis of the vector space) has $n_7 = 8$ and $n_2 = 1$. In this case, the normal subgroup is of order 8, not 7.\\n\\n2. The logic used to rule out $n_7=8$ is flawed. The model states: \\\"This would leave only 8 elements in $G$ that are not in any Sylow 7-subgroup, which is not enough to form the Sylow 2-subgroups.\\\" This is incorrect. The 8 remaining elements (the identity plus 7 elements of order $2^k$) form exactly one unique Sylow 2-subgroup of order 8. Thus, the case $n_7=8$ is mathematically consistent and implies $n_2=1$.\",\n  \"suggestions\": \"Correctly identify that Sylow's theorems imply either $n_7=1$ or $n_2=1$. Explain that while a normal subgroup of order 7 is possible ($n_7=1$), the other possibility is a normal subgroup of order 8 ($n_2=1, n_7=8$). Therefore, one cannot prove there is *always* a normal subgroup of order 7; rather, there is always a normal non-trivial subgroup (either of order 7 or order 8).\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer attempts to prove a false statement using invalid reasoning. \\n\\n1. It is not true that every group of order 56 has a normal subgroup of order 7. For example, the semidirect product $(\\\\mathbb{Z}_2 \\\\times \\\\mathbb{Z}_2 \\\\times \\\\mathbb{Z}_2) \\\\rtimes \\\\mathbb{Z}_7$ (where the action maps a generator of $\\\\mathbb{Z}_7$ to a permutation of the basis of the vector space) has $n_7 = 8$ and $n_2 = 1$. In this case, the normal subgroup is of order 8, not 7.\\n\\n2. The logic used to rule out $n_7=8$ is flawed. The model states: \\\"This would leave only 8 elements in $G$ that are not in any Sylow 7-subgroup, which is not enough to form the Sylow 2-subgroups.\\\" This is incorrect. The 8 remaining elements (the identity plus 7 elements of order $2^k$) form exactly one unique Sylow 2-subgroup of order 8. Thus, the case $n_7=8$ is mathematically consistent and implies $n_2=1$.\",\n  \"suggestions\": \"Correctly identify that Sylow's theorems imply either $n_7=1$ or $n_2=1$. Explain that while a normal subgroup of order 7 is possible ($n_7=1$), the other possibility is a normal subgroup of order 8 ($n_2=1, n_7=8$). Therefore, one cannot prove there is *always* a normal subgroup of order 7; rather, there is always a normal non-trivial subgroup (either of order 7 or order 8).\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer attempts to prove a false statement using invalid reasoning. \n\n1. It is not true that every group of order 56 has a normal subgroup of order 7. For example, the semidirect product $(\\mathbb{Z}_2 \\times \\mathbb{Z}_2 \\times \\mathbb{Z}_2) \\rtimes \\mathbb{Z}_7$ (where the action maps a generator of $\\mathbb{Z}_7$ to a permutation of the basis of the vector space) has $n_7 = 8$ and $n_2 = 1$. In this case, the normal subgroup is of order 8, not 7.\n\n2. The logic used to rule out $n_7=8$ is flawed. The model states: \"This would leave only 8 elements in $G$ that are not in any Sylow 7-subgroup, which is not enough to form the Sylow 2-subgroups.\" This is incorrect. The 8 remaining elements (the identity plus 7 elements of order $2^k$) form exactly one unique Sylow 2-subgroup of order 8. Thus, the case $n_7=8$ is mathematically consistent and implies $n_2=1$.",
+        "suggestions": "Correctly identify that Sylow's theorems imply either $n_7=1$ or $n_2=1$. Explain that while a normal subgroup of order 7 is possible ($n_7=1$), the other possibility is a normal subgroup of order 8 ($n_2=1, n_7=8$). Therefore, one cannot prove there is *always* a normal subgroup of order 7; rather, there is always a normal non-trivial subgroup (either of order 7 or order 8).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $K = \\mathbb{Q}(\\sqrt{2}, \\sqrt{3})$ be a field extension of $\\mathbb{Q}$. Determine the degree of the field extension $[K : \\mathbb{Q}]$ and find a basis for $K$ over $\\mathbb{Q}$.",
+    "run_id": "6",
+    "topic_slug": "field_theory_and_polynomials",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. It correctly applies the Tower Law to determine the degree of the extension is 4. The proof that $\\\\sqrt{3} \\\\notin \\\\mathbb{Q}(\\\\sqrt{2})$ is rigorous, correctly deriving contradictions for cases where coefficients are zero. The construction of the basis $\\{1, \\\\sqrt{2}, \\\\sqrt{3}, \\\\sqrt{6}\\}$ by multiplying the bases of the intermediate extensions is correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. It correctly applies the Tower Law to determine the degree of the extension is 4. The proof that $\\\\sqrt{3} \\\\notin \\\\mathbb{Q}(\\\\sqrt{2})$ is rigorous, correctly deriving contradictions for cases where coefficients are zero. The construction of the basis $\\{1, \\\\sqrt{2}, \\\\sqrt{3}, \\\\sqrt{6}\\}$ by multiplying the bases of the intermediate extensions is correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. It correctly applies the Tower Law to determine the degree of the extension is 4. The proof that $\\sqrt{3} \\notin \\mathbb{Q}(\\sqrt{2})$ is rigorous, correctly deriving contradictions for cases where coefficients are zero. The construction of the basis $\\{1, \\sqrt{2}, \\sqrt{3}, \\sqrt{6}\\}$ by multiplying the bases of the intermediate extensions is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a commutative ring with unity, and let $I$ and $J$ be ideals of $R$. Suppose that $I + J = R$. Prove that $I \\cap J = IJ$.",
+    "run_id": "7",
+    "topic_slug": "commutative_algebra",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"In part 1, the justification provided for why the terms $xi$ and $xj$ belong to the ideal $IJ$ is mathematically invalid. The answer claims '$xi \\\\in IJ$ because $x \\\\in I$ and $i \\\\in I$' and '$xj \\\\in IJ$ because $x \\\\in J$ and $j \\\\in J$'. The product of two elements from $I$ belongs to $I^2$, not necessarily $IJ$ (unless $I \\\\subseteq J$). The correct reasoning relies on the fact that $x \\\\in I \\\\cap J$: specifically, $xi \\\\in IJ$ because $i \\\\in I$ and $x \\\\in J$, and $xj \\\\in IJ$ because $x \\\\in I$ and $j \\\\in J$.\",\n  \"suggestions\": \"Correct the reasoning in step 1 to use the intersection property properly. State that since $x \\\\in I \\\\cap J$, we have $x \\\\in J$ (so $ix \\\\in IJ$) and $x \\\\in I$ (so $xj \\\\in IJ$).\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"In part 1, the justification provided for why the terms $xi$ and $xj$ belong to the ideal $IJ$ is mathematically invalid. The answer claims '$xi \\\\in IJ$ because $x \\\\in I$ and $i \\\\in I$' and '$xj \\\\in IJ$ because $x \\\\in J$ and $j \\\\in J$'. The product of two elements from $I$ belongs to $I^2$, not necessarily $IJ$ (unless $I \\\\subseteq J$). The correct reasoning relies on the fact that $x \\\\in I \\\\cap J$: specifically, $xi \\\\in IJ$ because $i \\\\in I$ and $x \\\\in J$, and $xj \\\\in IJ$ because $x \\\\in I$ and $j \\\\in J$.\",\n  \"suggestions\": \"Correct the reasoning in step 1 to use the intersection property properly. State that since $x \\\\in I \\\\cap J$, we have $x \\\\in J$ (so $ix \\\\in IJ$) and $x \\\\in I$ (so $xj \\\\in IJ$).\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "In part 1, the justification provided for why the terms $xi$ and $xj$ belong to the ideal $IJ$ is mathematically invalid. The answer claims '$xi \\in IJ$ because $x \\in I$ and $i \\in I$' and '$xj \\in IJ$ because $x \\in J$ and $j \\in J$'. The product of two elements from $I$ belongs to $I^2$, not necessarily $IJ$ (unless $I \\subseteq J$). The correct reasoning relies on the fact that $x \\in I \\cap J$: specifically, $xi \\in IJ$ because $i \\in I$ and $x \\in J$, and $xj \\in IJ$ because $x \\in I$ and $j \\in J$.",
+        "suggestions": "Correct the reasoning in step 1 to use the intersection property properly. State that since $x \\in I \\cap J$, we have $x \\in J$ (so $ix \\in IJ$) and $x \\in I$ (so $xj \\in IJ$).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $V$ be the affine variety in $\\mathbb{C}^3$ defined by the ideal $I = \\langle x^2 + y^2 + z^2 - 1, x^2 + y^2 - z \\rangle$. Determine the dimension of $V$ and describe its irreducible components.",
+    "run_id": "8",
+    "topic_slug": "algebraic_geometry",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly applies real-valued constraints to a problem in $\\\\mathbb{C}^3$. Specifically, the step \\\"Since $u = x^2 + y^2 \\\\geq 0$, only the positive solution is valid\\\" is false in the complex numbers; the equation $x^2 + y^2 = c$ has solutions for any $c \\\\in \\\\mathbb{C}$. As a result, the solution discards the second valid root $z = \\\\frac{-1 - \\\\sqrt{5}}{2}$ and fails to identify the second irreducible component of the variety.\",\n  \"suggestions\": \"Retain both roots of the quadratic equation $z^2 + z - 1 = 0$. Acknowledge that in $\\\\mathbb{C}^3$, the variety consists of two disjoint irreducible components (curves) located at distinct $z$-values.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly applies real-valued constraints to a problem in $\\\\mathbb{C}^3$. Specifically, the step \\\"Since $u = x^2 + y^2 \\\\geq 0$, only the positive solution is valid\\\" is false in the complex numbers; the equation $x^2 + y^2 = c$ has solutions for any $c \\\\in \\\\mathbb{C}$. As a result, the solution discards the second valid root $z = \\\\frac{-1 - \\\\sqrt{5}}{2}$ and fails to identify the second irreducible component of the variety.\",\n  \"suggestions\": \"Retain both roots of the quadratic equation $z^2 + z - 1 = 0$. Acknowledge that in $\\\\mathbb{C}^3$, the variety consists of two disjoint irreducible components (curves) located at distinct $z$-values.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly applies real-valued constraints to a problem in $\\mathbb{C}^3$. Specifically, the step \"Since $u = x^2 + y^2 \\geq 0$, only the positive solution is valid\" is false in the complex numbers; the equation $x^2 + y^2 = c$ has solutions for any $c \\in \\mathbb{C}$. As a result, the solution discards the second valid root $z = \\frac{-1 - \\sqrt{5}}{2}$ and fails to identify the second irreducible component of the variety.",
+        "suggestions": "Retain both roots of the quadratic equation $z^2 + z - 1 = 0$. Acknowledge that in $\\mathbb{C}^3$, the variety consists of two disjoint irreducible components (curves) located at distinct $z$-values.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $A$ be a $3 \\times 3$ matrix with real entries such that $A^3 = I$, where $I$ is the $3 \\times 3$ identity matrix. Determine all possible eigenvalues of $A$ and prove your result.",
+    "run_id": "9",
+    "topic_slug": "linear_and_multilinear_algebra",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly deduces that the eigenvalues must be cube roots of unity. It appropriately applies the constraint that the matrix is real, requiring complex eigenvalues to appear in conjugate pairs. It correctly identifies the two possible spectra: {1, 1, 1} and {1, \u03c9, \u03c9\u0305}, and lists the set of all possible values.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly deduces that the eigenvalues must be cube roots of unity. It appropriately applies the constraint that the matrix is real, requiring complex eigenvalues to appear in conjugate pairs. It correctly identifies the two possible spectra: {1, 1, 1} and {1, \u03c9, \u03c9\u0305}, and lists the set of all possible values.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly deduces that the eigenvalues must be cube roots of unity. It appropriately applies the constraint that the matrix is real, requiring complex eigenvalues to appear in conjugate pairs. It correctly identifies the two possible spectra: {1, 1, 1} and {1, \u03c9, \u03c9\u0305}, and lists the set of all possible values.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a commutative ring with unity, and let $I$ and $J$ be ideals of $R$. Define the product of $I$ and $J$, denoted $IJ$, as the set of all finite sums of elements of the form $ab$ where $a \\in I$ and $b \\in J$. Prove that $IJ$ is an ideal of $R$.",
+    "run_id": "10",
+    "topic_slug": "associative_rings_and_algebras",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The proof is mathematically sound and correctly establishes that $IJ$ is an ideal. The steps verify closure under addition, the existence of the zero element, and closure under scalar multiplication, which are the sufficient conditions for an ideal (given that $R$ has unity, closure under scalar multiplication implies additive inverses). \\n\\nThere is a minor terminological error in Step 1: the answer states that to show $IJ$ is a subring, one only needs to verify closure under addition and the additive identity. In standard definitions, a subring must also be closed under multiplication and contain additive inverses. However, since the proof later establishes closure under multiplication by $R$ (Step 2), the conditions for being an ideal are ultimately satisfied.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The proof is mathematically sound and correctly establishes that $IJ$ is an ideal. The steps verify closure under addition, the existence of the zero element, and closure under scalar multiplication, which are the sufficient conditions for an ideal (given that $R$ has unity, closure under scalar multiplication implies additive inverses). \\n\\nThere is a minor terminological error in Step 1: the answer states that to show $IJ$ is a subring, one only needs to verify closure under addition and the additive identity. In standard definitions, a subring must also be closed under multiplication and contain additive inverses. However, since the proof later establishes closure under multiplication by $R$ (Step 2), the conditions for being an ideal are ultimately satisfied.\"\n}",
+        "verdict": "correct",
+        "notes": "The proof is mathematically sound and correctly establishes that $IJ$ is an ideal. The steps verify closure under addition, the existence of the zero element, and closure under scalar multiplication, which are the sufficient conditions for an ideal (given that $R$ has unity, closure under scalar multiplication implies additive inverses). \n\nThere is a minor terminological error in Step 1: the answer states that to show $IJ$ is a subring, one only needs to verify closure under addition and the additive identity. In standard definitions, a subring must also be closed under multiplication and contain additive inverses. However, since the proof later establishes closure under multiplication by $R$ (Step 2), the conditions for being an ideal are ultimately satisfied.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $A$ be a nonassociative algebra over the field $\\mathbb{R}$ with a basis $\\{e_1, e_2, e_3\\}$. The multiplication in $A$ is defined by the following rules:\n\n1. $e_1 e_1 = e_2$,\n2. $e_1 e_2 = e_3$,\n3. $e_2 e_1 = -e_3$,\n4. $e_2 e_2 = e_1$,\n5. $e_3 e_1 = e_1$,\n6. $e_3 e_2 = e_2$,\n7. $e_3 e_3 = e_3$.\n\nDetermine whether $A$ is a Lie algebra. If it is, find the dimension of its center. If it is not, provide a reason why it fails to be a Lie algebra.",
+    "run_id": "11",
+    "topic_slug": "nonassociative_rings_and_algebras",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that the algebra fails the anticommutativity (skew-symmetry) property required for a Lie algebra. Specifically, in a Lie algebra over a field of characteristic not 2, the condition $xy = -yx$ implies $xx = 0$ for all elements $x$. The answer correctly points out that $e_1 e_1 = e_2 \\neq 0$, which violates this condition. The reasoning is sound and the conclusion is valid.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that the algebra fails the anticommutativity (skew-symmetry) property required for a Lie algebra. Specifically, in a Lie algebra over a field of characteristic not 2, the condition $xy = -yx$ implies $xx = 0$ for all elements $x$. The answer correctly points out that $e_1 e_1 = e_2 \\neq 0$, which violates this condition. The reasoning is sound and the conclusion is valid.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies that the algebra fails the anticommutativity (skew-symmetry) property required for a Lie algebra. Specifically, in a Lie algebra over a field of characteristic not 2, the condition $xy = -yx$ implies $xx = 0$ for all elements $x$. The answer correctly points out that $e_1 e_1 = e_2 \neq 0$, which violates this condition. The reasoning is sound and the conclusion is valid.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathcal{A}$ be an abelian category, and consider the following short exact sequence of objects in $\\mathcal{A}$:\n\n$$ 0 \\to A \\xrightarrow{f} B \\xrightarrow{g} C \\to 0. $$\n\nAssume that $C$ is a projective object in $\\mathcal{A}$. Prove that the sequence splits, i.e., show that there exists a morphism $h: C \\to B$ such that $g \\circ h = \\text{id}_C$.",
+    "run_id": "12",
+    "topic_slug": "category_theory_and_homological_algebra",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a specific logical error in the justification of a step. It states, \\\"The exactness of the sequence at $B$ implies that $g: B \\\\to C$ is an epimorphism.\\\" This is mathematically false. Exactness at $B$ implies $\\\\text{Im}(f) = \\\\text{Ker}(g)$. It is the exactness at $C$ (specifically the segment $B \\\\xrightarrow{g} C \\\\to 0$) that implies $g$ is an epimorphism (surjective). While the conclusion that $g$ is an epimorphism is correct based on the problem statement, the reasoning provided to derive it is invalid.\",\n  \"suggestions\": \"Replace the incorrect justification with the correct one: state that the exactness of the sequence at $C$ (or the presence of the segment $B \\\\to C \\\\to 0$) implies that $g$ is an epimorphism.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a specific logical error in the justification of a step. It states, \\\"The exactness of the sequence at $B$ implies that $g: B \\\\to C$ is an epimorphism.\\\" This is mathematically false. Exactness at $B$ implies $\\\\text{Im}(f) = \\\\text{Ker}(g)$. It is the exactness at $C$ (specifically the segment $B \\\\xrightarrow{g} C \\\\to 0$) that implies $g$ is an epimorphism (surjective). While the conclusion that $g$ is an epimorphism is correct based on the problem statement, the reasoning provided to derive it is invalid.\",\n  \"suggestions\": \"Replace the incorrect justification with the correct one: state that the exactness of the sequence at $C$ (or the presence of the segment $B \\\\to C \\\\to 0$) implies that $g$ is an epimorphism.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains a specific logical error in the justification of a step. It states, \"The exactness of the sequence at $B$ implies that $g: B \\to C$ is an epimorphism.\" This is mathematically false. Exactness at $B$ implies $\\text{Im}(f) = \\text{Ker}(g)$. It is the exactness at $C$ (specifically the segment $B \\xrightarrow{g} C \\to 0$) that implies $g$ is an epimorphism (surjective). While the conclusion that $g$ is an epimorphism is correct based on the problem statement, the reasoning provided to derive it is invalid.",
+        "suggestions": "Replace the incorrect justification with the correct one: state that the exactness of the sequence at $C$ (or the presence of the segment $B \\to C \\to 0$) implies that $g$ is an epimorphism.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a compact Hausdorff space, and let $C(X, \\mathbb{C})$ denote the algebra of continuous complex-valued functions on $X$. Consider the vector bundle $E \\to X$ associated with a projection $p \\in M_n(C(X, \\mathbb{C}))$, where $M_n(C(X, \\mathbb{C}))$ is the algebra of $n \\times n$ matrices with entries in $C(X, \\mathbb{C})$. \n\nSuppose $p$ is a projection such that $p^2 = p$ and $p^* = p$. The K-theory group $K^0(X)$ is defined as the Grothendieck group of isomorphism classes of vector bundles over $X$. \n\nProve that the class $[E]$ in $K^0(X)$ is independent of the choice of the projection $p$ within its homotopy class. In other words, if $p_t \\in M_n(C(X, \\mathbb{C}))$ is a continuous family of projections with $p_0 = p$ and $p_1 = q$, then $[E_p] = [E_q]$ in $K^0(X)$.",
+    "run_id": "13",
+    "topic_slug": "k_theory",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly constructs a vector bundle $E_P$ over the product space $X \\\\times [0, 1]$ from the homotopy of projections. However, Step 4 asserts that the restrictions of this bundle to $X \\\\times \\\\{0\\\\}$ and $X \\\\times \\\\{1\\\\}$ are isomorphic merely because they are restrictions of the same continuous bundle. This reasoning is incomplete. The fact that restrictions to the ends of the cylinder $X \\\\times [0, 1]$ are isomorphic is a non-trivial result (the Homotopy Invariance Theorem for vector bundles) that relies on the contractibility of the interval $[0, 1]$. It does not follow solely from the continuity of $P$ without invoking this theorem or constructing an explicit isomorphism (e.g., via a unitary intertwiner).\",\n  \"suggestions\": \"To complete the proof, either explicitly cite the theorem that vector bundles over $X \\\\times [0, 1]$ are isomorphic to the pullback of their restriction to $X \\\\times \\\\{0\\\\}$ (homotopy invariance), or provide a constructive proof of the isomorphism (e.g., by constructing a unitary path $U_t$ such that $U_t p_0 U_t^* = p_t$ using the differential equation $\\\\dot{U}_t = [\\\\dot{p}_t, p_t]U_t$).\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly constructs a vector bundle $E_P$ over the product space $X \\\\times [0, 1]$ from the homotopy of projections. However, Step 4 asserts that the restrictions of this bundle to $X \\\\times \\\\{0\\\\}$ and $X \\\\times \\\\{1\\\\}$ are isomorphic merely because they are restrictions of the same continuous bundle. This reasoning is incomplete. The fact that restrictions to the ends of the cylinder $X \\\\times [0, 1]$ are isomorphic is a non-trivial result (the Homotopy Invariance Theorem for vector bundles) that relies on the contractibility of the interval $[0, 1]$. It does not follow solely from the continuity of $P$ without invoking this theorem or constructing an explicit isomorphism (e.g., via a unitary intertwiner).\",\n  \"suggestions\": \"To complete the proof, either explicitly cite the theorem that vector bundles over $X \\\\times [0, 1]$ are isomorphic to the pullback of their restriction to $X \\\\times \\\\{0\\\\}$ (homotopy invariance), or provide a constructive proof of the isomorphism (e.g., by constructing a unitary path $U_t$ such that $U_t p_0 U_t^* = p_t$ using the differential equation $\\\\dot{U}_t = [\\\\dot{p}_t, p_t]U_t$).\"\n}",
+        "verdict": "insufficient",
+        "notes": "The answer correctly constructs a vector bundle $E_P$ over the product space $X \\times [0, 1]$ from the homotopy of projections. However, Step 4 asserts that the restrictions of this bundle to $X \\times \\{0\\}$ and $X \\times \\{1\\}$ are isomorphic merely because they are restrictions of the same continuous bundle. This reasoning is incomplete. The fact that restrictions to the ends of the cylinder $X \\times [0, 1]$ are isomorphic is a non-trivial result (the Homotopy Invariance Theorem for vector bundles) that relies on the contractibility of the interval $[0, 1]$. It does not follow solely from the continuity of $P$ without invoking this theorem or constructing an explicit isomorphism (e.g., via a unitary intertwiner).",
+        "suggestions": "To complete the proof, either explicitly cite the theorem that vector bundles over $X \\times [0, 1]$ are isomorphic to the pullback of their restriction to $X \\times \\{0\\}$ (homotopy invariance), or provide a constructive proof of the isomorphism (e.g., by constructing a unitary path $U_t$ such that $U_t p_0 U_t^* = p_t$ using the differential equation $\\dot{U}_t = [\\dot{p}_t, p_t]U_t$).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a finite group of order 56. Prove that $G$ has a normal subgroup of order 7.",
+    "run_id": "14",
+    "topic_slug": "group_theory_and_generalizations",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is incorrect because it attempts to prove a false statement. A group of order 56 is not required to have a normal subgroup of order 7; it must have a normal Sylow subgroup of order 7 OR order 8 (e.g., the group $(\\\\mathbb{Z}_2)^3 \\\\rtimes \\\\mathbb{Z}_7$ has a normal subgroup of order 8 and no normal subgroup of order 7). Additionally, the proof contains specific mathematical errors: (1) it falsely claims that 7 is not congruent to $1 \\\\pmod 2$ to rule out $n_2=7$, and (2) it erroneously claims a contradiction in the $n_7=8$ case, asserting that the 8 remaining elements cannot form a Sylow 2-subgroup, when in fact they fit perfectly as the unique Sylow 2-subgroup.\",\n  \"suggestions\": \"Acknowledge that the problem statement as given is false; the correct theorem states $G$ has a normal subgroup of order 7 or order 8. Correct the modular arithmetic (note that $7 \\\\equiv 1 \\\\pmod 2$). In the counting argument, recognize that if $n_7=8$, the remaining 8 elements form a normal Sylow 2-subgroup, which is a valid case.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is incorrect because it attempts to prove a false statement. A group of order 56 is not required to have a normal subgroup of order 7; it must have a normal Sylow subgroup of order 7 OR order 8 (e.g., the group $(\\\\mathbb{Z}_2)^3 \\\\rtimes \\\\mathbb{Z}_7$ has a normal subgroup of order 8 and no normal subgroup of order 7). Additionally, the proof contains specific mathematical errors: (1) it falsely claims that 7 is not congruent to $1 \\\\pmod 2$ to rule out $n_2=7$, and (2) it erroneously claims a contradiction in the $n_7=8$ case, asserting that the 8 remaining elements cannot form a Sylow 2-subgroup, when in fact they fit perfectly as the unique Sylow 2-subgroup.\",\n  \"suggestions\": \"Acknowledge that the problem statement as given is false; the correct theorem states $G$ has a normal subgroup of order 7 or order 8. Correct the modular arithmetic (note that $7 \\\\equiv 1 \\\\pmod 2$). In the counting argument, recognize that if $n_7=8$, the remaining 8 elements form a normal Sylow 2-subgroup, which is a valid case.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer is incorrect because it attempts to prove a false statement. A group of order 56 is not required to have a normal subgroup of order 7; it must have a normal Sylow subgroup of order 7 OR order 8 (e.g., the group $(\\mathbb{Z}_2)^3 \\rtimes \\mathbb{Z}_7$ has a normal subgroup of order 8 and no normal subgroup of order 7). Additionally, the proof contains specific mathematical errors: (1) it falsely claims that 7 is not congruent to $1 \\pmod 2$ to rule out $n_2=7$, and (2) it erroneously claims a contradiction in the $n_7=8$ case, asserting that the 8 remaining elements cannot form a Sylow 2-subgroup, when in fact they fit perfectly as the unique Sylow 2-subgroup.",
+        "suggestions": "Acknowledge that the problem statement as given is false; the correct theorem states $G$ has a normal subgroup of order 7 or order 8. Correct the modular arithmetic (note that $7 \\equiv 1 \\pmod 2$). In the counting argument, recognize that if $n_7=8$, the remaining 8 elements form a normal Sylow 2-subgroup, which is a valid case.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a connected Lie group and let $H$ be a closed subgroup of $G$. Prove that the quotient space $G/H$ is a smooth manifold. Furthermore, determine the dimension of $G/H$ in terms of the dimensions of $G$ and $H$.",
+    "run_id": "15",
+    "topic_slug": "topological_groups_and_lie_groups",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a fundamental mathematical error in the construction of the local chart (Section 1). It claims there exists a neighborhood $U$ of the identity $e$ **in** $G$ such that the multiplication map $\\\\phi: U \\\\times H \\\\to G$ is a diffeomorphism. This is dimensionally impossible unless $\\\\dim H = 0$, because the domain has dimension $\\\\dim G + \\\\dim H$ while the codomain has dimension $\\\\dim G$. The correct proof requires constructing a 'slice' or submanifold transversal to $H$ (typically using a subspace $\\\\mathfrak{m} \\\\subset \\\\mathfrak{g}$ complementary to the Lie algebra $\\\\mathfrak{h}$), not taking an open set of the group $G$.\",\n  \"suggestions\": \"To fix the proof, use the Slice Theorem (or the Quotient Manifold Theorem). Specifically, choose a subspace $\\\\mathfrak{m}$ of the Lie algebra $\\\\mathfrak{g}$ such that $\\\\mathfrak{g} = \\\\mathfrak{h} \\\\oplus \\\\mathfrak{m}$. Then, define the map using the exponential map restricted to $\\\\mathfrak{m}$, i.e., $\\\\phi: V \\\\times H \\\\to G$ where $V \\\\subset \\\\mathfrak{m}$ is a neighborhood of $0$, defined by $\\\\phi(X, h) = (\\\\exp X)h$. This map is a local diffeomorphism.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a fundamental mathematical error in the construction of the local chart (Section 1). It claims there exists a neighborhood $U$ of the identity $e$ **in** $G$ such that the multiplication map $\\\\phi: U \\\\times H \\\\to G$ is a diffeomorphism. This is dimensionally impossible unless $\\\\dim H = 0$, because the domain has dimension $\\\\dim G + \\\\dim H$ while the codomain has dimension $\\\\dim G$. The correct proof requires constructing a 'slice' or submanifold transversal to $H$ (typically using a subspace $\\\\mathfrak{m} \\\\subset \\\\mathfrak{g}$ complementary to the Lie algebra $\\\\mathfrak{h}$), not taking an open set of the group $G$.\",\n  \"suggestions\": \"To fix the proof, use the Slice Theorem (or the Quotient Manifold Theorem). Specifically, choose a subspace $\\\\mathfrak{m}$ of the Lie algebra $\\\\mathfrak{g}$ such that $\\\\mathfrak{g} = \\\\mathfrak{h} \\\\oplus \\\\mathfrak{m}$. Then, define the map using the exponential map restricted to $\\\\mathfrak{m}$, i.e., $\\\\phi: V \\\\times H \\\\to G$ where $V \\\\subset \\\\mathfrak{m}$ is a neighborhood of $0$, defined by $\\\\phi(X, h) = (\\\\exp X)h$. This map is a local diffeomorphism.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer contains a fundamental mathematical error in the construction of the local chart (Section 1). It claims there exists a neighborhood $U$ of the identity $e$ **in** $G$ such that the multiplication map $\\phi: U \\times H \\to G$ is a diffeomorphism. This is dimensionally impossible unless $\\dim H = 0$, because the domain has dimension $\\dim G + \\dim H$ while the codomain has dimension $\\dim G$. The correct proof requires constructing a 'slice' or submanifold transversal to $H$ (typically using a subspace $\\mathfrak{m} \\subset \\mathfrak{g}$ complementary to the Lie algebra $\\mathfrak{h}$), not taking an open set of the group $G$.",
+        "suggestions": "To fix the proof, use the Slice Theorem (or the Quotient Manifold Theorem). Specifically, choose a subspace $\\mathfrak{m}$ of the Lie algebra $\\mathfrak{g}$ such that $\\mathfrak{g} = \\mathfrak{h} \\oplus \\mathfrak{m}$. Then, define the map using the exponential map restricted to $\\mathfrak{m}$, i.e., $\\phi: V \\times H \\to G$ where $V \\subset \\mathfrak{m}$ is a neighborhood of $0$, defined by $\\phi(X, h) = (\\exp X)h$. This map is a local diffeomorphism.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a continuous function such that for all $x \\in \\mathbb{R}$, $f(x) = f(x^2)$. Prove that $f$ is a constant function.",
+    "run_id": "16",
+    "topic_slug": "real_functions",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution contains invalid reasoning in the case for $x > 1$. It considers the sequence $x^{2^n}$ which approaches $\\\\infty$ and incorrectly concludes that $f(x) = f(1)$ from this, which is a non-sequitur. The correct approach is to iterate the inverse operation ($x^{1/2^n} \\\\to 1$). Furthermore, the solution fails to prove that $f(0) = f(1)$, which is necessary to conclude that $f$ is constantly $f(0)$ everywhere. In Case 2, it incorrectly claims that Case 1 showed $f(y) = f(0)$ for all $y \\\\geq 0$, ignoring its own previous (flawed) conclusion that $f(x) = f(1)$ for $x > 1$.\",\n  \"suggestions\": \"For $x > 1$, use the sequence defined by repeated square roots ($x, x^{1/2}, x^{1/4}, \\\\dots$) which converges to $1$. Use continuity at $x=1$ to show that the constant value on $[0, 1)$ must equal the constant value on $(1, \\\\infty)$, thereby proving $f(0) = f(1)$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution contains invalid reasoning in the case for $x > 1$. It considers the sequence $x^{2^n}$ which approaches $\\\\infty$ and incorrectly concludes that $f(x) = f(1)$ from this, which is a non-sequitur. The correct approach is to iterate the inverse operation ($x^{1/2^n} \\\\to 1$). Furthermore, the solution fails to prove that $f(0) = f(1)$, which is necessary to conclude that $f$ is constantly $f(0)$ everywhere. In Case 2, it incorrectly claims that Case 1 showed $f(y) = f(0)$ for all $y \\\\geq 0$, ignoring its own previous (flawed) conclusion that $f(x) = f(1)$ for $x > 1$.\",\n  \"suggestions\": \"For $x > 1$, use the sequence defined by repeated square roots ($x, x^{1/2}, x^{1/4}, \\\\dots$) which converges to $1$. Use continuity at $x=1$ to show that the constant value on $[0, 1)$ must equal the constant value on $(1, \\\\infty)$, thereby proving $f(0) = f(1)$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The solution contains invalid reasoning in the case for $x > 1$. It considers the sequence $x^{2^n}$ which approaches $\\infty$ and incorrectly concludes that $f(x) = f(1)$ from this, which is a non-sequitur. The correct approach is to iterate the inverse operation ($x^{1/2^n} \\to 1$). Furthermore, the solution fails to prove that $f(0) = f(1)$, which is necessary to conclude that $f$ is constantly $f(0)$ everywhere. In Case 2, it incorrectly claims that Case 1 showed $f(y) = f(0)$ for all $y \\geq 0$, ignoring its own previous (flawed) conclusion that $f(x) = f(1)$ for $x > 1$.",
+        "suggestions": "For $x > 1$, use the sequence defined by repeated square roots ($x, x^{1/2}, x^{1/4}, \\dots$) which converges to $1$. Use continuity at $x=1$ to show that the constant value on $[0, 1)$ must equal the constant value on $(1, \\infty)$, thereby proving $f(0) = f(1)$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: [0, 1] \\to \\mathbb{R}$ be a Lebesgue integrable function such that $\\int_0^1 f(x) \\, dx = 0$. Prove that for any $\\epsilon > 0$, there exists a measurable set $E \\subseteq [0, 1]$ with measure $m(E) < \\epsilon$ such that $\\int_{[0, 1] \\setminus E} f(x) \\, dx = 0$.",
+    "run_id": "17",
+    "topic_slug": "measure_and_integration",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is incorrect for multiple reasons. First, the problem has a trivial solution: since $\\\\int_0^1 f(x) \\\\, dx = 0$, one can simply choose $E = \\\\emptyset$. Then $m(E) = 0 < \\\\epsilon$ and $\\\\int_{[0,1] \\\\setminus \\\\emptyset} f(x) \\\\, dx = \\\\int_0^1 f(x) \\\\, dx = 0$. The answer overlooks this and attempts a flawed construction.\\n\\nSecond, the mathematical reasoning in the construction is invalid. In Step 2, the answer claims that for $A_n = \\\\{ x : f(x) > 1/n \\\\}$, $m(A_n) \\\\to 0$ as $n \\\\to \\\\infty$. This is false; as $n \\\\to \\\\infty$, $1/n \\\\to 0$, so $A_n$ expands to $\\\\{ x : f(x) > 0 \\\\}$. The measure of this set is not necessarily zero (e.g., if $f(x) = x - 1/2$, $m(A_n) \\\\to 0.5$).\\n\\nThird, in Step 4, the proof only shows that the integral over $[0, 1] \\\\setminus E$ is bounded by $1/n$, not that it is exactly equal to 0 for a fixed set $E$, as required by the problem statement.\",\n  \"suggestions\": \"Simply observe that $E = \\\\emptyset$ satisfies the conditions given that $\\\\int_0^1 f(x) \\\\, dx = 0$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer is incorrect for multiple reasons. First, the problem has a trivial solution: since $\\\\int_0^1 f(x) \\\\, dx = 0$, one can simply choose $E = \\\\emptyset$. Then $m(E) = 0 < \\\\epsilon$ and $\\\\int_{[0,1] \\\\setminus \\\\emptyset} f(x) \\\\, dx = \\\\int_0^1 f(x) \\\\, dx = 0$. The answer overlooks this and attempts a flawed construction.\\n\\nSecond, the mathematical reasoning in the construction is invalid. In Step 2, the answer claims that for $A_n = \\\\{ x : f(x) > 1/n \\\\}$, $m(A_n) \\\\to 0$ as $n \\\\to \\\\infty$. This is false; as $n \\\\to \\\\infty$, $1/n \\\\to 0$, so $A_n$ expands to $\\\\{ x : f(x) > 0 \\\\}$. The measure of this set is not necessarily zero (e.g., if $f(x) = x - 1/2$, $m(A_n) \\\\to 0.5$).\\n\\nThird, in Step 4, the proof only shows that the integral over $[0, 1] \\\\setminus E$ is bounded by $1/n$, not that it is exactly equal to 0 for a fixed set $E$, as required by the problem statement.\",\n  \"suggestions\": \"Simply observe that $E = \\\\emptyset$ satisfies the conditions given that $\\\\int_0^1 f(x) \\\\, dx = 0$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer is incorrect for multiple reasons. First, the problem has a trivial solution: since $\\int_0^1 f(x) \\, dx = 0$, one can simply choose $E = \\emptyset$. Then $m(E) = 0 < \\epsilon$ and $\\int_{[0,1] \\setminus \\emptyset} f(x) \\, dx = \\int_0^1 f(x) \\, dx = 0$. The answer overlooks this and attempts a flawed construction.\n\nSecond, the mathematical reasoning in the construction is invalid. In Step 2, the answer claims that for $A_n = \\{ x : f(x) > 1/n \\}$, $m(A_n) \\to 0$ as $n \\to \\infty$. This is false; as $n \\to \\infty$, $1/n \\to 0$, so $A_n$ expands to $\\{ x : f(x) > 0 \\}$. The measure of this set is not necessarily zero (e.g., if $f(x) = x - 1/2$, $m(A_n) \\to 0.5$).\n\nThird, in Step 4, the proof only shows that the integral over $[0, 1] \\setminus E$ is bounded by $1/n$, not that it is exactly equal to 0 for a fixed set $E$, as required by the problem statement.",
+        "suggestions": "Simply observe that $E = \\emptyset$ satisfies the conditions given that $\\int_0^1 f(x) \\, dx = 0$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f(z) = z^3 - 3z + 2$ be a polynomial function of a complex variable $z$. Determine all the roots of $f(z)$ in the complex plane.",
+    "run_id": "18",
+    "topic_slug": "functions_of_a_complex_variable",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the Rational Root Theorem to identify roots $z=1$ and $z=-2$, performs accurate polynomial division to find the remaining factor, and correctly concludes the factorization is $f(z) = (z-1)^2(z+2)$. All calculations are accurate.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the Rational Root Theorem to identify roots $z=1$ and $z=-2$, performs accurate polynomial division to find the remaining factor, and correctly concludes the factorization is $f(z) = (z-1)^2(z+2)$. All calculations are accurate.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly applies the Rational Root Theorem to identify roots $z=1$ and $z=-2$, performs accurate polynomial division to find the remaining factor, and correctly concludes the factorization is $f(z) = (z-1)^2(z+2)$. All calculations are accurate.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $D$ be the open unit disk in the complex plane, i.e., $D = \\{ z \\in \\mathbb{C} : |z| < 1 \\}$. Consider the function $u: D \\to \\mathbb{R}$ defined by\n\n$$ u(z) = \\log \\left( \\frac{1}{1 - |z|^2} \\right). $$\n\nProve that $u$ is a harmonic function on $D$. Furthermore, determine whether $u$ can be extended to a harmonic function on the closed unit disk $\\overline{D} = \\{ z \\in \\mathbb{C} : |z| \\leq 1 \\}$.",
+    "run_id": "19",
+    "topic_slug": "potential_theory",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The function $u(z) = \\\\log \\\\left( \\\\frac{1}{1 - |z|^2} \\\\right)$ is not harmonic on $D$. For a radial function $u(r)$ (where $r=|z|$) to be harmonic in two dimensions, it must be of the form $c_1 \\\\log r + c_2$. The given function does not satisfy this form. A correct calculation yields $\\\\Delta u = \\\\frac{4}{(1 - |z|^2)^2} \\\\neq 0$. The provided solution contains algebraic errors in the application of the quotient rule for the second derivatives and incorrectly asserts that the sum of two non-zero expressions is zero.\",\n  \"suggestions\": \"Verify the harmonicity by computing the Laplacian $\\\\Delta u = u_{xx} + u_{yy}$ correctly or by using the radial form of the Laplacian $\\\\Delta u = u_{rr} + \\\\frac{1}{r}u_r$. Correct the algebraic steps in the differentiation.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The function $u(z) = \\\\log \\\\left( \\\\frac{1}{1 - |z|^2} \\\\right)$ is not harmonic on $D$. For a radial function $u(r)$ (where $r=|z|$) to be harmonic in two dimensions, it must be of the form $c_1 \\\\log r + c_2$. The given function does not satisfy this form. A correct calculation yields $\\\\Delta u = \\\\frac{4}{(1 - |z|^2)^2} \\\\neq 0$. The provided solution contains algebraic errors in the application of the quotient rule for the second derivatives and incorrectly asserts that the sum of two non-zero expressions is zero.\",\n  \"suggestions\": \"Verify the harmonicity by computing the Laplacian $\\\\Delta u = u_{xx} + u_{yy}$ correctly or by using the radial form of the Laplacian $\\\\Delta u = u_{rr} + \\\\frac{1}{r}u_r$. Correct the algebraic steps in the differentiation.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The function $u(z) = \\log \\left( \\frac{1}{1 - |z|^2} \\right)$ is not harmonic on $D$. For a radial function $u(r)$ (where $r=|z|$) to be harmonic in two dimensions, it must be of the form $c_1 \\log r + c_2$. The given function does not satisfy this form. A correct calculation yields $\\Delta u = \\frac{4}{(1 - |z|^2)^2} \\neq 0$. The provided solution contains algebraic errors in the application of the quotient rule for the second derivatives and incorrectly asserts that the sum of two non-zero expressions is zero.",
+        "suggestions": "Verify the harmonicity by computing the Laplacian $\\Delta u = u_{xx} + u_{yy}$ correctly or by using the radial form of the Laplacian $\\Delta u = u_{rr} + \\frac{1}{r}u_r$. Correct the algebraic steps in the differentiation.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{C}^2 \\to \\mathbb{C}$ be a holomorphic function defined by $f(z_1, z_2) = z_1^2 + z_2^2 - 1$. Consider the set $V = \\{ (z_1, z_2) \\in \\mathbb{C}^2 \\mid f(z_1, z_2) = 0 \\}$, which is an analytic variety in $\\mathbb{C}^2$. Determine whether $V$ is irreducible, and if it is not, find its irreducible components.",
+    "run_id": "20",
+    "topic_slug": "several_complex_variables_and_analytic_spaces",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that the variety is irreducible because the defining polynomial $z_1^2 + z_2^2 - 1$ is irreducible over $\\\\mathbb{C}$. The geometric argument that the zero set is a non-degenerate conic (and thus not a union of lines/hyperplanes) is valid.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that the variety is irreducible because the defining polynomial $z_1^2 + z_2^2 - 1$ is irreducible over $\\\\mathbb{C}$. The geometric argument that the zero set is a non-degenerate conic (and thus not a union of lines/hyperplanes) is valid.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies that the variety is irreducible because the defining polynomial $z_1^2 + z_2^2 - 1$ is irreducible over $\\mathbb{C}$. The geometric argument that the zero set is a non-degenerate conic (and thus not a union of lines/hyperplanes) is valid.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the Gamma function $\\Gamma(z)$, which is defined for complex numbers $z$ with $\\Re(z) > 0$ by the integral\n\n$$ \\Gamma(z) = \\int_0^\\infty t^{z-1} e^{-t} \\, dt. $$\n\nThe Gamma function satisfies the functional equation $\\Gamma(z+1) = z\\Gamma(z)$ and is related to the factorial by $\\Gamma(n) = (n-1)!$ for natural numbers $n$. \n\nProve that for any positive integer $n$, the following identity holds:\n\n$$ \\Gamma\\left(\\frac{1}{2}\\right) \\Gamma\\left(n + \\frac{1}{2}\\right) = \\frac{(2n-1)!! \\sqrt{\\pi}}{2^n}, $$\n\nwhere $(2n-1)!!$ denotes the double factorial, defined as the product of all odd numbers up to $(2n-1)$.",
+    "run_id": "21",
+    "topic_slug": "special_functions",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The question asks to prove a mathematically false identity. Specifically, the Left Hand Side simplifies to $\\\\frac{(2n-1)!! \\\\pi}{2^n}$, whereas the Right Hand Side is given as $\\\\frac{(2n-1)!! \\\\sqrt{\\pi}}{2^n}$. The answer correctly derives the expression with $\\\\pi$ in the penultimate step, but then falsely claims in the conclusion to have proved the target identity (containing $\\\\sqrt{\\pi}$), ignoring the contradiction between its derivation and the problem statement.\",\n  \"suggestions\": \"When the statement to be proved is incorrect, identify the error (in this case, the RHS should contain $\\\\pi$, not $\\\\sqrt{\\pi}$) rather than claiming to have proved the false statement.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The question asks to prove a mathematically false identity. Specifically, the Left Hand Side simplifies to $\\\\frac{(2n-1)!! \\\\pi}{2^n}$, whereas the Right Hand Side is given as $\\\\frac{(2n-1)!! \\\\sqrt{\\pi}}{2^n}$. The answer correctly derives the expression with $\\\\pi$ in the penultimate step, but then falsely claims in the conclusion to have proved the target identity (containing $\\\\sqrt{\\pi}$), ignoring the contradiction between its derivation and the problem statement.\",\n  \"suggestions\": \"When the statement to be proved is incorrect, identify the error (in this case, the RHS should contain $\\\\pi$, not $\\\\sqrt{\\pi}$) rather than claiming to have proved the false statement.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The question asks to prove a mathematically false identity. Specifically, the Left Hand Side simplifies to $\\frac{(2n-1)!! \\pi}{2^n}$, whereas the Right Hand Side is given as $\\frac{(2n-1)!! \\sqrt{\\pi}}{2^n}$. The answer correctly derives the expression with $\\pi$ in the penultimate step, but then falsely claims in the conclusion to have proved the target identity (containing $\\sqrt{\\pi}$), ignoring the contradiction between its derivation and the problem statement.",
+        "suggestions": "When the statement to be proved is incorrect, identify the error (in this case, the RHS should contain $\\pi$, not $\\sqrt{\\pi}$) rather than claiming to have proved the false statement.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the second-order linear ordinary differential equation given by:\n\n$$ y'' - 4y' + 4y = e^{2x}, $$\n\nwhere $y(x)$ is a function of $x$. Find the general solution of this differential equation.",
+    "run_id": "22",
+    "topic_slug": "ordinary_differential_equations",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution arrives at the correct final answer, but the derivation contains a significant calculation error. The calculation of the second derivative $y_p''(x)$ is incorrect. The solution states $y_p''(x) = A(2 + 4x + 4x^2)e^{2x}$, but the correct derivative is $y_p''(x) = A(2 + 8x + 4x^2)e^{2x}$. As a result of this error, the substitution step in the solution should yield a residual $x$ term ($-4Ax e^{2x}$) rather than canceling out completely. The solution incorrectly asserts that the terms cancel to force the result $2A=1$.\",\n  \"suggestions\": \"Recalculate the second derivative using the product rule correctly: $\\\\frac{d}{dx}[A(2x+2x^2)e^{2x}] = A(2+4x)e^{2x} + A(2x+2x^2)(2e^{2x}) = A(2+8x+4x^2)e^{2x}$. Ensure the substitution step demonstrates the correct cancellation of linear $x$ terms.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The solution arrives at the correct final answer, but the derivation contains a significant calculation error. The calculation of the second derivative $y_p''(x)$ is incorrect. The solution states $y_p''(x) = A(2 + 4x + 4x^2)e^{2x}$, but the correct derivative is $y_p''(x) = A(2 + 8x + 4x^2)e^{2x}$. As a result of this error, the substitution step in the solution should yield a residual $x$ term ($-4Ax e^{2x}$) rather than canceling out completely. The solution incorrectly asserts that the terms cancel to force the result $2A=1$.\",\n  \"suggestions\": \"Recalculate the second derivative using the product rule correctly: $\\\\frac{d}{dx}[A(2x+2x^2)e^{2x}] = A(2+4x)e^{2x} + A(2x+2x^2)(2e^{2x}) = A(2+8x+4x^2)e^{2x}$. Ensure the substitution step demonstrates the correct cancellation of linear $x$ terms.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The solution arrives at the correct final answer, but the derivation contains a significant calculation error. The calculation of the second derivative $y_p''(x)$ is incorrect. The solution states $y_p''(x) = A(2 + 4x + 4x^2)e^{2x}$, but the correct derivative is $y_p''(x) = A(2 + 8x + 4x^2)e^{2x}$. As a result of this error, the substitution step in the solution should yield a residual $x$ term ($-4Ax e^{2x}$) rather than canceling out completely. The solution incorrectly asserts that the terms cancel to force the result $2A=1$.",
+        "suggestions": "Recalculate the second derivative using the product rule correctly: $\\frac{d}{dx}[A(2x+2x^2)e^{2x}] = A(2+4x)e^{2x} + A(2x+2x^2)(2e^{2x}) = A(2+8x+4x^2)e^{2x}$. Ensure the substitution step demonstrates the correct cancellation of linear $x$ terms.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the partial differential equation (PDE) given by:\n\n$$ u_{xx} + u_{yy} = 0 $$\n\nwhere $u(x, y)$ is a twice continuously differentiable function defined on the entire plane $\\mathbb{R}^2$. This is known as the Laplace equation in two dimensions. \n\nSuppose $u(x, y)$ is subject to the boundary condition:\n\n$$ u(x, 0) = \\sin(x) $$\n\nfor all $x \\in \\mathbb{R}$.\n\nFind a function $u(x, y)$ that satisfies both the PDE and the given boundary condition.",
+    "run_id": "23",
+    "topic_slug": "partial_differential_equations",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The final solution $u(x, y) = \\sin(x) \\cosh(y)$ is correct as it satisfies the Laplace equation and the boundary condition $u(x, 0) = \\sin(x)$. Note that there is an algebraic error in the intermediate step: the answer claims $u(x, y) = \\sin(x)(e^y + e^{-y})$ is the solution, but this function satisfies $u(x, 0) = 2\\sin(x)$. However, the final conclusion implicitly corrects this by using $\\cosh(y)$ (which introduces the required factor of $1/2$), leading to the correct result.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The final solution $u(x, y) = \\sin(x) \\cosh(y)$ is correct as it satisfies the Laplace equation and the boundary condition $u(x, 0) = \\sin(x)$. Note that there is an algebraic error in the intermediate step: the answer claims $u(x, y) = \\sin(x)(e^y + e^{-y})$ is the solution, but this function satisfies $u(x, 0) = 2\\sin(x)$. However, the final conclusion implicitly corrects this by using $\\cosh(y)$ (which introduces the required factor of $1/2$), leading to the correct result.\"\n}",
+        "verdict": "correct",
+        "notes": "The final solution $u(x, y) = \\sin(x) \\cosh(y)$ is correct as it satisfies the Laplace equation and the boundary condition $u(x, 0) = \\sin(x)$. Note that there is an algebraic error in the intermediate step: the answer claims $u(x, y) = \\sin(x)(e^y + e^{-y})$ is the solution, but this function satisfies $u(x, 0) = 2\\sin(x)$. However, the final conclusion implicitly corrects this by using $\\cosh(y)$ (which introduces the required factor of $1/2$), leading to the correct result.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the discrete dynamical system defined by the map $T: [0, 1] \\to [0, 1]$ given by\n\n$$ T(x) = \\begin{cases} \n2x, & \\text{if } 0 \\leq x < \\frac{1}{2}, \\\\\n2x - 1, & \\text{if } \\frac{1}{2} \\leq x \\leq 1.\n\\end{cases} $$\n\nThis map is known as the tent map. Determine the set of all periodic points of period 2 for this map. A point $x \\in [0, 1]$ is a periodic point of period 2 if $T^2(x) = x$ and $T(x) \\neq x$.",
+    "run_id": "24",
+    "topic_slug": "dynamical_systems_and_ergodic_theory",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer correctly calculates the set of period 2 points as $\\\\{1/3, 2/3\\\\}$ but contains logical errors in the verification of the fixed points $x=0$ and $x=1$. Specifically, for $x=0$, the answer states \\\"But $T(x) = 0 \\\\neq x$\\\". Since $x=0$, this claims $0 \\\\neq 0$, which is false. Furthermore, if $T(x) \\\\neq x$ were true, $x$ would satisfy the condition for being a period 2 point (assuming $T^2(x)=x$), yet the answer concludes it is not. The correct reasoning is that $T(0)=0=x$, so the condition $T(x) \\\\neq x$ is not met. The same error occurs for $x=1$.\",\n  \"suggestions\": \"Correct the justification for excluding the fixed points. State that for $x=0$ and $x=1$, $T(x) = x$, which fails the requirement $T(x) \\\\neq x$ for a period 2 point.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer correctly calculates the set of period 2 points as $\\\\{1/3, 2/3\\\\}$ but contains logical errors in the verification of the fixed points $x=0$ and $x=1$. Specifically, for $x=0$, the answer states \\\"But $T(x) = 0 \\\\neq x$\\\". Since $x=0$, this claims $0 \\\\neq 0$, which is false. Furthermore, if $T(x) \\\\neq x$ were true, $x$ would satisfy the condition for being a period 2 point (assuming $T^2(x)=x$), yet the answer concludes it is not. The correct reasoning is that $T(0)=0=x$, so the condition $T(x) \\\\neq x$ is not met. The same error occurs for $x=1$.\",\n  \"suggestions\": \"Correct the justification for excluding the fixed points. State that for $x=0$ and $x=1$, $T(x) = x$, which fails the requirement $T(x) \\\\neq x$ for a period 2 point.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer correctly calculates the set of period 2 points as $\\{1/3, 2/3\\}$ but contains logical errors in the verification of the fixed points $x=0$ and $x=1$. Specifically, for $x=0$, the answer states \"But $T(x) = 0 \\neq x$\". Since $x=0$, this claims $0 \\neq 0$, which is false. Furthermore, if $T(x) \\neq x$ were true, $x$ would satisfy the condition for being a period 2 point (assuming $T^2(x)=x$), yet the answer concludes it is not. The correct reasoning is that $T(0)=0=x$, so the condition $T(x) \\neq x$ is not met. The same error occurs for $x=1$.",
+        "suggestions": "Correct the justification for excluding the fixed points. State that for $x=0$ and $x=1$, $T(x) = x$, which fails the requirement $T(x) \\neq x$ for a period 2 point.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{Z} \\to \\mathbb{Z}$ be a function satisfying the functional equation $f(n+2) = f(n) + 2n + 3$ for all integers $n$. Given that $f(0) = 1$, find the explicit formula for $f(n)$.",
+    "run_id": "25",
+    "topic_slug": "difference_and_functional_equations",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly derives the formula for even integers but assumes without justification that the same formula applies to odd integers. The functional equation $f(n+2) = f(n) + 2n + 3$ relates terms of the same parity, so $f(n)$ for odd $n$ depends on $f(1)$, which is not given. Consequently, the solution on $\\\\mathbb{Z}$ is not unique. The derived polynomial is a valid particular solution, but the answer presents it as the unique explicit formula without noting the ambiguity for odd $n$.\",\n  \"suggestions\": \"Acknowledge that the recurrence determines values for even $n$ based on $f(0)$ and for odd $n$ based on $f(1)$. Since $f(1)$ is unknown, explain that the general solution is not unique, or explicitly state the assumption (e.g., that $f(n)$ is a polynomial) that leads to the specific answer provided.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly derives the formula for even integers but assumes without justification that the same formula applies to odd integers. The functional equation $f(n+2) = f(n) + 2n + 3$ relates terms of the same parity, so $f(n)$ for odd $n$ depends on $f(1)$, which is not given. Consequently, the solution on $\\\\mathbb{Z}$ is not unique. The derived polynomial is a valid particular solution, but the answer presents it as the unique explicit formula without noting the ambiguity for odd $n$.\",\n  \"suggestions\": \"Acknowledge that the recurrence determines values for even $n$ based on $f(0)$ and for odd $n$ based on $f(1)$. Since $f(1)$ is unknown, explain that the general solution is not unique, or explicitly state the assumption (e.g., that $f(n)$ is a polynomial) that leads to the specific answer provided.\"\n}",
+        "verdict": "insufficient",
+        "notes": "The answer correctly derives the formula for even integers but assumes without justification that the same formula applies to odd integers. The functional equation $f(n+2) = f(n) + 2n + 3$ relates terms of the same parity, so $f(n)$ for odd $n$ depends on $f(1)$, which is not given. Consequently, the solution on $\\mathbb{Z}$ is not unique. The derived polynomial is a valid particular solution, but the answer presents it as the unique explicit formula without noting the ambiguity for odd $n$.",
+        "suggestions": "Acknowledge that the recurrence determines values for even $n$ based on $f(0)$ and for odd $n$ based on $f(1)$. Since $f(1)$ is unknown, explain that the general solution is not unique, or explicitly state the assumption (e.g., that $f(n)$ is a polynomial) that leads to the specific answer provided.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the sequence $\\{a_n\\}_{n=1}^{\\infty}$ defined by the recurrence relation $a_1 = 1$, and for $n \\geq 1$, $a_{n+1} = \\frac{1}{2}a_n + \\frac{1}{2^n}$. Determine the limit of the sequence $\\{a_n\\}$ as $n \\to \\infty$.",
+    "run_id": "26",
+    "topic_slug": "sequences_series_and_summability",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "The solution provided correctly identifies the limit of the sequence and uses a standard method for solving limit problems involving recurrence relations.\n\nHere is the verification breakdown:\n1.  **Method Validity**: The approach assumes the sequence converges to a limit $L$, applies the limit operator to both sides of the recurrence relation ($a_{n+1} = \\frac{1}{2}a_n + \\frac{1}{2^n}$), and solves the resulting algebraic equation. This is a standard heuristic in calculus.\n2.  **Correctness of Calculation**: The algebraic manipulation $L = \\frac{1}{2}L + 0 \\implies L=0$ is correct. The term $\\frac{1}{2^n}$ correctly vanishes as $n \\to \\infty$.\n3.  **Convergence Check**: While the solution does not strictly *prove* convergence (e.g., via the Monotone Convergence Theorem or by finding an explicit formula like $a_n = \\frac{n}{2^{n-1}}$), the recurrence is contractive (coefficient $\\frac{1}{2} < 1$) with a decaying source term, which guarantees convergence. The \"verification\" section of the answer correctly identifies that the sequence decreases (for sufficiently large $n$) towards 0.\n\nThe result is correct and the reasoning is sufficient for the \"Determine the limit\" task.\n\n```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly determines the limit is 0. The method of assuming convergence and solving the fixed-point equation is valid here because the recurrence coefficient (1/2) has an absolute value less than 1, ensuring the sequence is contractive and stable. The heuristic verification regarding the dominance of the negative term correctly describes the monotonic decrease of the sequence for n > 1.\"\n}\n```",
+        "raw_critique": "The solution provided correctly identifies the limit of the sequence and uses a standard method for solving limit problems involving recurrence relations.\n\nHere is the verification breakdown:\n1.  **Method Validity**: The approach assumes the sequence converges to a limit $L$, applies the limit operator to both sides of the recurrence relation ($a_{n+1} = \\frac{1}{2}a_n + \\frac{1}{2^n}$), and solves the resulting algebraic equation. This is a standard heuristic in calculus.\n2.  **Correctness of Calculation**: The algebraic manipulation $L = \\frac{1}{2}L + 0 \\implies L=0$ is correct. The term $\\frac{1}{2^n}$ correctly vanishes as $n \\to \\infty$.\n3.  **Convergence Check**: While the solution does not strictly *prove* convergence (e.g., via the Monotone Convergence Theorem or by finding an explicit formula like $a_n = \\frac{n}{2^{n-1}}$), the recurrence is contractive (coefficient $\\frac{1}{2} < 1$) with a decaying source term, which guarantees convergence. The \"verification\" section of the answer correctly identifies that the sequence decreases (for sufficiently large $n$) towards 0.\n\nThe result is correct and the reasoning is sufficient for the \"Determine the limit\" task.\n\n```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly determines the limit is 0. The method of assuming convergence and solving the fixed-point equation is valid here because the recurrence coefficient (1/2) has an absolute value less than 1, ensuring the sequence is contractive and stable. The heuristic verification regarding the dominance of the negative term correctly describes the monotonic decrease of the sequence for n > 1.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly determines the limit is 0. The method of assuming convergence and solving the fixed-point equation is valid here because the recurrence coefficient (1/2) has an absolute value less than 1, ensuring the sequence is contractive and stable. The heuristic verification regarding the dominance of the negative term correctly describes the monotonic decrease of the sequence for n > 1.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the function $f(x) = e^{x^2}$. Find the first four non-zero terms of the Taylor series expansion of $f(x)$ about $x = 0$.",
+    "run_id": "27",
+    "topic_slug": "approximations_and_expansions",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"While the final answer is correct, the derivation for the higher-order derivatives contains significant mathematical errors and logical inconsistencies. In Step 6, the expression used for differentiation ($12xe^{x^2} + \\dots$) does not match the result found in Step 5 ($12e^{x^2} + \\dots$). Furthermore, the derived expression for $f^{(5)}(x)$ includes the term $12e^{x^2}$, which evaluates to 12 at $x=0$, yet the solution incorrectly asserts $f^{(5)}(0)=0$. Similarly, the value for $f^{(6)}(0)$ does not follow from the algebraic expression provided in the previous step.\",\n  \"suggestions\": \"Ensure that the expression carried forward to the next step matches the previous result. For this specific function, it is much more efficient and less error-prone to use the substitution method: substitute $u=x^2$ into the known Maclaurin series for $e^u$ ($1 + u + u^2/2! + u^3/3! + \\dots$).\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"While the final answer is correct, the derivation for the higher-order derivatives contains significant mathematical errors and logical inconsistencies. In Step 6, the expression used for differentiation ($12xe^{x^2} + \\dots$) does not match the result found in Step 5 ($12e^{x^2} + \\dots$). Furthermore, the derived expression for $f^{(5)}(x)$ includes the term $12e^{x^2}$, which evaluates to 12 at $x=0$, yet the solution incorrectly asserts $f^{(5)}(0)=0$. Similarly, the value for $f^{(6)}(0)$ does not follow from the algebraic expression provided in the previous step.\",\n  \"suggestions\": \"Ensure that the expression carried forward to the next step matches the previous result. For this specific function, it is much more efficient and less error-prone to use the substitution method: substitute $u=x^2$ into the known Maclaurin series for $e^u$ ($1 + u + u^2/2! + u^3/3! + \\dots$).\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "While the final answer is correct, the derivation for the higher-order derivatives contains significant mathematical errors and logical inconsistencies. In Step 6, the expression used for differentiation ($12xe^{x^2} + \\dots$) does not match the result found in Step 5 ($12e^{x^2} + \\dots$). Furthermore, the derived expression for $f^{(5)}(x)$ includes the term $12e^{x^2}$, which evaluates to 12 at $x=0$, yet the solution incorrectly asserts $f^{(5)}(0)=0$. Similarly, the value for $f^{(6)}(0)$ does not follow from the algebraic expression provided in the previous step.",
+        "suggestions": "Ensure that the expression carried forward to the next step matches the previous result. For this specific function, it is much more efficient and less error-prone to use the substitution method: substitute $u=x^2$ into the known Maclaurin series for $e^u$ ($1 + u + u^2/2! + u^3/3! + \\dots$).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{R}^2 \\to \\mathbb{R}$ be a function defined by $f(x, y) = e^{-(x^2 + y^2)}$. Consider the Fourier transform $\\mathcal{F}\\{f\\}$ of $f$, defined by\n\n$$ \\mathcal{F}\\{f\\}(\\xi, \\eta) = \\int_{\\mathbb{R}^2} f(x, y) e^{-2\\pi i (x \\xi + y \\eta)} \\, dx \\, dy. $$\n\nFind the exact value of $\\mathcal{F}\\{f\\}(\\xi, \\eta)$ for all $(\\xi, \\eta) \\in \\mathbb{R}^2$.",
+    "run_id": "28",
+    "topic_slug": "harmonic_analysis_on_euclidean_spaces",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies the properties of the Fourier transform. It accurately separates the 2D integral into a product of two 1D integrals and correctly utilizes the known Fourier transform of a Gaussian function, taking into account the specific parameters given in the problem statement ($a=1$). The final result is consistent with the integral of the function at zero frequency (which equals $\\\\pi$) and the scaling properties.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies the properties of the Fourier transform. It accurately separates the 2D integral into a product of two 1D integrals and correctly utilizes the known Fourier transform of a Gaussian function, taking into account the specific parameters given in the problem statement ($a=1$). The final result is consistent with the integral of the function at zero frequency (which equals $\\\\pi$) and the scaling properties.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies the properties of the Fourier transform. It accurately separates the 2D integral into a product of two 1D integrals and correctly utilizes the known Fourier transform of a Gaussian function, taking into account the specific parameters given in the problem statement ($a=1$). The final result is consistent with the integral of the function at zero frequency (which equals $\\pi$) and the scaling properties.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G$ be a locally compact abelian group, and let $\\widehat{G}$ denote its Pontryagin dual, the group of continuous homomorphisms from $G$ to the circle group $\\mathbb{T} = \\{ z \\in \\mathbb{C} : |z| = 1 \\}$, equipped with pointwise multiplication. Suppose $f \\in L^1(G)$, the space of integrable functions on $G$. Define the Fourier transform of $f$ as $\\widehat{f}(\\chi) = \\int_G f(x) \\overline{\\chi(x)} \\, dx$ for $\\chi \\in \\widehat{G}$.\n\nProve that if $f \\in L^1(G)$ and $\\widehat{f} = 0$ on a neighborhood of the identity in $\\widehat{G}$, then $f = 0$ almost everywhere on $G$.",
+    "run_id": "29",
+    "topic_slug": "abstract_harmonic_analysis",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer attempts to prove a mathematical statement that is false. It is not true that if the Fourier transform of an $L^1$ function vanishes on a neighborhood of the identity, the function must be zero almost everywhere. For example, on $G=\\\\mathbb{R}$, one can choose a function $\\\\widehat{f} \\\\in C_c^\\\\infty(\\\\mathbb{R})$ with support disjoint from the origin; its inverse Fourier transform $f$ is a Schwartz function (hence in $L^1$) that is not identically zero. \\n\\nThe proof relies on a false lemma in Step 4: \\\"the zero set of a continuous function that contains a non-empty open set must be the entire space.\\\" This property holds for analytic functions on connected domains, but not for general continuous functions or Fourier transforms of $L^1$ functions.\",\n  \"suggestions\": \"Identify that the prompt asks to prove a false assertion. Provide a counterexample (e.g., using band-limited functions on $\\\\mathbb{R}$) to disprove the claim.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer attempts to prove a mathematical statement that is false. It is not true that if the Fourier transform of an $L^1$ function vanishes on a neighborhood of the identity, the function must be zero almost everywhere. For example, on $G=\\\\mathbb{R}$, one can choose a function $\\\\widehat{f} \\\\in C_c^\\\\infty(\\\\mathbb{R})$ with support disjoint from the origin; its inverse Fourier transform $f$ is a Schwartz function (hence in $L^1$) that is not identically zero. \\n\\nThe proof relies on a false lemma in Step 4: \\\"the zero set of a continuous function that contains a non-empty open set must be the entire space.\\\" This property holds for analytic functions on connected domains, but not for general continuous functions or Fourier transforms of $L^1$ functions.\",\n  \"suggestions\": \"Identify that the prompt asks to prove a false assertion. Provide a counterexample (e.g., using band-limited functions on $\\\\mathbb{R}$) to disprove the claim.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer attempts to prove a mathematical statement that is false. It is not true that if the Fourier transform of an $L^1$ function vanishes on a neighborhood of the identity, the function must be zero almost everywhere. For example, on $G=\\mathbb{R}$, one can choose a function $\\widehat{f} \\in C_c^\\infty(\\mathbb{R})$ with support disjoint from the origin; its inverse Fourier transform $f$ is a Schwartz function (hence in $L^1$) that is not identically zero. \n\nThe proof relies on a false lemma in Step 4: \"the zero set of a continuous function that contains a non-empty open set must be the entire space.\" This property holds for analytic functions on connected domains, but not for general continuous functions or Fourier transforms of $L^1$ functions.",
+        "suggestions": "Identify that the prompt asks to prove a false assertion. Provide a counterexample (e.g., using band-limited functions on $\\mathbb{R}$) to disprove the claim.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f(t) = e^{-2t} \\sin(3t)$ for $t \\geq 0$. Compute the Laplace transform $\\mathcal{L}\\{f(t)\\}(s)$, where $s$ is a complex number with $\\text{Re}(s) > -2$.",
+    "run_id": "30",
+    "topic_slug": "integral_transforms_and_operational_calculus",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies the properties of the Laplace transform (specifically the translation theorem or the standard formula for exponentially damped sine waves). The substitution of parameters $a=-2$ and $b=3$ is correct, and the algebraic simplification of the denominator is accurate.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies the properties of the Laplace transform (specifically the translation theorem or the standard formula for exponentially damped sine waves). The substitution of parameters $a=-2$ and $b=3$ is correct, and the algebraic simplification of the denominator is accurate.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies the properties of the Laplace transform (specifically the translation theorem or the standard formula for exponentially damped sine waves). The substitution of parameters $a=-2$ and $b=3$ is correct, and the algebraic simplification of the denominator is accurate.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the integral equation involving a real-valued function $f(x)$ defined on the interval $[0, 1]$:\n\n$$ f(x) = \\int_0^1 (x^2 + t) f(t) \\, dt + x^3. $$\n\nFind the explicit form of the function $f(x)$.",
+    "run_id": "31",
+    "topic_slug": "integral_equations",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple fatal errors in calculation and reasoning. \\n\\n1. **Integration Error**: In step 8 of the integration, the answer evaluates the term corresponding to $t \\cdot d$ (denoted as `dt` in the expansion) incorrectly. It states `\\\\int_0^1 dt = [t]_0^1 = 1` and subsequently adds `d` to the constant term equation. The correct integral of the term $t \\cdot d$ with respect to $t$ is $\\\\int_0^1 d \\\\cdot t \\\\, dt = \\\\frac{d}{2}$.\\n\\n2. **Algebraic Error**: The system of linear equations derived in the answer is inconsistent with the claimed solution. The equation for the constant term is derived as $d = \\\\frac{1}{5} + \\\\frac{b}{4} + d$, which simplifies to $0 = \\\\frac{1}{5} + \\\\frac{b}{4}$, implying $b = -\\\\frac{4}{5}$. However, the answer claims $b=0$, which satisfies neither the derived system nor the original integral equation.\\n\\n3. **Incorrect Result**: The proposed solution $f(x) = x^3$ is incorrect. Substituting $f(x)=x^3$ into the RHS yields $\\\\int_0^1 (x^2+t)t^3 dt + x^3 = x^2(\\\\frac{1}{4}) + \\\\frac{1}{5} + x^3$, which does not equal the LHS $x^3$.\",\n  \"suggestions\": \"Re-evaluate the integrals carefully, specifically $\\\\int_0^1 (x^2+t)(at^3+bt^2+ct+d) dt$. This results in a system of linear equations for coefficients $a, b, c, d$. Specifically, $f(x)$ takes the form $x^3 + C_1 x^2 + C_2$. Solve the resulting system $8C_1 - 12C_2 = 3$ and $-5C_1 + 10C_2 = 4$ to find the correct coefficients.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple fatal errors in calculation and reasoning. \\n\\n1. **Integration Error**: In step 8 of the integration, the answer evaluates the term corresponding to $t \\cdot d$ (denoted as `dt` in the expansion) incorrectly. It states `\\\\int_0^1 dt = [t]_0^1 = 1` and subsequently adds `d` to the constant term equation. The correct integral of the term $t \\cdot d$ with respect to $t$ is $\\\\int_0^1 d \\\\cdot t \\\\, dt = \\\\frac{d}{2}$.\\n\\n2. **Algebraic Error**: The system of linear equations derived in the answer is inconsistent with the claimed solution. The equation for the constant term is derived as $d = \\\\frac{1}{5} + \\\\frac{b}{4} + d$, which simplifies to $0 = \\\\frac{1}{5} + \\\\frac{b}{4}$, implying $b = -\\\\frac{4}{5}$. However, the answer claims $b=0$, which satisfies neither the derived system nor the original integral equation.\\n\\n3. **Incorrect Result**: The proposed solution $f(x) = x^3$ is incorrect. Substituting $f(x)=x^3$ into the RHS yields $\\\\int_0^1 (x^2+t)t^3 dt + x^3 = x^2(\\\\frac{1}{4}) + \\\\frac{1}{5} + x^3$, which does not equal the LHS $x^3$.\",\n  \"suggestions\": \"Re-evaluate the integrals carefully, specifically $\\\\int_0^1 (x^2+t)(at^3+bt^2+ct+d) dt$. This results in a system of linear equations for coefficients $a, b, c, d$. Specifically, $f(x)$ takes the form $x^3 + C_1 x^2 + C_2$. Solve the resulting system $8C_1 - 12C_2 = 3$ and $-5C_1 + 10C_2 = 4$ to find the correct coefficients.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains multiple fatal errors in calculation and reasoning. \n\n1. **Integration Error**: In step 8 of the integration, the answer evaluates the term corresponding to $t \\cdot d$ (denoted as `dt` in the expansion) incorrectly. It states `\\\\int_0^1 dt = [t]_0^1 = 1` and subsequently adds `d` to the constant term equation. The correct integral of the term $t \\cdot d$ with respect to $t$ is $\\\\int_0^1 d \\cdot t \\\\, dt = \\\\frac{d}{2}$.\n\n2. **Algebraic Error**: The system of linear equations derived in the answer is inconsistent with the claimed solution. The equation for the constant term is derived as $d = \\\\frac{1}{5} + \\\\frac{b}{4} + d$, which simplifies to $0 = \\\\frac{1}{5} + \\\\frac{b}{4}$, implying $b = -\\\\frac{4}{5}$. However, the answer claims $b=0$, which satisfies neither the derived system nor the original integral equation.\n\n3. **Incorrect Result**: The proposed solution $f(x) = x^3$ is incorrect. Substituting $f(x)=x^3$ into the RHS yields $\\\\int_0^1 (x^2+t)t^3 dt + x^3 = x^2(\\\\frac{1}{4}) + \\\\frac{1}{5} + x^3$, which does not equal the LHS $x^3$.",
+        "suggestions": "Re-evaluate the integrals carefully, specifically $\\\\int_0^1 (x^2+t)(at^3+bt^2+ct+d) dt$. This results in a system of linear equations for coefficients $a, b, c, d$. Specifically, $f(x)$ takes the form $x^3 + C_1 x^2 + C_2$. Solve the resulting system $8C_1 - 12C_2 = 3$ and $-5C_1 + 10C_2 = 4$ to find the correct coefficients.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a Banach space, and let $T: X \\to X$ be a bounded linear operator. Suppose that $T$ is compact and that the spectrum of $T$, denoted by $\\sigma(T)$, contains only the point $\\{0\\}$. Prove that $T$ is the zero operator.",
+    "run_id": "32",
+    "topic_slug": "functional_analysis",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The mathematical claim requested by the prompt is false. A compact operator with spectrum $\\\\{0\\\\}$ is quasinilpotent, but need not be the zero operator. A simple counterexample is the nilpotent matrix $T = \\\\begin{pmatrix} 0 & 1 \\\\\\\\ 0 & 0 \\\\end{pmatrix}$ on $\\\\mathbb{C}^2$, which is compact and has $\\\\sigma(T)=\\\\{0\\\\}$ but is not zero. The provided proof contains fundamental logical errors, such as the claim that 'Range of T is a compact subset' (it is an unbounded subspace unless zero) and the deduction that lack of non-zero eigenvalues implies $T(x)=y$ has no solution for $y \\\\in \\\\text{Ran}(T)$ (confusing range membership with the eigenvalue equation $Tx=\\\\lambda x$).\",\n  \"suggestions\": \"Identify that the statement is false and provide a counterexample (e.g., a nilpotent operator or the Volterra operator). The statement holds true if one adds the hypothesis that $T$ is a normal operator on a Hilbert space.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The mathematical claim requested by the prompt is false. A compact operator with spectrum $\\\\{0\\\\}$ is quasinilpotent, but need not be the zero operator. A simple counterexample is the nilpotent matrix $T = \\\\begin{pmatrix} 0 & 1 \\\\\\\\ 0 & 0 \\\\end{pmatrix}$ on $\\\\mathbb{C}^2$, which is compact and has $\\\\sigma(T)=\\\\{0\\\\}$ but is not zero. The provided proof contains fundamental logical errors, such as the claim that 'Range of T is a compact subset' (it is an unbounded subspace unless zero) and the deduction that lack of non-zero eigenvalues implies $T(x)=y$ has no solution for $y \\\\in \\\\text{Ran}(T)$ (confusing range membership with the eigenvalue equation $Tx=\\\\lambda x$).\",\n  \"suggestions\": \"Identify that the statement is false and provide a counterexample (e.g., a nilpotent operator or the Volterra operator). The statement holds true if one adds the hypothesis that $T$ is a normal operator on a Hilbert space.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The mathematical claim requested by the prompt is false. A compact operator with spectrum $\\{0\\}$ is quasinilpotent, but need not be the zero operator. A simple counterexample is the nilpotent matrix $T = \\begin{pmatrix} 0 & 1 \\\\ 0 & 0 \\end{pmatrix}$ on $\\mathbb{C}^2$, which is compact and has $\\sigma(T)=\\{0\\}$ but is not zero. The provided proof contains fundamental logical errors, such as the claim that 'Range of T is a compact subset' (it is an unbounded subspace unless zero) and the deduction that lack of non-zero eigenvalues implies $T(x)=y$ has no solution for $y \\in \\text{Ran}(T)$ (confusing range membership with the eigenvalue equation $Tx=\\lambda x$).",
+        "suggestions": "Identify that the statement is false and provide a counterexample (e.g., a nilpotent operator or the Volterra operator). The statement holds true if one adds the hypothesis that $T$ is a normal operator on a Hilbert space.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $T: \\mathbb{R}^3 \\to \\mathbb{R}^3$ be a linear operator represented by the matrix $A = \\begin{pmatrix} 2 & -1 & 0 \\\\ -1 & 2 & -1 \\\\ 0 & -1 & 2 \\end{pmatrix}$. Determine whether $T$ is invertible, and if so, find the inverse operator $T^{-1}$.",
+    "run_id": "33",
+    "topic_slug": "operator_theory",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer correctly calculates the determinant as 4, but fails to correctly calculate the inverse matrix due to errors in the cofactor expansion. Specifically, the cofactor $C_{2,1}$ is calculated using the wrong submatrix (yielding 0 instead of 2), and the cofactor $C_{2,3}$ has a sign error (yielding -2 instead of 2). Since the original matrix $A$ is symmetric, its inverse must also be symmetric; the result provided in the solution is not.\",\n  \"suggestions\": \"Recalculate the cofactors carefully. For $C_{2,1}$, the minor is $\\\\begin{vmatrix} -1 & 0 \\\\ -1 & 2 \\\\end{vmatrix} = -2$, so $C_{2,1} = -(-2) = 2$. For $C_{2,3}$, the minor is $\\\\begin{vmatrix} 2 & -1 \\\\ 0 & -1 \\\\end{vmatrix} = -2$, so $C_{2,3} = -(-2) = 2$. The correct inverse is $\\\\frac{1}{4} \\\\begin{pmatrix} 3 & 2 & 1 \\\\\\\\ 2 & 4 & 2 \\\\\\\\ 1 & 2 & 3 \\\\end{pmatrix}$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer correctly calculates the determinant as 4, but fails to correctly calculate the inverse matrix due to errors in the cofactor expansion. Specifically, the cofactor $C_{2,1}$ is calculated using the wrong submatrix (yielding 0 instead of 2), and the cofactor $C_{2,3}$ has a sign error (yielding -2 instead of 2). Since the original matrix $A$ is symmetric, its inverse must also be symmetric; the result provided in the solution is not.\",\n  \"suggestions\": \"Recalculate the cofactors carefully. For $C_{2,1}$, the minor is $\\\\begin{vmatrix} -1 & 0 \\\\ -1 & 2 \\\\end{vmatrix} = -2$, so $C_{2,1} = -(-2) = 2$. For $C_{2,3}$, the minor is $\\\\begin{vmatrix} 2 & -1 \\\\ 0 & -1 \\\\end{vmatrix} = -2$, so $C_{2,3} = -(-2) = 2$. The correct inverse is $\\\\frac{1}{4} \\\\begin{pmatrix} 3 & 2 & 1 \\\\\\\\ 2 & 4 & 2 \\\\\\\\ 1 & 2 & 3 \\\\end{pmatrix}$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer correctly calculates the determinant as 4, but fails to correctly calculate the inverse matrix due to errors in the cofactor expansion. Specifically, the cofactor $C_{2,1}$ is calculated using the wrong submatrix (yielding 0 instead of 2), and the cofactor $C_{2,3}$ has a sign error (yielding -2 instead of 2). Since the original matrix $A$ is symmetric, its inverse must also be symmetric; the result provided in the solution is not.",
+        "suggestions": "Recalculate the cofactors carefully. For $C_{2,1}$, the minor is $\\begin{vmatrix} -1 & 0 \\ -1 & 2 \\end{vmatrix} = -2$, so $C_{2,1} = -(-2) = 2$. For $C_{2,3}$, the minor is $\\begin{vmatrix} 2 & -1 \\ 0 & -1 \\end{vmatrix} = -2$, so $C_{2,3} = -(-2) = 2$. The correct inverse is $\\frac{1}{4} \\begin{pmatrix} 3 & 2 & 1 \\\\ 2 & 4 & 2 \\\\ 1 & 2 & 3 \\end{pmatrix}$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the functional $J[y] = \\int_0^1 \\left( y'(x)^2 + (y(x) - x)^2 \\right) \\, dx$, where $y(x)$ is a twice-differentiable function satisfying the boundary conditions $y(0) = 0$ and $y(1) = 1$. Find the function $y(x)$ that minimizes the functional $J[y]$.",
+    "run_id": "34",
+    "topic_slug": "calculus_of_variations_and_optimization",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly sets up the Euler-Lagrange equation, solves the resulting differential equation $y'' - y = -x$, and applies the boundary conditions to find the unique minimizer $y(x) = x$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly sets up the Euler-Lagrange equation, solves the resulting differential equation $y'' - y = -x$, and applies the boundary conditions to find the unique minimizer $y(x) = x$.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly sets up the Euler-Lagrange equation, solves the resulting differential equation $y'' - y = -x$, and applies the boundary conditions to find the unique minimizer $y(x) = x$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "None needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a triangle $ABC$ with sides $AB = c$, $BC = a$, and $CA = b$. Let $D$ be a point on side $BC$ such that $AD$ is the angle bisector of $\\angle BAC$. The angle bisector theorem states that $\\frac{BD}{DC} = \\frac{AB}{AC}$. Given that $a = 7$, $b = 5$, and $c = 6$, find the length of $BD$.",
+    "run_id": "35",
+    "topic_slug": "geometry",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the Angle Bisector Theorem to set up the ratio $\\\\frac{BD}{DC} = \\\\frac{c}{b} = \\\\frac{6}{5}$. The subsequent algebraic steps to solve the system $x/y = 6/5$ and $x+y=7$ are logically sound and computationally accurate, leading to the correct result $BD = \\\\frac{42}{11}$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies the Angle Bisector Theorem to set up the ratio $\\\\frac{BD}{DC} = \\\\frac{c}{b} = \\\\frac{6}{5}$. The subsequent algebraic steps to solve the system $x/y = 6/5$ and $x+y=7$ are logically sound and computationally accurate, leading to the correct result $BD = \\\\frac{42}{11}$.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly applies the Angle Bisector Theorem to set up the ratio $\\frac{BD}{DC} = \\frac{c}{b} = \\frac{6}{5}$. The subsequent algebraic steps to solve the system $x/y = 6/5$ and $x+y=7$ are logically sound and computationally accurate, leading to the correct result $BD = \\frac{42}{11}$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a convex polygon $P$ with $n$ vertices, where $n \\geq 4$. Each vertex of the polygon is labeled with a distinct integer from the set $\\{1, 2, \\ldots, n\\}$. A diagonal of the polygon is a line segment connecting two non-adjacent vertices. Define the weight of a diagonal as the absolute difference between the integers labeling its endpoints. \n\nProve that there exists a diagonal in the polygon whose weight is at least $\\left\\lceil \\frac{n}{2} \\right\\rceil$.",
+    "run_id": "36",
+    "topic_slug": "convex_and_discrete_geometry",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof relies on an invalid \\\"Without loss of generality\\\" assumption that the vertices are labeled in increasing order around the polygon. This assumes a specific configuration, whereas the problem allows for any permutation of the labels $\\{1, \\dots, n\\}$. Furthermore, the statement to be proven is false in the general case. For $n=4$, if the vertices are labeled $1, 3, 2, 4$ in clockwise order, the diagonals are $(1,2)$ and $(3,4)$. Both have weight $|1-2|=1$ and $|3-4|=1$, which is less than $\\\\lceil 4/2 \\\\rceil = 2$. The proof fails to address arbitrary labelings.\",\n  \"suggestions\": \"Remove the invalid WLOG assumption. Check small cases (like n=4) with non-sequential labelings to verify the validity of the problem statement before attempting a proof.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof relies on an invalid \\\"Without loss of generality\\\" assumption that the vertices are labeled in increasing order around the polygon. This assumes a specific configuration, whereas the problem allows for any permutation of the labels $\\{1, \\dots, n\\}$. Furthermore, the statement to be proven is false in the general case. For $n=4$, if the vertices are labeled $1, 3, 2, 4$ in clockwise order, the diagonals are $(1,2)$ and $(3,4)$. Both have weight $|1-2|=1$ and $|3-4|=1$, which is less than $\\\\lceil 4/2 \\\\rceil = 2$. The proof fails to address arbitrary labelings.\",\n  \"suggestions\": \"Remove the invalid WLOG assumption. Check small cases (like n=4) with non-sequential labelings to verify the validity of the problem statement before attempting a proof.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The proof relies on an invalid \"Without loss of generality\" assumption that the vertices are labeled in increasing order around the polygon. This assumes a specific configuration, whereas the problem allows for any permutation of the labels $\\{1, \\dots, n\\}$. Furthermore, the statement to be proven is false in the general case. For $n=4$, if the vertices are labeled $1, 3, 2, 4$ in clockwise order, the diagonals are $(1,2)$ and $(3,4)$. Both have weight $|1-2|=1$ and $|3-4|=1$, which is less than $\\lceil 4/2 \\rceil = 2$. The proof fails to address arbitrary labelings.",
+        "suggestions": "Remove the invalid WLOG assumption. Check small cases (like n=4) with non-sequential labelings to verify the validity of the problem statement before attempting a proof.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $M$ be a smooth manifold and let $\\omega$ be a differential 2-form on $M$. Suppose that $\\omega$ is closed, meaning $d\\omega = 0$, where $d$ is the exterior derivative. Assume further that $M$ is simply connected. Prove that $\\omega$ is exact, i.e., there exists a differential 1-form $\\alpha$ on $M$ such that $\\omega = d\\alpha$.",
+    "run_id": "37",
+    "topic_slug": "differential_geometry",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer relies on the false claim that 'For a simply connected manifold, the higher de Rham cohomology groups ... are trivial. In particular, H^2_{dR}(M) = 0.' Simple connectivity ($\\\\pi_1(M) = 0$) implies that the first de Rham cohomology group $H^1_{dR}(M)$ is trivial, but it does not imply that $H^2_{dR}(M)$ is trivial. A standard counterexample is the 2-sphere $S^2$, which is simply connected but has $H^2_{dR}(S^2) \\\\cong \\\\mathbb{R}$. Consequently, there exist closed 2-forms on $S^2$ (such as the volume form) that are not exact. The statement the model attempts to prove is false for general manifolds.\",\n  \"suggestions\": \"Identify that the statement to be proven is false. Provide a counterexample (e.g., $S^2$) where a closed 2-form is not exact despite the manifold being simply connected. Clarify that simple connectivity implies $H^1(M)=0$, whereas $H^2(M)=0$ requires topological conditions like $M$ being contractible (Poincar\u00e9 Lemma) or having trivial second homology.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer relies on the false claim that 'For a simply connected manifold, the higher de Rham cohomology groups ... are trivial. In particular, H^2_{dR}(M) = 0.' Simple connectivity ($\\\\pi_1(M) = 0$) implies that the first de Rham cohomology group $H^1_{dR}(M)$ is trivial, but it does not imply that $H^2_{dR}(M)$ is trivial. A standard counterexample is the 2-sphere $S^2$, which is simply connected but has $H^2_{dR}(S^2) \\\\cong \\\\mathbb{R}$. Consequently, there exist closed 2-forms on $S^2$ (such as the volume form) that are not exact. The statement the model attempts to prove is false for general manifolds.\",\n  \"suggestions\": \"Identify that the statement to be proven is false. Provide a counterexample (e.g., $S^2$) where a closed 2-form is not exact despite the manifold being simply connected. Clarify that simple connectivity implies $H^1(M)=0$, whereas $H^2(M)=0$ requires topological conditions like $M$ being contractible (Poincar\u00e9 Lemma) or having trivial second homology.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer relies on the false claim that 'For a simply connected manifold, the higher de Rham cohomology groups ... are trivial. In particular, H^2_{dR}(M) = 0.' Simple connectivity ($\\pi_1(M) = 0$) implies that the first de Rham cohomology group $H^1_{dR}(M)$ is trivial, but it does not imply that $H^2_{dR}(M)$ is trivial. A standard counterexample is the 2-sphere $S^2$, which is simply connected but has $H^2_{dR}(S^2) \\cong \\mathbb{R}$. Consequently, there exist closed 2-forms on $S^2$ (such as the volume form) that are not exact. The statement the model attempts to prove is false for general manifolds.",
+        "suggestions": "Identify that the statement to be proven is false. Provide a counterexample (e.g., $S^2$) where a closed 2-form is not exact despite the manifold being simply connected. Clarify that simple connectivity implies $H^1(M)=0$, whereas $H^2(M)=0$ requires topological conditions like $M$ being contractible (Poincar\u00e9 Lemma) or having trivial second homology.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a topological space and let $A \\subseteq X$ be a subset. Define the closure of $A$, denoted $\\overline{A}$, as the set of all points $x \\in X$ such that every open set $U$ containing $x$ intersects $A$. \n\nConsider the space $X = \\mathbb{R}$ with the standard topology, and let $A = \\{ \\frac{1}{n} \\mid n \\in \\mathbb{N} \\}$. Determine the closure $\\overline{A}$ of the set $A$ in $\\mathbb{R}$.",
+    "run_id": "38",
+    "topic_slug": "general_topology",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the closure of the set $A$ as $A \\cup \\{0\\}$. It correctly establishes that $0$ is a limit point because the sequence converges to $0$. The reasoning regarding other points is sound: since the sequence converges to $0$, the set $A$ has no other accumulation points in $\\\\mathbb{R}$. The minor inaccuracy in phrasing\u2014stating that neighborhoods of $x > 0$ contain \\\"no points of $A$\\\" (which is technically false for $x \\in A$, as they contain $x$) rather than \\\"no other points of $A$\\\"\u2014does not affect the correctness of the final result or the classification of limit points.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the closure of the set $A$ as $A \\cup \\{0\\}$. It correctly establishes that $0$ is a limit point because the sequence converges to $0$. The reasoning regarding other points is sound: since the sequence converges to $0$, the set $A$ has no other accumulation points in $\\\\mathbb{R}$. The minor inaccuracy in phrasing\u2014stating that neighborhoods of $x > 0$ contain \\\"no points of $A$\\\" (which is technically false for $x \\in A$, as they contain $x$) rather than \\\"no other points of $A$\\\"\u2014does not affect the correctness of the final result or the classification of limit points.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the closure of the set $A$ as $A \\cup \\{0\\}$. It correctly establishes that $0$ is a limit point because the sequence converges to $0$. The reasoning regarding other points is sound: since the sequence converges to $0$, the set $A$ has no other accumulation points in $\\mathbb{R}$. The minor inaccuracy in phrasing\u2014stating that neighborhoods of $x > 0$ contain \"no points of $A$\" (which is technically false for $x \\in A$, as they contain $x$) rather than \"no other points of $A$\"\u2014does not affect the correctness of the final result or the classification of limit points.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a topological space that is homotopy equivalent to the wedge sum of two circles, $S^1 \\vee S^1$. Consider the fundamental group $\\pi_1(X, x_0)$, where $x_0$ is a base point in $X$. Determine the structure of $\\pi_1(X, x_0)$ and provide a proof of your result.",
+    "run_id": "39",
+    "topic_slug": "algebraic_topology",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The final conclusion that $\\\\pi_1(X, x_0) \\\\cong F_2$ is correct, and the use of the Seifert-van Kampen theorem is the correct approach. However, the proof contains a significant error in the construction of the open sets $A$ and $B$. The answer describes them as 'the two circles minus a small open neighborhood around the wedge point.' If one removes a neighborhood of the wedge point from the circles, the resulting spaces are disjoint arcs, which are contractible. This implies $\\\\pi_1(A) \\\\cong 0$ and $\\\\pi_1(B) \\\\cong 0$, contradicting the claim that they are isomorphic to $\\\\mathbb{Z}$. Consequently, the logic deriving the free product $F_2$ is invalid based on the definitions provided.\",\n  \"suggestions\": \"Correct the definition of the open sets $A$ and $B$. For the Seifert-van Kampen theorem, appropriate choices would be $A = X \\\\setminus \\\\{p_2\\\\}$ and $B = X \\\\setminus \\\\{p_1\\\\}$, where $p_1$ and $p_2$ are points on the first and second circles, respectively, distinct from the wedge point. With this definition, $A$ and $B$ are open, deformation retract to $S^1$ (giving $\\\\pi_1 \\\\cong \\\\mathbb{Z}$), and their intersection $A \\\\cap B$ deformation retracts to the wedge point (giving $\\\\pi_1 \\\\cong 0$).\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The final conclusion that $\\\\pi_1(X, x_0) \\\\cong F_2$ is correct, and the use of the Seifert-van Kampen theorem is the correct approach. However, the proof contains a significant error in the construction of the open sets $A$ and $B$. The answer describes them as 'the two circles minus a small open neighborhood around the wedge point.' If one removes a neighborhood of the wedge point from the circles, the resulting spaces are disjoint arcs, which are contractible. This implies $\\\\pi_1(A) \\\\cong 0$ and $\\\\pi_1(B) \\\\cong 0$, contradicting the claim that they are isomorphic to $\\\\mathbb{Z}$. Consequently, the logic deriving the free product $F_2$ is invalid based on the definitions provided.\",\n  \"suggestions\": \"Correct the definition of the open sets $A$ and $B$. For the Seifert-van Kampen theorem, appropriate choices would be $A = X \\\\setminus \\\\{p_2\\\\}$ and $B = X \\\\setminus \\\\{p_1\\\\}$, where $p_1$ and $p_2$ are points on the first and second circles, respectively, distinct from the wedge point. With this definition, $A$ and $B$ are open, deformation retract to $S^1$ (giving $\\\\pi_1 \\\\cong \\\\mathbb{Z}$), and their intersection $A \\\\cap B$ deformation retracts to the wedge point (giving $\\\\pi_1 \\\\cong 0$).\"\n}",
+        "verdict": "incorrect",
+        "notes": "The final conclusion that $\\pi_1(X, x_0) \\cong F_2$ is correct, and the use of the Seifert-van Kampen theorem is the correct approach. However, the proof contains a significant error in the construction of the open sets $A$ and $B$. The answer describes them as 'the two circles minus a small open neighborhood around the wedge point.' If one removes a neighborhood of the wedge point from the circles, the resulting spaces are disjoint arcs, which are contractible. This implies $\\pi_1(A) \\cong 0$ and $\\pi_1(B) \\cong 0$, contradicting the claim that they are isomorphic to $\\mathbb{Z}$. Consequently, the logic deriving the free product $F_2$ is invalid based on the definitions provided.",
+        "suggestions": "Correct the definition of the open sets $A$ and $B$. For the Seifert-van Kampen theorem, appropriate choices would be $A = X \\setminus \\{p_2\\}$ and $B = X \\setminus \\{p_1\\}$, where $p_1$ and $p_2$ are points on the first and second circles, respectively, distinct from the wedge point. With this definition, $A$ and $B$ are open, deformation retract to $S^1$ (giving $\\pi_1 \\cong \\mathbb{Z}$), and their intersection $A \\cap B$ deformation retracts to the wedge point (giving $\\pi_1 \\cong 0$).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $M$ be a compact, connected, orientable 2-dimensional manifold without boundary. Suppose $M$ is homeomorphic to a surface of genus $g$. Consider the Euler characteristic $\\chi(M)$ of the manifold $M$. \n\n(a) Express the Euler characteristic $\\chi(M)$ in terms of the genus $g$.\n\n(b) If $M$ is triangulated with $V$ vertices, $E$ edges, and $F$ faces, use the Euler characteristic to derive a relationship between $V$, $E$, and $F$.\n\n(c) Suppose $M$ is a torus (i.e., $g = 1$). If $M$ is triangulated with 10 vertices, determine the number of edges and faces in this triangulation.",
+    "run_id": "40",
+    "topic_slug": "manifolds_and_cell_complexes",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the Euler characteristic formula for a surface of genus $g$ ($\\chi = 2-2g$) and the relation for a triangulation ($V-E+F = \\chi$). In part (c), it correctly applies these formulas along with the constraint $3F = 2E$ (valid for any triangulation of a surface without boundary) to solve the system of equations for $E$ and $F$. The arithmetic is correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the Euler characteristic formula for a surface of genus $g$ ($\\chi = 2-2g$) and the relation for a triangulation ($V-E+F = \\chi$). In part (c), it correctly applies these formulas along with the constraint $3F = 2E$ (valid for any triangulation of a surface without boundary) to solve the system of equations for $E$ and $F$. The arithmetic is correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the Euler characteristic formula for a surface of genus $g$ ($\\chi = 2-2g$) and the relation for a triangulation ($V-E+F = \\chi$). In part (c), it correctly applies these formulas along with the constraint $3F = 2E$ (valid for any triangulation of a surface without boundary) to solve the system of equations for $E$ and $F$. The arithmetic is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $M$ be a compact, oriented 2-dimensional Riemannian manifold without boundary. Consider a smooth vector field $X$ on $M$. Prove that the Euler characteristic $\\chi(M)$ of the manifold $M$ is equal to the sum of the indices of the isolated zeros of $X$. Assume that $X$ has only isolated zeros.",
+    "run_id": "41",
+    "topic_slug": "global_analysis_on_manifolds",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly identifies the statement as the Poincar\u00e9-Hopf theorem but fails to provide the requested proof. Merely citing the theorem that states the conclusion is circular reasoning when the task is to prove that conclusion. A proper proof requires deriving the result from more fundamental concepts, such as relating the indices to the Euler characteristic via the Gauss-Bonnet theorem or through a triangulation argument.\",\n  \"suggestions\": \"Provide a derivation of the result rather than just stating the name of the theorem. For a Riemannian manifold, a standard approach is to use the Gauss-Bonnet theorem: start with $\\\\int_M K dA = 2\\\\pi \\\\chi(M)$, and show that the integral of the geodesic curvature / connection form related to the vector field sums to $2\\\\pi \\\\sum \\\\text{index}(X,p)$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The answer correctly identifies the statement as the Poincar\u00e9-Hopf theorem but fails to provide the requested proof. Merely citing the theorem that states the conclusion is circular reasoning when the task is to prove that conclusion. A proper proof requires deriving the result from more fundamental concepts, such as relating the indices to the Euler characteristic via the Gauss-Bonnet theorem or through a triangulation argument.\",\n  \"suggestions\": \"Provide a derivation of the result rather than just stating the name of the theorem. For a Riemannian manifold, a standard approach is to use the Gauss-Bonnet theorem: start with $\\\\int_M K dA = 2\\\\pi \\\\chi(M)$, and show that the integral of the geodesic curvature / connection form related to the vector field sums to $2\\\\pi \\\\sum \\\\text{index}(X,p)$.\"\n}\n```",
+        "verdict": "insufficient",
+        "notes": "The answer correctly identifies the statement as the Poincar\u00e9-Hopf theorem but fails to provide the requested proof. Merely citing the theorem that states the conclusion is circular reasoning when the task is to prove that conclusion. A proper proof requires deriving the result from more fundamental concepts, such as relating the indices to the Euler characteristic via the Gauss-Bonnet theorem or through a triangulation argument.",
+        "suggestions": "Provide a derivation of the result rather than just stating the name of the theorem. For a Riemannian manifold, a standard approach is to use the Gauss-Bonnet theorem: start with $\\int_M K dA = 2\\pi \\chi(M)$, and show that the integral of the geodesic curvature / connection form related to the vector field sums to $2\\pi \\sum \\text{index}(X,p)$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a continuous-time Markov chain with state space $S = \\{1, 2, 3\\}$ and generator matrix $Q$ given by:\n\n$$\nQ = \\begin{pmatrix}\n-3 & 3 & 0 \\\\\n1 & -4 & 3 \\\\\n0 & 2 & -2\n\\end{pmatrix}.\n$$\n\n(a) Determine the stationary distribution $\\pi = (\\pi_1, \\pi_2, \\pi_3)$ of the Markov chain.\n\n(b) Calculate the expected time to absorption if the chain starts in state 1, assuming state 3 is an absorbing state.",
+    "run_id": "42",
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (a) is correct. However, part (b) is incorrect due to both formulation and calculation errors. \\n\\n1. **Formulation Error**: The system of equations for the expected times $t_1$ and $t_2$ is not derived correctly from the generator matrix $Q$. For a continuous-time Markov chain, the expected time to absorption satisfies $t_i = \\frac{1}{q_i} + \\sum_{j \\neq i, 3} \\frac{q_{ij}}{q_i} t_j$, where $q_i = -q_{ii}$ is the rate out of state $i$. \\n   - For state 1: Rate is 3, transition to 2 is with prob 1. Equation should be $t_1 = \\frac{1}{3} + t_2$.\\n   - For state 2: Rate is 4, transition to 1 is with prob $1/4$ (since $q_{21}=1$). Equation should be $t_2 = \\frac{1}{4} + \\frac{1}{4}t_1$.\\n   The model proposes $t_1 = 1 + 3t_2$ and $t_2 = 1 + \\frac{1}{2}t_1$, which uses incorrect holding times and transition coefficients.\\n\\n2. **Algebraic Error**: In solving its derived system, the model reaches $t_1 = 4 + \\frac{3}{2}t_1$, which implies $-\\frac{1}{2}t_1 = 4$ and $t_1 = -8$. The model ignores the sign to claim $t_1 = 8$.\",\n  \"suggestions\": \"Use the standard equations for mean hitting times in a CTMC: $-Q_{TT} \\mathbf{t} = \\mathbf{1}$, where $Q_{TT}$ is the submatrix for transient states. Alternatively, use the 'first step analysis' with mean holding times ($1/|q_{ii}|$) and jump probabilities ($p_{ij} = q_{ij}/|q_{ii}|$). Ensure that algebraic steps preserve signs.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"Part (a) is correct. However, part (b) is incorrect due to both formulation and calculation errors. \\n\\n1. **Formulation Error**: The system of equations for the expected times $t_1$ and $t_2$ is not derived correctly from the generator matrix $Q$. For a continuous-time Markov chain, the expected time to absorption satisfies $t_i = \\frac{1}{q_i} + \\sum_{j \\neq i, 3} \\frac{q_{ij}}{q_i} t_j$, where $q_i = -q_{ii}$ is the rate out of state $i$. \\n   - For state 1: Rate is 3, transition to 2 is with prob 1. Equation should be $t_1 = \\frac{1}{3} + t_2$.\\n   - For state 2: Rate is 4, transition to 1 is with prob $1/4$ (since $q_{21}=1$). Equation should be $t_2 = \\frac{1}{4} + \\frac{1}{4}t_1$.\\n   The model proposes $t_1 = 1 + 3t_2$ and $t_2 = 1 + \\frac{1}{2}t_1$, which uses incorrect holding times and transition coefficients.\\n\\n2. **Algebraic Error**: In solving its derived system, the model reaches $t_1 = 4 + \\frac{3}{2}t_1$, which implies $-\\frac{1}{2}t_1 = 4$ and $t_1 = -8$. The model ignores the sign to claim $t_1 = 8$.\",\n  \"suggestions\": \"Use the standard equations for mean hitting times in a CTMC: $-Q_{TT} \\mathbf{t} = \\mathbf{1}$, where $Q_{TT}$ is the submatrix for transient states. Alternatively, use the 'first step analysis' with mean holding times ($1/|q_{ii}|$) and jump probabilities ($p_{ij} = q_{ij}/|q_{ii}|$). Ensure that algebraic steps preserve signs.\"\n}",
+        "verdict": "incorrect",
+        "notes": "Part (a) is correct. However, part (b) is incorrect due to both formulation and calculation errors. \n\n1. **Formulation Error**: The system of equations for the expected times $t_1$ and $t_2$ is not derived correctly from the generator matrix $Q$. For a continuous-time Markov chain, the expected time to absorption satisfies $t_i = \\frac{1}{q_i} + \\sum_{j \\neq i, 3} \\frac{q_{ij}}{q_i} t_j$, where $q_i = -q_{ii}$ is the rate out of state $i$. \n   - For state 1: Rate is 3, transition to 2 is with prob 1. Equation should be $t_1 = \\frac{1}{3} + t_2$.\n   - For state 2: Rate is 4, transition to 1 is with prob $1/4$ (since $q_{21}=1$). Equation should be $t_2 = \\frac{1}{4} + \\frac{1}{4}t_1$.\n   The model proposes $t_1 = 1 + 3t_2$ and $t_2 = 1 + \\frac{1}{2}t_1$, which uses incorrect holding times and transition coefficients.\n\n2. **Algebraic Error**: In solving its derived system, the model reaches $t_1 = 4 + \\frac{3}{2}t_1$, which implies $-\\frac{1}{2}t_1 = 4$ and $t_1 = -8$. The model ignores the sign to claim $t_1 = 8$.",
+        "suggestions": "Use the standard equations for mean hitting times in a CTMC: $-Q_{TT} \\mathbf{t} = \\mathbf{1}$, where $Q_{TT}$ is the submatrix for transient states. Alternatively, use the 'first step analysis' with mean holding times ($1/|q_{ii}|$) and jump probabilities ($p_{ij} = q_{ij}/|q_{ii}|$). Ensure that algebraic steps preserve signs.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a random variable $X$ that follows a normal distribution with an unknown mean $\\mu$ and a known standard deviation $\\sigma = 3$. You are given a random sample of size $n = 25$ from this distribution, with a sample mean $\\bar{x} = 10$. Construct a 95% confidence interval for the population mean $\\mu$.",
+    "run_id": "43",
+    "topic_slug": "statistics",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the parameters ($\\\\sigma=3$, $n=25$, $\\\\bar{x}=10$) and selects the appropriate formula for a confidence interval with known population standard deviation (using the z-statistic). The calculation of the standard error ($0.6$), the margin of error ($1.176$), and the final interval bounds are all arithmetically correct.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the parameters ($\\\\sigma=3$, $n=25$, $\\\\bar{x}=10$) and selects the appropriate formula for a confidence interval with known population standard deviation (using the z-statistic). The calculation of the standard error ($0.6$), the margin of error ($1.176$), and the final interval bounds are all arithmetically correct.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the parameters ($\\sigma=3$, $n=25$, $\\bar{x}=10$) and selects the appropriate formula for a confidence interval with known population standard deviation (using the z-statistic). The calculation of the standard error ($0.6$), the margin of error ($1.176$), and the final interval bounds are all arithmetically correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately verifies the method (z-interval for known sigma), parameter values, and arithmetic calculations. No changes are needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the function $f(x) = e^{-x^2}$, which is defined for all real numbers $x$. We are interested in approximating the definite integral $I = \\int_{0}^{1} e^{-x^2} \\, dx$ using numerical methods.\n\n1. Use the Trapezoidal Rule with $n = 4$ subintervals to approximate $I$.\n2. Use Simpson's Rule with $n = 4$ subintervals to approximate $I$.\n3. Compare the two approximations and discuss which one is likely to be more accurate and why.",
+    "run_id": "44",
+    "topic_slug": "numerical_analysis",
+    "question_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies both the Trapezoidal Rule and Simpson's Rule with $n=4$ subintervals. The function evaluations, intermediate sums, and final results are accurate to the displayed precision. The comparison correctly identifies Simpson's Rule as more accurate due to its higher order of accuracy (quadratic approximation versus linear interpolation) for smooth functions like $e^{-x^2}$.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies both the Trapezoidal Rule and Simpson's Rule with $n=4$ subintervals. The function evaluations, intermediate sums, and final results are accurate to the displayed precision. The comparison correctly identifies Simpson's Rule as more accurate due to its higher order of accuracy (quadratic approximation versus linear interpolation) for smooth functions like $e^{-x^2}$.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly applies both the Trapezoidal Rule and Simpson's Rule with $n=4$ subintervals. The function evaluations, intermediate sums, and final results are accurate to the displayed precision. The comparison correctly identifies Simpson's Rule as more accurate due to its higher order of accuracy (quadratic approximation versus linear interpolation) for smooth functions like $e^{-x^2}$.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  }
+]
