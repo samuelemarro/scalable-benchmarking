@@ -1,1 +1,947 @@
-[]
+[
+  {
+    "question": "Let $p$ be a prime number such that $p \\equiv 2 \\pmod 3$. Determine a closed-form expression, in terms of $p$, for the summation:\n$$ S = \\sum_{k=1}^{p-1} \\left\\lfloor \\frac{k^3}{p} \\right\\rfloor $$\nwhere $\\lfloor x \\rfloor$ denotes the greatest integer less than or equal to $x$.",
+    "run_id": "3",
+    "topic_slug": "number_theory",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly uses the decomposition $\\\\lfloor x\\\\rfloor = x - \\\\{x\\\\}$, the formula for sum of cubes, and the bijection property of $k\\\\mapsto k^3\\\\bmod p$ because $\\\\gcd(3,p-1)=1$ (since $p\\\\equiv2\\\\pmod3$). The arithmetic is accurate, leading to the closed form $S = \\\\frac{(p-1)(p-2)(p+1)}{4}$. The reasoning is complete and rigorous, covering all necessary steps and handling edge cases implicitly (e.g., $p=2$ works).\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly uses the decomposition $\\\\lfloor x\\\\rfloor = x - \\\\{x\\\\}$, the formula for sum of cubes, and the bijection property of $k\\\\mapsto k^3\\\\bmod p$ because $\\\\gcd(3,p-1)=1$ (since $p\\\\equiv2\\\\pmod3$). The arithmetic is accurate, leading to the closed form $S = \\\\frac{(p-1)(p-2)(p+1)}{4}$. The reasoning is complete and rigorous, covering all necessary steps and handling edge cases implicitly (e.g., $p=2$ works).\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly uses the decomposition $\\lfloor x\\rfloor = x - \\{x\\}$, the formula for sum of cubes, and the bijection property of $k\\mapsto k^3\\bmod p$ because $\\gcd(3,p-1)=1$ (since $p\\equiv2\\pmod3$). The arithmetic is accurate, leading to the closed form $S = \\frac{(p-1)(p-2)(p+1)}{4}$. The reasoning is complete and rigorous, covering all necessary steps and handling edge cases implicitly (e.g., $p=2$ works).",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique correctly identifies the answer as correct, provides evidence-based reasoning, and follows the required JSON format. No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Find the general solution of the ordinary differential equation\n$$ 4 \\frac{d^2y}{dx^2} + (4e^{2x} - 1)y = 0 $$\ndefined for $x \\in \\mathbb{R}$. Express your answer in terms of elementary functions.",
+    "run_id": "22",
+    "topic_slug": "ordinary_differential_equations",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer is mathematically correct and complete. The transformation t = e^x reduces the ODE to Bessel's equation of order 1/2, whose general solution in terms of J_{1/2} and J_{-1/2} is expressed via elementary functions. The final expression y(x) = e^{-x/2}(c_1 \\\\sin(e^x) + c_2 \\\\cos(e^x)) is the general solution defined for all real x.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer is mathematically correct and complete. The transformation t = e^x reduces the ODE to Bessel's equation of order 1/2, whose general solution in terms of J_{1/2} and J_{-1/2} is expressed via elementary functions. The final expression y(x) = e^{-x/2}(c_1 \\\\sin(e^x) + c_2 \\\\cos(e^x)) is the general solution defined for all real x.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer is mathematically correct and complete. The transformation t = e^x reduces the ODE to Bessel's equation of order 1/2, whose general solution in terms of J_{1/2} and J_{-1/2} is expressed via elementary functions. The final expression y(x) = e^{-x/2}(c_1 \\sin(e^x) + c_2 \\cos(e^x)) is the general solution defined for all real x.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $NC_8$ denote the lattice of non-crossing partitions of the set $S = \\{1, 2, \\dots, 8\\}$, ordered by the standard refinement relation $\\le$.\n(For two partitions $\\sigma, \\pi \\in NC_8$, we say $\\sigma \\le \\pi$ if and only if every block of $\\sigma$ is a subset of a block of $\\pi$).\nLet $\\hat{0}$ denote the minimal element of $NC_8$, which is the partition of $S$ into 8 singleton sets.\n\nDetermine the exact number of elements $\\pi \\in NC_8$ such that the interval $[\\hat{0}, \\pi] = \\{ \\sigma \\in NC_8 \\mid \\hat{0} \\le \\sigma \\le \\pi \\}$ is isomorphic to a Boolean algebra.",
+    "run_id": "4",
+    "topic_slug": "order_lattices_and_ordered_algebraic_structures",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly uses the product decomposition $[\\\\hat{0},\\\\pi]\\\\cong\\\\prod_i NC_{|B_i|}$ and notes that this product is a Boolean algebra iff each factor is Boolean, which holds exactly when all block sizes are 1 or 2. The enumeration of such $\\\\pi$ via Motzkin numbers is standard, and the computation $M_8=323$ is accurate. The reasoning is complete and mathematically sound.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly uses the product decomposition $[\\\\hat{0},\\\\pi]\\\\cong\\\\prod_i NC_{|B_i|}$ and notes that this product is a Boolean algebra iff each factor is Boolean, which holds exactly when all block sizes are 1 or 2. The enumeration of such $\\\\pi$ via Motzkin numbers is standard, and the computation $M_8=323$ is accurate. The reasoning is complete and mathematically sound.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly uses the product decomposition $[\\hat{0},\\pi]\\cong\\prod_i NC_{|B_i|}$ and notes that this product is a Boolean algebra iff each factor is Boolean, which holds exactly when all block sizes are 1 or 2. The enumeration of such $\\pi$ via Motzkin numbers is standard, and the computation $M_8=323$ is accurate. The reasoning is complete and mathematically sound.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Here is the problem and solution in the requested format.\n\n\nLet $n$ be a non-negative integer. Determine the value of the sum\n$$ S_n = \\sum_{k=0}^n \\binom{n}{k} \\binom{2k}{k} (-2)^{n-k} $$\nin closed form. Your answer should be a function of $n$ (and may involve cases based on the parity of $n$).",
+    "run_id": "2",
+    "topic_slug": "combinatorics",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically correct and complete. The identity $\\\\binom{2k}{k}=[x^0](x+x^{-1})^{2k}$ is valid, linearity of coefficient extraction is correctly applied, binomial expansions are accurate, and the parity analysis yields the closed form $S_n = 0$ for odd $n$ and $S_n = \\\\binom{n}{n/2}$ for even $n$. Numerical checks for small $n$ confirm the result.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically correct and complete. The identity $\\\\binom{2k}{k}=[x^0](x+x^{-1})^{2k}$ is valid, linearity of coefficient extraction is correctly applied, binomial expansions are accurate, and the parity analysis yields the closed form $S_n = 0$ for odd $n$ and $S_n = \\\\binom{n}{n/2}$ for even $n$. Numerical checks for small $n$ confirm the result.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution is mathematically correct and complete. The identity $\\binom{2k}{k}=[x^0](x+x^{-1})^{2k}$ is valid, linearity of coefficient extraction is correctly applied, binomial expansions are accurate, and the parity analysis yields the closed form $S_n = 0$ for odd $n$ and $S_n = \\binom{n}{n/2}$ for even $n$. Numerical checks for small $n$ confirm the result.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $A$ be a $3 \\times 3$ matrix with real entries. The matrix $A$ satisfies the following properties:\n1.  The trace of $A$ is $\\text{tr}(A) = 3$.\n2.  The trace of $A^2$ is $\\text{tr}(A^2) = 5$.\n3.  The determinant of $A$ is $\\det(A) = 2$.\n\nFind the exact value of $\\det(A^2 - 2A + 2I)$, where $I$ is the $3 \\times 3$ identity matrix.",
+    "run_id": "9",
+    "topic_slug": "linear_and_multilinear_algebra",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly uses Newton's identities to find the characteristic polynomial, then expresses the determinant as product over eigenvalues, and computes it via polynomial evaluation. All steps are mathematically sound, and the final answer 8 is correct.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly uses Newton's identities to find the characteristic polynomial, then expresses the determinant as product over eigenvalues, and computes it via polynomial evaluation. All steps are mathematically sound, and the final answer 8 is correct.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly uses Newton's identities to find the characteristic polynomial, then expresses the determinant as product over eigenvalues, and computes it via polynomial evaluation. All steps are mathematically sound, and the final answer 8 is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X = \\mathbb{R}P^2 \\times \\mathbb{R}P^2$ be the product of two real projective planes. Calculate the additive groups of the complex K-theory of $X$, denoted by $K^0(X)$ and $K^1(X)$.",
+    "run_id": "13",
+    "topic_slug": "k_theory",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies $K^0(\\\\mathbb{R}P^2)\\\\cong\\\\mathbb{Z}\\\\oplus\\\\mathbb{Z}/2$ and $K^1(\\\\mathbb{R}P^2)=0$, then applies the K\\u00fcnneth formula for complex K-theory. The tensor and Tor calculations are accurate, yielding $K^0(X)\\\\cong\\\\mathbb{Z}\\\\oplus(\\\\mathbb{Z}/2)^3$ and $K^1(X)\\\\cong\\\\mathbb{Z}/2$. The reasoning is clear and complete, with no mathematical errors or omissions.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies $K^0(\\\\mathbb{R}P^2)\\\\cong\\\\mathbb{Z}\\\\oplus\\\\mathbb{Z}/2$ and $K^1(\\\\mathbb{R}P^2)=0$, then applies the K\\u00fcnneth formula for complex K-theory. The tensor and Tor calculations are accurate, yielding $K^0(X)\\\\cong\\\\mathbb{Z}\\\\oplus(\\\\mathbb{Z}/2)^3$ and $K^1(X)\\\\cong\\\\mathbb{Z}/2$. The reasoning is clear and complete, with no mathematical errors or omissions.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies $K^0(\\mathbb{R}P^2)\\cong\\mathbb{Z}\\oplus\\mathbb{Z}/2$ and $K^1(\\mathbb{R}P^2)=0$, then applies the K\u00fcnneth formula for complex K-theory. The tensor and Tor calculations are accurate, yielding $K^0(X)\\cong\\mathbb{Z}\\oplus(\\mathbb{Z}/2)^3$ and $K^1(X)\\cong\\mathbb{Z}/2$. The reasoning is clear and complete, with no mathematical errors or omissions.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique correctly identifies the answer as correct, provides accurate reasoning, and follows the required JSON format. No improvements are necessary."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Determine all functions $f: \\mathbb{R} \\to \\mathbb{R}$ such that for all $x, y \\in \\mathbb{R}$:\n$$ f(x^2 - y^2) = (x-y)(f(x) + f(y)) $$",
+    "run_id": "25",
+    "topic_slug": "difference_and_functional_equations",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof contains a critical error in the substitution step when introducing h. From g(x)=h(x^2) and the equation (x+y)g(x^2-y^2)=x g(x)+y g(y), the left side should be (x+y)h((x^2-y^2)^2), not (x+y)h(x^2-y^2). The subsequent derivation using h(u-v) is therefore invalid. This mistake undermines the entire argument that h must be constant, rendering the proof incorrect.\",\n  \"suggestions\": \"To fix, one could define a different auxiliary function, e.g., let k(t)=g(\u221at) for t>0, then express g(x^2-y^2) as k((x^2-y^2)^2). Alternatively, work directly with g and use algebraic manipulations to show g is constant without the flawed h substitution.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The proof contains a critical error in the substitution step when introducing h. From g(x)=h(x^2) and the equation (x+y)g(x^2-y^2)=x g(x)+y g(y), the left side should be (x+y)h((x^2-y^2)^2), not (x+y)h(x^2-y^2). The subsequent derivation using h(u-v) is therefore invalid. This mistake undermines the entire argument that h must be constant, rendering the proof incorrect.\",\n  \"suggestions\": \"To fix, one could define a different auxiliary function, e.g., let k(t)=g(\u221at) for t>0, then express g(x^2-y^2) as k((x^2-y^2)^2). Alternatively, work directly with g and use algebraic manipulations to show g is constant without the flawed h substitution.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The proof contains a critical error in the substitution step when introducing h. From g(x)=h(x^2) and the equation (x+y)g(x^2-y^2)=x g(x)+y g(y), the left side should be (x+y)h((x^2-y^2)^2), not (x+y)h(x^2-y^2). The subsequent derivation using h(u-v) is therefore invalid. This mistake undermines the entire argument that h must be constant, rendering the proof incorrect.",
+        "suggestions": "To fix, one could define a different auxiliary function, e.g., let k(t)=g(\u221at) for t>0, then express g(x^2-y^2) as k((x^2-y^2)^2). Alternatively, work directly with g and use algebraic manipulations to show g is constant without the flawed h substitution.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Find the function $y \\in C^2[0, 1]$ that minimizes the functional\n$$ J[y] = \\int_0^1 \\left( \\frac{1}{2}(y'(x))^2 + \\frac{1}{2}(y(x))^2 + x y(x) \\right) \\, dx $$\nsubject to the boundary condition $y(0) = 0$. No constraint is imposed on the value of $y(1)$.",
+    "run_id": "34",
+    "topic_slug": "calculus_of_variations_and_optimization",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the Euler-Lagrange equation, applies the natural boundary condition at x=1, solves the ODE with given boundary condition, and obtains the unique function y(x) = sinh(x)/cosh(1) - x. The convexity argument ensures it is a global minimizer. All steps are mathematically sound and complete.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the Euler-Lagrange equation, applies the natural boundary condition at x=1, solves the ODE with given boundary condition, and obtains the unique function y(x) = sinh(x)/cosh(1) - x. The convexity argument ensures it is a global minimizer. All steps are mathematically sound and complete.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly derives the Euler-Lagrange equation, applies the natural boundary condition at x=1, solves the ODE with given boundary condition, and obtains the unique function y(x) = sinh(x)/cosh(1) - x. The convexity argument ensures it is a global minimizer. All steps are mathematically sound and complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathbb{F}_7$ be the finite field of integers modulo 7. Consider the polynomial ring $R = \\mathbb{F}_7[x]$. Let $I$ be the ideal generated by the polynomial $f(x) = x^4 - 2$.\nDetermine the order of the group of units of the quotient ring $Q = R/I$.",
+    "run_id": "5",
+    "topic_slug": "general_algebraic_systems",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The factorization of $x^4-2$ over $\\\\mathbb{F}_7$ as $(x^2-3)(x-2)(x+2)$ is correct; the factors are distinct irreducibles, so CRT yields a product of fields. The unit groups are multiplicative groups of finite fields, giving sizes 48, 6, 6, product 1728. No errors or omissions.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The factorization of $x^4-2$ over $\\\\mathbb{F}_7$ as $(x^2-3)(x-2)(x+2)$ is correct; the factors are distinct irreducibles, so CRT yields a product of fields. The unit groups are multiplicative groups of finite fields, giving sizes 48, 6, 6, product 1728. No errors or omissions.\"\n}",
+        "verdict": "correct",
+        "notes": "The factorization of $x^4-2$ over $\\mathbb{F}_7$ as $(x^2-3)(x-2)(x+2)$ is correct; the factors are distinct irreducibles, so CRT yields a product of fields. The unit groups are multiplicative groups of finite fields, giving sizes 48, 6, 6, product 1728. No errors or omissions.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathcal{C}$ denote the standard middle-thirds Cantor set on the interval $[0,1]$. Let $f: [0,1] \\to [0,1]$ be the Cantor-Lebesgue function (also known as the Devil's Staircase). The function $f$ is the unique continuous, non-decreasing function satisfying the following functional properties:\n\n1. $f(0)=0$ and $f(1)=1$.\n2. For $x \\in [0, 1/3]$, $f(x) = \\frac{1}{2}f(3x)$.\n3. For $x \\in [1/3, 2/3]$, $f(x) = 1/2$.\n4. For $x \\in [2/3, 1]$, $f(x) = \\frac{1}{2}(1 + f(3x-2))$.\n\nCalculate the exact value of the integral:\n$$ \\mathcal{I} = \\int_0^1 (f(x) - x)^2 \\, dx $$",
+    "run_id": "17",
+    "topic_slug": "measure_and_integration",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly uses the self-similarity properties to set up equations for \\$A = \\\\int_0^1 f(x)^2\\\\,dx\\$ and \\$B = \\\\int_0^1 x f(x)\\\\,dx\\$, solves them, and obtains \\$\\\\mathcal{I} = 1/120\\$. All steps are mathematically sound, the algebra is correct, and the reasoning is complete and rigorous. The use of \\$\\\\int_0^1 f = 1/2\\$ is justified by symmetry and is accurate.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly uses the self-similarity properties to set up equations for \\\\(A = \\\\int_0^1 f(x)^2\\\\,dx\\\\) and \\\\(B = \\\\int_0^1 x f(x)\\\\,dx\\\\), solves them, and obtains \\\\(\\\\mathcal{I} = 1/120\\\\). All steps are mathematically sound, the algebra is correct, and the reasoning is complete and rigorous. The use of \\\\(\\\\int_0^1 f = 1/2\\\\) is justified by symmetry and is accurate.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly uses the self-similarity properties to set up equations for $A = \\int_0^1 f(x)^2\\,dx$ and $B = \\int_0^1 x f(x)\\,dx$, solves them, and obtains $\\mathcal{I} = 1/120$. All steps are mathematically sound, the algebra is correct, and the reasoning is complete and rigorous. The use of $\\int_0^1 f = 1/2$ is justified by symmetry and is accurate.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $H = L^2([0,1])$ be the complex Hilbert space of square-integrable functions on the interval $[0,1]$ equipped with the standard inner product. Define the linear operator $T: H \\to H$ by\n$$ (Tf)(x) = x f(x) + \\int_0^1 f(t) \\, dt $$\nDetermine the exact value of the operator norm $\\|T\\|$.",
+    "run_id": "32",
+    "topic_slug": "functional_analysis",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that T is self-adjoint and positive, uses spectral theory to compute the norm. The essential spectrum is [0,1] via Weyl's theorem, and an eigenvalue \u03bb = e/(e-1) is found. The reasoning is mathematically sound, complete, and rigorous. The final answer is correct.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies that T is self-adjoint and positive, uses spectral theory to compute the norm. The essential spectrum is [0,1] via Weyl's theorem, and an eigenvalue \u03bb = e/(e-1) is found. The reasoning is mathematically sound, complete, and rigorous. The final answer is correct.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies that T is self-adjoint and positive, uses spectral theory to compute the norm. The essential spectrum is [0,1] via Weyl's theorem, and an eigenvalue \u03bb = e/(e-1) is found. The reasoning is mathematically sound, complete, and rigorous. The final answer is correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $f: \\mathbb{R} \\setminus \\{0, 1\\} \\to \\mathbb{R}$ be a function satisfying the functional equation\n$$ f(x) + f\\left( \\frac{1}{1-x} \\right) = 1 + \\frac{1}{x(1-x)} $$\nfor all $x \\in \\mathbb{R} \\setminus \\{0, 1\\}$.\n\nFind the explicit expression for $f(x)$ and determine the exact value of the integral\n$$ I = \\int_2^3 f(x) \\, dx $$",
+    "run_id": "16",
+    "topic_slug": "real_functions",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The derivation correctly identifies the 3-cycle and sets up the system of equations. The algebraic simplifications are accurate, leading to f(x)=x+1/x. The integral evaluation is correct. The solution is complete and rigorous.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The derivation correctly identifies the 3-cycle and sets up the system of equations. The algebraic simplifications are accurate, leading to f(x)=x+1/x. The integral evaluation is correct. The solution is complete and rigorous.\"\n}",
+        "verdict": "correct",
+        "notes": "The derivation correctly identifies the 3-cycle and sets up the system of equations. The algebraic simplifications are accurate, leading to f(x)=x+1/x. The integral evaluation is correct. The solution is complete and rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "None needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Here is a challenging mathematics problem regarding the exponential map of the Lie group $SL(2, \\mathbb{R})$.\n\n\nLet $G = SL(2, \\mathbb{R})$ be the Lie group of all $2 \\times 2$ real matrices with determinant $1$. Let $\\mathfrak{g} = \\mathfrak{sl}(2, \\mathbb{R})$ be its Lie algebra, consisting of all $2 \\times 2$ real matrices with trace $0$. The exponential map $\\exp: \\mathfrak{g} \\to G$ is defined by the standard power series:\n$$ \\exp(X) = \\sum_{k=0}^\\infty \\frac{X^k}{k!} $$\nLet $\\mathcal{T} \\subset \\mathbb{R}$ be the set of traces of all matrices in $G$ that do **not** lie in the image of the exponential map. Formally:\n$$ \\mathcal{T} = \\{ \\text{tr}(A) \\mid A \\in G \\text{ and } A \\notin \\exp(\\mathfrak{g}) \\} $$\nDetermine the set $\\mathcal{T}$ explicitly. Provide a complete proof characterizing the image of the exponential map to justify your answer.",
+    "run_id": "15",
+    "topic_slug": "topological_groups_and_lie_groups",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer is mathematically correct, complete, and rigorous. It correctly identifies the image of the exponential map and the exceptional case at trace -2, leading to \\$\\\\mathcal{T} = (-\\\\infty, -2]\\$. The case analysis covers all trace ranges, and the reasoning is sound with no gaps or errors.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer is mathematically correct, complete, and rigorous. It correctly identifies the image of the exponential map and the exceptional case at trace -2, leading to \\\\(\\\\mathcal{T} = (-\\\\infty, -2]\\\\). The case analysis covers all trace ranges, and the reasoning is sound with no gaps or errors.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer is mathematically correct, complete, and rigorous. It correctly identifies the image of the exponential map and the exceptional case at trace -2, leading to $\\mathcal{T} = (-\\infty, -2]$. The case analysis covers all trace ranges, and the reasoning is sound with no gaps or errors.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Determine the exact value of the infinite series:\n$$ \\sum_{n=1}^\\infty \\frac{2^n}{n^2 \\binom{2n}{n}} $$",
+    "run_id": "26",
+    "topic_slug": "sequences_series_and_summability",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the series expansion of $(\\\\arcsin x)^2$ via a differential equation, obtains the closed form $a_{2n}=2^{2n-1}/(n^2\\\\binom{2n}{n})$, and substitutes $x=1/\\\\sqrt{2}$ to evaluate the given series as $\\\\pi^2/8$. All steps are mathematically valid, complete, and sufficiently rigorous.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the series expansion of $(\\\\arcsin x)^2$ via a differential equation, obtains the closed form $a_{2n}=2^{2n-1}/(n^2\\\\binom{2n}{n})$, and substitutes $x=1/\\\\sqrt{2}$ to evaluate the given series as $\\\\pi^2/8$. All steps are mathematically valid, complete, and sufficiently rigorous.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly derives the series expansion of $(\\arcsin x)^2$ via a differential equation, obtains the closed form $a_{2n}=2^{2n-1}/(n^2\\binom{2n}{n})$, and substitutes $x=1/\\sqrt{2}$ to evaluate the given series as $\\pi^2/8$. All steps are mathematically valid, complete, and sufficiently rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the domain $\\Omega \\subset \\mathbb{C}^2$ defined by:\n$$ \\Omega = \\left\\{ (z, w) \\in \\mathbb{C}^2 : |z|^2 + |w|^4 < 1 \\right\\} $$\nLet $\\mathbb{B}^2 = \\left\\{ (z, w) \\in \\mathbb{C}^2 : |z|^2 + |w|^2 < 1 \\right\\}$ denote the standard unit ball.\n\n1.  Compute the Levi form of the defining function $\\rho(z, w) = |z|^2 + |w|^4 - 1$ at a point $p \\in \\partial \\Omega$, restricted to the complex tangent space $T_p^{1,0}(\\partial \\Omega)$.\n2.  Determine the set $S \\subset \\partial \\Omega$ of points where the boundary $\\partial \\Omega$ is **not** strictly pseudoconvex.\n3.  Prove that $\\Omega$ is not biholomorphically equivalent to $\\mathbb{B}^2$.\n    *(Note: You may use the fact that any biholomorphic map between bounded domains in $\\mathbb{C}^n$ with smooth real-analytic boundaries extends to a smooth diffeomorphism of their closures.)*",
+    "run_id": "20",
+    "topic_slug": "several_complex_variables_and_analytic_spaces",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly computes the Levi form, identifies the set S = {(z,0): |z|=1} where the boundary is not strictly pseudoconvex, and proves non-equivalence via invariance of strict pseudoconvexity under biholomorphic extension. All steps are mathematically sound, complete, and rigorous.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly computes the Levi form, identifies the set S = {(z,0): |z|=1} where the boundary is not strictly pseudoconvex, and proves non-equivalence via invariance of strict pseudoconvexity under biholomorphic extension. All steps are mathematically sound, complete, and rigorous.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly computes the Levi form, identifies the set S = {(z,0): |z|=1} where the boundary is not strictly pseudoconvex, and proves non-equivalence via invariance of strict pseudoconvexity under biholomorphic extension. All steps are mathematically sound, complete, and rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Evaluate the following definite integral:\n$$ I = \\int_0^{\\pi/2} x \\ln(\\tan x) \\, dx $$\nExpress your answer in terms of the Riemann Zeta function, denoted as $\\zeta(s)$.",
+    "run_id": "21",
+    "topic_slug": "special_functions",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly splits the integral, uses symmetry to relate A and B, evaluates A via Fourier series expansion of ln(sin x), correctly computes the integrals and sums, and obtains I = 7/8 \u03b6(3). All steps are mathematically sound and complete. The answer is expressed in terms of the Riemann Zeta function as required.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly splits the integral, uses symmetry to relate A and B, evaluates A via Fourier series expansion of ln(sin x), correctly computes the integrals and sums, and obtains I = 7/8 \u03b6(3). All steps are mathematically sound and complete. The answer is expressed in terms of the Riemann Zeta function as required.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly splits the integral, uses symmetry to relate A and B, evaluates A via Fourier series expansion of ln(sin x), correctly computes the integrals and sums, and obtains I = 7/8 \u03b6(3). All steps are mathematically sound and complete. The answer is expressed in terms of the Riemann Zeta function as required.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\phi = \\frac{1+\\sqrt{5}}{2}$ be the golden ratio. Consider the dynamical system on the interval $[0, 1)$ generated by the $\\beta$-transformation $T: [0, 1) \\to [0, 1)$ defined by:\n$$ T(x) = \\phi x - \\lfloor \\phi x \\rfloor $$\nCompute the exact value of the limit\n$$ L = \\lim_{n \\to \\infty} \\frac{1}{n} \\sum_{k=0}^{n-1} T^k(x) $$\nfor almost every $x \\in [0, 1)$ with respect to the Lebesgue measure.",
+    "run_id": "24",
+    "topic_slug": "dynamical_systems_and_ergodic_theory",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies Birkhoff's Ergodic Theorem and the known invariant density for the golden ratio \u03b2-transformation. The computation of the orbit of 1, the unnormalized density, normalization constant, and integral are all correct, leading to L = 1/\u221a5. The reasoning is complete and rigorous enough for the problem.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly applies Birkhoff's Ergodic Theorem and the known invariant density for the golden ratio \u03b2-transformation. The computation of the orbit of 1, the unnormalized density, normalization constant, and integral are all correct, leading to L = 1/\u221a5. The reasoning is complete and rigorous enough for the problem.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly applies Birkhoff's Ergodic Theorem and the known invariant density for the golden ratio \u03b2-transformation. The computation of the orbit of 1, the unnormalized density, normalization constant, and integral are all correct, leading to L = 1/\u221a5. The reasoning is complete and rigorous enough for the problem.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately assesses the answer as correct, with appropriate justification and adherence to the required JSON format."
+        }
+      }
+    ]
+  },
+  {
+    "question": "To ensure the problem meets the rigorous standards of the benchmarking framework, I have selected a problem from Galois Theory. This problem requires synthesizing knowledge of splitting fields, degree calculations, group structure identification, and the Galois correspondence to perform a counting task. It is non-trivial, well-posed, and has a verifiable integer solution.\n\n\nLet $f(x) = x^5 - 2 \\in \\mathbb{Q}[x]$. Let $K \\subseteq \\mathbb{C}$ be the splitting field of $f(x)$ over $\\mathbb{Q}$.\n\n1. Determine the degree of the field extension $[K : \\mathbb{Q}]$.\n2. Identify the Galois group $G = \\text{Gal}(K/\\mathbb{Q})$ up to isomorphism.\n3. Using the Fundamental Theorem of Galois Theory, calculate the number of strict intermediate fields of the extension. That is, determine the number of fields $F$ such that $\\mathbb{Q} \\subsetneq F \\subsetneq K$.",
+    "run_id": "6",
+    "topic_slug": "field_theory_and_polynomials",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly computes the degree as 20 using irreducibility and coprime degrees. The Galois group is identified as $F_{20} \\\\cong C_5 \\\\rtimes C_4$. The subgroup count is thorough: orders 2 (5 subgroups), 4 (5), 5 (1), 10 (1), plus trivial and whole, giving 14 subgroups, hence 12 strict intermediate fields. All steps are logically valid and complete.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly computes the degree as 20 using irreducibility and coprime degrees. The Galois group is identified as $F_{20} \\\\cong C_5 \\\\rtimes C_4$. The subgroup count is thorough: orders 2 (5 subgroups), 4 (5), 5 (1), 10 (1), plus trivial and whole, giving 14 subgroups, hence 12 strict intermediate fields. All steps are logically valid and complete.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly computes the degree as 20 using irreducibility and coprime degrees. The Galois group is identified as $F_{20} \\cong C_5 \\rtimes C_4$. The subgroup count is thorough: orders 2 (5 subgroups), 4 (5), 5 (1), 10 (1), plus trivial and whole, giving 14 subgroups, hence 12 strict intermediate fields. All steps are logically valid and complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $n=3$. Consider the function $f: \\mathbb{R}^3 \\to \\mathbb{R}$ defined by $f(x) = \\chi_{B}(x)$, where $\\chi_{B}$ is the indicator function of the unit ball $B = \\{x \\in \\mathbb{R}^3 : |x| \\le 1\\}$. Here, $|x|$ denotes the standard Euclidean norm.\n\nWe adopt the following definition for the Fourier transform of a function $g \\in L^1(\\mathbb{R}^3) \\cap L^2(\\mathbb{R}^3)$:\n$$ \\widehat{g}(\\xi) = \\int_{\\mathbb{R}^3} g(x) e^{-2\\pi i x \\cdot \\xi} \\, dx $$\n\n1.  Derive the explicit expression for $\\widehat{f}(\\xi)$. Your final answer should be in terms of the radial frequency $\\rho = |\\xi|$ and standard trigonometric functions.\n2.  Use the Plancherel theorem, which asserts that $\\|f\\|_{L^2(\\mathbb{R}^3)} = \\|\\widehat{f}\\|_{L^2(\\mathbb{R}^3)}$, to determine the exact value of the integral:\n    $$ I = \\int_0^\\infty \\frac{(\\sin t - t \\cos t)^2}{t^4} \\, dt $$",
+    "run_id": "28",
+    "topic_slug": "harmonic_analysis_on_euclidean_spaces",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The derivation of the Fourier transform is correct, using spherical coordinates and integration by parts, yielding $\\\\widehat{f}(\\\\xi) = \\\\frac{\\\\sin(2\\\\pi\\\\rho) - 2\\\\pi\\\\rho\\\\cos(2\\\\pi\\\\rho)}{2\\\\pi^2\\\\rho^3}$. The application of Plancherel's theorem is accurate: $\\\\|f\\\\|_2^2 = \\\\frac{4\\\\pi}{3}$ and $\\\\|\\\\widehat{f}\\\\|_2^2 = 8I$, leading to $I = \\\\frac{\\\\pi}{6}$. All steps are mathematically sound, complete, and sufficiently rigorous.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The derivation of the Fourier transform is correct, using spherical coordinates and integration by parts, yielding $\\\\widehat{f}(\\\\xi) = \\\\frac{\\\\sin(2\\\\pi\\\\rho) - 2\\\\pi\\\\rho\\\\cos(2\\\\pi\\\\rho)}{2\\\\pi^2\\\\rho^3}$. The application of Plancherel's theorem is accurate: $\\\\|f\\\\|_2^2 = \\\\frac{4\\\\pi}{3}$ and $\\\\|\\\\widehat{f}\\\\|_2^2 = 8I$, leading to $I = \\\\frac{\\\\pi}{6}$. All steps are mathematically sound, complete, and sufficiently rigorous.\"\n}",
+        "verdict": "correct",
+        "notes": "The derivation of the Fourier transform is correct, using spherical coordinates and integration by parts, yielding $\\widehat{f}(\\xi) = \\frac{\\sin(2\\pi\\rho) - 2\\pi\\rho\\cos(2\\pi\\rho)}{2\\pi^2\\rho^3}$. The application of Plancherel's theorem is accurate: $\\|f\\|_2^2 = \\frac{4\\pi}{3}$ and $\\|\\widehat{f}\\|_2^2 = 8I$, leading to $I = \\frac{\\pi}{6}$. All steps are mathematically sound, complete, and sufficiently rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "None needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $A$ be a 3-dimensional algebra over $\\mathbb{R}$ with basis $\\{e_1, e_2, e_3\\}$. The multiplication operation, denoted by $[x, y]$, is bilinear and skew-symmetric (i.e., $[x,y] = -[y,x]$). It is defined on the basis elements as follows:\n\n$$ [e_1, e_2] = e_3 $$\n$$ [e_2, e_3] = e_1 $$\n$$ [e_3, e_1] = e_1 $$\n\nNote that this algebra is **not** a Lie algebra because it fails to satisfy the Jacobi identity.\n\nA linear map $D: A \\to A$ is called a *derivation* if it satisfies the Leibniz rule:\n$$ D([x, y]) = [D(x), y] + [x, D(y)] $$\nfor all $x, y \\in A$.\n\nThe set of all such derivations forms a vector subspace of the algebra of linear endomorphisms of $A$, denoted by $\\text{Der}(A)$.\n\nDetermine the dimension of $\\text{Der}(A)$.",
+    "run_id": "11",
+    "topic_slug": "nonassociative_rings_and_algebras",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly sets up the derivation conditions for the three basis pairs, derives the linear equations, solves them systematically, and obtains a one-parameter family of derivations. All steps are mathematically sound and complete. The dimension of Der(A) is indeed 1.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly sets up the derivation conditions for the three basis pairs, derives the linear equations, solves them systematically, and obtains a one-parameter family of derivations. All steps are mathematically sound and complete. The dimension of Der(A) is indeed 1.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly sets up the derivation conditions for the three basis pairs, derives the linear equations, solves them systematically, and obtains a one-parameter family of derivations. All steps are mathematically sound and complete. The dimension of Der(A) is indeed 1.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $k$ be a field of prime characteristic $p > 0$. Let $A$ be the associative algebra over $k$ generated by two elements $x$ and $y$ subject to the relation:\n$$ yx - xy = y $$\nDetermine the center of $A$, denoted $Z(A)$. Specifically, find a set of algebraically independent generators for $Z(A)$ as a subalgebra of $A$.",
+    "run_id": "10",
+    "topic_slug": "associative_rings_and_algebras",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the center as k[x^p - x, y^p]. The reasoning is mathematically sound: using the PBW basis, commutation with x forces only powers of y that are multiples of p; commutation with y forces the coefficient polynomials to be invariant under x \u2192 x+1, which are exactly polynomials in x^p - x. The generators are shown to be central and algebraically independent. No errors or gaps are present; the solution is complete and rigorous.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the center as k[x^p - x, y^p]. The reasoning is mathematically sound: using the PBW basis, commutation with x forces only powers of y that are multiples of p; commutation with y forces the coefficient polynomials to be invariant under x \u2192 x+1, which are exactly polynomials in x^p - x. The generators are shown to be central and algebraically independent. No errors or gaps are present; the solution is complete and rigorous.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the center as k[x^p - x, y^p]. The reasoning is mathematically sound: using the PBW basis, commutation with x forces only powers of y that are multiples of p; commutation with y forces the coefficient polynomials to be invariant under x \u2192 x+1, which are exactly polynomials in x^p - x. The generators are shown to be central and algebraically independent. No errors or gaps are present; the solution is complete and rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathbb{H} = \\{(x, t) : x \\in \\mathbb{R}^3, t > 0\\}$ be the upper half-space in $\\mathbb{R}^4$. Let $u: \\overline{\\mathbb{H}} \\to \\mathbb{R}$ be the bounded continuous function that is harmonic in $\\mathbb{H}$ and satisfies the boundary condition\n$$ u(x, 0) = \\frac{1}{(1+|x|^2)^2} $$\nfor all $x \\in \\mathbb{R}^3$, where $|x|$ denotes the Euclidean norm.\n\nFind the exact value of the limit:\n$$ L = \\lim_{t \\to \\infty} t \\left( t^3 u(0, t) - 1 \\right) $$",
+    "run_id": "19",
+    "topic_slug": "potential_theory",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly uses the Poisson integral formula for the half-space, sets up the integral for u(0,t), reduces to a one-dimensional integral, and evaluates it via contour integration. The residue calculations are accurate, leading to u(0,t) = 1/(t+1)^3. The limit is then computed as -3. All steps are mathematically sound and complete.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly uses the Poisson integral formula for the half-space, sets up the integral for u(0,t), reduces to a one-dimensional integral, and evaluates it via contour integration. The residue calculations are accurate, leading to u(0,t) = 1/(t+1)^3. The limit is then computed as -3. All steps are mathematically sound and complete.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly uses the Poisson integral formula for the half-space, sets up the integral for u(0,t), reduces to a one-dimensional integral, and evaluates it via contour integration. The residue calculations are accurate, leading to u(0,t) = 1/(t+1)^3. The limit is then computed as -3. All steps are mathematically sound and complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Solve the following Volterra integral equation of the second kind for the function $y(t)$ defined for $t > 0$:\n\n$$ y(t) + \\frac{1}{\\sqrt{\\pi}} \\int_0^t \\frac{y(\\tau)}{\\sqrt{t-\\tau}} \\, d\\tau = e^{-t} $$\n\nProvide the exact solution $y(t)$ in terms of the exponential function $e^x$, the complementary error function $\\operatorname{erfc}(x)$, and the imaginary error function $\\operatorname{erfi}(x)$.\n\n**Definitions:**\n$$\n\\operatorname{erf}(x) &= \\frac{2}{\\sqrt{\\pi}} \\int_0^x e^{-u^2} \\, du \\\\\n\\operatorname{erfc}(x) &= 1 - \\operatorname{erf}(x) = \\frac{2}{\\sqrt{\\pi}} \\int_x^\\infty e^{-u^2} \\, du \\\\\n\\operatorname{erfi}(x) &= -i \\operatorname{erf}(ix) = \\frac{2}{\\sqrt{\\pi}} \\int_0^x e^{u^2} \\, du\n$$",
+    "run_id": "30",
+    "topic_slug": "integral_transforms_and_operational_calculus",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies Laplace transform, partial fractions, and inverse transforms using known pairs. All steps are mathematically sound, and the final expression matches the required form in terms of e^x, erfc, and erfi. The cancellation of singular terms yields a well-defined function for t>0. No errors or gaps are present.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly applies Laplace transform, partial fractions, and inverse transforms using known pairs. All steps are mathematically sound, and the final expression matches the required form in terms of e^x, erfc, and erfi. The cancellation of singular terms yields a well-defined function for t>0. No errors or gaps are present.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly applies Laplace transform, partial fractions, and inverse transforms using known pairs. All steps are mathematically sound, and the final expression matches the required form in terms of e^x, erfc, and erfi. The cancellation of singular terms yields a well-defined function for t>0. No errors or gaps are present.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "No improvements needed; the critique is accurate and well-justified."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G = S_3$ be the symmetric group on 3 letters, and let $k = \\mathbb{F}_3$ be the field with 3 elements. We view $k$ as a trivial $kG$-module.\n\nDetermine the graded commutative ring structure of the group cohomology ring $H^*(G, k) = \\bigoplus_{n \\ge 0} H^n(G, k)$. Provide a presentation of this ring in terms of generators and relations, specifying the degrees of all generators.",
+    "run_id": "12",
+    "topic_slug": "category_theory_and_homological_algebra",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the cohomology ring as $H^*(S_3, \\\\mathbb{F}_3) \\\\cong \\\\mathbb{F}_3[x, y]/(x^2)$ with $\\\\deg x = 3$, $\\\\deg y = 4$. The reasoning uses the stable elements theorem to reduce to invariants of $H^*(C_3, \\\\mathbb{F}_3)$ under the action of $C_2$, computes the action on generators, and determines the invariant subring. All steps are mathematically sound, complete, and adequately rigorous.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the cohomology ring as $H^*(S_3, \\\\mathbb{F}_3) \\\\cong \\\\mathbb{F}_3[x, y]/(x^2)$ with $\\\\deg x = 3$, $\\\\deg y = 4$. The reasoning uses the stable elements theorem to reduce to invariants of $H^*(C_3, \\\\mathbb{F}_3)$ under the action of $C_2$, computes the action on generators, and determines the invariant subring. All steps are mathematically sound, complete, and adequately rigorous.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the cohomology ring as $H^*(S_3, \\mathbb{F}_3) \\cong \\mathbb{F}_3[x, y]/(x^2)$ with $\\deg x = 3$, $\\deg y = 4$. The reasoning uses the stable elements theorem to reduce to invariants of $H^*(C_3, \\mathbb{F}_3)$ under the action of $C_2$, computes the action on generators, and determines the invariant subring. All steps are mathematically sound, complete, and adequately rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $C = [0,1]^4$ be the unit hypercube in $\\mathbb{R}^4$, defined as the set of points $(x_1, x_2, x_3, x_4)$ such that $0 \\le x_i \\le 1$ for all $i$. Let $H$ be the hyperplane given by the equation:\n$$x_1 + x_2 + x_3 + x_4 = 2$$\nLet $K = C \\cap H$ be the intersection of the hypercube and the hyperplane. Calculate the 3-dimensional volume of $K$.",
+    "run_id": "36",
+    "topic_slug": "convex_and_discrete_geometry",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the vertices of K as the six points with two 1's and two 0's, and argues that no edge interior intersections occur (since the sum changes by exactly 1 along an edge, the hyperplane only meets vertices). The convex hull is a regular octahedron with edge length \u221a2, and its volume is \u221a2/3 * (\u221a2)^3 = 4/3. The Irwin-Hall method is correctly applied and yields the same result. The reasoning is mathematically sound, complete, and adequately rigorous.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the vertices of K as the six points with two 1's and two 0's, and argues that no edge interior intersections occur (since the sum changes by exactly 1 along an edge, the hyperplane only meets vertices). The convex hull is a regular octahedron with edge length \u221a2, and its volume is \u221a2/3 * (\u221a2)^3 = 4/3. The Irwin-Hall method is correctly applied and yields the same result. The reasoning is mathematically sound, complete, and adequately rigorous.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the vertices of K as the six points with two 1's and two 0's, and argues that no edge interior intersections occur (since the sum changes by exactly 1 along an edge, the hyperplane only meets vertices). The convex hull is a regular octahedron with edge length \u221a2, and its volume is \u221a2/3 * (\u221a2)^3 = 4/3. The Irwin-Hall method is correctly applied and yields the same result. The reasoning is mathematically sound, complete, and adequately rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "None needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X_1, X_2, \\dots, X_n$ be a random sample of size $n$ ($n \\ge 1$) from a distribution with the probability density function:\n$$ f(x; \\theta) = \\begin{cases} \\frac{2x}{\\theta^2} & 0 < x < \\theta \\\\ 0 & \\text{otherwise} \\end{cases} $$\nwhere $\\theta > 0$ is an unknown parameter.\n\nLet $\\hat{\\theta}_{MV}$ be the Uniformly Minimum Variance Unbiased Estimator (UMVUE) of $\\theta$.\nLet $V_{CR}(\\theta)$ be the formal Cramer-Rao Lower Bound for the variance of an unbiased estimator of $\\theta$, calculated as:\n$$ V_{CR}(\\theta) = \\frac{1}{n I(\\theta)} $$\nwhere $I(\\theta) = E\\left[ \\left( \\frac{\\partial}{\\partial \\theta} \\ln f(X; \\theta) \\right)^2 \\right]$ is the Fisher Information contained in a single observation, calculated ignoring the dependence of the support on $\\theta$.\n\nDetermine the value of the ratio:\n$$ R_n = \\frac{\\text{Var}(\\hat{\\theta}_{MV})}{V_{CR}(\\theta)} $$\nExpress your answer as a function of $n$.",
+    "run_id": "43",
+    "topic_slug": "statistics",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly computes the formal Cram\u00e9r-Rao lower bound as $\\\\theta^2/(4n)$ and the UMVUE as $\\\\hat{\\\\theta}_{MV} = \\\\frac{2n+1}{2n} X_{(n)}$. The variance of the UMVUE is derived as $\\\\theta^2/(4n(n+1))$, leading to the ratio $R_n = 1/(n+1)$. All steps are mathematically sound, complete, and rigorous. No errors or omissions are present.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly computes the formal Cram\u00e9r-Rao lower bound as $\\\\theta^2/(4n)$ and the UMVUE as $\\\\hat{\\\\theta}_{MV} = \\\\frac{2n+1}{2n} X_{(n)}$. The variance of the UMVUE is derived as $\\\\theta^2/(4n(n+1))$, leading to the ratio $R_n = 1/(n+1)$. All steps are mathematically sound, complete, and rigorous. No errors or omissions are present.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly computes the formal Cram\u00e9r-Rao lower bound as $\\theta^2/(4n)$ and the UMVUE as $\\hat{\\theta}_{MV} = \\frac{2n+1}{2n} X_{(n)}$. The variance of the UMVUE is derived as $\\theta^2/(4n(n+1))$, leading to the ratio $R_n = 1/(n+1)$. All steps are mathematically sound, complete, and rigorous. No errors or omissions are present.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R = \\mathbb{C}[x, y, z, w] / (xy - zw)$.\n\n1.  Prove that $R$ is a normal domain.\n2.  Determine the divisor class group $\\text{Cl}(R)$.",
+    "run_id": "7",
+    "topic_slug": "commutative_algebra",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves $R$ is a normal domain by showing irreducibility of $xy-zw$ (via rank of quadratic form) and applying Serre's criterion ($S_2$ from Cohen\u2013Macaulay property, $R_1$ from singular locus of dimension $0$). The computation of $\\\\operatorname{Cl}(R)$ uses Nagata's lemma: localizing at $y$ gives a UFD, so the class group is generated by the primes containing $y$. The decomposition $(y)=(y,z)\\\\cap(y,w)$ is valid (in the quotient, $(y,zw)=(y,z)\\\\cap(y,w)$ and $zw=xy$ gives $(y)=(y,z)\\\\cap(y,w)$), yielding $\\\\operatorname{div}(y)=[\\\\mathfrak{p}_1]+[\\\\mathfrak{p}_2]=0$, so the class group is cyclic. The geometric interpretation (affine cone over $\\\\mathbb{P}^1\\\\times\\\\mathbb{P}^1$) shows it is infinite cyclic, i.e., $\\\\operatorname{Cl}(R)\\\\cong\\\\mathbb{Z}$. All steps are mathematically sound, complete, and sufficiently rigorous; minor inaccuracies (e.g., the exact sequence notation) do not affect correctness.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves $R$ is a normal domain by showing irreducibility of $xy-zw$ (via rank of quadratic form) and applying Serre's criterion ($S_2$ from Cohen\u2013Macaulay property, $R_1$ from singular locus of dimension $0$). The computation of $\\\\operatorname{Cl}(R)$ uses Nagata's lemma: localizing at $y$ gives a UFD, so the class group is generated by the primes containing $y$. The decomposition $(y)=(y,z)\\\\cap(y,w)$ is valid (in the quotient, $(y,zw)=(y,z)\\\\cap(y,w)$ and $zw=xy$ gives $(y)=(y,z)\\\\cap(y,w)$), yielding $\\\\operatorname{div}(y)=[\\\\mathfrak{p}_1]+[\\\\mathfrak{p}_2]=0$, so the class group is cyclic. The geometric interpretation (affine cone over $\\\\mathbb{P}^1\\\\times\\\\mathbb{P}^1$) shows it is infinite cyclic, i.e., $\\\\operatorname{Cl}(R)\\\\cong\\\\mathbb{Z}$. All steps are mathematically sound, complete, and sufficiently rigorous; minor inaccuracies (e.g., the exact sequence notation) do not affect correctness.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly proves $R$ is a normal domain by showing irreducibility of $xy-zw$ (via rank of quadratic form) and applying Serre's criterion ($S_2$ from Cohen\u2013Macaulay property, $R_1$ from singular locus of dimension $0$). The computation of $\\operatorname{Cl}(R)$ uses Nagata's lemma: localizing at $y$ gives a UFD, so the class group is generated by the primes containing $y$. The decomposition $(y)=(y,z)\\cap(y,w)$ is valid (in the quotient, $(y,zw)=(y,z)\\cap(y,w)$ and $zw=xy$ gives $(y)=(y,z)\\cap(y,w)$), yielding $\\operatorname{div}(y)=[\\mathfrak{p}_1]+[\\mathfrak{p}_2]=0$, so the class group is cyclic. The geometric interpretation (affine cone over $\\mathbb{P}^1\\times\\mathbb{P}^1$) shows it is infinite cyclic, i.e., $\\operatorname{Cl}(R)\\cong\\mathbb{Z}$. All steps are mathematically sound, complete, and sufficiently rigorous; minor inaccuracies (e.g., the exact sequence notation) do not affect correctness.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique correctly identifies the answer as correct, provides evidence-based reasoning, and follows the required format. No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Compute the exact value of the following definite integral using methods from complex analysis:\n\n$$ I = \\int_{0}^{\\infty} \\frac{\\ln x}{x^2 + 2x + 2} \\, dx $$\n\nEnsure you justify your choice of contour and branch cuts, and clearly derive the residues required for the evaluation.",
+    "run_id": "18",
+    "topic_slug": "functions_of_a_complex_variable",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. The keyhole contour with branch cut along the positive real axis is correctly chosen, and the contributions from the large and small circles vanish (the small-circle estimate is slightly misstated but the conclusion holds). The residues are accurately computed, and the final result \\$I = \\\\frac{\\\\pi \\\\ln 2}{8}\\$ follows correctly. No substantive errors or gaps are present.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. The keyhole contour with branch cut along the positive real axis is correctly chosen, and the contributions from the large and small circles vanish (the small-circle estimate is slightly misstated but the conclusion holds). The residues are accurately computed, and the final result \\\\(I = \\\\frac{\\\\pi \\\\ln 2}{8}\\\\) follows correctly. No substantive errors or gaps are present.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. The keyhole contour with branch cut along the positive real axis is correctly chosen, and the contributions from the large and small circles vanish (the small-circle estimate is slightly misstated but the conclusion holds). The residues are accurately computed, and the final result $I = \\frac{\\pi \\ln 2}{8}$ follows correctly. No substantive errors or gaps are present.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the Fredholm integral equation of the second kind for a continuous function $u: [0,1] \\to \\mathbb{R}$:\n\n$$ u(x) = 1 + \\lambda \\int_0^1 K(x,t) u(t) \\, dt $$\n\nwhere $\\lambda$ is a real parameter and the kernel $K(x,t)$ is defined as:\n\n$$ K(x,t) = \\begin{cases} \\sinh(x)\\cosh(t) & 0 \\le x \\le t \\le 1 \\\\ \\cosh(x)\\sinh(t) & 0 \\le t \\le x \\le 1 \\end{cases} $$\n\n1.  Derive the equivalent boundary value problem (ordinary differential equation with boundary conditions) for $u(x)$.\n2.  Determine the transcendental equation that $\\lambda$ must satisfy for the solution $u(x)$ to be non-unique (i.e., find the condition for $\\lambda$ to be an eigenvalue).\n3.  Find the explicit solution $u(x)$ for the specific case $\\lambda = 1$.",
+    "run_id": "31",
+    "topic_slug": "integral_equations",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the BVP, obtains the eigenvalue condition \\$\\\\sqrt{\\\\lambda-1}\\\\cot(\\\\sqrt{\\\\lambda-1}) = \\\\tanh(1)\\$ for \\$\\\\lambda>1\\$, and solves the \\$\\\\lambda=1\\$ case explicitly. All reasoning is sound and complete.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the BVP, obtains the eigenvalue condition \\\\(\\\\sqrt{\\\\lambda-1}\\\\cot(\\\\sqrt{\\\\lambda-1}) = \\\\tanh(1)\\\\) for \\\\(\\\\lambda>1\\\\), and solves the \\\\(\\\\lambda=1\\\\) case explicitly. All reasoning is sound and complete.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly derives the BVP, obtains the eigenvalue condition $\\sqrt{\\lambda-1}\\cot(\\sqrt{\\lambda-1}) = \\tanh(1)$ for $\\lambda>1$, and solves the $\\lambda=1$ case explicitly. All reasoning is sound and complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "None."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Find the exact solution $u(x,t)$ to the following initial-boundary value problem for the partial differential equation:\n\n$$ \\frac{\\partial u}{\\partial t} = \\frac{\\partial^2 u}{\\partial x^2} - 2 \\frac{\\partial u}{\\partial x} $$\n\ndefined on the semi-infinite domain $x > 0$ and time $t > 0$, subject to the initial condition:\n$$ u(x, 0) = 0 \\quad \\text{for } x > 0 $$\n\nand the boundary conditions:\n$$ u(0, t) = 1 \\quad \\text{for } t > 0 $$\n$$ \\lim_{x \\to \\infty} u(x, t) = 0 \\quad \\text{for } t > 0 $$\n\nExpress your answer in terms of the complementary error function, defined as $\\text{erfc}(z) = \\frac{2}{\\sqrt{\\pi}} \\int_z^\\infty e^{-\\eta^2} \\, d\\eta$.",
+    "run_id": "23",
+    "topic_slug": "partial_differential_equations",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. The Laplace transform is correctly applied, the ODE solution properly uses the boundary conditions (setting the growing exponential to zero), and the inverse transform employs a known Laplace pair (verified by consistency checks for $\\\\alpha=0$ and $k=0$). The final expression $u(x,t)=\\\\frac12\\\\operatorname{erfc}\\\\left(\\\\frac{x-2t}{2\\\\sqrt{t}}\\\\right)+\\\\frac12 e^{2x}\\\\operatorname{erfc}\\\\left(\\\\frac{x+2t}{2\\\\sqrt{t}}\\\\right)$ satisfies the PDE, initial condition, and boundary conditions. No errors or gaps are present.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution is mathematically sound and complete. The Laplace transform is correctly applied, the ODE solution properly uses the boundary conditions (setting the growing exponential to zero), and the inverse transform employs a known Laplace pair (verified by consistency checks for $\\\\alpha=0$ and $k=0$). The final expression $u(x,t)=\\\\frac12\\\\operatorname{erfc}\\\\left(\\\\frac{x-2t}{2\\\\sqrt{t}}\\\\right)+\\\\frac12 e^{2x}\\\\operatorname{erfc}\\\\left(\\\\frac{x+2t}{2\\\\sqrt{t}}\\\\right)$ satisfies the PDE, initial condition, and boundary conditions. No errors or gaps are present.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution is mathematically sound and complete. The Laplace transform is correctly applied, the ODE solution properly uses the boundary conditions (setting the growing exponential to zero), and the inverse transform employs a known Laplace pair (verified by consistency checks for $\\alpha=0$ and $k=0$). The final expression $u(x,t)=\\frac12\\operatorname{erfc}\\left(\\frac{x-2t}{2\\sqrt{t}}\\right)+\\frac12 e^{2x}\\operatorname{erfc}\\left(\\frac{x+2t}{2\\sqrt{t}}\\right)$ satisfies the PDE, initial condition, and boundary conditions. No errors or gaps are present.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and correctly identifies the answer as correct. It provides evidence-based reasoning and follows the required JSON format. No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathbb{R}$ denote the set of real numbers and let $\\mathbb{Z}^+$ denote the set of positive integers $\\{1, 2, 3, \\dots\\}$. Define the set $K \\subset \\mathbb{R}$ by\n$$ K = \\left\\{ \\frac{1}{n} : n \\in \\mathbb{Z}^+ \\right\\}. $$\nLet $\\tau_K$ be the topology on $\\mathbb{R}$ generated by the basis\n$$ \\mathcal{B} = \\{ (a, b) : a, b \\in \\mathbb{R}, a < b \\} \\cup \\{ (a, b) \\setminus K : a, b \\in \\mathbb{R}, a < b \\}, $$\nwhere $(a, b)$ denotes the standard Euclidean open interval. Let $X$ be the topological space $(\\mathbb{R}, \\tau_K)$.\n\nDefine an equivalence relation $\\sim$ on $X$ by $x \\sim y$ if and only if $x = y$ or $x, y \\in K$. Let $Y = X / \\sim$ be the quotient space equipped with the quotient topology.\n\nDetermine whether $Y$ is a Hausdorff ($T_2$) space. Provide a complete proof for your answer.",
+    "run_id": "38",
+    "topic_slug": "general_topology",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves that Y is not Hausdorff. The reasoning is mathematically sound: it identifies distinct points [K] and [0], shows any open set containing K must contain an interval around each 1/n, any open set containing 0 contains a set (-\u03b4,\u03b4)\\\\K, and then demonstrates that these must intersect. All steps are justified, and the proof is complete and rigorous. Minor imprecision about saturation does not affect the validity.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves that Y is not Hausdorff. The reasoning is mathematically sound: it identifies distinct points [K] and [0], shows any open set containing K must contain an interval around each 1/n, any open set containing 0 contains a set (-\u03b4,\u03b4)\\\\K, and then demonstrates that these must intersect. All steps are justified, and the proof is complete and rigorous. Minor imprecision about saturation does not affect the validity.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly proves that Y is not Hausdorff. The reasoning is mathematically sound: it identifies distinct points [K] and [0], shows any open set containing K must contain an interval around each 1/n, any open set containing 0 contains a set (-\u03b4,\u03b4)\\K, and then demonstrates that these must intersect. All steps are justified, and the proof is complete and rigorous. Minor imprecision about saturation does not affect the validity.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $ABCD$ be a rectangle with side lengths $AB = 8$ and $BC = 6$. The rectangle is folded along the diagonal $AC$ so that vertex $B$ moves to a new position $B'$. The side $AB'$ of the folded triangle intersects the side $CD$ of the original rectangle at point $E$.\n\nLet $O$ be the center of the rectangle $ABCD$ (the intersection of its diagonals), and let $I$ be the incenter of the triangle $AEC$. Find the distance between points $O$ and $I$.",
+    "run_id": "35",
+    "topic_slug": "geometry",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies triangle AEC as isosceles with AE = EC, computes DE = 7/4, AE = EC = 25/4, altitude EO = 15/4, area = 75/4, semiperimeter = 45/4, inradius = 5/3, and notes that O lies on AC and I lies on EO, so OI equals the inradius. All steps are mathematically sound and complete.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies triangle AEC as isosceles with AE = EC, computes DE = 7/4, AE = EC = 25/4, altitude EO = 15/4, area = 75/4, semiperimeter = 45/4, inradius = 5/3, and notes that O lies on AC and I lies on EO, so OI equals the inradius. All steps are mathematically sound and complete.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies triangle AEC as isosceles with AE = EC, computes DE = 7/4, AE = EC = 25/4, altitude EO = 15/4, area = 75/4, semiperimeter = 45/4, inradius = 5/3, and notes that O lies on AC and I lies on EO, so OI equals the inradius. All steps are mathematically sound and complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Here is a challenging mathematics problem in the domain of approximations and expansions, designed to test asymptotic analysis skills.\n\n\nConsider the integral $I(\\lambda)$ defined by:\n$$ I(\\lambda) = \\int_0^1 e^{\\lambda(x^2 - x)} \\ln x \\, dx $$\nfor $\\lambda > 0$.\n\nDetermine the asymptotic expansion of $I(\\lambda)$ as $\\lambda \\to \\infty$. Specifically, find the values of the constants $a, b, c,$ and $d$ in the expansion:\n$$ I(\\lambda) = a \\frac{\\ln \\lambda}{\\lambda} + \\frac{b}{\\lambda} + c \\frac{\\ln \\lambda}{\\lambda^2} + \\frac{d}{\\lambda^2} + o(\\lambda^{-2}) $$\nExpress your answers in terms of the Euler-Mascheroni constant $\\gamma$.",
+    "run_id": "27",
+    "topic_slug": "approximations_and_expansions",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The derivation correctly applies Laplace's method, splitting the integral at 1/2, substituting u = \u03bbx and v = \u03bb(1-x), extending limits to infinity with exponentially small error, expanding the integrands in powers of 1/\u03bb, and evaluating the necessary integrals. The constants a = -1, b = -\u03b3, c = -2, d = 2 - 2\u03b3 are correctly obtained. All steps are mathematically sound and complete.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The derivation correctly applies Laplace's method, splitting the integral at 1/2, substituting u = \u03bbx and v = \u03bb(1-x), extending limits to infinity with exponentially small error, expanding the integrands in powers of 1/\u03bb, and evaluating the necessary integrals. The constants a = -1, b = -\u03b3, c = -2, d = 2 - 2\u03b3 are correctly obtained. All steps are mathematically sound and complete.\"\n}",
+        "verdict": "correct",
+        "notes": "The derivation correctly applies Laplace's method, splitting the integral at 1/2, substituting u = \u03bbx and v = \u03bb(1-x), extending limits to infinity with exponentially small error, expanding the integrands in powers of 1/\u03bb, and evaluating the necessary integrals. The constants a = -1, b = -\u03b3, c = -2, d = 2 - 2\u03b3 are correctly obtained. All steps are mathematically sound and complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Here is a challenging problem in Operator Theory.\n\n\nLet $H = \\ell^2(\\mathbb{N})$ be the Hilbert space of square-summable complex sequences indexed by $n \\in \\{1, 2, \\dots\\}$. Define the bounded linear operator $T: H \\to H$ by its action on a sequence $x = (x_n)_{n=1}^\\infty$ as follows:\n$$ (Tx)_n = x_{n-1} + x_{n+1} + (-1)^n x_n \\quad \\text{for } n \\ge 2, $$\n$$ (Tx)_1 = x_2 - 2x_1. $$\nDetermine the point spectrum $\\sigma_p(T)$ of the operator $T$.",
+    "run_id": "33",
+    "topic_slug": "operator_theory",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly solves the eigenvalue problem. The derivation of the essential spectrum, transfer matrix, boundary condition, and stability analysis are mathematically sound. The quadratic equation yields \u03bb = -1 \u00b1 \u221a2, and only \u03bb = -1 - \u221a2 gives |\u03bc| < 1, ensuring \u2113\u00b2 decay. No errors or gaps are present; the solution is complete and rigorous.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly solves the eigenvalue problem. The derivation of the essential spectrum, transfer matrix, boundary condition, and stability analysis are mathematically sound. The quadratic equation yields \u03bb = -1 \u00b1 \u221a2, and only \u03bb = -1 - \u221a2 gives |\u03bc| < 1, ensuring \u2113\u00b2 decay. No errors or gaps are present; the solution is complete and rigorous.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly solves the eigenvalue problem. The derivation of the essential spectrum, transfer matrix, boundary condition, and stability analysis are mathematically sound. The quadratic equation yields \u03bb = -1 \u00b1 \u221a2, and only \u03bb = -1 - \u221a2 gives |\u03bc| < 1, ensuring \u2113\u00b2 decay. No errors or gaps are present; the solution is complete and rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $n \\geq 2$ be an integer. Consider the system of linear equations $Ax = b$, where $A$ is an $n \\times n$ tridiagonal matrix with constant diagonals, defined by:\n$$ A = \\begin{pmatrix} 2 & \\alpha & 0 & \\cdots & 0 \\\\ \\alpha & 2 & \\alpha & \\cdots & 0 \\\\ 0 & \\alpha & 2 & \\ddots & \\vdots \\\\ \\vdots & \\vdots & \\ddots & \\ddots & \\alpha \\\\ 0 & 0 & \\cdots & \\alpha & 2 \\end{pmatrix} $$\nwhere $\\alpha \\in \\mathbb{R}$ is a real parameter.\n\n1. Determine the exact set of values for $\\alpha$ (expressed in terms of $n$) such that the **Jacobi iterative method** converges for any initial guess $x^{(0)}$.\n2. Let $n=3$. Assume $\\alpha$ is non-zero and falls within the convergence range found in Part 1. Determine the optimal relaxation parameter $\\omega_{\\text{opt}}$ for the **Successive Over-Relaxation (SOR)** method as a function of $\\alpha$. Then, find the spectral radius of the SOR iteration matrix at this optimal parameter, $\\rho(\\mathcal{L}_{\\omega_{\\text{opt}}})$, simplifying your answer.",
+    "run_id": "44",
+    "topic_slug": "numerical_analysis",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly computes the eigenvalues of the Jacobi iteration matrix, leading to \u03c1(B_J)=|\u03b1| cos(\u03c0/(n+1)) and the convergence condition |\u03b1|<sec(\u03c0/(n+1)). For n=3, using \u03bc=|\u03b1|/\u221a2, the standard SOR optimal parameter formula yields \u03c9_opt=2/(1+\u221a(1-\u03b1^2/2)) and \u03c1(L_\u03c9_opt)=\u03c9_opt-1=(1-\u221a(1-\u03b1^2/2))/(1+\u221a(1-\u03b1^2/2)). All reasoning is mathematically sound, complete, and rigorous enough.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly computes the eigenvalues of the Jacobi iteration matrix, leading to \u03c1(B_J)=|\u03b1| cos(\u03c0/(n+1)) and the convergence condition |\u03b1|<sec(\u03c0/(n+1)). For n=3, using \u03bc=|\u03b1|/\u221a2, the standard SOR optimal parameter formula yields \u03c9_opt=2/(1+\u221a(1-\u03b1^2/2)) and \u03c1(L_\u03c9_opt)=\u03c9_opt-1=(1-\u221a(1-\u03b1^2/2))/(1+\u221a(1-\u03b1^2/2)). All reasoning is mathematically sound, complete, and rigorous enough.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly computes the eigenvalues of the Jacobi iteration matrix, leading to \u03c1(B_J)=|\u03b1| cos(\u03c0/(n+1)) and the convergence condition |\u03b1|<sec(\u03c0/(n+1)). For n=3, using \u03bc=|\u03b1|/\u221a2, the standard SOR optimal parameter formula yields \u03c9_opt=2/(1+\u221a(1-\u03b1^2/2)) and \u03c1(L_\u03c9_opt)=\u03c9_opt-1=(1-\u221a(1-\u03b1^2/2))/(1+\u221a(1-\u03b1^2/2)). All reasoning is mathematically sound, complete, and rigorous enough.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique correctly identifies the answer as correct, provides evidence, and follows the required format. No improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X \\subset \\mathbb{C}P^4$ be a smooth complex surface defined as the complete intersection of two hypersurfaces, $H_1$ and $H_2$, both of degree 3.\nWe equip $X$ with the Riemannian metric $g$ induced by the standard Fubini-Study metric on $\\mathbb{C}P^4$.\nLet $\\nabla$ be the Levi-Civita connection associated with $g$, and let $\\Omega$ be its curvature 2-form, regarded as a section of $\\text{End}(TX) \\otimes \\Lambda^2(T^*X)$.\nSpecifically, if $e_1, \\dots, e_4$ is a local orthonormal frame for the real tangent bundle $TX$, then $\\Omega$ is the matrix of 2-forms $(\\Omega^i_j)$ where $\\Omega^i_j = \\sum_{k<l} R^i_{jkl} \\theta^k \\wedge \\theta^l$.\n\nCalculate the exact value of the integral:\n$$ \\mathcal{I} = \\int_X \\text{tr}(\\Omega \\wedge \\Omega) $$\nwhere the trace is taken over the endomorphism indices, and the wedge product acts on the form components.",
+    "run_id": "41",
+    "topic_slug": "global_analysis_on_manifolds",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly uses Chern-Weil theory to relate the integral to the first Pontryagin number, computes Chern classes via adjunction formula, obtains c1 = -h, c2 = 7h^2, p1 = -13h^2, and degree = 9, leading to I = 936\u03c0^2. All steps are mathematically sound and complete.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly uses Chern-Weil theory to relate the integral to the first Pontryagin number, computes Chern classes via adjunction formula, obtains c1 = -h, c2 = 7h^2, p1 = -13h^2, and degree = 9, leading to I = 936\u03c0^2. All steps are mathematically sound and complete.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly uses Chern-Weil theory to relate the integral to the first Pontryagin number, computes Chern classes via adjunction formula, obtains c1 = -h, c2 = 7h^2, p1 = -13h^2, and degree = 9, leading to I = 936\u03c0^2. All steps are mathematically sound and complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "**Problem: Trace of a Convolution Operator on the Heisenberg Group**\n\nLet $H$ be the Heisenberg group, identified with $\\mathbb{R}^3$ equipped with the group multiplication law:\n$$ (x,y,z) \\cdot (x',y',z') = (x+x', y+y', z+z' + xy'). $$\nLet $\\mu$ be the Haar measure on $H$, given by $d\\mu(x,y,z) = dx \\, dy \\, dz$.\n\nLet $\\pi: H \\to \\mathcal{U}(L^2(\\mathbb{R}))$ be the unitary representation of $H$ acting on the space of square-integrable functions $L^2(\\mathbb{R})$, defined by:\n$$ [\\pi(x,y,z)\\psi](t) = e^{2\\pi i (z + yt)} \\psi(t+x) $$\nfor all $\\psi \\in L^2(\\mathbb{R})$ and $t \\in \\mathbb{R}$.\n\nConsider the function $F \\in L^1(H)$ defined by:\n$$ F(x,y,z) = e^{-\\alpha(x^2 + y^2)} e^{-\\beta z^2} $$\nwhere $\\alpha$ and $\\beta$ are strictly positive real constants.\n\nWe define the operator $T_F: L^2(\\mathbb{R}) \\to L^2(\\mathbb{R})$ by the Bochner integral:\n$$ T_F = \\int_H F(g) \\pi(g) \\, d\\mu(g). $$\nExplicitly, for any $\\psi \\in L^2(\\mathbb{R})$, $(T_F \\psi)(t) = \\int_{\\mathbb{R}^3} F(x,y,z) [\\pi(x,y,z)\\psi](t) \\, dx \\, dy \\, dz$.\n\nProve that $T_F$ is a trace class operator and compute its trace, $\\text{Tr}(T_F)$.\n\n---",
+    "run_id": "29",
+    "topic_slug": "abstract_harmonic_analysis",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in the justification of trace class: it claims 'Integral operators with Schwartz kernels on \u211d are known to be trace class.' This is false; a counterexample is the convolution operator with Gaussian kernel, which has a Schwartz kernel but is not even compact (hence not trace class). Therefore the proof that \\$T_F\\$ is trace class is invalid. The trace computation is correct only if the operator is trace class, but the reasoning is flawed.\",\n  \"suggestions\": \"Provide a valid proof that \\$T_F\\$ is trace class, for instance by factorizing it as a product of two Hilbert\u2013Schmidt operators, or by diagonalizing it via Hermite functions to show its singular values are summable.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains a mathematical error in the justification of trace class: it claims 'Integral operators with Schwartz kernels on \u211d are known to be trace class.' This is false; a counterexample is the convolution operator with Gaussian kernel, which has a Schwartz kernel but is not even compact (hence not trace class). Therefore the proof that \\\\(T_F\\\\) is trace class is invalid. The trace computation is correct only if the operator is trace class, but the reasoning is flawed.\",\n  \"suggestions\": \"Provide a valid proof that \\\\(T_F\\\\) is trace class, for instance by factorizing it as a product of two Hilbert\u2013Schmidt operators, or by diagonalizing it via Hermite functions to show its singular values are summable.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains a mathematical error in the justification of trace class: it claims 'Integral operators with Schwartz kernels on \u211d are known to be trace class.' This is false; a counterexample is the convolution operator with Gaussian kernel, which has a Schwartz kernel but is not even compact (hence not trace class). Therefore the proof that \\$T_F\\$ is trace class is invalid. The trace computation is correct only if the operator is trace class, but the reasoning is flawed.",
+        "suggestions": "Provide a valid proof that \\$T_F\\$ is trace class, for instance by factorizing it as a product of two Hilbert\u2013Schmidt operators, or by diagonalizing it via Hermite functions to show its singular values are summable.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique accurately identifies the false claim about Schwartz kernels and provides a valid counterexample. It correctly notes that the trace computation depends on the operator being trace class, which was not properly justified. The suggestions for improvement are appropriate. No revisions needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $S^2$ be the standard 2-sphere. Consider the product space $X = S^2 \\times S^2$. Let $\\sigma: X \\to X$ be the involution defined by $\\sigma(x, y) = (-x, -y)$, where $-x$ denotes the antipodal point of $x$. Let $M$ be the quotient space defined by $M = X / \\sim$, where the equivalence relation is generated by the identification $(x, y) \\sim \\sigma(x, y)$.\n\nDetermine the singular homology groups $H_n(M; \\mathbb{Z})$ for all integers $n \\ge 0$.",
+    "run_id": "39",
+    "topic_slug": "algebraic_topology",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly computes the homology groups. The fundamental group is Z2, giving H1=Z2 via Hurewicz. The fibration M \u2192 \u211dP\u00b2 with fiber S\u00b2 is properly constructed, and the Serre spectral sequence with local coefficients is set up correctly. The twisted homology of \u211dP\u00b2 is computed as H\u2080=\u2124, H\u2081=\u2124\u2082, H\u2082=0 (trivial) and H\u2080=\u2124\u2082, H\u2081=0, H\u2082=\u2124 (twisted). All differentials vanish because the target rows are zero and p \u2264 2 forces higher differentials out of range. The resulting groups H\u2080=\u2124, H\u2081=\u2124\u2082, H\u2082=\u2124\u2082, H\u2083=0, H\u2084=\u2124 are consistent with Poincar\u00e9 duality and the transfer sequence. No mathematical errors or gaps are present.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly computes the homology groups. The fundamental group is Z2, giving H1=Z2 via Hurewicz. The fibration M \u2192 \u211dP\u00b2 with fiber S\u00b2 is properly constructed, and the Serre spectral sequence with local coefficients is set up correctly. The twisted homology of \u211dP\u00b2 is computed as H\u2080=\u2124, H\u2081=\u2124\u2082, H\u2082=0 (trivial) and H\u2080=\u2124\u2082, H\u2081=0, H\u2082=\u2124 (twisted). All differentials vanish because the target rows are zero and p \u2264 2 forces higher differentials out of range. The resulting groups H\u2080=\u2124, H\u2081=\u2124\u2082, H\u2082=\u2124\u2082, H\u2083=0, H\u2084=\u2124 are consistent with Poincar\u00e9 duality and the transfer sequence. No mathematical errors or gaps are present.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly computes the homology groups. The fundamental group is Z2, giving H1=Z2 via Hurewicz. The fibration M \u2192 \u211dP\u00b2 with fiber S\u00b2 is properly constructed, and the Serre spectral sequence with local coefficients is set up correctly. The twisted homology of \u211dP\u00b2 is computed as H\u2080=\u2124, H\u2081=\u2124\u2082, H\u2082=0 (trivial) and H\u2080=\u2124\u2082, H\u2081=0, H\u2082=\u2124 (twisted). All differentials vanish because the target rows are zero and p \u2264 2 forces higher differentials out of range. The resulting groups H\u2080=\u2124, H\u2081=\u2124\u2082, H\u2082=\u2124\u2082, H\u2083=0, H\u2084=\u2124 are consistent with Poincar\u00e9 duality and the transfer sequence. No mathematical errors or gaps are present.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Here is the generated mathematics problem and solution.\n\n\nLet $S_n = \\sum_{i=1}^n X_i$ be a simple symmetric random walk starting at $S_0 = 0$, where $X_1, X_2, \\dots$ are independent and identically distributed random variables with $P(X_i = 1) = P(X_i = -1) = 1/2$.\n\nLet $a$ and $b$ be two positive integers. Define the stopping time $\\tau$ as the first time the random walk hits either $a$ or $-b$:\n$$ \\tau = \\min \\{ n \\ge 0 : S_n = a \\text{ or } S_n = -b \\}. $$\n\nDetermine the variance of $\\tau$, $\\text{Var}(\\tau)$, in terms of $a$ and $b$.",
+    "run_id": "42",
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the variance using martingales and optional stopping. All steps are mathematically sound: the martingales are correctly constructed, the algebra is verified, and the final expression matches independent checks (e.g., a=b=1 gives 0, a=1,b=2 gives 2, a=2,b=2 gives 8). The application of optional stopping is justified by noting that \u03c4 has finite moments. The solution is complete and adequately rigorous.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the variance using martingales and optional stopping. All steps are mathematically sound: the martingales are correctly constructed, the algebra is verified, and the final expression matches independent checks (e.g., a=b=1 gives 0, a=1,b=2 gives 2, a=2,b=2 gives 8). The application of optional stopping is justified by noting that \u03c4 has finite moments. The solution is complete and adequately rigorous.\"\n}",
+        "verdict": "correct",
+        "notes": "The solution correctly derives the variance using martingales and optional stopping. All steps are mathematically sound: the martingales are correctly constructed, the algebra is verified, and the final expression matches independent checks (e.g., a=b=1 gives 0, a=1,b=2 gives 2, a=2,b=2 gives 8). The application of optional stopping is justified by noting that \u03c4 has finite moments. The solution is complete and adequately rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no improvements needed."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Here is the generated problem and solution.\n\n\nLet $S$ be the surface in $\\mathbb{R}^3$ defined by the parameterization\n$$ \\mathbf{r}(u,v) = (u \\cos v, u \\sin v, \\ln u) $$\ndefined for $u > 0$ and $v \\in \\mathbb{R}$. Consider the curvilinear quadrilateral region $D \\subset S$ defined by the parameter domain:\n$$ 1 \\le u \\le \\sqrt{3}, \\quad 0 \\le v \\le \\frac{\\pi}{2} $$\nVerify the local Gauss-Bonnet theorem for the region $D$. To do this, explicitly calculate the following values:\n\n1.  **The Gaussian curvature integral**: Calculate the Gaussian curvature $K$ of the surface and evaluate $\\iint_D K \\, dA$.\n2.  **The geodesic curvature integral**: Calculate the geodesic curvature $k_g$ along each of the four smooth segments of the boundary $\\partial D$. Evaluate the path integral $\\oint_{\\partial D} k_g \\, ds$, assuming $\\partial D$ is oriented such that the region $D$ lies to the left (i.e., counter-clockwise in the $uv$-plane).\n3.  **The turning angles**: Determine the exterior turning angles $\\theta_i$ at the four vertices of $D$.\n\nShow that the sum $\\iint_D K \\, dA + \\oint_{\\partial D} k_g \\, ds + \\sum \\theta_i$ is equal to $2\\pi \\chi(D)$, where $\\chi(D)$ is the Euler characteristic of the region.",
+    "run_id": "37",
+    "topic_slug": "differential_geometry",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"All calculations are mathematically correct and complete. The Gaussian curvature is correctly derived and integrated, the geodesic curvature integrals are correctly computed with proper sign considerations, the turning angles sum to 2\u03c0, and the Gauss-Bonnet theorem is verified. No errors or gaps found.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"All calculations are mathematically correct and complete. The Gaussian curvature is correctly derived and integrated, the geodesic curvature integrals are correctly computed with proper sign considerations, the turning angles sum to 2\u03c0, and the Gauss-Bonnet theorem is verified. No errors or gaps found.\"\n}",
+        "verdict": "correct",
+        "notes": "All calculations are mathematically correct and complete. The Gaussian curvature is correctly derived and integrated, the geodesic curvature integrals are correctly computed with proper sign considerations, the turning angles sum to 2\u03c0, and the Gauss-Bonnet theorem is verified. No errors or gaps found.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $M = G(2, 4)$ be the real Grassmannian manifold consisting of all 2-dimensional linear subspaces of $\\mathbb{R}^4$.\n\n1. Calculate the Euler characteristic $\\chi(M)$.\n2. Compute the integral cohomology groups $H^k(M; \\mathbb{Z})$ for all $k \\geq 0$.\n3. Determine the ring structure of the cohomology with coefficients in $\\mathbb{Z}_2$, denoted $H^*(M; \\mathbb{Z}_2)$, by providing a presentation in terms of generators and relations.",
+    "run_id": "40",
+    "topic_slug": "manifolds_and_cell_complexes",
+    "question_author": "google-gemini-3-pro-preview",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "google-gemini-3-pro-preview",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly computes the Euler characteristic via Schubert cell counts (1-1+2-1+1=2). The integral cohomology groups are correctly derived using cellular homology, Euler characteristic, universal coefficient theorem, and Poincar\u00e9 duality, yielding H^0=Z, H^2=Z2, H^3=Z2, H^4=Z, others 0. The Z2 cohomology ring presentation is correctly obtained from Stiefel-Whitney classes and the Whitney sum relation, giving Z2[w1,w2]/(w1^3, w2^2 + w1^2 w2). All steps are logically valid and complete.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly computes the Euler characteristic via Schubert cell counts (1-1+2-1+1=2). The integral cohomology groups are correctly derived using cellular homology, Euler characteristic, universal coefficient theorem, and Poincar\u00e9 duality, yielding H^0=Z, H^2=Z2, H^3=Z2, H^4=Z, others 0. The Z2 cohomology ring presentation is correctly obtained from Stiefel-Whitney classes and the Whitney sum relation, giving Z2[w1,w2]/(w1^3, w2^2 + w1^2 w2). All steps are logically valid and complete.\"\n}",
+        "verdict": "correct",
+        "notes": "The answer correctly computes the Euler characteristic via Schubert cell counts (1-1+2-1+1=2). The integral cohomology groups are correctly derived using cellular homology, Euler characteristic, universal coefficient theorem, and Poincar\u00e9 duality, yielding H^0=Z, H^2=Z2, H^3=Z2, H^4=Z, others 0. The Z2 cohomology ring presentation is correctly obtained from Stiefel-Whitney classes and the Whitney sum relation, giving Z2[w1,w2]/(w1^3, w2^2 + w1^2 w2). All steps are logically valid and complete.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  }
+]
