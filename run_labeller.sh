@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+git pull --no-rebase --autostash
+
 if [[ $# -lt 1 ]]; then
   echo "Usage: $0 USERNAME [extra streamlit args...]" >&2
   exit 1
