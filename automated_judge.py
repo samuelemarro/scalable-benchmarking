@@ -702,6 +702,7 @@ def main():
                         key = task_key(task)
                         if key:
                             decisions_by_key[key] = decision
+                    save_decisions(out_path, decisions)
                     processed += len(batch)
                     logger.info(f"{spec.pretty}: marked {len(batch)} evaluations failed (input too long)")
                 continue
@@ -712,9 +713,8 @@ def main():
                 if key:
                     decisions_by_key[key] = decision
             processed += len(batch)
-            logger.info(f"{spec.pretty}: processed {len(batch)} evaluations")
-        if processed:
             save_decisions(out_path, decisions)
+            logger.info(f"{spec.pretty}: processed {len(batch)} evaluations")
         return len(pending)
 
     if args.parallel:
