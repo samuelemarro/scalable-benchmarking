@@ -241,34 +241,38 @@ def main():
                     continue
 
                 def run_task(qm=question_model, am=answer_spec, b=batch, b_entries=benchmark_entries, out=out_path):
-                    outputs = run_generation(
-                        qm,
-                        am.name,
-                        b,
-                        answer_guidance,
-                        self_critique_guidance,
-                        args.max_rounds,
-                        args.disable_batch,
-                        am.temperature,
-                        am.reasoning,
-                        overrides,
-                    )
-                    existing_records = load_answer_entries(out)
-                    index_by_key: Dict = {}
-                    for rec_idx, rec in enumerate(existing_records):
-                        if not rec:
-                            continue
-                        key = entry_key(rec.run_id, rec.topic_slug, rec.question)
-                        if key and key not in index_by_key:
-                            index_by_key[key] = rec_idx
-                    for idx, record in outputs:
-                        key = entry_key(record.run_id, record.topic_slug, record.question)
-                        if key and key in index_by_key:
-                            existing_records[index_by_key[key]] = record
-                        else:
-                            existing_records.append(record)
-                    save_answer_entries(out, existing_records)
-                    return qm, am.name, len(outputs)
+                    try:
+                        outputs = run_generation(
+                            qm,
+                            am.name,
+                            b,
+                            answer_guidance,
+                            self_critique_guidance,
+                            args.max_rounds,
+                            args.disable_batch,
+                            am.temperature,
+                            am.reasoning,
+                            overrides,
+                        )
+                        existing_records = load_answer_entries(out)
+                        index_by_key: Dict = {}
+                        for rec_idx, rec in enumerate(existing_records):
+                            if not rec:
+                                continue
+                            key = entry_key(rec.run_id, rec.topic_slug, rec.question)
+                            if key and key not in index_by_key:
+                                index_by_key[key] = rec_idx
+                        for idx, record in outputs:
+                            key = entry_key(record.run_id, record.topic_slug, record.question)
+                            if key and key in index_by_key:
+                                existing_records[index_by_key[key]] = record
+                            else:
+                                existing_records.append(record)
+                        save_answer_entries(out, existing_records)
+                        return qm, am.name, len(outputs)
+                    except Exception:
+                        logger.exception("Task failed for %s on %s (%s)", am.name, qm, out)
+                        raise
 
                 tasks.append(pool.submit(run_task))
 
