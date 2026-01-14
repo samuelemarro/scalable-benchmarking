@@ -494,16 +494,22 @@ def render_task(
         f"**Question model:** {display_q}  |  **Answer model:** {display_a}  |  **Critic:** {display_c or ''}"
     )
     st.info(f"Alice: {display_c or display_a or 'unknown'}   |   Bob: {display_a if task.type == 'critique' else display_q or 'unknown'}")
+    question_text = task.question or ""
+    answer_text = task.answer or ""
+    critique_text = task.critique or ""
     cols = st.columns(2)
     with cols[0]:
         st.subheader("Question")
-        st.write(task.question or "")
+        st.write(question_text)
+        st.download_button("Copy Question", data=question_text, file_name="Question.md", mime="text/markdown")
         st.subheader("Answer")
-        st.write(task.answer or "")
+        st.write(answer_text)
+        st.download_button("Copy Answer", data=answer_text, file_name="Answer.md", mime="text/markdown")
     with cols[1]:
         if task.type in ("critique", "illposed"):
             st.subheader("Critique")
-            st.markdown(task.critique or "")
+            st.markdown(critique_text)
+            st.download_button("Copy Critique", data=critique_text, file_name="Critique.md", mime="text/markdown")
         st.subheader("Debate")
         for msg in task.debate_history or []:
             st.markdown(f"- **{msg.speaker}**: {msg.message}")
@@ -523,21 +529,6 @@ def render_task(
             )
 
     st.divider()
-
-    def markdown_block(label: str, content: str):
-        st.markdown(f"**{label}**")
-        st.markdown(content or "")
-        st.download_button(f"Copy {label}", data=content or "", file_name=f"{label}.md", mime="text/markdown")
-
-    copy_cols = st.columns(3)
-    with copy_cols[0]:
-        markdown_block("Question", task.question or "")
-    with copy_cols[1]:
-        markdown_block("Answer", task.answer or "")
-    with copy_cols[2]:
-        if task.type in ("critique", "illposed"):
-            markdown_block("Critique", task.critique or "")
-
     if auto_evals:
         combined = "\n\n".join(
             f"Judge: {ev.judge_model or 'unknown'}\nVerdict: {ev.verdict}\nConfidence: {ev.confidence}\nReasoning: {ev.reasoning or ''}"
@@ -606,11 +597,6 @@ def main():
     parser.add_argument("--automated-evals-dir", type=Path, default=Path("automated_evaluations"))
     parser.add_argument("--keys", type=Path, default=Path("debate_keys.json"))
     parser.add_argument("--config", type=Path, default=Path("configs/models.json"))
-    parser.add_argument(
-        "--include-other-labels",
-        action="store_true",
-        help="Include tasks already labelled by other evaluators (default skips high-confidence labels).",
-    )
     args, _ = parser.parse_known_args()
 
     registry = load_registry(str(args.config))
@@ -683,7 +669,8 @@ def main():
     selected_a = st.multiselect("Answer model", answerers, default=answerers)
     selected_c = st.multiselect("Critic", critics, default=critics)
     only_unlabeled = st.checkbox("Only not yet labelled by me", value=True)
-    skip_labeled_by_others = not args.include_other_labels
+    include_other_labels = st.checkbox("Include tasks labelled by others (confidence ≥ 3)", value=False)
+    skip_labeled_by_others = not include_other_labels
 
     filtered = []
     skipped_by_others = 0
@@ -709,7 +696,10 @@ def main():
 
     st.subheader(f"Tasks ({len(ordered_pairs)})")
     if skip_labeled_by_others and skipped_by_others:
-        st.info(f"Skipped {skipped_by_others} tasks already labelled elsewhere with confidence ≥ 3 (excluding 'unknown'). Use --include-other-labels to include them.")
+        st.info(
+            f"Skipped {skipped_by_others} tasks already labelled elsewhere with confidence ≥ 3 (excluding 'unknown'). "
+            "Tick the checkbox above to include them."
+        )
     if dropped_no_data:
         st.info(f"Dropped {dropped_no_data} keys lacking debate data.")
     if dropped_unanimous:
