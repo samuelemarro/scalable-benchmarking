@@ -48,6 +48,8 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 
+INPUT_TOO_LONG_MARKERS = ("context_length_exceeded", "input too long")
+
 
 def load_decisions(path: Path) -> Dict[str, AutomatedEvaluation]:
     payload = load_evaluation_entries(path)
@@ -125,6 +127,29 @@ def load_answers_with_benchmark_fallback(
     return load_answer_entries(answer_path)
 
 
+def is_input_length_error(message: str) -> bool:
+    lowered = message.lower()
+    return any(marker in lowered for marker in INPUT_TOO_LONG_MARKERS)
+
+
+def build_failed_decision(task: JudgingTask, judge_slug: str, error_message: str) -> AutomatedEvaluation:
+    return AutomatedEvaluation(
+        id=task.id,
+        type=task.type,
+        mode=task.mode,
+        question_model=task.question_model,
+        answer_model=task.answer_model,
+        critic_model=task.critic_model,
+        verdict=JUDGE_VERDICT_UNKNOWN,
+        confidence=None,
+        reasoning=None,
+        status=STATUS_FAILED,
+        error=error_message,
+        raw_response=None,
+        run_id=task.run_id,
+        topic_slug=task.topic_slug,
+        judge_model=judge_slug,
+    )
 
 
 def build_redactions(registry, alice_model: str, bob_model: str) -> Tuple[List[Tuple[str, str]], Dict[str, str]]:
@@ -668,7 +693,17 @@ def main():
                     spec.reasoning,
                 )
             except Exception as exc:
+                message = str(exc)
                 logger.error(f"Judge batch failed for {spec.name}: {exc}")
+                if is_input_length_error(message):
+                    for task in batch:
+                        decision = build_failed_decision(task, spec.slug, message)
+                        decisions[task.id] = decision
+                        key = task_key(task)
+                        if key:
+                            decisions_by_key[key] = decision
+                    processed += len(batch)
+                    logger.info(f"{spec.pretty}: marked {len(batch)} evaluations failed (input too long)")
                 continue
             for task, response in zip(batch, responses):
                 decision = parse_judgment(response, task, spec.slug)
@@ -729,7 +764,28 @@ def main():
                     )
                     decision = parse_judgment(response, task, spec.slug)
                 except Exception as exc:
-                    logger.error(f"Judge task failed for {spec.name} {task.id}: {exc}")
+                    message = str(exc)
+                    if is_input_length_error(message):
+                        logger.error(f"Judge task failed for {spec.name} {task.id}: {exc}")
+                        failure = build_failed_decision(task, spec.slug, message)
+                        lock = lock_for(out_path)
+                        with lock:
+                            decisions = load_decisions(out_path)
+                            decisions_by_key = {
+                                decision_key(decision): decision
+                                for decision in decisions.values()
+                                if decision_key(decision)
+                            }
+                            key = task_key(task)
+                            if not args.overwrite and (task.id in decisions or (key and key in decisions_by_key)):
+                                return
+                            decisions[task.id] = failure
+                            if key:
+                                decisions_by_key[key] = failure
+                            save_decisions(out_path, decisions)
+                        logger.info(f"{spec.pretty}: recorded failed evaluation {task.id} (input too long)")
+                    else:
+                        logger.error(f"Judge task failed for {spec.name} {task.id}: {exc}")
                     return
 
                 lock = lock_for(out_path)

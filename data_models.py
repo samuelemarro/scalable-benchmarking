@@ -284,6 +284,7 @@ class AutomatedEvaluation(BaseModel):
     status: Optional[Literal["succeeded", "failed"]] = Field(
         None, description="Judgment status"
     )
+    error: Optional[str] = Field(None, description="Underlying error if judgment failed")
     raw_response: Optional[str] = Field(None, description="Raw judge response")
     run_id: Optional[str] = Field(None, description="Run identifier")
     topic_slug: Optional[str] = Field(None, description="Topic slug")
