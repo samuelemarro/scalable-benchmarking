@@ -38,6 +38,26 @@ def final_answer(entry: AnswerEntry) -> Optional[str]:
     return attempts[-1].answer
 
 
+def build_illposed_claim(entry: Optional[AnswerEntry]) -> str:
+    if not entry:
+        return ""
+    attempts = entry.attempts or []
+    if not attempts:
+        return ""
+    evaluation = attempts[-1].evaluation or {}
+    issues = evaluation.get("issues")
+    if not issues:
+        return ""
+    if isinstance(issues, str):
+        issue_list = [issues]
+    else:
+        try:
+            issue_list = [str(issue) for issue in issues if issue]
+        except TypeError:
+            issue_list = [str(issues)]
+    return "\n".join(f"- {issue}" for issue in issue_list)
+
+
 def benchmark_answer_map(benchmark_dir: Path, q_slug: str) -> Dict:
     bench_path = benchmark_dir / f"{q_slug}.json"
     entries = load_benchmark_entries(bench_path)
@@ -86,6 +106,7 @@ def gather_illposed(debates_dir: Path, answers_dir: Path, benchmark_dir: Path, r
                 answer_text = benchmark_answers.get(key, "")
             run_id = (debate.run_id if debate else None) or (answer_record.run_id if answer_record else None)
             topic_slug = (debate.topic_slug if debate else None) or (answer_record.topic_slug if answer_record else None)
+            claim_text = build_illposed_claim(answer_record)
             prefix = f"illposed/{q_slug}/{a_slug}"
             item_id = _task_id(prefix, run_id, topic_slug, question or (answer_record.question if answer_record else None))
             items.append(
@@ -99,6 +120,7 @@ def gather_illposed(debates_dir: Path, answers_dir: Path, benchmark_dir: Path, r
                     topic_slug=topic_slug,
                     question=question or (answer_record.question if answer_record else ""),
                     answer=answer_text,
+                    critique=claim_text,
                     debate_history=debate.history if debate else [],
                 )
             )
@@ -192,7 +214,7 @@ def render_task(task: JudgingTask, existing: Optional[HumanEvaluation], save_cb)
         st.subheader("Answer")
         st.write(task.answer or "")
     with cols[1]:
-        if task.type == "critique":
+        if task.type in ("critique", "illposed"):
             st.subheader("Critique")
             st.write(task.critique or "")
         st.subheader("Debate")
