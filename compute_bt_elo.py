@@ -3,13 +3,11 @@ import csv
 import math
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from constants import (
-    CLAIMANT_WIN_VERDICTS,
     CRITIQUE_VERDICT_CORRECT,
     CRITIQUE_VERDICT_UNKNOWN,
-    DEFENDER_WIN_VERDICTS,
     STATUS_FAILED,
     STATUS_ILL_POSED,
     STATUS_SUCCEEDED,
@@ -23,6 +21,7 @@ from data_models import (
     load_evaluation_entries,
 )
 from model_config import load_registry
+from victory import VictorySide, resolve_automated_victory
 
 
 def final_question(entry: BenchmarkEntry) -> Optional[str]:
@@ -45,26 +44,6 @@ def collect_decisions(auto_eval_dir: Path) -> Dict[str, List[AutomatedEvaluation
             if decision and decision.id:
                 decisions_by_claim[decision.id].append(decision)
     return decisions_by_claim
-
-
-def majority_side(decisions: Iterable[AutomatedEvaluation]) -> Optional[str]:
-    claimant = defender = other = 0
-    for decision in decisions:
-        verdict = decision.verdict
-        if verdict in CLAIMANT_WIN_VERDICTS:
-            claimant += 1
-        elif verdict in DEFENDER_WIN_VERDICTS:
-            defender += 1
-        else:
-            other += 1
-    total = claimant + defender + other
-    if total == 0:
-        return None
-    if claimant > total / 2:
-        return "claimant"
-    if defender > total / 2:
-        return "defender"
-    return None
 
 
 def load_critique_verdicts(critiques_dir: Path) -> Dict[Tuple[str, str, str, int], Dict[str, str]]:
@@ -249,11 +228,15 @@ def collect_games(
                         continue
                     else:
                         claim_id = f"critique/{self_mode}/{q_slug}/{a_slug}__{q_slug}/{idx}"
-                        majority = majority_side(decisions_by_claim.get(claim_id, []))
-                        if majority == "claimant":
+                        outcome = resolve_automated_victory(
+                            "critique",
+                            decisions_by_claim.get(claim_id, []),
+                            context=claim_id,
+                        )
+                        if outcome == VictorySide.ALICE:
                             skip_counts["self_answer_invalid"] += 1
                             continue
-                        if majority is None:
+                        if outcome in {None, VictorySide.DROP}:
                             skip_counts["self_answer_no_majority"] += 1
                             continue
 
@@ -263,11 +246,15 @@ def collect_games(
 
                 if answer_entry.status == STATUS_ILL_POSED:
                     claim_id = f"illposed/{q_slug}/{a_slug}/{idx}"
-                    majority = majority_side(decisions_by_claim.get(claim_id, []))
-                    if majority == "claimant":
+                    outcome = resolve_automated_victory(
+                        "illposed",
+                        decisions_by_claim.get(claim_id, []),
+                        context=claim_id,
+                    )
+                    if outcome == VictorySide.ALICE:
                         skip_counts["illposed_validated"] += 1
                         continue
-                    if majority == "defender":
+                    if outcome == VictorySide.BOB:
                         games.append((answer_name, q_name, 0))
                         continue
                     skip_counts["illposed_no_majority"] += 1
@@ -297,11 +284,15 @@ def collect_games(
                     continue
 
                 claim_id = f"critique/{mode}/{q_slug}/{q_slug}__{a_slug}/{idx}"
-                majority = majority_side(decisions_by_claim.get(claim_id, []))
-                if majority == "defender":
+                outcome = resolve_automated_victory(
+                    "critique",
+                    decisions_by_claim.get(claim_id, []),
+                    context=claim_id,
+                )
+                if outcome == VictorySide.BOB:
                     games.append((answer_name, q_name, 1))
                     continue
-                if majority == "claimant":
+                if outcome == VictorySide.ALICE:
                     games.append((answer_name, q_name, 0))
                     continue
                 skip_counts["critique_no_majority"] += 1

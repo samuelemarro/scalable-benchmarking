@@ -7,6 +7,7 @@ from typing import Dict, List, Optional, Tuple
 
 from data_models import (
     AutomatedEvaluation,
+    BenchmarkEntry,
     load_answer_entries,
     load_benchmark_entries,
     load_critique_entries,
@@ -15,10 +16,18 @@ from data_models import (
     load_human_evaluation_entries,
 )
 from constants import (
-    CLAIMANT_WIN_VERDICTS,
     CRITIQUE_VERDICT_CORRECT,
-    DEFENDER_WIN_VERDICTS,
+    CRITIQUE_VERDICT_INCORRECT,
+    CRITIQUE_VERDICT_INSUFFICIENT,
+    CRITIQUE_VERDICT_OBSCURE,
+    CRITIQUE_VERDICT_UNKNOWN,
+    STATUS_FAILED,
     STATUS_ILL_POSED,
+    STATUS_SUCCEEDED,
+)
+from victory import (
+    VictorySide,
+    resolve_automated_victory,
 )
 
 logger = logging.getLogger(__name__)
@@ -40,6 +49,78 @@ def _task_id(prefix: str, run_id: Optional[str], topic_slug: Optional[str], ques
         digest = hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
         return f"{prefix}/{topic_slug}/{digest}"
     return f"{prefix}/unknown"
+
+
+_CRITIQUE_INCORRECT_EQUIV = {
+    CRITIQUE_VERDICT_INCORRECT,
+    CRITIQUE_VERDICT_INSUFFICIENT,
+    CRITIQUE_VERDICT_OBSCURE,
+}
+
+
+def normalize_critique_verdict(verdict: Optional[str]) -> Optional[str]:
+    if verdict in _CRITIQUE_INCORRECT_EQUIV:
+        return CRITIQUE_VERDICT_INCORRECT
+    return verdict
+
+
+def final_question(entry: BenchmarkEntry) -> Optional[str]:
+    generations = entry.generation_rounds or []
+    if not generations:
+        return None
+    refinements = generations[-1].refinement_rounds or []
+    if not refinements:
+        return None
+    return refinements[-1].question
+
+
+def load_critique_verdicts(critiques_dir: Path) -> Dict[Tuple[str, str, str, int], Dict[str, str]]:
+    verdicts: Dict[Tuple[str, str, str, int], Dict[str, str]] = defaultdict(dict)
+    if not critiques_dir.exists():
+        return verdicts
+    for mode_dir in critiques_dir.glob("*"):
+        mode = mode_dir.name
+        for q_dir in mode_dir.glob("*"):
+            q_slug = q_dir.name
+            for crit_file in q_dir.glob("*.json"):
+                parts = crit_file.stem.split("__", 1)
+                if len(parts) != 2:
+                    continue
+                critic_slug, answer_slug = parts
+                entries = load_critique_entries(crit_file)
+                for idx, entry in enumerate(entries):
+                    if not entry or entry.status != STATUS_SUCCEEDED:
+                        continue
+                    attempts = entry.attempts or []
+                    if not attempts:
+                        continue
+                    verdict = normalize_critique_verdict(attempts[-1].verdict)
+                    if not verdict:
+                        continue
+                    key = (q_slug, critic_slug, answer_slug, idx)
+                    verdicts[key][mode] = verdict
+    return verdicts
+
+
+def find_critique_verdict(
+    verdicts: Dict[Tuple[str, str, str, int], Dict[str, str]],
+    q_slug: str,
+    critic_slug: str,
+    answer_slug: str,
+    idx: int,
+    preferred_mode: Optional[str],
+    fallback_any: bool,
+) -> Tuple[Optional[str], Optional[str]]:
+    key = (q_slug, critic_slug, answer_slug, idx)
+    modes = verdicts.get(key, {})
+    if preferred_mode and preferred_mode in modes:
+        return preferred_mode, modes[preferred_mode]
+    if not fallback_any:
+        return None, None
+    if not modes:
+        return None, None
+    mode = sorted(modes.keys())[0]
+    return mode, modes[mode]
 
 
 def count_items(path: Path, kind: str):
@@ -100,7 +181,7 @@ def critique_verdicts(critiques_dir: Path):
                     if not attempts:
                         verdict_counts["missing"] += 1
                         continue
-                    verdict = attempts[-1].verdict
+                    verdict = normalize_critique_verdict(attempts[-1].verdict)
                     if not verdict:
                         verdict_counts["missing"] += 1
                     else:
@@ -118,6 +199,214 @@ def count_illposed_answers(answers_dir: Path):
                 if entry and entry.status == STATUS_ILL_POSED:
                     count += 1
     return count
+
+
+def collect_decisions_by_claim(auto_eval_dir: Path) -> Dict[str, List[AutomatedEvaluation]]:
+    decisions_by_claim: Dict[str, List[AutomatedEvaluation]] = defaultdict(list)
+    for decision in collect_automated_evaluations(auto_eval_dir):
+        if decision.id:
+            decisions_by_claim[decision.id].append(decision)
+    return decisions_by_claim
+
+
+def _format_count(count: int, total: int) -> str:
+    if total <= 0:
+        return f"{count} (0.00%)"
+    pct = 100.0 * count / total
+    return f"{count} ({pct:.2f}%)"
+
+
+def print_protocol_stats(
+    benchmarks_dir: Path,
+    answers_dir: Path,
+    critiques_dir: Path,
+    auto_eval_dir: Path,
+    answer_critique_mode: str = "evaluator",
+    self_answer_critique_mode: str = "contradictor",
+    fallback_any_mode: bool = False,
+) -> None:
+    critique_verdicts = load_critique_verdicts(critiques_dir)
+    decisions_by_claim = collect_decisions_by_claim(auto_eval_dir)
+
+    counts = Counter()
+    candidate_games = 0
+
+    for bench_path in benchmarks_dir.glob("*.json"):
+        q_slug = bench_path.stem
+        benchmarks = load_benchmark_entries(bench_path)
+        answers_root = answers_dir / q_slug
+        if not answers_root.exists():
+            continue
+        for answer_file in answers_root.glob("*.json"):
+            a_slug = answer_file.stem
+            answers = load_answer_entries(answer_file)
+            max_len = max(len(benchmarks), len(answers))
+            for idx in range(max_len):
+                counts["pairs_total"] += 1
+                bench_entry = benchmarks[idx] if idx < len(benchmarks) else None
+                if not bench_entry or bench_entry.status != STATUS_SUCCEEDED:
+                    counts["drop_question_missing_or_failed"] += 1
+                    continue
+                question_text = final_question(bench_entry)
+                if not question_text:
+                    counts["drop_question_missing_or_failed"] += 1
+                    continue
+                answer_entry = answers[idx] if idx < len(answers) else None
+                if not answer_entry:
+                    counts["drop_answer_missing"] += 1
+                    continue
+
+                candidate_games += 1
+
+                # Step 3: Bob critiques Alice's self-answer (question validity check)
+                self_mode, self_verdict = find_critique_verdict(
+                    critique_verdicts,
+                    q_slug,
+                    a_slug,
+                    q_slug,
+                    idx,
+                    self_answer_critique_mode,
+                    fallback_any_mode,
+                )
+                if not self_verdict:
+                    counts["drop_self_critique_missing"] += 1
+                    counts["final_drop"] += 1
+                    continue
+                counts["self_critique_present"] += 1
+                self_verdict = normalize_critique_verdict(self_verdict)
+
+                if self_verdict == CRITIQUE_VERDICT_UNKNOWN:
+                    counts["drop_self_critique_unknown"] += 1
+                    counts["final_drop"] += 1
+                    continue
+
+                if self_verdict == CRITIQUE_VERDICT_CORRECT:
+                    counts["self_critique_correct"] += 1
+                else:
+                    claim_id = f"critique/{self_mode}/{q_slug}/{a_slug}__{q_slug}/{idx}"
+                    outcome = resolve_automated_victory(
+                        "critique",
+                        decisions_by_claim.get(claim_id, []),
+                        context=claim_id,
+                    )
+                    if outcome == VictorySide.ALICE:
+                        counts["drop_self_critique_upheld"] += 1
+                        counts["final_drop"] += 1
+                        continue
+                    if outcome == VictorySide.BOB:
+                        counts["self_critique_rejected"] += 1
+                    else:
+                        counts["drop_self_critique_no_victory"] += 1
+                        counts["final_drop"] += 1
+                        continue
+
+                # Step 4: Bob answers Alice's question
+                if answer_entry.status == STATUS_FAILED:
+                    counts["answer_failed"] += 1
+                    counts["final_alice_wins"] += 1
+                    continue
+
+                if answer_entry.status == STATUS_ILL_POSED:
+                    counts["answer_illposed_claimed"] += 1
+                    claim_id = f"illposed/{q_slug}/{a_slug}/{idx}"
+                    outcome = resolve_automated_victory(
+                        "illposed",
+                        decisions_by_claim.get(claim_id, []),
+                        context=claim_id,
+                    )
+                    if outcome == VictorySide.ALICE:
+                        counts["drop_illposed_upheld"] += 1
+                        counts["final_drop"] += 1
+                        continue
+                    if outcome == VictorySide.BOB:
+                        counts["illposed_rejected"] += 1
+                        counts["final_alice_wins"] += 1
+                        continue
+                    counts["drop_illposed_no_victory"] += 1
+                    counts["final_drop"] += 1
+                    continue
+
+                if answer_entry.status != STATUS_SUCCEEDED:
+                    counts["drop_answer_invalid_status"] += 1
+                    counts["final_drop"] += 1
+                    continue
+
+                counts["answer_succeeded"] += 1
+
+                # Step 5: Alice critiques Bob's answer
+                mode, verdict = find_critique_verdict(
+                    critique_verdicts,
+                    q_slug,
+                    q_slug,
+                    a_slug,
+                    idx,
+                    answer_critique_mode,
+                    fallback_any_mode,
+                )
+                if not verdict:
+                    counts["drop_critique_missing"] += 1
+                    counts["final_drop"] += 1
+                    continue
+                verdict = normalize_critique_verdict(verdict)
+                if verdict == CRITIQUE_VERDICT_UNKNOWN:
+                    counts["drop_critique_unknown"] += 1
+                    counts["final_drop"] += 1
+                    continue
+                if verdict == CRITIQUE_VERDICT_CORRECT:
+                    counts["critique_says_correct"] += 1
+                    counts["final_bob_wins"] += 1
+                    continue
+
+                claim_id = f"critique/{mode}/{q_slug}/{q_slug}__{a_slug}/{idx}"
+                outcome = resolve_automated_victory(
+                    "critique",
+                    decisions_by_claim.get(claim_id, []),
+                    context=claim_id,
+                )
+                if outcome == VictorySide.BOB:
+                    counts["critique_incorrect_defender_wins"] += 1
+                    counts["final_bob_wins"] += 1
+                    continue
+                if outcome == VictorySide.ALICE:
+                    counts["critique_incorrect_claimant_wins"] += 1
+                    counts["final_alice_wins"] += 1
+                    continue
+                counts["critique_incorrect_no_victory"] += 1
+                counts["final_drop"] += 1
+
+    pairs_total = counts["pairs_total"]
+
+    print("\nProtocol flow (percentages of candidate games):")
+    print(f"  Total pairs considered: {pairs_total}")
+    print(f"  Candidate games (valid question + answer entry): {_format_count(candidate_games, pairs_total)}")
+    print(f"  Dropped before candidate (question missing/failed): {_format_count(counts['drop_question_missing_or_failed'], pairs_total)}")
+    print(f"  Dropped before candidate (answer missing): {_format_count(counts['drop_answer_missing'], pairs_total)}")
+
+    print(f"  Bob critiques Alice's question: {_format_count(counts['self_critique_present'], candidate_games)}")
+    print(f"  Bob's critique missing: {_format_count(counts['drop_self_critique_missing'], candidate_games)}")
+    print(f"  Bob's critique says correct: {_format_count(counts['self_critique_correct'], candidate_games)}")
+    print(f"  Bob's critique unknown: {_format_count(counts['drop_self_critique_unknown'], candidate_games)}")
+    print(f"  Bob's critique upheld (drop): {_format_count(counts['drop_self_critique_upheld'], candidate_games)}")
+    print(f"  Bob's critique rejected: {_format_count(counts['self_critique_rejected'], candidate_games)}")
+    print(f"  Bob's critique no victory (drop): {_format_count(counts['drop_self_critique_no_victory'], candidate_games)}")
+
+    print(f"  Bob fails to answer: {_format_count(counts['answer_failed'], candidate_games)}")
+    print(f"  Bob claims ill-posed: {_format_count(counts['answer_illposed_claimed'], candidate_games)}")
+    print(f"  Ill-posed upheld (drop): {_format_count(counts['drop_illposed_upheld'], candidate_games)}")
+    print(f"  Ill-posed rejected (Alice wins): {_format_count(counts['illposed_rejected'], candidate_games)}")
+    print(f"  Ill-posed no victory (drop): {_format_count(counts['drop_illposed_no_victory'], candidate_games)}")
+    print(f"  Bob answers successfully: {_format_count(counts['answer_succeeded'], candidate_games)}")
+
+    print(f"  Alice's critique missing: {_format_count(counts['drop_critique_missing'], candidate_games)}")
+    print(f"  Alice's critique unknown: {_format_count(counts['drop_critique_unknown'], candidate_games)}")
+    print(f"  Alice says answer correct (Bob wins): {_format_count(counts['critique_says_correct'], candidate_games)}")
+    print(f"  Alice says incorrect, Bob wins: {_format_count(counts['critique_incorrect_defender_wins'], candidate_games)}")
+    print(f"  Alice says incorrect, Alice wins: {_format_count(counts['critique_incorrect_claimant_wins'], candidate_games)}")
+    print(f"  Alice says incorrect, no victory (drop): {_format_count(counts['critique_incorrect_no_victory'], candidate_games)}")
+
+    print(f"  Final Bob wins: {_format_count(counts['final_bob_wins'], candidate_games)}")
+    print(f"  Final Alice wins: {_format_count(counts['final_alice_wins'], candidate_games)}")
+    print(f"  Final dropped: {_format_count(counts['final_drop'], candidate_games)}")
 
 
 def collect_automated_evaluations(auto_eval_dir: Path) -> List[AutomatedEvaluation]:
@@ -210,7 +499,7 @@ def build_critique_verdict_map(critiques_dir: Path) -> Dict[str, Dict]:
                     if not entry:
                         continue
                     attempts = entry.attempts if entry else None
-                    verdict = attempts[-1].verdict if attempts else None
+                    verdict = normalize_critique_verdict(attempts[-1].verdict) if attempts else None
                     # Extract answer author and question author from entry
                     answer_author = entry.answer_author if entry else None
                     question_author = entry.question_author if entry else None
@@ -246,27 +535,23 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
                 if model_name:
                     encountered_models.add(model_name)
 
-    # For each model, track self-answer correctness percentages
-    # Verdicts that mean "answer is correct": defender_wins_incorrect, defender_wins_minor
-    # (Alice claimed error, but Bob defended successfully)
+    # For each model, track self-answer correctness victory rates.
     model_self_answers = defaultdict(list)
 
     # Track self-answers declared "correct" by critics (no debate needed)
     model_self_answers_no_debate = defaultdict(int)
 
-    # For each defender model (answer author), track their success rate when defending answers
-    # Verdicts that side with defender: defender_wins_incorrect, defender_wins_minor
+    # For each defender model (answer author), track their victory rate when defending answers.
     model_as_defender_success_rate = defaultdict(list)
 
-    # For each claimant model (critic), track their success rate when making claims
-    # Verdicts that side with claimant: claimant_wins, mixed (partial win)
+    # For each claimant model (critic), track their victory rate when making claims.
     model_as_claimant_success_rate = defaultdict(list)
 
     # For cross-model answers, track three categories per (answer_model, question_model) pair
     cross_model_answers = defaultdict(lambda: defaultdict(lambda: {
         "declared_correct": 0,  # Critic said "correct" (no debate)
-        "critiqued_correct": 0,  # Critic said wrong, but majority of judges sided with defender
-        "critiqued_wrong": 0,    # Critic said wrong, and majority of judges sided with critic
+        "critiqued_correct": 0,  # Critic said wrong, but victory rules sided with defender
+        "critiqued_wrong": 0,    # Critic said wrong, and victory rules sided with claimant
         "total": 0
     }))
 
@@ -286,48 +571,30 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
         mode = first.mode
 
         if claim_type == "critique":
-            # Count verdicts for this claim
-            verdicts = [d.verdict for d in claim_decisions if d.verdict]
-
-            if not verdicts:
+            outcome = resolve_automated_victory(claim_type, claim_decisions, context=claim_id)
+            if outcome in {None, VictorySide.DROP}:
                 continue
 
             # Determine if this is a self-answer (question_model == answer_model)
             is_self_answer = (question_model == answer_model)
 
             if is_self_answer:
-                # Calculate percentage of judges saying answer is correct
-                # Correct = defender wins (defender_wins_incorrect or defender_wins_minor)
-                correct_count = sum(1 for v in verdicts if v in DEFENDER_WIN_VERDICTS)
-                percentage = 100 * correct_count / len(verdicts)
-                model_self_answers[answer_model].append(percentage)
+                win_rate = 100.0 if outcome == VictorySide.BOB else 0.0
+                model_self_answers[answer_model].append(win_rate)
             else:
-                # Cross-model answer - count judges siding with defender
-                correct_count = sum(1 for v in verdicts if v in DEFENDER_WIN_VERDICTS)
-
-                # Exclude ties from analysis (per user decision Q1.2)
-                # Ties occur when correct_count == len(verdicts) / 2
-                is_tie = (correct_count == len(verdicts) / 2)
-
-                if not is_tie:
-                    majority_correct = correct_count > len(verdicts) / 2
-                    # This answer was critiqued (not declared "correct"), so categorize based on judge majority
-                    if majority_correct:
-                        cross_model_answers[answer_model][question_model]["critiqued_correct"] += 1
-                    else:
-                        cross_model_answers[answer_model][question_model]["critiqued_wrong"] += 1
-                    cross_model_answers[answer_model][question_model]["total"] += 1
-                # If tie, skip entirely (not counted in total)
+                if outcome == VictorySide.BOB:
+                    cross_model_answers[answer_model][question_model]["critiqued_correct"] += 1
+                else:
+                    cross_model_answers[answer_model][question_model]["critiqued_wrong"] += 1
+                cross_model_answers[answer_model][question_model]["total"] += 1
 
             # Defender stats (Bob is the answer_model defending)
-            defender_wins_count = sum(1 for v in verdicts if v in DEFENDER_WIN_VERDICTS)
-            percentage = 100 * defender_wins_count / len(verdicts)
-            model_as_defender_success_rate[answer_model].append(percentage)
+            defender_rate = 100.0 if outcome == VictorySide.BOB else 0.0
+            model_as_defender_success_rate[answer_model].append(defender_rate)
 
             # Claimant stats (Alice is the critic_model claiming error)
-            claimant_wins_count = sum(1 for v in verdicts if v in CLAIMANT_WIN_VERDICTS)
-            percentage = 100 * claimant_wins_count / len(verdicts)
-            model_as_claimant_success_rate[critic_model].append(percentage)
+            claimant_rate = 100.0 if outcome == VictorySide.ALICE else 0.0
+            model_as_claimant_success_rate[critic_model].append(claimant_rate)
 
     # Now add answers declared "correct" by critics (these don't appear in automated evaluations)
     for cid, crit_info in critique_verdict_map.items():
@@ -351,8 +618,8 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
     return model_self_answers, model_self_answers_no_debate, model_as_defender_success_rate, model_as_claimant_success_rate, cross_model_answers
 
 
-def print_agreement_stats(model_stats, title, total_judges=None):
-    """Print average percentage of judges agreeing."""
+def print_agreement_stats(model_stats, title):
+    """Print average victory rate across claims."""
     if not model_stats:
         print(f"\n{title}: No data available")
         return
@@ -365,7 +632,7 @@ def print_agreement_stats(model_stats, title, total_judges=None):
 
         # Safe division with explicit check
         avg_percentage = sum(percentages) / len(percentages) if percentages else 0.0
-        print(f"  {model}: {avg_percentage:.1f}% average (across {len(percentages)} critiques)")
+        print(f"  {model}: {avg_percentage:.1f}% victory rate (across {len(percentages)} critiques)")
 
 
 def print_cross_model_stats(cross_model_stats):
@@ -388,8 +655,8 @@ def print_cross_model_stats(cross_model_stats):
 
                 print(f"    {q_model}'s questions ({total} total):")
                 print(f"      {declared_pct:.1f}% declared correct by critic (no debate)")
-                print(f"      {critiqued_correct_pct:.1f}% critiqued but judge majority says correct")
-                print(f"      {critiqued_wrong_pct:.1f}% critiqued and judge majority says wrong")
+                print(f"      {critiqued_correct_pct:.1f}% critiqued but victory rules say correct")
+                print(f"      {critiqued_wrong_pct:.1f}% critiqued and victory rules say wrong")
 
 
 def main():
@@ -445,12 +712,14 @@ def main():
     print(f"  naive: {inter_judge_naive}")
     print(f"  deduped by answer/question: {inter_judge_dedup}")
 
+    print_protocol_stats(benchmarks_dir, answers_dir, critiques_dir, auto_eval_dir)
+
     # Compute and print automated evaluation statistics
     model_self_answers, model_self_answers_no_debate, model_as_defender_success_rate, model_as_claimant_success_rate, cross_model_stats = compute_model_stats(auto_eval_dir, critiques_dir)
 
     print_agreement_stats(
         model_self_answers,
-        "Self-answer correctness (debated - number of judges agreeing answer is correct)"
+        "Self-answer correctness (debated victory rate for answer correctness)"
     )
 
     # Print self-answers declared correct without debate
@@ -462,12 +731,12 @@ def main():
 
     print_agreement_stats(
         model_as_defender_success_rate,
-        "Defender success (number of judges siding with defender/answer)"
+        "Defender success (victory rate for defender/answer)"
     )
 
     print_agreement_stats(
         model_as_claimant_success_rate,
-        "Claimant success (number of judges siding with claimant/critic)"
+        "Claimant success (victory rate for claimant/critic)"
     )
 
     print_cross_model_stats(cross_model_stats)
