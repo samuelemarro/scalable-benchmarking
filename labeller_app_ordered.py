@@ -162,6 +162,27 @@ def verdict_choices(task_type: str) -> List[str]:
     return [v for v in preferred if v in VALID_CRITIQUE_DEBATE_VERDICTS or v == "other"]
 
 
+def verdict_descriptions(task_type: str) -> Dict[str, str]:
+    if task_type == "illposed":
+        return {
+            "claimant_wins": "Alice's claim is correct; the question is ill-posed per the rubric.",
+            "defender_wins_incorrect": "Alice's claim is incorrect; the question is well-posed.",
+            "wrong_problem": "The question has issues, but not for Alice's stated reason.",
+            "mixed": "Alice made multiple claims; some are correct and some are incorrect.",
+            "unknown": "Not enough evidence to judge Alice's claim.",
+            "other": "Use for cases not covered; explain in comments.",
+        }
+    return {
+        "claimant_wins": "Alice's claim is correct; the answer has a substantive flaw she identified.",
+        "defender_wins_incorrect": "Alice's claim is incorrect; the answer is actually correct.",
+        "defender_wins_minor": "Alice identified only minor issues that do not affect correctness.",
+        "wrong_problem": "The answer has issues, but not the one Alice claimed.",
+        "mixed": "Alice made multiple claims; some are correct and some are incorrect.",
+        "unknown": "Not enough evidence to judge Alice's claim.",
+        "other": "Use for cases not covered; explain in comments.",
+    }
+
+
 def hash_seed(username: str) -> int:
     return int(hashlib.sha256(username.encode("utf-8")).hexdigest(), 16) % (2**32)
 
@@ -493,7 +514,7 @@ def render_task(
     st.write(
         f"**Question model:** {display_q}  |  **Answer model:** {display_a}  |  **Critic:** {display_c or ''}"
     )
-    st.info(f"Alice: {display_c or display_a or 'unknown'}   |   Bob: {display_a if task.type == 'critique' else display_q or 'unknown'}")
+    st.info(f"Alice (claimant): {display_c or display_a or 'unknown'}   |   Bob (defender): {display_a if task.type == 'critique' else display_q or 'unknown'}")
     question_text = task.question or ""
     answer_text = task.answer or ""
     critique_text = task.critique or ""
@@ -552,9 +573,19 @@ def render_task(
     st.download_button("Copy all fields", data="\n\n".join(all_fields), file_name="task.md", mime="text/markdown")
 
     options = verdict_choices(task.type)
+    descriptions = verdict_descriptions(task.type)
+
     existing_choice = existing.verdict if existing else None
     default_index = options.index(existing_choice) if existing_choice in options else options.index("unknown")
-    choice = st.radio("Verdict", options, index=default_index, key=f"verdict-{task.id}")
+    choice = st.radio(
+        "Verdict",
+        options,
+        index=default_index,
+        key=f"verdict-{task.id}",
+        format_func=lambda verdict: f"{verdict} - {descriptions.get(verdict, '').strip()}"
+        if descriptions.get(verdict)
+        else verdict,
+    )
     confidence = st.slider(
         "Confidence (1-5)",
         1,
