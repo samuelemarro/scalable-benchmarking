@@ -58,8 +58,8 @@ _HUMAN_NORMALIZATION = {
 }
 
 _ALICE_WINS = {
-    "critique": {JUDGE_VERDICT_CLAIMANT_WINS},
-    "illposed": {JUDGE_VERDICT_CLAIMANT_WINS},
+    "critique": {JUDGE_VERDICT_CLAIMANT_WINS, JUDGE_VERDICT_MIXED},
+    "illposed": {JUDGE_VERDICT_CLAIMANT_WINS, JUDGE_VERDICT_MIXED},
 }
 
 _BOB_WINS = {
@@ -75,8 +75,8 @@ _BOB_WINS = {
 }
 
 _DROP_VERDICTS = {
-    "critique": {JUDGE_VERDICT_MIXED, JUDGE_VERDICT_UNKNOWN},
-    "illposed": {JUDGE_VERDICT_MIXED, JUDGE_VERDICT_UNKNOWN},
+    "critique": {JUDGE_VERDICT_UNKNOWN},
+    "illposed": {JUDGE_VERDICT_UNKNOWN},
 }
 
 
@@ -133,12 +133,13 @@ def resolve_victory_from_verdicts(
     human_verdicts: Optional[Iterable[str]] = None,
     automated_verdicts: Optional[Iterable[str]] = None,
     context: Optional[str] = None,
+    log_automated_disagreements: bool = True,
 ) -> Optional[VictorySide]:
     """
     Resolve a winner following docs/victory_rules.md.
 
     Human judgments take precedence. If multiple humans disagree, raise an error.
-    Automated judgments must be unanimous; otherwise we log an error and return None.
+    Automated judgments must be unanimous; otherwise we log an error (if enabled) and return None.
     """
 
     human_verdicts = human_verdicts or []
@@ -167,11 +168,12 @@ def resolve_victory_from_verdicts(
 
     unique = set(auto_sides)
     if len(unique) != 1:
-        logger.error(
-            "Automated judgments disagree for %s: %s",
-            context or "unknown task",
-            sorted(side.value for side in unique),
-        )
+        if log_automated_disagreements:
+            logger.error(
+                "Automated judgments disagree for %s: %s",
+                context or "unknown task",
+                sorted(side.value for side in unique),
+            )
         return None
 
     return auto_sides[0]
@@ -182,12 +184,16 @@ def resolve_automated_victory(
     decisions: Sequence[AutomatedEvaluation],
     *,
     context: Optional[str] = None,
+    log_automated_disagreements: bool = True,
 ) -> Optional[VictorySide]:
     """Convenience wrapper for AutomatedEvaluation objects."""
 
     verdicts = [decision.verdict for decision in decisions if decision and decision.verdict]
     return resolve_victory_from_verdicts(
-        claim_type, automated_verdicts=verdicts, context=context
+        claim_type,
+        automated_verdicts=verdicts,
+        context=context,
+        log_automated_disagreements=log_automated_disagreements,
     )
 
 

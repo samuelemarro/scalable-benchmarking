@@ -17,7 +17,14 @@ from prompt_library import (
     load_question_guidance,
 )
 from model_api import query_llm_single
-from utils import safe_load_json, clean_math, setup_logging, benchmark_answers_from_entries
+from utils import (
+    benchmark_answers_from_entries,
+    clean_math,
+    debate_key as debate_task_key,
+    question_key,
+    safe_load_json,
+    setup_logging,
+)
 from constants import CRITIQUE_VERDICT_CORRECT, CRITIQUE_VERDICT_UNKNOWN, STATUS_ILL_POSED, STATUS_SUCCEEDED
 from data_models import (
     AnswerEntry,
@@ -37,33 +44,39 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 
-def debate_key(
-    run_id: Optional[str],
-    topic_slug: Optional[str],
-    question: Optional[str],
-) -> Optional[Tuple[Optional[str], Optional[str], Optional[str]]]:
-    if run_id is None and topic_slug is None and not question:
+def _debate_key_for_entry(
+    entry: Optional[DebateEntry],
+    question_model: Optional[str],
+    answer_model: Optional[str],
+    critic_model: Optional[str],
+    mode: Optional[str],
+) -> Optional[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]]:
+    if not entry:
         return None
-    return (str(run_id) if run_id is not None else None, topic_slug, question)
+    return debate_task_key(question_model, answer_model, critic_model, mode, entry.run_id)
 
 
-def collect_debate_keys(entries: List[Optional[DebateEntry]]) -> Set[Tuple[Optional[str], Optional[str], Optional[str]]]:
-    keys: Set[Tuple[Optional[str], Optional[str], Optional[str]]] = set()
+def collect_debate_keys(
+    entries: List[Optional[DebateEntry]],
+    question_model: Optional[str],
+    answer_model: Optional[str],
+    critic_model: Optional[str],
+    mode: Optional[str],
+) -> Set[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]]:
+    keys: Set[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]] = set()
     for entry in entries:
-        if not entry:
-            continue
-        key = debate_key(entry.run_id, entry.topic_slug, entry.question)
+        key = _debate_key_for_entry(entry, question_model, answer_model, critic_model, mode)
         if key:
             keys.add(key)
     return keys
 
 
-def build_entry_map(entries: List[Optional[Any]]) -> Dict[Tuple[Optional[str], Optional[str], Optional[str]], Any]:
-    mapped: Dict[Tuple[Optional[str], Optional[str], Optional[str]], Any] = {}
+def build_entry_map(entries: List[Optional[Any]]) -> Dict[Tuple[Optional[str], Optional[str]], Any]:
+    mapped: Dict[Tuple[Optional[str], Optional[str]], Any] = {}
     for entry in entries:
         if not entry:
             continue
-        key = debate_key(entry.run_id, entry.topic_slug, entry.question)
+        key = question_key(getattr(entry, "question_model", None), getattr(entry, "run_id", None))
         if not key:
             continue
         existing = mapped.get(key)
@@ -77,12 +90,18 @@ def build_entry_map(entries: List[Optional[Any]]) -> Dict[Tuple[Optional[str], O
     return mapped
 
 
-def index_by_key(entries: List[Optional[DebateEntry]]) -> Dict[Tuple[Optional[str], Optional[str], Optional[str]], int]:
-    index: Dict[Tuple[Optional[str], Optional[str], Optional[str]], int] = {}
+def index_by_key(
+    entries: List[Optional[DebateEntry]],
+    question_model: Optional[str],
+    answer_model: Optional[str],
+    critic_model: Optional[str],
+    mode: Optional[str],
+) -> Dict[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]], int]:
+    index: Dict[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]], int] = {}
     for idx, entry in enumerate(entries):
         if not entry:
             continue
-        key = debate_key(entry.run_id, entry.topic_slug, entry.question)
+        key = _debate_key_for_entry(entry, question_model, answer_model, critic_model, mode)
         if key and key not in index:
             index[key] = idx
     return index
@@ -351,7 +370,7 @@ def main():
                     records = load_answer_entries(answer_file)
                     debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
                     existing = load_debate_entries(debate_path)
-                    existing_keys = collect_debate_keys(existing)
+                    existing_keys = collect_debate_keys(existing, q_slug, answer_model_slug, None, None)
                     for idx, rec in enumerate(records):
                         if args.limit is not None and len(tasks) >= args.limit:
                             break
@@ -359,7 +378,7 @@ def main():
                             continue
                         if len(existing) > idx and existing[idx]:
                             continue
-                        key = debate_key(rec.run_id, rec.topic_slug, rec.question)
+                        key = debate_task_key(q_slug, answer_model_slug, None, None, rec.run_id)
                         if key and key in existing_keys:
                             continue
                         tasks.append(
@@ -425,10 +444,10 @@ def main():
                     lock = lock_for(debate_path)
                     with lock:
                         existing = load_debate_entries(debate_path)
-                        existing_keys = collect_debate_keys(existing)
+                        existing_keys = collect_debate_keys(existing, q_slug, answer_model_slug, None, None)
                         if len(existing) > idx and existing[idx]:
                             return False
-                        key = debate_key(rec.run_id, rec.topic_slug, rec.question)
+                        key = debate_task_key(q_slug, answer_model_slug, None, None, rec.run_id)
                         if key and key in existing_keys:
                             return False
                         if len(existing) <= idx:
@@ -488,10 +507,10 @@ def main():
                             continue
                         debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
                         existing = load_debate_entries(debate_path)
-                        existing_keys = collect_debate_keys(existing)
+                        existing_keys = collect_debate_keys(existing, q_slug, answer_model_slug, None, None)
                         if len(existing) > idx and existing[idx]:
                             continue
-                        key = debate_key(rec.run_id, rec.topic_slug, rec.question)
+                        key = debate_task_key(q_slug, answer_model_slug, None, None, rec.run_id)
                         if key and key in existing_keys:
                             continue
                         total_tasks += 1
@@ -522,7 +541,7 @@ def main():
                     # Load debate file once per answer_file instead of per record
                     debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
                     existing = load_debate_entries(debate_path)
-                    existing_keys = collect_debate_keys(existing)
+                    existing_keys = collect_debate_keys(existing, q_slug, answer_model_slug, None, None)
 
                     for idx, rec in enumerate(records):
                         if args.limit is not None and debates >= args.limit:
@@ -535,7 +554,7 @@ def main():
 
                         if len(existing) > idx and existing[idx]:
                             continue
-                        key = debate_key(rec.run_id, rec.topic_slug, rec.question)
+                        key = debate_task_key(q_slug, answer_model_slug, None, None, rec.run_id)
                         if key and key in existing_keys:
                             continue
 
@@ -610,7 +629,7 @@ def main():
                         answer_map = build_entry_map(answers)
                         debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                         existing = load_debate_entries(debate_path)
-                        existing_keys = collect_debate_keys(existing)
+                        existing_keys = collect_debate_keys(existing, q_slug, answer_slug, critic_slug, mode)
                         for idx, crit_entry in enumerate(critiques):
                             if args.limit is not None and len(tasks) >= args.limit:
                                 break
@@ -631,12 +650,19 @@ def main():
                                 continue
                             if verdict == CRITIQUE_VERDICT_CORRECT:
                                 continue
-                            key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
-                            if not key:
+                            question_key_value = question_key(q_slug, crit_entry.run_id)
+                            if not question_key_value:
                                 continue
-                            if key and key in existing_keys:
+                            debate_key_value = debate_task_key(
+                                q_slug,
+                                answer_slug,
+                                critic_slug,
+                                mode,
+                                crit_entry.run_id,
+                            )
+                            if debate_key_value and debate_key_value in existing_keys:
                                 continue
-                            answer_entry = answer_map.get(key)
+                            answer_entry = answer_map.get(question_key_value)
                             if not answer_entry:
                                 continue
                             answer_text = final_answer(answer_entry) or ""
@@ -713,10 +739,15 @@ def main():
                     lock = lock_for(debate_path)
                     with lock:
                         existing = load_debate_entries(debate_path)
-                        key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
+                        key = debate_task_key(
+                            q_slug,
+                            answer_slug,
+                            critic_slug,
+                            mode,
+                            crit_entry.run_id,
+                        )
                         if not key:
                             return False
-                        index = index_by_key(existing)
                         entry = DebateEntry(
                             question=crit_entry.question,
                             alice_model=critic_model.slug,
@@ -798,13 +829,20 @@ def main():
                                 continue
                             debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                             existing = load_debate_entries(debate_path)
-                            existing_keys = collect_debate_keys(existing)
-                            key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
-                            if not key:
+                            existing_keys = collect_debate_keys(existing, q_slug, answer_slug, critic_slug, mode)
+                            question_key_value = question_key(q_slug, crit_entry.run_id)
+                            if not question_key_value:
                                 continue
-                            if key and key in existing_keys:
+                            debate_key_value = debate_task_key(
+                                q_slug,
+                                answer_slug,
+                                critic_slug,
+                                mode,
+                                crit_entry.run_id,
+                            )
+                            if debate_key_value and debate_key_value in existing_keys:
                                 continue
-                            if not answer_map.get(key):
+                            if not answer_map.get(question_key_value):
                                 continue
                             total_tasks += 1
                         if args.limit is not None and total_tasks >= args.limit:
@@ -845,7 +883,7 @@ def main():
                         # Load debate file once per critique file instead of per record
                         debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                         existing = load_debate_entries(debate_path)
-                        existing_keys = collect_debate_keys(existing)
+                        existing_keys = collect_debate_keys(existing, q_slug, answer_slug, critic_slug, mode)
 
                         for idx, crit_entry in enumerate(critiques):
                             if args.limit is not None and debates >= args.limit:
@@ -858,12 +896,19 @@ def main():
                                 continue
                             if verdict == CRITIQUE_VERDICT_CORRECT:
                                 continue
-                            key = debate_key(crit_entry.run_id, crit_entry.topic_slug, crit_entry.question)
-                            if not key:
+                            question_key_value = question_key(q_slug, crit_entry.run_id)
+                            if not question_key_value:
                                 continue
-                            if key and key in existing_keys:
+                            debate_key_value = debate_task_key(
+                                q_slug,
+                                answer_slug,
+                                critic_slug,
+                                mode,
+                                crit_entry.run_id,
+                            )
+                            if debate_key_value and debate_key_value in existing_keys:
                                 continue
-                            answer_entry = answer_map.get(key)
+                            answer_entry = answer_map.get(question_key_value)
                             if not answer_entry:
                                 continue
                             answer_text = final_answer(answer_entry) or ""
@@ -897,14 +942,14 @@ def main():
                                     critic=critic_model.slug,
                                     history=history,
                                 )
-                                index = index_by_key(existing)
-                                if key in index:
-                                    existing[index[key]] = entry
+                                index = index_by_key(existing, q_slug, answer_slug, critic_slug, mode)
+                                if debate_key_value and debate_key_value in index:
+                                    existing[index[debate_key_value]] = entry
                                 else:
                                     existing.append(entry)
                                 save_debate_entries(debate_path, existing)
-                                if key:
-                                    existing_keys.add(key)
+                                if debate_key_value:
+                                    existing_keys.add(debate_key_value)
                                 debates += 1
                                 pbar.update(1)
                             except Exception as e:

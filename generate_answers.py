@@ -27,7 +27,7 @@ from data_models import (
     load_benchmark_entries,
     save_answer_entries,
 )
-from utils import _ensure_non_empty_responses, clean_math, entry_key, setup_logging
+from utils import _ensure_non_empty_responses, answer_key, answer_key_from_entry, clean_math, setup_logging
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +74,7 @@ def prepare_batch(
     for rec in existing:
         if not rec:
             continue
-        key = entry_key(rec.run_id, rec.topic_slug, rec.question)
+        key = answer_key_from_entry(rec)
         if not key:
             continue
         prior = existing_by_key.get(key)
@@ -91,7 +91,7 @@ def prepare_batch(
         question_text = final_question(entry)
         if not question_text:
             continue
-        key = entry_key(entry.run_id, entry.topic_slug, question_text)
+        key = answer_key(question_model, answer_model, entry.run_id)
         prior = existing_by_key.get(key) if key else None
         if prior and prior.status == STATUS_SUCCEEDED:
             continue
@@ -259,11 +259,11 @@ def main():
                         for rec_idx, rec in enumerate(existing_records):
                             if not rec:
                                 continue
-                            key = entry_key(rec.run_id, rec.topic_slug, rec.question)
+                            key = answer_key_from_entry(rec)
                             if key and key not in index_by_key:
                                 index_by_key[key] = rec_idx
                         for idx, record in outputs:
-                            key = entry_key(record.run_id, record.topic_slug, record.question)
+                            key = answer_key_from_entry(record)
                             if key and key in index_by_key:
                                 existing_records[index_by_key[key]] = record
                             else:

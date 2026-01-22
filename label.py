@@ -1,5 +1,4 @@
 import argparse
-import hashlib
 import json
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -14,57 +13,13 @@ from data_models import (
     load_human_evaluation_entries,
     save_human_evaluation_entries,
 )
-from utils import entry_key
-
-
-def _task_id(prefix: str, run_id: Optional[str], topic_slug: Optional[str], question: Optional[str]) -> str:
-    if run_id:
-        return f"{prefix}/{run_id}"
-    if topic_slug and question:
-        digest = hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
-        return f"{prefix}/{topic_slug}/{digest}"
-    return f"{prefix}/unknown"
-
-
-def _digest_question(question: Optional[str]) -> Optional[str]:
-    if not question:
-        return None
-    return hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
-
-
-def _find_entry_by_run_id(entries: List, run_id: Optional[str]):
-    if run_id is None:
-        return None
-    run_id = str(run_id)
-    for entry in entries:
-        if not entry:
-            continue
-        if str(entry.run_id) == run_id:
-            return entry
-    return None
-
-
-def _find_entry_by_digest(entries: List, topic_slug: Optional[str], digest: Optional[str]):
-    if not topic_slug or not digest:
-        return None
-    for entry in entries:
-        if not entry or entry.topic_slug != topic_slug:
-            continue
-        if _digest_question(entry.question) == digest:
-            return entry
-    return None
-
-
-def _maybe_index_fallback(entries: List, idx_str: Optional[str]):
-    if idx_str is None:
-        return None
-    try:
-        idx = int(idx_str)
-    except ValueError:
-        return None
-    if 0 <= idx < len(entries):
-        return entries[idx]
-    return None
+from utils import (
+    answer_key,
+    answer_key_from_entry,
+    critique_key,
+    format_key,
+    human_evaluation_key_from_entry,
+)
 
 
 def list_illposed(answers_dir: Path, debates_dir: Path) -> List[Dict]:
@@ -80,24 +35,28 @@ def list_illposed(answers_dir: Path, debates_dir: Path) -> List[Dict]:
             for debate in debates:
                 if not debate:
                     continue
-                key = entry_key(debate.run_id, debate.topic_slug, debate.question)
+                key = answer_key(q_slug, a_slug, debate.run_id)
                 if key and key not in debate_map:
                     debate_map[key] = debate
             for idx, rec in enumerate(records):
                 if not rec or rec.status != STATUS_ILL_POSED:
                     continue
-                key = entry_key(rec.run_id, rec.topic_slug, rec.question)
+                key = answer_key_from_entry(rec)
                 debate_history = debate_map.get(key)
-                prefix = f"illposed/{q_slug}/{a_slug}"
-                item_key = _task_id(
-                    prefix,
-                    rec.run_id or (debate_history.run_id if debate_history else None),
-                    rec.topic_slug or (debate_history.topic_slug if debate_history else None),
-                    rec.question or (debate_history.question if debate_history else None),
-                )
-                items.append(
-                    {
-                        "key": item_key,
+                run_id = rec.run_id or (debate_history.run_id if debate_history else None)
+                task_key = critique_key(q_slug, a_slug, None, None, run_id)
+                if not task_key:
+                    continue
+                    items.append(
+                        {
+                            "key": format_key(task_key),
+                            "task_key": task_key,
+                            "type": "illposed",
+                            "run_id": run_id,
+                            "question_model": q_slug,
+                            "answer_model": a_slug,
+                            "critic_model": None,
+                            "mode": None,
                         "question": rec.question,
                         "claim": rec.ill_posed_claim,
                         "debate": debate_history.model_dump(exclude_none=True) if debate_history else {},
@@ -124,7 +83,7 @@ def list_critiques(critiques_dir: Path, debates_dir: Path) -> List[Dict]:
                 for debate in debates:
                     if not debate:
                         continue
-                    key = entry_key(debate.run_id, debate.topic_slug, debate.question)
+                    key = answer_key(q_slug, answer_slug, debate.run_id)
                     if key and key not in debate_map:
                         debate_map[key] = debate
                 for idx, crit in enumerate(critiques):
@@ -132,18 +91,26 @@ def list_critiques(critiques_dir: Path, debates_dir: Path) -> List[Dict]:
                         continue
                     attempts = crit.attempts or []
                     last_attempt = attempts[-1] if attempts else None
-                    key = entry_key(crit.run_id, crit.topic_slug, crit.question)
-                    debate_history = debate_map.get(key)
-                    prefix = f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}"
-                    item_key = _task_id(
-                        prefix,
-                        crit.run_id or (debate_history.run_id if debate_history else None),
-                        crit.topic_slug or (debate_history.topic_slug if debate_history else None),
-                        crit.question or (debate_history.question if debate_history else None),
+                    key = answer_key(
+                        crit.question_author,
+                        crit.answer_author,
+                        crit.run_id,
                     )
+                    debate_history = debate_map.get(key)
+                    run_id = crit.run_id or (debate_history.run_id if debate_history else None)
+                    task_key = critique_key(q_slug, answer_slug, critic_slug, mode, run_id)
+                    if not task_key:
+                        continue
                     items.append(
                         {
-                            "key": item_key,
+                            "key": format_key(task_key),
+                            "task_key": task_key,
+                            "type": "critique",
+                            "run_id": run_id,
+                            "question_model": q_slug,
+                            "answer_model": answer_slug,
+                            "critic_model": critic_slug,
+                            "mode": mode,
                             "question": crit.question,
                             "critique": last_attempt.raw_critique if last_attempt else None,
                             "verdict": last_attempt.verdict if last_attempt else None,
@@ -156,25 +123,39 @@ def list_critiques(critiques_dir: Path, debates_dir: Path) -> List[Dict]:
     return items
 
 
+def build_item_map(answers_dir: Path, critiques_dir: Path, debates_dir: Path) -> Dict[str, Dict]:
+    items = list_illposed(answers_dir, debates_dir) + list_critiques(critiques_dir, debates_dir)
+    return {item["key"]: item for item in items}
+
+
 def record_evaluation(
     username: str,
-    key: str,
+    task: Dict,
     verdict: str,
     comment: str,
     eval_type: str,
     store_dir: Path,
-    mode: Optional[str] = None,
 ):
     eval_path = store_dir / f"{username}.json"
     payload = load_human_evaluation_entries(eval_path)
-    decisions = {decision.id: decision for decision in payload.decisions if decision.id}
-    decisions[key] = HumanEvaluation(
-        id=key,
+    decisions: Dict = {}
+    for decision in payload.decisions:
+        key = human_evaluation_key_from_entry(decision)
+        if key:
+            decisions[key] = decision
+    new_decision = HumanEvaluation(
+        run_id=task.get("run_id"),
         type=eval_type,
-        mode=mode,
+        mode=task.get("mode"),
+        question_model=task.get("question_model"),
+        answer_model=task.get("answer_model"),
+        critic_model=task.get("critic_model"),
         verdict=verdict,
         comment=comment,
     )
+    decision_key = human_evaluation_key_from_entry(new_decision)
+    if decision_key:
+        decisions[decision_key] = new_decision
     save_human_evaluation_entries(eval_path, HumanEvaluationFile(decisions=list(decisions.values())))
 
 
@@ -205,85 +186,22 @@ def main():
         return
 
     if args.show:
-        key = args.show
-        parts = key.split("/")
-        critique_modes = {p.name for p in args.critiques_dir.glob("*") if p.is_dir()}
-        if parts[0] == "critique":
-            parts = parts[1:]
-        elif parts[0] == "illposed":
-            parts = parts[1:]
-
-        is_critique = parts[0] in critique_modes if parts else False
-        if not is_critique:
-            # ill-posed
-            if len(parts) < 3:
-                raise ValueError("Ill-posed key must look like qslug/aslug/run_id or qslug/aslug/topic/hash")
-            q_slug, a_slug = parts[0], parts[1]
-            run_id = parts[2] if len(parts) == 3 else None
-            topic_slug = parts[2] if len(parts) >= 4 else None
-            digest = parts[3] if len(parts) >= 4 else None
-            answer_file = args.answers_dir / q_slug / f"{a_slug}.json"
-            debate_file = args.debates_dir / "illposed" / q_slug / f"{a_slug}.json"
-            answers = load_answer_entries(answer_file)
-            debates = load_debate_entries(debate_file)
-            answer_record = _find_entry_by_run_id(answers, run_id) or _find_entry_by_digest(
-                answers, topic_slug, digest
-            )
-            if not answer_record and run_id:
-                answer_record = _maybe_index_fallback(answers, run_id)
-            debate_record = _find_entry_by_run_id(debates, run_id) or _find_entry_by_digest(
-                debates, topic_slug, digest
-            )
-            if not debate_record and run_id:
-                debate_record = _maybe_index_fallback(debates, run_id)
-            item = {
-                "key": key,
-                "answer_record": answer_record.model_dump(exclude_none=True) if answer_record else {},
-                "debate": debate_record.model_dump(exclude_none=True) if debate_record else {},
-            }
-            show_item(item)
-        else:
-            # critique
-            if len(parts) < 4:
-                raise ValueError("Critique key must look like mode/qslug/critic__answer/run_id or mode/qslug/critic__answer/topic/hash")
-            mode, q_slug, pair = parts[0], parts[1], parts[2]
-            critic_slug, answer_slug = pair.split("__")
-            run_id = parts[3] if len(parts) == 4 else None
-            topic_slug = parts[3] if len(parts) >= 5 else None
-            digest = parts[4] if len(parts) >= 5 else None
-            crit_file = args.critiques_dir / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
-            debate_file = args.debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
-            critiques = load_critique_entries(crit_file)
-            debates = load_debate_entries(debate_file)
-            critique_record = _find_entry_by_run_id(critiques, run_id) or _find_entry_by_digest(
-                critiques, topic_slug, digest
-            )
-            if not critique_record and run_id:
-                critique_record = _maybe_index_fallback(critiques, run_id)
-            debate_record = _find_entry_by_run_id(debates, run_id) or _find_entry_by_digest(
-                debates, topic_slug, digest
-            )
-            if not debate_record and run_id:
-                debate_record = _maybe_index_fallback(debates, run_id)
-            item = {
-                "key": key,
-                "critique_record": critique_record.model_dump(exclude_none=True) if critique_record else {},
-                "debate": debate_record.model_dump(exclude_none=True) if debate_record else {},
-            }
-            show_item(item)
+        item_map = build_item_map(args.answers_dir, args.critiques_dir, args.debates_dir)
+        item = item_map.get(args.show)
+        if not item:
+            raise ValueError(f"Unknown key: {args.show}")
+        show_item(item)
         return
 
     if args.verdict:
-        key = args.verdict.split(":")[0] if ":" in args.verdict else None
-        if not key:
-            raise ValueError("Provide verdict as key:decision (e.g., ill-posed/openai-gpt-5-2025-08-07__...:correct)")
-        key_part, decision = args.verdict.split(":")
-        eval_type = "illposed" if key_part.count("/") == 2 else "critique"
-        mode = None
-        if eval_type == "critique":
-            parts = key_part.split("/")
-            mode = parts[0] if len(parts) == 4 else None
-        record_evaluation(args.username, key_part, decision, args.comment, eval_type, args.evaluations_dir, mode=mode)
+        if ":" not in args.verdict:
+            raise ValueError("Provide verdict as key:decision (e.g., run_id/question_model/answer_model/...:correct)")
+        key_part, decision = args.verdict.split(":", 1)
+        item_map = build_item_map(args.answers_dir, args.critiques_dir, args.debates_dir)
+        item = item_map.get(key_part)
+        if not item:
+            raise ValueError(f"Unknown key: {key_part}")
+        record_evaluation(args.username, item, decision, args.comment, item["type"], args.evaluations_dir)
         print(f"Recorded {decision} for {key_part}")
         return
 

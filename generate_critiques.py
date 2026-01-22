@@ -18,7 +18,15 @@ from prompt_library import (
     load_critique_guidance,
 )
 from self_improvement import self_improve_critiques
-from utils import _ensure_non_empty_responses, benchmark_answers_from_entries, clean_math, entry_key, safe_load_json, setup_logging
+from utils import (
+    _ensure_non_empty_responses,
+    benchmark_answers_from_entries,
+    clean_math,
+    critique_key,
+    question_key,
+    safe_load_json,
+    setup_logging,
+)
 from model_api import query_llm_batch, query_llm_parallel, query_llm_single
 from constants import (
     CRITIQUE_VERDICT_UNKNOWN,
@@ -52,7 +60,7 @@ class CritiqueJob:
     run_id: Optional[str]
     topic_slug: Optional[str]
     output_path: Path
-    record_key: Tuple[Optional[str], Optional[str], Optional[str]]
+    record_key: Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]
 
 
 def final_question(entry: BenchmarkEntry) -> Optional[str]:
@@ -153,12 +161,12 @@ def _batched_query(model: str, prompts: List[str], disable_batch: bool, temperat
     return responses
 
 
-def build_entry_map(entries: List[Optional[AnswerEntry]]) -> Dict[Tuple[Optional[str], Optional[str], Optional[str]], AnswerEntry]:
-    mapped: Dict[Tuple[Optional[str], Optional[str], Optional[str]], AnswerEntry] = {}
+def build_answer_map(entries: List[Optional[AnswerEntry]]) -> Dict[Tuple[Optional[str], Optional[str]], AnswerEntry]:
+    mapped: Dict[Tuple[Optional[str], Optional[str]], AnswerEntry] = {}
     for entry in entries:
         if not entry:
             continue
-        key = entry_key(entry.run_id, entry.topic_slug, entry.question)
+        key = question_key(entry.question_model, entry.run_id)
         if not key:
             continue
         existing = mapped.get(key)
@@ -195,7 +203,7 @@ def prepare_pairs(
     limit: Optional[int],
     benchmark_entries: List[Optional[BenchmarkEntry]],
     critic_names: Optional[Set[str]],
-) -> List[Tuple[Tuple[Optional[str], Optional[str], Optional[str]], str, str]]:
+) -> List[Tuple[Tuple[Optional[str], Optional[str]], str, str]]:
     pairs = []
     critic_name_set = set(critic_names or [])
     q_slug = _slugify(question_model)
@@ -205,7 +213,7 @@ def prepare_pairs(
         question_model,
         benchmark_entries,
     )
-    question_author_map = build_entry_map(question_author_answers)
+    question_author_map = build_answer_map(question_author_answers)
 
     if mode == "contradictor":
         critic_list = sorted(critic_name_set) if critic_name_set else answer_models
@@ -233,7 +241,7 @@ def prepare_pairs(
         if answer_model == question_model and not answer_records:
             answer_records = question_author_answers
 
-        answer_map = build_entry_map(answer_records)
+        answer_map = build_answer_map(answer_records)
         for key, target_entry in answer_map.items():
             if limit is not None and len(pairs) >= limit:
                 break
@@ -454,7 +462,7 @@ def main():
         benchmark_entries = load_benchmark_entries(bench_path)
         answer_models = [spec.name for spec in registry.models.values() if "answer" in spec.roles]
 
-        pairs: List[Tuple[Tuple[Optional[str], Optional[str], Optional[str]], str, str]] = []
+        pairs: List[Tuple[Tuple[Optional[str], Optional[str]], str, str]] = []
         if args.mode == "custom":
             for question_author, answerer, critic in custom_pairs:
                 if question_author != question_model:
@@ -467,7 +475,7 @@ def main():
                     answerer,
                     benchmark_entries,
                 )
-                answer_map = build_entry_map(answer_records)
+                answer_map = build_answer_map(answer_records)
                 for key, rec in answer_map.items():
                     if args.limit is not None and len(pairs) >= args.limit:
                         break
@@ -487,14 +495,14 @@ def main():
             continue
 
         jobs_by_critic: Dict[str, Dict] = {}
-        benchmark_question_map: Dict[Tuple[Optional[str], Optional[str], Optional[str]], str] = {}
+        benchmark_question_map: Dict[Tuple[Optional[str], Optional[str]], str] = {}
         for entry in benchmark_entries:
             if not entry:
                 continue
             question_text = final_question(entry)
             if not question_text:
                 continue
-            key = entry_key(entry.run_id, entry.topic_slug, question_text)
+            key = question_key(q_slug, entry.run_id)
             if key and key not in benchmark_question_map:
                 benchmark_question_map[key] = question_text
 
@@ -510,7 +518,7 @@ def main():
                 answer_author,
                 benchmark_entries,
             )
-            answer_map = build_entry_map(answer_records)
+            answer_map = build_answer_map(answer_records)
             answer_entry = answer_map.get(key)
             if not answer_entry or answer_entry.status in {STATUS_FAILED, STATUS_ILL_POSED}:
                 run_id = key[0] if key else None
@@ -525,8 +533,15 @@ def main():
                 continue
             output_path = args.output_dir / args.mode / q_slug / f"{critic_slug}__{a_slug}.json"
             existing = load_critique_entries(output_path)
-            existing_map = build_entry_map(existing)
-            prior = existing_map.get(key)
+            existing_map: Dict[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]], CritiqueEntry] = {}
+            for rec in existing:
+                if not rec:
+                    continue
+                rec_key = critique_key(rec.question_author, rec.answer_author, rec.critic, args.mode, rec.run_id)
+                if rec_key and rec_key not in existing_map:
+                    existing_map[rec_key] = rec
+            record_key = critique_key(q_slug, a_slug, critic_slug, args.mode, answer_entry.run_id)
+            prior = existing_map.get(record_key)
             if prior and prior.status == STATUS_SUCCEEDED:
                 continue
 
@@ -539,7 +554,7 @@ def main():
                 run_id=answer_entry.run_id,
                 topic_slug=answer_entry.topic_slug,
                 output_path=output_path,
-                record_key=key,
+                record_key=record_key,
             )
             bucket = jobs_by_critic.setdefault(critic_spec.name, {"spec": critic_spec, "jobs": []})
             bucket["jobs"].append(job)
@@ -569,11 +584,11 @@ def main():
                 lock = lock_for(job.output_path)
                 with lock:
                     records = load_critique_entries(job.output_path)
-                    index_by_key: Dict[Tuple[Optional[str], Optional[str], Optional[str]], int] = {}
+                    index_by_key: Dict[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]], int] = {}
                     for rec_idx, rec in enumerate(records):
                         if not rec:
                             continue
-                        rec_key = entry_key(rec.run_id, rec.topic_slug, rec.question)
+                        rec_key = critique_key(rec.question_author, rec.answer_author, rec.critic, args.mode, rec.run_id)
                         if rec_key and rec_key not in index_by_key:
                             index_by_key[rec_key] = rec_idx
                     final_verdict = attempts[-1].verdict if attempts else None
@@ -644,11 +659,11 @@ def main():
                     )
                     for job, attempts in zip(jobs, attempts_list):
                         records = load_critique_entries(job.output_path)
-                        index_by_key: Dict[Tuple[Optional[str], Optional[str], Optional[str]], int] = {}
+                        index_by_key: Dict[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]], int] = {}
                         for rec_idx, rec in enumerate(records):
                             if not rec:
                                 continue
-                            rec_key = entry_key(rec.run_id, rec.topic_slug, rec.question)
+                            rec_key = critique_key(rec.question_author, rec.answer_author, rec.critic, args.mode, rec.run_id)
                             if rec_key and rec_key not in index_by_key:
                                 index_by_key[rec_key] = rec_idx
                         final_verdict = attempts[-1].verdict if attempts else None

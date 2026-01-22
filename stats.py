@@ -1,9 +1,9 @@
 from collections import Counter, defaultdict
 from pathlib import Path
-import hashlib
+import argparse
 import logging
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 from data_models import (
     AutomatedEvaluation,
@@ -28,6 +28,14 @@ from constants import (
 from victory import (
     VictorySide,
     resolve_automated_victory,
+    verdict_to_victory_side,
+)
+from utils import (
+    format_key,
+    human_evaluation_key_from_entry,
+    judging_task_key,
+    question_key,
+    task_key_from_prefix,
 )
 
 logger = logging.getLogger(__name__)
@@ -38,17 +46,14 @@ def count_human_labels(evaluations_dir: Path):
     for eval_file in evaluations_dir.glob("*.json"):
         data = load_human_evaluation_entries(eval_file)
         for dec in data.decisions:
-            label_counts[dec.id] += 1
+            key = human_evaluation_key_from_entry(dec)
+            if key:
+                label_counts[key] += 1
     return label_counts
 
 
-def _task_id(prefix: str, run_id: Optional[str], topic_slug: Optional[str], question: Optional[str]) -> str:
-    if run_id:
-        return f"{prefix}/{run_id}"
-    if topic_slug and question:
-        digest = hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
-        return f"{prefix}/{topic_slug}/{digest}"
-    return f"{prefix}/unknown"
+def _task_key(prefix: str, run_id: Optional[str], _topic_slug: Optional[str], _question: Optional[str]):
+    return task_key_from_prefix(prefix, run_id)
 
 
 _CRITIQUE_INCORRECT_EQUIV = {
@@ -74,8 +79,14 @@ def final_question(entry: BenchmarkEntry) -> Optional[str]:
     return refinements[-1].question
 
 
-def load_critique_verdicts(critiques_dir: Path) -> Dict[Tuple[str, str, str, int], Dict[str, str]]:
-    verdicts: Dict[Tuple[str, str, str, int], Dict[str, str]] = defaultdict(dict)
+QuestionKey = Tuple[Optional[str], Optional[str]]
+CritiqueKey = Tuple[str, str, str, Union[int, QuestionKey]]
+
+
+def load_critique_verdicts(
+    critiques_dir: Path,
+) -> Dict[CritiqueKey, Dict[str, Dict[str, Optional[str]]]]:
+    verdicts: Dict[CritiqueKey, Dict[str, Dict[str, Optional[str]]]] = defaultdict(dict)
     if not critiques_dir.exists():
         return verdicts
     for mode_dir in critiques_dir.glob("*"):
@@ -97,22 +108,34 @@ def load_critique_verdicts(critiques_dir: Path) -> Dict[Tuple[str, str, str, int
                     verdict = normalize_critique_verdict(attempts[-1].verdict)
                     if not verdict:
                         continue
-                    key = (q_slug, critic_slug, answer_slug, idx)
-                    verdicts[key][mode] = verdict
+                    info = {
+                        "verdict": verdict,
+                        "run_id": entry.run_id,
+                        "topic_slug": entry.topic_slug,
+                        "question": entry.question,
+                    }
+                    q_key = question_key(entry.question_author, entry.run_id)
+                    if q_key:
+                        verdicts[(q_slug, critic_slug, answer_slug, q_key)][mode] = info
+                    verdicts[(q_slug, critic_slug, answer_slug, idx)][mode] = info
     return verdicts
 
 
 def find_critique_verdict(
-    verdicts: Dict[Tuple[str, str, str, int], Dict[str, str]],
+    verdicts: Dict[CritiqueKey, Dict[str, Dict[str, Optional[str]]]],
     q_slug: str,
     critic_slug: str,
     answer_slug: str,
     idx: int,
+    q_key: Optional[QuestionKey],
     preferred_mode: Optional[str],
     fallback_any: bool,
-) -> Tuple[Optional[str], Optional[str]]:
-    key = (q_slug, critic_slug, answer_slug, idx)
-    modes = verdicts.get(key, {})
+) -> Tuple[Optional[str], Optional[Dict[str, Optional[str]]]]:
+    modes = {}
+    if q_key is not None:
+        modes = verdicts.get((q_slug, critic_slug, answer_slug, q_key), {})
+    if not modes:
+        modes = verdicts.get((q_slug, critic_slug, answer_slug, idx), {})
     if preferred_mode and preferred_mode in modes:
         return preferred_mode, modes[preferred_mode]
     if not fallback_any:
@@ -143,8 +166,8 @@ def count_items(path: Path, kind: str):
     return counts
 
 
-def collect_claim_ids(critiques_dir: Path, debates_dir: Path):
-    claim_ids = set()
+def collect_claim_keys(critiques_dir: Path, debates_dir: Path):
+    claim_keys = set()
     for mode_dir in critiques_dir.glob("*"):
         for q_dir in mode_dir.glob("*"):
             for crit_file in q_dir.glob("*.json"):
@@ -154,7 +177,9 @@ def collect_claim_ids(critiques_dir: Path, debates_dir: Path):
                     if not entry:
                         continue
                     prefix = f"critique/{mode_dir.name}/{q_slug}/{crit_file.stem}"
-                    claim_ids.add(_task_id(prefix, entry.run_id, entry.topic_slug, entry.question))
+                    claim_key = _task_key(prefix, entry.run_id, entry.topic_slug, entry.question)
+                    if claim_key:
+                        claim_keys.add(claim_key)
     for debate_file in (debates_dir / "illposed").glob("*/*.json"):
         q_slug = debate_file.parent.name
         a_slug = debate_file.stem
@@ -163,8 +188,10 @@ def collect_claim_ids(critiques_dir: Path, debates_dir: Path):
             if not entry:
                 continue
             prefix = f"illposed/{q_slug}/{a_slug}"
-            claim_ids.add(_task_id(prefix, entry.run_id, entry.topic_slug, entry.question))
-    return claim_ids
+            claim_key = _task_key(prefix, entry.run_id, entry.topic_slug, entry.question)
+            if claim_key:
+                claim_keys.add(claim_key)
+    return claim_keys
 
 
 def critique_verdicts(critiques_dir: Path):
@@ -201,11 +228,12 @@ def count_illposed_answers(answers_dir: Path):
     return count
 
 
-def collect_decisions_by_claim(auto_eval_dir: Path) -> Dict[str, List[AutomatedEvaluation]]:
-    decisions_by_claim: Dict[str, List[AutomatedEvaluation]] = defaultdict(list)
+def collect_decisions_by_claim(auto_eval_dir: Path) -> Dict[Tuple, List[AutomatedEvaluation]]:
+    decisions_by_claim: Dict[Tuple, List[AutomatedEvaluation]] = defaultdict(list)
     for decision in collect_automated_evaluations(auto_eval_dir):
-        if decision.id:
-            decisions_by_claim[decision.id].append(decision)
+        key = judging_task_key(decision)
+        if key:
+            decisions_by_claim[key].append(decision)
     return decisions_by_claim
 
 
@@ -216,6 +244,101 @@ def _format_count(count: int, total: int) -> str:
     return f"{count} ({pct:.2f}%)"
 
 
+def _drop_reason_from_verdicts(drop_verdicts: Counter) -> str:
+    if not drop_verdicts:
+        return "unanimous_drop"
+    if len(drop_verdicts) == 1:
+        verdict = next(iter(drop_verdicts))
+        return f"unanimous_drop_{verdict}"
+    return "unanimous_drop_mixed_verdicts"
+
+
+def _format_drop_reason(reason: str) -> str:
+    if reason.startswith("unanimous_drop_"):
+        suffix = reason[len("unanimous_drop_") :]
+        if suffix == "mixed_verdicts":
+            return "unanimous drop: mixed/unknown"
+        return f"unanimous drop: {suffix}"
+    mapping = {
+        "no_decisions": "no automated decisions",
+        "no_valid_verdicts": "all judgments invalid",
+        "no_unanimity": "no unanimity among judges",
+    }
+    return mapping.get(reason, reason)
+
+
+def _analyze_automated_victory(
+    claim_type: str,
+    decisions: List[AutomatedEvaluation],
+    *,
+    context: Optional[str] = None,
+    log_automated_disagreements: bool = True,
+) -> Tuple[Optional[VictorySide], str, Counter, Counter]:
+    verdicts = [decision.verdict for decision in decisions if decision and decision.verdict]
+    if not verdicts:
+        return None, "no_decisions", Counter(), Counter()
+
+    invalid_verdicts: Counter = Counter()
+    drop_verdicts: Counter = Counter()
+    sides: List[VictorySide] = []
+    for verdict in verdicts:
+        side = verdict_to_victory_side(claim_type, verdict)
+        if side is None:
+            invalid_verdicts[verdict] += 1
+            continue
+        sides.append(side)
+        if side == VictorySide.DROP:
+            drop_verdicts[verdict] += 1
+
+    if not sides:
+        return None, "no_valid_verdicts", invalid_verdicts, drop_verdicts
+
+    unique = set(sides)
+    if len(unique) != 1:
+        if log_automated_disagreements:
+            logger.error(
+                "Automated judgments disagree for %s: %s",
+                context or "unknown task",
+                sorted(side.value for side in unique),
+            )
+        return None, "no_unanimity", invalid_verdicts, drop_verdicts
+
+    outcome = unique.pop()
+    if outcome == VictorySide.DROP:
+        reason = _drop_reason_from_verdicts(drop_verdicts)
+        return outcome, reason, invalid_verdicts, drop_verdicts
+
+    return outcome, "unanimous_win", invalid_verdicts, drop_verdicts
+
+
+def _diagnose_missing_critique(
+    critiques_dir: Path,
+    mode: str,
+    q_slug: str,
+    critic_slug: str,
+    answer_slug: str,
+    idx: int,
+) -> Tuple[str, str]:
+    crit_path = critiques_dir / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
+    if not crit_path.exists():
+        return "file_missing", str(crit_path)
+    entries = load_critique_entries(crit_path)
+    if idx >= len(entries):
+        return "entry_missing", str(crit_path)
+    entry = entries[idx]
+    if not entry:
+        return "entry_none", str(crit_path)
+    if entry.status != STATUS_SUCCEEDED:
+        return f"status_{entry.status}", str(crit_path)
+    attempts = entry.attempts or []
+    if not attempts:
+        return "no_attempts", str(crit_path)
+    verdict = attempts[-1].verdict
+    if not verdict:
+        return "verdict_missing", str(crit_path)
+    return "unexpected_missing", str(crit_path)
+
+
 def print_protocol_stats(
     benchmarks_dir: Path,
     answers_dir: Path,
@@ -224,12 +347,26 @@ def print_protocol_stats(
     answer_critique_mode: str = "evaluator",
     self_answer_critique_mode: str = "contradictor",
     fallback_any_mode: bool = False,
+    log_automated_disagreements: bool = True,
+    list_missing_critiques: bool = False,
 ) -> None:
     critique_verdicts = load_critique_verdicts(critiques_dir)
     decisions_by_claim = collect_decisions_by_claim(auto_eval_dir)
 
     counts = Counter()
     candidate_games = 0
+    no_victory_reasons = {
+        "self_critique": Counter(),
+        "illposed": Counter(),
+        "answer_critique": Counter(),
+    }
+    invalid_verdicts = {
+        "self_critique": Counter(),
+        "illposed": Counter(),
+        "answer_critique": Counter(),
+    }
+    missing_critique_reasons = Counter()
+    missing_critique_cases: List[Dict[str, str]] = []
 
     for bench_path in benchmarks_dir.glob("*.json"):
         q_slug = bench_path.stem
@@ -259,21 +396,22 @@ def print_protocol_stats(
                 candidate_games += 1
 
                 # Step 3: Bob critiques Alice's self-answer (question validity check)
-                self_mode, self_verdict = find_critique_verdict(
+                self_mode, self_info = find_critique_verdict(
                     critique_verdicts,
                     q_slug,
                     a_slug,
                     q_slug,
                     idx,
+                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id),
                     self_answer_critique_mode,
                     fallback_any_mode,
                 )
-                if not self_verdict:
+                if not self_info:
                     counts["drop_self_critique_missing"] += 1
                     counts["final_drop"] += 1
                     continue
                 counts["self_critique_present"] += 1
-                self_verdict = normalize_critique_verdict(self_verdict)
+                self_verdict = normalize_critique_verdict(self_info.get("verdict"))
 
                 if self_verdict == CRITIQUE_VERDICT_UNKNOWN:
                     counts["drop_self_critique_unknown"] += 1
@@ -283,11 +421,18 @@ def print_protocol_stats(
                 if self_verdict == CRITIQUE_VERDICT_CORRECT:
                     counts["self_critique_correct"] += 1
                 else:
-                    claim_id = f"critique/{self_mode}/{q_slug}/{a_slug}__{q_slug}/{idx}"
-                    outcome = resolve_automated_victory(
+                    prefix = f"critique/{self_mode}/{q_slug}/{a_slug}__{q_slug}"
+                    claim_key = _task_key(
+                        prefix,
+                        self_info.get("run_id"),
+                        self_info.get("topic_slug"),
+                        self_info.get("question"),
+                    )
+                    outcome, reason, invalid_counts, _ = _analyze_automated_victory(
                         "critique",
-                        decisions_by_claim.get(claim_id, []),
-                        context=claim_id,
+                        decisions_by_claim.get(claim_key, []),
+                        context=format_key(claim_key or ()),
+                        log_automated_disagreements=log_automated_disagreements,
                     )
                     if outcome == VictorySide.ALICE:
                         counts["drop_self_critique_upheld"] += 1
@@ -298,6 +443,8 @@ def print_protocol_stats(
                     else:
                         counts["drop_self_critique_no_victory"] += 1
                         counts["final_drop"] += 1
+                        no_victory_reasons["self_critique"][reason] += 1
+                        invalid_verdicts["self_critique"].update(invalid_counts)
                         continue
 
                 # Step 4: Bob answers Alice's question
@@ -308,11 +455,18 @@ def print_protocol_stats(
 
                 if answer_entry.status == STATUS_ILL_POSED:
                     counts["answer_illposed_claimed"] += 1
-                    claim_id = f"illposed/{q_slug}/{a_slug}/{idx}"
-                    outcome = resolve_automated_victory(
+                    prefix = f"illposed/{q_slug}/{a_slug}"
+                    claim_key = _task_key(
+                        prefix,
+                        answer_entry.run_id,
+                        answer_entry.topic_slug,
+                        answer_entry.question,
+                    )
+                    outcome, reason, invalid_counts, _ = _analyze_automated_victory(
                         "illposed",
-                        decisions_by_claim.get(claim_id, []),
-                        context=claim_id,
+                        decisions_by_claim.get(claim_key, []),
+                        context=format_key(claim_key or ()),
+                        log_automated_disagreements=log_automated_disagreements,
                     )
                     if outcome == VictorySide.ALICE:
                         counts["drop_illposed_upheld"] += 1
@@ -324,6 +478,8 @@ def print_protocol_stats(
                         continue
                     counts["drop_illposed_no_victory"] += 1
                     counts["final_drop"] += 1
+                    no_victory_reasons["illposed"][reason] += 1
+                    invalid_verdicts["illposed"].update(invalid_counts)
                     continue
 
                 if answer_entry.status != STATUS_SUCCEEDED:
@@ -334,20 +490,40 @@ def print_protocol_stats(
                 counts["answer_succeeded"] += 1
 
                 # Step 5: Alice critiques Bob's answer
-                mode, verdict = find_critique_verdict(
+                mode, verdict_info = find_critique_verdict(
                     critique_verdicts,
                     q_slug,
                     q_slug,
                     a_slug,
                     idx,
+                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id),
                     answer_critique_mode,
                     fallback_any_mode,
                 )
-                if not verdict:
+                if not verdict_info:
                     counts["drop_critique_missing"] += 1
                     counts["final_drop"] += 1
+                    if list_missing_critiques:
+                        reason, path = _diagnose_missing_critique(
+                            critiques_dir,
+                            answer_critique_mode,
+                            q_slug,
+                            q_slug,
+                            a_slug,
+                            idx,
+                        )
+                        missing_critique_reasons[reason] += 1
+                        missing_critique_cases.append(
+                            {
+                                "question": q_slug,
+                                "answerer": a_slug,
+                                "index": str(idx),
+                                "reason": reason,
+                                "path": path,
+                            }
+                        )
                     continue
-                verdict = normalize_critique_verdict(verdict)
+                verdict = normalize_critique_verdict(verdict_info.get("verdict"))
                 if verdict == CRITIQUE_VERDICT_UNKNOWN:
                     counts["drop_critique_unknown"] += 1
                     counts["final_drop"] += 1
@@ -357,11 +533,18 @@ def print_protocol_stats(
                     counts["final_bob_wins"] += 1
                     continue
 
-                claim_id = f"critique/{mode}/{q_slug}/{q_slug}__{a_slug}/{idx}"
-                outcome = resolve_automated_victory(
+                prefix = f"critique/{mode}/{q_slug}/{q_slug}__{a_slug}"
+                claim_key = _task_key(
+                    prefix,
+                    verdict_info.get("run_id"),
+                    verdict_info.get("topic_slug"),
+                    verdict_info.get("question"),
+                )
+                outcome, reason, invalid_counts, _ = _analyze_automated_victory(
                     "critique",
-                    decisions_by_claim.get(claim_id, []),
-                    context=claim_id,
+                    decisions_by_claim.get(claim_key, []),
+                    context=format_key(claim_key or ()),
+                    log_automated_disagreements=log_automated_disagreements,
                 )
                 if outcome == VictorySide.BOB:
                     counts["critique_incorrect_defender_wins"] += 1
@@ -373,6 +556,8 @@ def print_protocol_stats(
                     continue
                 counts["critique_incorrect_no_victory"] += 1
                 counts["final_drop"] += 1
+                no_victory_reasons["answer_critique"][reason] += 1
+                invalid_verdicts["answer_critique"].update(invalid_counts)
 
     pairs_total = counts["pairs_total"]
 
@@ -408,6 +593,35 @@ def print_protocol_stats(
     print(f"  Final Alice wins: {_format_count(counts['final_alice_wins'], candidate_games)}")
     print(f"  Final dropped: {_format_count(counts['final_drop'], candidate_games)}")
 
+    print("\nNo-victory breakdowns (percentages of each drop category):")
+    breakdowns = [
+        ("Bob's critique no victory (drop)", "self_critique", counts["drop_self_critique_no_victory"]),
+        ("Ill-posed no victory (drop)", "illposed", counts["drop_illposed_no_victory"]),
+        ("Alice says incorrect, no victory (drop)", "answer_critique", counts["critique_incorrect_no_victory"]),
+    ]
+    for label, key, total in breakdowns:
+        if total <= 0:
+            continue
+        print(f"  {label}:")
+        for reason in sorted(no_victory_reasons[key].keys()):
+            count = no_victory_reasons[key][reason]
+            print(f"    {_format_drop_reason(reason)}: {_format_count(count, total)}")
+        if invalid_verdicts[key]:
+            print("    invalid judgments:")
+            for verdict in sorted(invalid_verdicts[key].keys()):
+                print(f"      {verdict}: {invalid_verdicts[key][verdict]}")
+
+    if list_missing_critiques and missing_critique_cases:
+        print("\nAlice critique missing reasons:")
+        for reason, count in missing_critique_reasons.most_common():
+            print(f"  {reason}: {count}")
+        print("\nAlice critique missing cases:")
+        for case in missing_critique_cases:
+            print(
+                f"  {case['question']} -> {case['answerer']} "
+                f"[{case['index']}]: {case['reason']} ({case['path']})"
+            )
+
 
 def collect_automated_evaluations(auto_eval_dir: Path) -> List[AutomatedEvaluation]:
     """Collect all automated evaluation decisions from all judge files."""
@@ -422,26 +636,22 @@ def collect_automated_evaluations(auto_eval_dir: Path) -> List[AutomatedEvaluati
     return all_decisions
 
 
-def _critique_target_key(claim_id: str) -> Optional[str]:
-    parts = claim_id.split("/")
-    if len(parts) < 5:
+def _critique_target_key(task_key: Tuple) -> Optional[Tuple[str, str, str]]:
+    if not task_key or len(task_key) < 3:
         return None
-    q_slug = parts[-3]
-    critic_and_answer = parts[-2]
-    token = parts[-1]
-    if "__" not in critic_and_answer:
+    run_id, question_model, answer_model, _, _ = task_key
+    if not run_id or not question_model or not answer_model:
         return None
-    _, answer_slug = critic_and_answer.split("__", 1)
-    return f"critique/{q_slug}/{answer_slug}/{token}"
+    return (run_id, question_model, answer_model)
 
 
-def _illposed_target_key(claim_id: str) -> Optional[str]:
-    parts = claim_id.split("/")
-    if len(parts) < 4:
+def _illposed_target_key(task_key: Tuple) -> Optional[Tuple[str, str]]:
+    if not task_key or len(task_key) < 2:
         return None
-    q_slug = parts[-3]
-    token = parts[-1]
-    return f"illposed/{q_slug}/{token}"
+    run_id, question_model, *_rest = task_key
+    if not run_id or not question_model:
+        return None
+    return (run_id, question_model)
 
 
 def count_inter_judge_disagreements(auto_eval_dir: Path) -> Tuple[int, int]:
@@ -449,13 +659,14 @@ def count_inter_judge_disagreements(auto_eval_dir: Path) -> Tuple[int, int]:
     decisions = collect_automated_evaluations(auto_eval_dir)
     decisions_by_claim = defaultdict(list)
     for decision in decisions:
-        if decision.id:
-            decisions_by_claim[decision.id].append(decision)
+        key = judging_task_key(decision)
+        if key:
+            decisions_by_claim[key].append(decision)
 
     naive_count = 0
     dedup_targets = set()
 
-    for claim_id, claim_decisions in decisions_by_claim.items():
+    for claim_key, claim_decisions in decisions_by_claim.items():
         if not claim_decisions:
             continue
         claim_type = claim_decisions[0].type
@@ -469,10 +680,10 @@ def count_inter_judge_disagreements(auto_eval_dir: Path) -> Tuple[int, int]:
 
         naive_count += 1
         if claim_type in {"critique", "critique_debate"}:
-            target_key = _critique_target_key(claim_id)
+            target_key = _critique_target_key(claim_key)
         else:
-            target_key = _illposed_target_key(claim_id)
-        dedup_targets.add(target_key or f"{claim_type}/{claim_id}")
+            target_key = _illposed_target_key(claim_key)
+        dedup_targets.add(target_key or (claim_type, format_key(claim_key)))
 
     return naive_count, len(dedup_targets)
 
@@ -506,8 +717,10 @@ def build_critique_verdict_map(critiques_dir: Path) -> Dict[str, Dict]:
                     critic_model_name = entry.critic if entry else None
 
                     prefix = f"critique/{mode_dir.name}/{q_slug}/{crit_file.stem}"
-                    cid = _task_id(prefix, entry.run_id, entry.topic_slug, entry.question)
-                    critique_verdict_map[cid] = {
+                    task_key = _task_key(prefix, entry.run_id, entry.topic_slug, entry.question)
+                    if not task_key:
+                        continue
+                    critique_verdict_map[task_key] = {
                         "verdict": verdict,
                         "answer_author": answer_author,
                         "question_author": question_author,
@@ -516,19 +729,23 @@ def build_critique_verdict_map(critiques_dir: Path) -> Dict[str, Dict]:
     return critique_verdict_map
 
 
-def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
+def compute_model_stats(
+    auto_eval_dir: Path,
+    critiques_dir: Path,
+    log_automated_disagreements: bool = True,
+):
     """Compute agreement statistics for various model roles."""
     decisions = collect_automated_evaluations(auto_eval_dir)
 
     # Track all encountered model names for validation
     encountered_models = set()
 
-    # Group decisions by claim ID
+    # Group decisions by claim key
     decisions_by_claim = defaultdict(list)
     for decision in decisions:
-        claim_id = decision.id
-        if claim_id:
-            decisions_by_claim[claim_id].append(decision)
+        claim_key = judging_task_key(decision)
+        if claim_key:
+            decisions_by_claim[claim_key].append(decision)
             # Track model names
             for key in ["question_model", "answer_model", "critic_model", "judge_model"]:
                 model_name = getattr(decision, key)
@@ -558,7 +775,7 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
     # Build critique verdict map to identify "correct" verdicts (no debate)
     critique_verdict_map = build_critique_verdict_map(critiques_dir)
 
-    for claim_id, claim_decisions in decisions_by_claim.items():
+    for claim_key, claim_decisions in decisions_by_claim.items():
         if not claim_decisions:
             continue
 
@@ -571,7 +788,12 @@ def compute_model_stats(auto_eval_dir: Path, critiques_dir: Path):
         mode = first.mode
 
         if claim_type == "critique":
-            outcome = resolve_automated_victory(claim_type, claim_decisions, context=claim_id)
+            outcome = resolve_automated_victory(
+                claim_type,
+                claim_decisions,
+                context=format_key(claim_key),
+                log_automated_disagreements=log_automated_disagreements,
+            )
             if outcome in {None, VictorySide.DROP}:
                 continue
 
@@ -660,6 +882,12 @@ def print_cross_model_stats(cross_model_stats):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Report aggregate stats for benchmarks.")
+    parser.add_argument("--disable-disagreement-logs", action="store_true")
+    parser.add_argument("--list-missing-critiques", action="store_true")
+    args, _ = parser.parse_known_args()
+    log_automated_disagreements = not args.disable_disagreement_logs
+
     benchmarks_dir = Path("benchmarks")
     answers_dir = Path("answers")
     critiques_dir = Path("critiques")
@@ -674,24 +902,25 @@ def main():
     illposed_answer_count = count_illposed_answers(answers_dir)
 
     labels = count_human_labels(evaluations_dir)
-    claim_ids = collect_claim_ids(critiques_dir, debates_dir)
+    claim_keys = collect_claim_keys(critiques_dir, debates_dir)
 
     # Only count labels for critique claims with non-correct verdicts and all illposed claims
-    filtered_claim_ids = set()
+    filtered_claim_keys = set()
     verdicts = critique_verdicts(critiques_dir)
 
     # Build shared verdict map (reused by compute_model_stats)
     critique_verdict_map = build_critique_verdict_map(critiques_dir)
 
-    for cid in claim_ids:
-        if cid.startswith("critique/"):
+    for cid in claim_keys:
+        is_critique = bool(cid and (cid[3] or cid[4]))
+        if is_critique:
             crit_info = critique_verdict_map.get(cid, {})
             v = crit_info.get("verdict") if isinstance(crit_info, dict) else crit_info
             if v == CRITIQUE_VERDICT_CORRECT:
                 continue
-        filtered_claim_ids.add(cid)
+        filtered_claim_keys.add(cid)
 
-    label_hist = Counter(labels.get(cid, 0) for cid in filtered_claim_ids)
+    label_hist = Counter(labels.get(cid, 0) for cid in filtered_claim_keys)
 
     print("Counts:")
     print(f"- Questions: {questions}")
@@ -712,10 +941,21 @@ def main():
     print(f"  naive: {inter_judge_naive}")
     print(f"  deduped by answer/question: {inter_judge_dedup}")
 
-    print_protocol_stats(benchmarks_dir, answers_dir, critiques_dir, auto_eval_dir)
+    print_protocol_stats(
+        benchmarks_dir,
+        answers_dir,
+        critiques_dir,
+        auto_eval_dir,
+        log_automated_disagreements=log_automated_disagreements,
+        list_missing_critiques=args.list_missing_critiques,
+    )
 
     # Compute and print automated evaluation statistics
-    model_self_answers, model_self_answers_no_debate, model_as_defender_success_rate, model_as_claimant_success_rate, cross_model_stats = compute_model_stats(auto_eval_dir, critiques_dir)
+    model_self_answers, model_self_answers_no_debate, model_as_defender_success_rate, model_as_claimant_success_rate, cross_model_stats = compute_model_stats(
+        auto_eval_dir,
+        critiques_dir,
+        log_automated_disagreements=log_automated_disagreements,
+    )
 
     print_agreement_stats(
         model_self_answers,

@@ -34,18 +34,14 @@ from data_models import (
     load_human_evaluation_entries,
     save_human_evaluation_entries,
 )
-from utils import benchmark_answers_from_entries
+from utils import (
+    benchmark_answers_from_entries,
+    format_key,
+    human_evaluation_key_from_entry,
+    judging_task_key,
+)
 
 st.set_page_config(layout="wide")
-
-
-def _task_id(prefix: str, run_id: Optional[str], topic_slug: Optional[str], question: Optional[str]) -> str:
-    if run_id:
-        return f"{prefix}/{run_id}"
-    if topic_slug and question:
-        digest = hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
-        return f"{prefix}/{topic_slug}/{digest}"
-    return f"{prefix}/unknown"
 
 
 def final_answer(entry: AnswerEntry) -> Optional[str]:
@@ -55,13 +51,18 @@ def final_answer(entry: AnswerEntry) -> Optional[str]:
     return attempts[-1].answer
 
 
-def load_evaluations(path: Path) -> Dict[str, HumanEvaluation]:
+def load_evaluations(path: Path) -> Dict:
     payload = load_human_evaluation_entries(path)
-    return {d.id: d for d in payload.decisions if d.id}
+    decisions: Dict = {}
+    for decision in payload.decisions:
+        key = human_evaluation_key_from_entry(decision)
+        if key:
+            decisions[key] = decision
+    return decisions
 
 
-def load_other_evaluations(evaluations_dir: Path, username: str) -> Dict[str, List[HumanEvaluation]]:
-    collected: Dict[str, List[HumanEvaluation]] = {}
+def load_other_evaluations(evaluations_dir: Path, username: str) -> Dict:
+    collected: Dict = {}
     if not evaluations_dir.exists():
         return collected
     for eval_file in evaluations_dir.glob("*.json"):
@@ -69,9 +70,10 @@ def load_other_evaluations(evaluations_dir: Path, username: str) -> Dict[str, Li
             continue
         payload = load_human_evaluation_entries(eval_file)
         for decision in payload.decisions:
-            if not decision.id:
+            key = human_evaluation_key_from_entry(decision)
+            if not key:
                 continue
-            collected.setdefault(decision.id, []).append(decision)
+            collected.setdefault(key, []).append(decision)
     return collected
 
 
@@ -188,14 +190,14 @@ def hash_seed(username: str) -> int:
 
 
 def deterministic_order(tasks: List[JudgingTask], seed: int) -> List[JudgingTask]:
-    ordered = sorted(tasks, key=lambda t: t.id or "")
+    ordered = sorted(tasks, key=lambda t: format_key(judging_task_key(t) or ()))
     rng = random.Random(seed)
     rng.shuffle(ordered)
     return ordered
 
 
 def deterministic_order_keys(entries: List[Dict[str, Any]], seed: int) -> List[Dict[str, Any]]:
-    ordered = sorted(entries, key=lambda e: e.get("id") or "")
+    ordered = sorted(entries, key=lambda e: json.dumps(e.get("key")) if e.get("key") is not None else "")
     rng = random.Random(seed)
     rng.shuffle(ordered)
     return ordered
@@ -210,15 +212,17 @@ def max_other_confidence(other_labels: List[HumanEvaluation]) -> int:
     return max(confidences) if confidences else 0
 
 
-def normalize_key(raw: Optional[List[Any]]) -> Optional[Tuple[Optional[str], Optional[str], Optional[int]]]:
-    if not raw or len(raw) != 3:
+def normalize_key(raw: Optional[List[Any]]) -> Optional[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]]:
+    if not raw or len(raw) != 5:
         return None
-    run_id, topic_slug, idx = raw
-    try:
-        idx_val = int(idx) if idx is not None else None
-    except (TypeError, ValueError):
-        idx_val = None
-    return (str(run_id) if run_id is not None else None, topic_slug, idx_val)
+    run_id, question_model, answer_model, critic_model, mode = raw
+    return (
+        str(run_id) if run_id is not None else None,
+        question_model,
+        answer_model,
+        critic_model,
+        mode,
+    )
 
 
 def load_key_entries(path: Path) -> List[Dict[str, Any]]:
@@ -234,16 +238,17 @@ def load_key_entries(path: Path) -> List[Dict[str, Any]]:
     return entries
 
 
-def collect_consensus(auto_eval_dir: Path) -> Dict[str, Dict[str, Any]]:
-    consensus: Dict[str, Dict[str, Any]] = {}
+def collect_consensus(auto_eval_dir: Path) -> Dict[Tuple, Dict[str, Any]]:
+    consensus: Dict[Tuple, Dict[str, Any]] = {}
     if not auto_eval_dir.exists():
         return consensus
     for eval_file in auto_eval_dir.glob("*.json"):
         payload = load_evaluation_entries(eval_file)
         for decision in payload.decisions:
-            if not decision.id or decision.verdict is None:
+            key = judging_task_key(decision)
+            if not key or decision.verdict is None:
                 continue
-            bucket = consensus.setdefault(decision.id, {"verdicts": []})
+            bucket = consensus.setdefault(key, {"verdicts": []})
             bucket["verdicts"].append(decision.verdict)
     for key, bucket in consensus.items():
         verdicts = bucket["verdicts"]
@@ -253,30 +258,21 @@ def collect_consensus(auto_eval_dir: Path) -> Dict[str, Dict[str, Any]]:
     return consensus
 
 
-def collect_auto_evals(auto_eval_dir: Path) -> Tuple[Dict[str, List[AutomatedEvaluation]], Dict[Tuple, List[AutomatedEvaluation]]]:
-    by_id: Dict[str, List[AutomatedEvaluation]] = {}
-    by_key: Dict[Tuple, List[AutomatedEvaluation]] = {}
+def collect_auto_evals(auto_eval_dir: Path) -> Dict[Tuple, List[AutomatedEvaluation]]:
+    by_task_key: Dict[Tuple, List[AutomatedEvaluation]] = {}
     if not auto_eval_dir.exists():
-        return by_id, by_key
+        return by_task_key
     for eval_file in auto_eval_dir.glob("*.json"):
         payload = load_evaluation_entries(eval_file)
         for decision in payload.decisions:
-            if not decision.id:
+            key = judging_task_key(decision)
+            if not key:
                 continue
-            by_id.setdefault(decision.id, []).append(decision)
-            comp = (
-                decision.type,
-                decision.mode,
-                decision.question_model,
-                decision.answer_model,
-                decision.critic_model,
-                str(decision.run_id) if decision.run_id is not None else None,
-            )
-            by_key.setdefault(comp, []).append(decision)
-    return by_id, by_key
+            by_task_key.setdefault(key, []).append(decision)
+    return by_task_key
 
 
-KeyTuple = Tuple[Optional[str], Optional[str], Optional[int]]
+KeyTuple = Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]
 
 
 def build_answer_cache(answers_dir: Path) -> Dict[Tuple[str, str], Dict[str, AnswerEntry]]:
@@ -398,11 +394,11 @@ def build_task_from_key(
     key_tuple = normalize_key(key_entry.get("key"))
     if not key_tuple:
         return None, False
-    run_id, topic_slug, idx = key_tuple
+    run_id, key_question_model, key_answer_model, key_critic_model, key_mode = key_tuple
     k_type = key_entry.get("type")
     if k_type == "illposed":
-        q_slug = key_entry.get("question_model")
-        a_slug = key_entry.get("answer_model")
+        q_slug = key_entry.get("question_model") or key_question_model
+        a_slug = key_entry.get("answer_model") or key_answer_model
         if not q_slug or not a_slug:
             return None, False
         answers = answer_cache.get((q_slug, a_slug), {})
@@ -418,13 +414,17 @@ def build_task_from_key(
         history = debate.history if debate else []
         has_data = bool(history)
         claim_text = build_illposed_claim(answer_entry) or build_illposed_claim(fallback_entry)
+        topic_slug = (
+            (debate.topic_slug if debate else None)
+            or (answer_entry.topic_slug if answer_entry else None)
+            or (fallback_entry.topic_slug if fallback_entry else None)
+        )
         return (
             JudgingTask(
-                id=key_entry.get("id") or _task_id(f"illposed/{q_slug}/{a_slug}", run_id, topic_slug, question_text or ""),
                 type="illposed",
                 question_model=q_slug,
                 answer_model=a_slug,
-                critic_model=a_slug,
+                critic_model=None,
                 run_id=run_id,
                 topic_slug=topic_slug,
                 question=question_text,
@@ -435,10 +435,10 @@ def build_task_from_key(
             has_data,
         )
     if k_type == "critique":
-        mode = key_entry.get("mode")
-        q_slug = key_entry.get("question_model")
-        critic_slug = key_entry.get("critic_model")
-        answer_slug = key_entry.get("answer_model")
+        mode = key_entry.get("mode") or key_mode
+        q_slug = key_entry.get("question_model") or key_question_model
+        critic_slug = key_entry.get("critic_model") or key_critic_model
+        answer_slug = key_entry.get("answer_model") or key_answer_model
         if not mode or not q_slug or not critic_slug or not answer_slug:
             return None, False
 
@@ -471,14 +471,13 @@ def build_task_from_key(
         history = debate.history if debate else []
         has_data = bool(history)
         display_critic_slug = critic_slug
+        topic_slug = (
+            (debate.topic_slug if debate else None)
+            or (critique_entry.topic_slug if critique_entry else None)
+            or (fallback_entry.topic_slug if fallback_entry else None)
+        )
         return (
             JudgingTask(
-                id=key_entry.get("id") or _task_id(
-                    f"critique/{mode}/{q_slug}/{display_critic_slug}__{answer_slug}",
-                    run_id,
-                    topic_slug,
-                    question_text or "",
-                ),
                 type="critique",
                 mode=mode,
                 question_model=q_slug,
@@ -504,7 +503,9 @@ def render_task(
     registry,
     save_cb,
 ):
-    st.markdown(f"### {task.id}")
+    task_key = judging_task_key(task) or ()
+    task_key_str = format_key(task_key)
+    st.markdown(f"### {task_key_str}")
     alice = task.critic_model if task.type == "critique" else task.answer_model
     bob = task.answer_model if task.type == "critique" else task.question_model
     display_q = registry.display_name_for_slug(task.question_model or "") if registry else task.question_model
@@ -581,7 +582,7 @@ def render_task(
         "Verdict",
         options,
         index=default_index,
-        key=f"verdict-{task.id}",
+        key=f"verdict-{task_key_str}",
         format_func=lambda verdict: f"{verdict} - {descriptions.get(verdict, '').strip()}"
         if descriptions.get(verdict)
         else verdict,
@@ -592,13 +593,13 @@ def render_task(
         5,
         int(existing.confidence if existing and existing.confidence is not None else 3),
         1,
-        key=f"conf-{task.id}",
+        key=f"conf-{task_key_str}",
     )
-    comment = st.text_area("Comments", value=existing.comment if existing else "", key=f"comment-{task.id}")
-    if st.button("Save", key=f"save-{task.id}"):
+    comment = st.text_area("Comments", value=existing.comment if existing else "", key=f"comment-{task_key_str}")
+    if st.button("Save", key=f"save-{task_key_str}"):
         ok, message, output = save_cb(
             HumanEvaluation(
-                id=task.id,
+                run_id=task.run_id,
                 type=task.type,
                 mode=task.mode,
                 question_model=task.question_model,
@@ -634,7 +635,7 @@ def main():
 
     key_entries = load_key_entries(args.keys)
     consensus = collect_consensus(args.automated_evals_dir)
-    auto_eval_by_id, auto_eval_by_key = collect_auto_evals(args.automated_evals_dir)
+    auto_eval_by_task = collect_auto_evals(args.automated_evals_dir)
 
     answer_cache = build_answer_cache(args.answers_dir)
     benchmark_cache = build_benchmark_cache(args.benchmark_dir)
@@ -645,7 +646,7 @@ def main():
     seed = hash_seed(args.username)
     ordered_keys = deterministic_order_keys(key_entries, seed)
 
-    tasks: List[Tuple[JudgingTask, List[AutomatedEvaluation]]] = []
+    tasks: List[Tuple[JudgingTask, List[AutomatedEvaluation], Tuple]] = []
     dropped_no_data = 0
     dropped_no_evals = 0
     dropped_unanimous = 0
@@ -664,15 +665,10 @@ def main():
             continue
         if not task:
             continue
-        comp_key = (
-            task.type,
-            task.mode,
-            task.question_model,
-            task.answer_model,
-            task.critic_model,
-            str(task.run_id) if task.run_id is not None else None,
-        )
-        evals = auto_eval_by_id.get(task.id, []) or auto_eval_by_key.get(comp_key, [])
+        task_key = judging_task_key(task)
+        if not task_key:
+            continue
+        evals = auto_eval_by_task.get(task_key, [])
         if not evals:
             dropped_no_evals += 1
             continue
@@ -680,7 +676,7 @@ def main():
         if verdicts and len(verdicts) == 1:
             dropped_unanimous += 1
             continue
-        tasks.append((task, evals))
+        tasks.append((task, evals, task_key))
 
     eval_path = args.evaluations_dir / f"{args.username}.json"
     decisions = load_evaluations(eval_path)
@@ -693,9 +689,9 @@ def main():
         ["illposed", "critique"],
         default=["illposed", "critique"],
     )
-    questioners = sorted({t.question_model for t, _ in tasks if t.question_model})
-    answerers = sorted({t.answer_model for t, _ in tasks if t.answer_model})
-    critics = sorted({t.critic_model for t, _ in tasks if t.critic_model})
+    questioners = sorted({t.question_model for t, _, _ in tasks if t.question_model})
+    answerers = sorted({t.answer_model for t, _, _ in tasks if t.answer_model})
+    critics = sorted({t.critic_model for t, _, _ in tasks if t.critic_model})
     selected_q = st.multiselect("Question model", questioners, default=questioners)
     selected_a = st.multiselect("Answer model", answerers, default=answerers)
     selected_c = st.multiselect("Critic", critics, default=critics)
@@ -705,7 +701,7 @@ def main():
 
     filtered = []
     skipped_by_others = 0
-    for task, evals in tasks:
+    for task, evals, task_key in tasks:
         if task.type not in claim_filter:
             continue
         if task.question_model not in selected_q:
@@ -714,14 +710,14 @@ def main():
             continue
         if task.critic_model and selected_c and task.critic_model not in selected_c:
             continue
-        already = decisions.get(task.id)
+        already = decisions.get(task_key)
         if only_unlabeled and already:
             continue
-        other_labels = other_decisions.get(task.id, [])
+        other_labels = other_decisions.get(task_key, [])
         if skip_labeled_by_others and max_other_confidence(other_labels) >= 3:
             skipped_by_others += 1
             continue
-        filtered.append((task, evals, other_labels))
+        filtered.append((task, evals, other_labels, task_key))
 
     ordered_pairs = filtered
 
@@ -747,8 +743,8 @@ def main():
     if idx >= len(ordered_pairs):
         idx = len(ordered_pairs) - 1
         st.session_state["task_idx"] = idx
-    task, evals, other_labels = ordered_pairs[idx]
-    existing = decisions.get(task.id)
+    task, evals, other_labels, task_key = ordered_pairs[idx]
+    existing = decisions.get(task_key)
 
     st.text(f"Task {idx + 1} / {len(ordered_pairs)}")
     nav_cols = st.columns(3)
@@ -767,9 +763,11 @@ def main():
             st.rerun()
 
     def save_decision(decision: HumanEvaluation) -> Tuple[bool, str, str]:
-        decisions[decision.id] = decision
+        key = human_evaluation_key_from_entry(decision)
+        if key:
+            decisions[key] = decision
         save_evaluation(eval_path, decisions)
-        label_id = decision.id or "unknown"
+        label_id = format_key(key or ())
         return run_git_sync(label_id, args.username, eval_path)
 
     st.divider()

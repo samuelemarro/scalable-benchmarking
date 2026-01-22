@@ -3,7 +3,7 @@ import csv
 import math
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 from constants import (
     CRITIQUE_VERDICT_CORRECT,
@@ -21,6 +21,7 @@ from data_models import (
     load_evaluation_entries,
 )
 from model_config import load_registry
+from utils import format_key, judging_task_key, question_key, task_key_from_prefix
 from victory import VictorySide, resolve_automated_victory
 
 
@@ -34,20 +35,31 @@ def final_question(entry: BenchmarkEntry) -> Optional[str]:
     return refinements[-1].question
 
 
-def collect_decisions(auto_eval_dir: Path) -> Dict[str, List[AutomatedEvaluation]]:
-    decisions_by_claim: Dict[str, List[AutomatedEvaluation]] = defaultdict(list)
+def _task_key(prefix: str, run_id: Optional[str], _topic_slug: Optional[str], _question: Optional[str]):
+    return task_key_from_prefix(prefix, run_id)
+
+
+def collect_decisions(auto_eval_dir: Path) -> Dict[Tuple, List[AutomatedEvaluation]]:
+    decisions_by_claim: Dict[Tuple, List[AutomatedEvaluation]] = defaultdict(list)
     if not auto_eval_dir.exists():
         return decisions_by_claim
     for eval_file in auto_eval_dir.glob("*.json"):
         data = load_evaluation_entries(eval_file)
         for decision in data.decisions:
-            if decision and decision.id:
-                decisions_by_claim[decision.id].append(decision)
+            key = judging_task_key(decision) if decision else None
+            if key:
+                decisions_by_claim[key].append(decision)
     return decisions_by_claim
 
 
-def load_critique_verdicts(critiques_dir: Path) -> Dict[Tuple[str, str, str, int], Dict[str, str]]:
-    verdicts: Dict[Tuple[str, str, str, int], Dict[str, str]] = defaultdict(dict)
+QuestionKey = Tuple[Optional[str], Optional[str]]
+CritiqueKey = Tuple[str, str, str, Union[int, QuestionKey]]
+
+
+def load_critique_verdicts(
+    critiques_dir: Path,
+) -> Dict[CritiqueKey, Dict[str, Dict[str, Optional[str]]]]:
+    verdicts: Dict[CritiqueKey, Dict[str, Dict[str, Optional[str]]]] = defaultdict(dict)
     if not critiques_dir.exists():
         return verdicts
     for mode_dir in critiques_dir.glob("*"):
@@ -69,22 +81,34 @@ def load_critique_verdicts(critiques_dir: Path) -> Dict[Tuple[str, str, str, int
                     verdict = attempts[-1].verdict
                     if not verdict:
                         continue
-                    key = (q_slug, critic_slug, answer_slug, idx)
-                    verdicts[key][mode] = verdict
+                    info = {
+                        "verdict": verdict,
+                        "run_id": entry.run_id,
+                        "topic_slug": entry.topic_slug,
+                        "question": entry.question,
+                    }
+                    q_key = question_key(entry.question_author, entry.run_id)
+                    if q_key:
+                        verdicts[(q_slug, critic_slug, answer_slug, q_key)][mode] = info
+                    verdicts[(q_slug, critic_slug, answer_slug, idx)][mode] = info
     return verdicts
 
 
 def find_critique_verdict(
-    verdicts: Dict[Tuple[str, str, str, int], Dict[str, str]],
+    verdicts: Dict[CritiqueKey, Dict[str, Dict[str, Optional[str]]]],
     q_slug: str,
     critic_slug: str,
     answer_slug: str,
     idx: int,
+    q_key: Optional[QuestionKey],
     preferred_mode: Optional[str],
     fallback_any: bool,
-) -> Tuple[Optional[str], Optional[str]]:
-    key = (q_slug, critic_slug, answer_slug, idx)
-    modes = verdicts.get(key, {})
+) -> Tuple[Optional[str], Optional[Dict[str, Optional[str]]]]:
+    modes = {}
+    if q_key is not None:
+        modes = verdicts.get((q_slug, critic_slug, answer_slug, q_key), {})
+    if not modes:
+        modes = verdicts.get((q_slug, critic_slug, answer_slug, idx), {})
     if preferred_mode and preferred_mode in modes:
         return preferred_mode, modes[preferred_mode]
     if not fallback_any:
@@ -177,6 +201,7 @@ def collect_games(
     answer_critique_mode: str,
     self_answer_critique_mode: str,
     fallback_any_mode: bool,
+    log_automated_disagreements: bool = True,
 ) -> Tuple[List[Tuple[str, str, int]], Counter]:
     registry = load_registry(str(registry_path)) if registry_path and registry_path.exists() else None
     critique_verdicts = load_critique_verdicts(critiques_dir)
@@ -211,27 +236,36 @@ def collect_games(
 
                 answer_name = resolve_model(registry, answer_entry.answer_model) or resolve_model(registry, a_slug) or a_slug
 
-                self_mode, self_verdict = find_critique_verdict(
+                self_mode, self_info = find_critique_verdict(
                     critique_verdicts,
                     q_slug,
                     a_slug,
                     q_slug,
                     idx,
+                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id),
                     self_answer_critique_mode,
                     fallback_any_mode,
                 )
-                if self_verdict:
+                if self_info:
+                    self_verdict = self_info.get("verdict")
                     if self_verdict == CRITIQUE_VERDICT_CORRECT:
                         pass
                     elif self_verdict == CRITIQUE_VERDICT_UNKNOWN:
                         skip_counts["self_answer_unknown"] += 1
                         continue
                     else:
-                        claim_id = f"critique/{self_mode}/{q_slug}/{a_slug}__{q_slug}/{idx}"
+                        prefix = f"critique/{self_mode}/{q_slug}/{a_slug}__{q_slug}"
+                        claim_key = _task_key(
+                            prefix,
+                            self_info.get("run_id"),
+                            self_info.get("topic_slug"),
+                            self_info.get("question"),
+                        )
                         outcome = resolve_automated_victory(
                             "critique",
-                            decisions_by_claim.get(claim_id, []),
-                            context=claim_id,
+                            decisions_by_claim.get(claim_key, []),
+                            context=format_key(claim_key or ()),
+                            log_automated_disagreements=log_automated_disagreements,
                         )
                         if outcome == VictorySide.ALICE:
                             skip_counts["self_answer_invalid"] += 1
@@ -245,11 +279,18 @@ def collect_games(
                     continue
 
                 if answer_entry.status == STATUS_ILL_POSED:
-                    claim_id = f"illposed/{q_slug}/{a_slug}/{idx}"
+                    prefix = f"illposed/{q_slug}/{a_slug}"
+                    claim_key = _task_key(
+                        prefix,
+                        answer_entry.run_id,
+                        answer_entry.topic_slug,
+                        answer_entry.question,
+                    )
                     outcome = resolve_automated_victory(
                         "illposed",
-                        decisions_by_claim.get(claim_id, []),
-                        context=claim_id,
+                        decisions_by_claim.get(claim_key, []),
+                        context=format_key(claim_key or ()),
+                        log_automated_disagreements=log_automated_disagreements,
                     )
                     if outcome == VictorySide.ALICE:
                         skip_counts["illposed_validated"] += 1
@@ -264,18 +305,20 @@ def collect_games(
                     skip_counts["answer_invalid_status"] += 1
                     continue
 
-                mode, verdict = find_critique_verdict(
+                mode, verdict_info = find_critique_verdict(
                     critique_verdicts,
                     q_slug,
                     q_slug,
                     a_slug,
                     idx,
+                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id),
                     answer_critique_mode,
                     fallback_any_mode,
                 )
-                if not verdict:
+                if not verdict_info:
                     skip_counts["critique_missing"] += 1
                     continue
+                verdict = verdict_info.get("verdict")
                 if verdict == CRITIQUE_VERDICT_UNKNOWN:
                     skip_counts["critique_unknown"] += 1
                     continue
@@ -283,11 +326,18 @@ def collect_games(
                     games.append((answer_name, q_name, 1))
                     continue
 
-                claim_id = f"critique/{mode}/{q_slug}/{q_slug}__{a_slug}/{idx}"
+                prefix = f"critique/{mode}/{q_slug}/{q_slug}__{a_slug}"
+                claim_key = _task_key(
+                    prefix,
+                    verdict_info.get("run_id"),
+                    verdict_info.get("topic_slug"),
+                    verdict_info.get("question"),
+                )
                 outcome = resolve_automated_victory(
                     "critique",
-                    decisions_by_claim.get(claim_id, []),
-                    context=claim_id,
+                    decisions_by_claim.get(claim_key, []),
+                    context=format_key(claim_key or ()),
+                    log_automated_disagreements=log_automated_disagreements,
                 )
                 if outcome == VictorySide.BOB:
                     games.append((answer_name, q_name, 1))
@@ -362,6 +412,7 @@ def main() -> int:
     parser.add_argument("--answer-critique-mode", type=str, default="evaluator")
     parser.add_argument("--self-answer-critique-mode", type=str, default="contradictor")
     parser.add_argument("--fallback-any-mode", action="store_true")
+    parser.add_argument("--disable-disagreement-logs", action="store_true")
     parser.add_argument("--max-iter", type=int, default=3000)
     parser.add_argument("--lr", type=float, default=0.05)
     parser.add_argument("--tol", type=float, default=1e-6)
@@ -380,6 +431,7 @@ def main() -> int:
         args.answer_critique_mode,
         args.self_answer_critique_mode,
         args.fallback_any_mode,
+        log_automated_disagreements=not args.disable_disagreement_logs,
     )
 
     if not games:

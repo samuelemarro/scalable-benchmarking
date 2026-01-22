@@ -1,5 +1,4 @@
 import argparse
-import hashlib
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -19,16 +18,15 @@ from data_models import (
     load_human_evaluation_entries,
     save_human_evaluation_entries,
 )
-from utils import benchmark_answers_from_entries, entry_key
-
-
-def _task_id(prefix: str, run_id: Optional[str], topic_slug: Optional[str], question: Optional[str]) -> str:
-    if run_id:
-        return f"{prefix}/{run_id}"
-    if topic_slug and question:
-        digest = hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
-        return f"{prefix}/{topic_slug}/{digest}"
-    return f"{prefix}/unknown"
+from utils import (
+    answer_key,
+    answer_key_from_entry,
+    benchmark_answers_from_entries,
+    format_key,
+    human_evaluation_key_from_entry,
+    judging_task_key,
+    question_key,
+)
 
 
 def final_answer(entry: AnswerEntry) -> Optional[str]:
@@ -66,7 +64,7 @@ def benchmark_answer_map(benchmark_dir: Path, q_slug: str) -> Dict:
     for entry in answers:
         if not entry:
             continue
-        key = entry_key(entry.run_id, entry.topic_slug, entry.question)
+        key = question_key(q_slug, entry.run_id)
         if key and key not in mapping:
             mapping[key] = final_answer(entry) or ""
     return mapping
@@ -77,8 +75,8 @@ def gather_illposed(debates_dir: Path, answers_dir: Path, benchmark_dir: Path, r
     for debate_file in debates_dir.glob("illposed/*/*.json"):
         q_slug = debate_file.parent.name
         a_slug = debate_file.stem
-        question_model = registry.display_name_for_slug(q_slug)
-        answer_model = registry.display_name_for_slug(a_slug)
+        question_model = q_slug
+        answer_model = a_slug
         debates = load_debate_entries(debate_file)
         answers = load_answer_entries(answers_dir / q_slug / f"{a_slug}.json")
         benchmark_answers = benchmark_answer_map(benchmark_dir, q_slug)
@@ -86,36 +84,33 @@ def gather_illposed(debates_dir: Path, answers_dir: Path, benchmark_dir: Path, r
         for debate in debates:
             if not debate:
                 continue
-            key = entry_key(debate.run_id, debate.topic_slug, debate.question)
+            key = answer_key(q_slug, a_slug, debate.run_id)
             if key and key not in debate_map:
                 debate_map[key] = debate
         answer_map: Dict = {}
         for answer in answers:
             if not answer:
                 continue
-            key = entry_key(answer.run_id, answer.topic_slug, answer.question)
+            key = answer_key_from_entry(answer)
             if key and key not in answer_map:
                 answer_map[key] = answer
-        keys = set(debate_map) | set(answer_map) | set(benchmark_answers)
+        keys = set(debate_map) | set(answer_map)
         for key in keys:
             debate = debate_map.get(key)
             question = debate.question if debate else ""
             answer_record = answer_map.get(key)
             answer_text = final_answer(answer_record) if answer_record else ""
             if not answer_text:
-                answer_text = benchmark_answers.get(key, "")
+                answer_text = benchmark_answers.get(question_key(q_slug, key[0]), "")
             run_id = (debate.run_id if debate else None) or (answer_record.run_id if answer_record else None)
             topic_slug = (debate.topic_slug if debate else None) or (answer_record.topic_slug if answer_record else None)
             claim_text = build_illposed_claim(answer_record)
-            prefix = f"illposed/{q_slug}/{a_slug}"
-            item_id = _task_id(prefix, run_id, topic_slug, question or (answer_record.question if answer_record else None))
             items.append(
                 JudgingTask(
-                    id=item_id,
                     type="illposed",
                     question_model=question_model,
                     answer_model=answer_model,
-                    critic_model=answer_model,
+                    critic_model=None,
                     run_id=run_id,
                     topic_slug=topic_slug,
                     question=question or (answer_record.question if answer_record else ""),
@@ -133,11 +128,11 @@ def gather_critiques(debates_dir: Path, critiques_dir: Path, answers_dir: Path, 
         mode = crit_mode_dir.name
         for q_dir in crit_mode_dir.glob("*"):
             q_slug = q_dir.name
-            question_model = registry.display_name_for_slug(q_slug)
+            question_model = q_slug
             for crit_file in q_dir.glob("*.json"):
                 critic_slug, answer_slug = crit_file.stem.split("__")
-                critic_model = registry.display_name_for_slug(critic_slug)
-                answer_model = registry.display_name_for_slug(answer_slug)
+                critic_model = critic_slug
+                answer_model = answer_slug
 
                 critiques = load_critique_entries(crit_file)
                 answers = load_answer_entries(answers_dir / q_slug / f"{answer_slug}.json")
@@ -147,14 +142,14 @@ def gather_critiques(debates_dir: Path, critiques_dir: Path, answers_dir: Path, 
                 for debate in debates:
                     if not debate:
                         continue
-                    key = entry_key(debate.run_id, debate.topic_slug, debate.question)
+                    key = answer_key(q_slug, answer_slug, debate.run_id)
                     if key and key not in debate_map:
                         debate_map[key] = debate
                 answer_map: Dict = {}
                 for answer in answers:
                     if not answer:
                         continue
-                    key = entry_key(answer.run_id, answer.topic_slug, answer.question)
+                    key = answer_key_from_entry(answer)
                     if key and key not in answer_map:
                         answer_map[key] = answer
 
@@ -164,21 +159,22 @@ def gather_critiques(debates_dir: Path, critiques_dir: Path, answers_dir: Path, 
                     critique_attempts = critique_entry.attempts or []
                     if critique_attempts and critique_attempts[-1].verdict == CRITIQUE_VERDICT_CORRECT:
                         continue
-                    key = entry_key(critique_entry.run_id, critique_entry.topic_slug, critique_entry.question)
+                    key = answer_key(
+                        critique_entry.question_author,
+                        critique_entry.answer_author,
+                        critique_entry.run_id,
+                    )
                     debate = debate_map.get(key)
                     question = (debate.question if debate else "") or critique_entry.question
                     answer_record = answer_map.get(key)
                     answer_text = final_answer(answer_record) if answer_record else ""
                     if not answer_text:
-                        answer_text = benchmark_answers.get(key, "")
+                        answer_text = benchmark_answers.get(question_key(q_slug, key[0]), "")
                     critique_text = critique_attempts[-1].raw_critique if critique_attempts else ""
                     run_id = (debate.run_id if debate else None) or critique_entry.run_id
                     topic_slug = (debate.topic_slug if debate else None) or critique_entry.topic_slug
-                    prefix = f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}"
-                    item_id = _task_id(prefix, run_id, topic_slug, question)
                     items.append(
                         JudgingTask(
-                            id=item_id,
                             type="critique",
                             mode=mode,
                             question_model=question_model,
@@ -195,9 +191,14 @@ def gather_critiques(debates_dir: Path, critiques_dir: Path, answers_dir: Path, 
     return items
 
 
-def load_evaluations(path: Path) -> Dict[str, HumanEvaluation]:
+def load_evaluations(path: Path) -> Dict:
     payload = load_human_evaluation_entries(path)
-    return {d.id: d for d in payload.decisions if d.id}
+    decisions: Dict = {}
+    for decision in payload.decisions:
+        key = human_evaluation_key_from_entry(decision)
+        if key:
+            decisions[key] = decision
+    return decisions
 
 
 def save_evaluation(path: Path, decisions: Dict[str, HumanEvaluation]):
@@ -205,7 +206,9 @@ def save_evaluation(path: Path, decisions: Dict[str, HumanEvaluation]):
 
 
 def render_task(task: JudgingTask, existing: Optional[HumanEvaluation], save_cb):
-    st.markdown(f"### {task.id}")
+    task_key = judging_task_key(task) or ()
+    task_key_str = format_key(task_key)
+    st.markdown(f"### {task_key_str}")
     st.write(f"**Question model:** {task.question_model}  |  **Answer model:** {task.answer_model}  |  **Critic:** {task.critic_model or ''}")
     cols = st.columns(2)
     with cols[0]:
@@ -240,13 +243,25 @@ def render_task(task: JudgingTask, existing: Optional[HumanEvaluation], save_cb)
         ]
 
     existing_choice = existing.verdict if existing else None
-    choice = st.radio("Verdict", options, index=options.index(existing_choice) if existing_choice in options else 0, key=f"verdict-{task.id}")
-    confidence = st.slider("Confidence (1-5)", 1, 5, int(existing.confidence if existing and existing.confidence is not None else 3), 1, key=f"conf-{task.id}")
-    comment = st.text_area("Comments", value=existing.comment if existing else "", key=f"comment-{task.id}")
-    if st.button("Save", key=f"save-{task.id}"):
+    choice = st.radio(
+        "Verdict",
+        options,
+        index=options.index(existing_choice) if existing_choice in options else 0,
+        key=f"verdict-{task_key_str}",
+    )
+    confidence = st.slider(
+        "Confidence (1-5)",
+        1,
+        5,
+        int(existing.confidence if existing and existing.confidence is not None else 3),
+        1,
+        key=f"conf-{task_key_str}",
+    )
+    comment = st.text_area("Comments", value=existing.comment if existing else "", key=f"comment-{task_key_str}")
+    if st.button("Save", key=f"save-{task_key_str}"):
         save_cb(
             HumanEvaluation(
-                id=task.id,
+                run_id=task.run_id,
                 type=task.type,
                 mode=task.mode,
                 question_model=task.question_model,
@@ -297,6 +312,10 @@ def main():
 
     filtered = []
     for task in tasks:
+        task_key = judging_task_key(task)
+        if not task_key:
+            continue
+        task_key_str = format_key(task_key)
         task_kind = task.type if task.type == "illposed" else task.mode or "critique"
         if task_kind not in claim_filter:
             continue
@@ -306,21 +325,23 @@ def main():
             continue
         if task.critic_model and selected_c and task.critic_model not in selected_c:
             continue
-        already = decisions.get(task.id)
+        already = decisions.get(task_key)
         if only_unlabeled and already:
             continue
-        filtered.append((task, already))
+        filtered.append((task, already, task_key, task_key_str))
 
     st.subheader(f"Tasks ({len(filtered)})")
 
     def save_decision(decision: HumanEvaluation):
-        decisions[decision.id] = decision
+        key = human_evaluation_key_from_entry(decision)
+        if key:
+            decisions[key] = decision
         save_evaluation(eval_path, decisions)
 
-    selected_task_id = st.session_state.get("selected_task_id")
+    selected_task_key = st.session_state.get("selected_task_key")
 
-    if not selected_task_id:
-        for task, existing in filtered:
+    if not selected_task_key:
+        for task, existing, task_key, task_key_str in filtered:
             claimant = task.critic_model or task.answer_model
             adversary = task.answer_model if task.type == "critique" else task.question_model
             topic = (task.question or "")[:80] + ("..." if task.question and len(task.question) > 80 else "")
@@ -328,18 +349,18 @@ def main():
             with cols[0]:
                 st.markdown(f"**{task.type}** | claimant: {claimant} | adversary: {adversary} | topic: {topic}")
             with cols[1]:
-                if st.button("Open", key=f"open-{task.id}"):
-                    st.session_state["selected_task_id"] = task.id
+                if st.button("Open", key=f"open-{task_key_str}"):
+                    st.session_state["selected_task_key"] = task_key_str
                     st.rerun()
         if not filtered:
             st.info("No tasks match the current filters.")
     else:
-        task, existing = next(((t, e) for t, e in filtered if t.id == selected_task_id), (None, None))
+        task, existing = next(((t, e) for t, e, _k, key_str in filtered if key_str == selected_task_key), (None, None))
         if not task:
             st.warning("Selected task not found in current filter. Clear selection.")
         else:
             if st.button("Back to list"):
-                st.session_state["selected_task_id"] = None
+                st.session_state["selected_task_key"] = None
                 st.rerun()
             st.divider()
             render_task(task, existing, save_decision)

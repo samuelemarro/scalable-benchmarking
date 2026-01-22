@@ -8,6 +8,7 @@ See docs/schema.md for detailed schema documentation.
 """
 
 import json
+import logging
 from pathlib import Path
 from typing import List, Optional, Dict, Any, Literal, Type, TypeVar
 from pydantic import BaseModel, Field, field_validator, model_serializer
@@ -20,6 +21,8 @@ from constants import (
     STATUS_PENDING,
     STATUS_SUCCEEDED,
 )
+
+logger = logging.getLogger(__name__)
 
 
 # ============================================================================
@@ -260,8 +263,6 @@ class DebateEntry(BaseModel):
 
 class AutomatedEvaluation(BaseModel):
     """An automated judgment of a debate."""
-
-    id: str = Field(description="Unique task identifier")
     type: Literal["illposed", "critique", "critique_debate"] = Field(
         description="Type of evaluation task"
     )
@@ -334,7 +335,7 @@ class EvaluationFile(BaseModel):
 class HumanEvaluation(BaseModel):
     """A human judgment for labeling tasks."""
 
-    id: str = Field(description="Unique task identifier")
+    run_id: Optional[str] = Field(None, description="Run identifier")
     type: Literal["illposed", "critique"] = Field(
         description="Type of evaluation task"
     )
@@ -394,8 +395,6 @@ class HumanEvaluationFile(BaseModel):
 
 class JudgingTask(BaseModel):
     """A task prepared for automated or human judging."""
-
-    id: str = Field(description="Unique task identifier")
     type: Literal["illposed", "critique"] = Field(description="Task type")
     mode: Optional[str] = Field(None, description="Critique mode")
     question_model: Optional[str] = Field(None, description="Question author")
@@ -483,10 +482,33 @@ def validate_evaluation_file(data: Dict[str, Any]) -> EvaluationFile:
     raise ValueError("Invalid evaluation file format")
 
 
+def _log_json_decode_error(path: Path, raw_text: str, exc: json.JSONDecodeError) -> None:
+    size = len(raw_text)
+    start = max(0, exc.pos - 120)
+    end = min(size, exc.pos + 120)
+    snippet = raw_text[start:end]
+    logger.error(
+        "Failed to parse JSON in %s (size=%d, line=%d, col=%d, pos=%d). Snippet: %r",
+        path,
+        size,
+        exc.lineno,
+        exc.colno,
+        exc.pos,
+        snippet,
+    )
+    if not raw_text.strip():
+        logger.error("JSON file is empty or whitespace-only: %s", path)
+
+
 def load_model_list(path: Path, model: Type[ModelT]) -> List[Optional[ModelT]]:
     if not path.exists():
         return []
-    data = json.loads(path.read_text())
+    raw_text = path.read_text()
+    try:
+        data = json.loads(raw_text)
+    except json.JSONDecodeError as exc:
+        _log_json_decode_error(path, raw_text, exc)
+        raise
     if not isinstance(data, list):
         raise ValueError(f"Expected list in {path}, got {type(data).__name__}")
     parsed: List[Optional[ModelT]] = []
@@ -507,7 +529,9 @@ def save_model_list(path: Path, items: List[Optional[BaseModel]]) -> None:
     for item in items:
         if item is not None:
             payload.append(item.model_dump(exclude_none=True))
-    path.write_text(json.dumps(payload, indent=2))
+    serialized = json.dumps(payload, indent=2)
+    logger.debug("Writing %d entries to %s (%d bytes)", len(payload), path, len(serialized))
+    path.write_text(serialized)
 
 
 def load_benchmark_entries(path: Path) -> List[Optional[BenchmarkEntry]]:

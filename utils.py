@@ -10,19 +10,201 @@ from data_models import AnswerAttempt, AnswerEntry, BenchmarkEntry
 
 logger = logging.getLogger(__name__)
 
-EntryKey = Tuple[Optional[str], Optional[str], Optional[str]]
+QuestionKey = Tuple[Optional[str], Optional[str]]
+AnswerKey = Tuple[Optional[str], Optional[str], Optional[str]]
+CritiqueKey = Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]
+EvaluationKey = Tuple[
+    Optional[str],
+    Optional[str],
+    Optional[str],
+    Optional[str],
+    Optional[str],
+    Optional[str],
+]
 
 
-def entry_key(run_id: Optional[str], topic_slug: Optional[str], question: Optional[str]) -> Optional[EntryKey]:
-    if run_id is None and topic_slug is None and not question:
+def _normalize_part(value: Optional[str]) -> Optional[str]:
+    if value is None:
         return None
-    return (str(run_id) if run_id is not None else None, topic_slug, question)
+    return str(value)
 
 
-def entry_key_from_entry(entry: Any) -> Optional[EntryKey]:
+def question_key(question_model: Optional[str], run_id: Optional[str]) -> Optional[QuestionKey]:
+    if run_id is None or not question_model:
+        return None
+    return (_normalize_part(run_id), _normalize_part(question_model))
+
+
+def question_key_from_entry(entry: Any, question_model: Optional[str]) -> Optional[QuestionKey]:
     if not entry:
         return None
-    return entry_key(getattr(entry, "run_id", None), getattr(entry, "topic_slug", None), getattr(entry, "question", None))
+    run_id = entry.get("run_id") if isinstance(entry, dict) else getattr(entry, "run_id", None)
+    return question_key(question_model, run_id)
+
+
+def answer_key(question_model: Optional[str], answer_model: Optional[str], run_id: Optional[str]) -> Optional[AnswerKey]:
+    if run_id is None or not question_model or not answer_model:
+        return None
+    return (_normalize_part(run_id), _normalize_part(question_model), _normalize_part(answer_model))
+
+
+def answer_key_from_entry(entry: Any) -> Optional[AnswerKey]:
+    if not entry:
+        return None
+    if isinstance(entry, dict):
+        return answer_key(entry.get("question_model"), entry.get("answer_model"), entry.get("run_id"))
+    return answer_key(getattr(entry, "question_model", None), getattr(entry, "answer_model", None), getattr(entry, "run_id", None))
+
+
+def critique_key(
+    question_model: Optional[str],
+    answer_model: Optional[str],
+    critic_model: Optional[str],
+    mode: Optional[str],
+    run_id: Optional[str],
+) -> Optional[CritiqueKey]:
+    if run_id is None or not question_model or not answer_model:
+        return None
+    return (
+        _normalize_part(run_id),
+        _normalize_part(question_model),
+        _normalize_part(answer_model),
+        _normalize_part(critic_model),
+        _normalize_part(mode),
+    )
+
+
+def critique_key_from_entry(entry: Any, mode: Optional[str]) -> Optional[CritiqueKey]:
+    if not entry:
+        return None
+    if isinstance(entry, dict):
+        return critique_key(
+            entry.get("question_author"),
+            entry.get("answer_author"),
+            entry.get("critic"),
+            mode,
+            entry.get("run_id"),
+        )
+    return critique_key(
+        getattr(entry, "question_author", None),
+        getattr(entry, "answer_author", None),
+        getattr(entry, "critic", None),
+        mode,
+        getattr(entry, "run_id", None),
+    )
+
+
+def debate_key(
+    question_model: Optional[str],
+    answer_model: Optional[str],
+    critic_model: Optional[str],
+    mode: Optional[str],
+    run_id: Optional[str],
+) -> Optional[CritiqueKey]:
+    return critique_key(question_model, answer_model, critic_model, mode, run_id)
+
+
+def debate_key_from_entry(
+    entry: Any,
+    question_model: Optional[str],
+    answer_model: Optional[str],
+    critic_model: Optional[str],
+    mode: Optional[str],
+) -> Optional[CritiqueKey]:
+    if not entry:
+        return None
+    run_id = entry.get("run_id") if isinstance(entry, dict) else getattr(entry, "run_id", None)
+    return debate_key(question_model, answer_model, critic_model, mode, run_id)
+
+
+def automated_evaluation_key_from_entry(entry: Any) -> Optional[EvaluationKey]:
+    if not entry:
+        return None
+    if isinstance(entry, dict):
+        return (
+            _normalize_part(entry.get("run_id")),
+            _normalize_part(entry.get("question_model")),
+            _normalize_part(entry.get("answer_model")),
+            _normalize_part(entry.get("critic_model")),
+            _normalize_part(entry.get("mode")),
+            _normalize_part(entry.get("judge_model")),
+        )
+    return (
+        _normalize_part(getattr(entry, "run_id", None)),
+        _normalize_part(getattr(entry, "question_model", None)),
+        _normalize_part(getattr(entry, "answer_model", None)),
+        _normalize_part(getattr(entry, "critic_model", None)),
+        _normalize_part(getattr(entry, "mode", None)),
+        _normalize_part(getattr(entry, "judge_model", None)),
+    )
+
+
+def judging_task_key(entry: Any) -> Optional[CritiqueKey]:
+    if not entry:
+        return None
+    if isinstance(entry, dict):
+        return critique_key(
+            entry.get("question_model"),
+            entry.get("answer_model"),
+            entry.get("critic_model"),
+            entry.get("mode"),
+            entry.get("run_id"),
+        )
+    return critique_key(
+        getattr(entry, "question_model", None),
+        getattr(entry, "answer_model", None),
+        getattr(entry, "critic_model", None),
+        getattr(entry, "mode", None),
+        getattr(entry, "run_id", None),
+    )
+
+
+def automated_evaluation_key_for_task(entry: Any, judge_model: Optional[str]) -> Optional[EvaluationKey]:
+    base = judging_task_key(entry)
+    if not base:
+        return None
+    run_id, question_model, answer_model, critic_model, mode = base
+    return (
+        _normalize_part(run_id),
+        _normalize_part(question_model),
+        _normalize_part(answer_model),
+        _normalize_part(critic_model),
+        _normalize_part(mode),
+        _normalize_part(judge_model),
+    )
+
+
+def human_evaluation_key_from_entry(entry: Any) -> Optional[CritiqueKey]:
+    return judging_task_key(entry)
+
+
+def format_key(parts: Sequence[Optional[str]]) -> str:
+    return "/".join("unknown" if part in (None, "") else str(part) for part in parts)
+
+
+def task_key_from_prefix(prefix: str, run_id: Optional[str]) -> Optional[CritiqueKey]:
+    if run_id is None:
+        return None
+    if not prefix:
+        return None
+    parts = prefix.split("/")
+    if not parts:
+        return None
+    if parts[0] == "illposed":
+        if len(parts) < 3:
+            return None
+        return critique_key(parts[1], parts[2], None, None, run_id)
+    if parts[0] == "critique":
+        if len(parts) < 4:
+            return None
+        mode = parts[1]
+        question_model = parts[2]
+        pair = parts[3]
+        if "__" not in pair:
+            return None
+        critic_model, answer_model = pair.split("__", 1)
+        return critique_key(question_model, answer_model, critic_model, mode, run_id)
+    return None
 
 
 def setup_logging(level: str = "INFO") -> None:

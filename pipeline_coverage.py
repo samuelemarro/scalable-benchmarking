@@ -1,5 +1,4 @@
 import argparse
-import hashlib
 import json
 from collections import Counter
 from pathlib import Path
@@ -23,7 +22,7 @@ from data_models import (
     load_evaluation_entries,
 )
 from model_config import ModelSpec, _slugify, load_registry
-from utils import benchmark_answers_from_entries, entry_key
+from utils import benchmark_answers_from_entries, format_key, judging_task_key, question_key, task_key_from_prefix
 
 
 def _load_runs(path: Path, limit: Optional[int]) -> List[str]:
@@ -58,20 +57,23 @@ def _pick_entry(entries_by_run: Dict[str, object], run_id: str):
     return entries_by_run.get(run_id)
 
 
-def _entry_key_for_answer(entry: Optional[AnswerEntry]):
+QuestionKey = Tuple[Optional[str], Optional[str]]
+
+
+def _question_key_for_answer(entry: Optional[AnswerEntry]) -> Optional[QuestionKey]:
     if not entry:
         return None
-    return entry_key(entry.run_id, entry.topic_slug, entry.question)
+    return question_key(entry.question_model, entry.run_id)
 
 
-def _entry_key_for_critique(entry: Optional[CritiqueEntry]):
+def _question_key_for_critique(entry: Optional[CritiqueEntry]) -> Optional[QuestionKey]:
     if not entry:
         return None
-    return entry_key(entry.run_id, entry.topic_slug, entry.question)
+    return question_key(entry.question_author, entry.run_id)
 
 
-def _map_by_key(entries: Sequence[Optional[object]], key_fn) -> Dict[Tuple[Optional[str], Optional[str], Optional[str]], object]:
-    mapping: Dict[Tuple[Optional[str], Optional[str], Optional[str]], object] = {}
+def _map_by_key(entries: Sequence[Optional[object]], key_fn) -> Dict[QuestionKey, object]:
+    mapping: Dict[QuestionKey, object] = {}
     for entry in entries:
         if not entry:
             continue
@@ -85,8 +87,8 @@ def _map_by_key(entries: Sequence[Optional[object]], key_fn) -> Dict[Tuple[Optio
 def _map_by_key_prefer_succeeded(
     entries: Sequence[Optional[object]],
     key_fn,
-) -> Dict[Tuple[Optional[str], Optional[str], Optional[str]], object]:
-    mapping: Dict[Tuple[Optional[str], Optional[str], Optional[str]], object] = {}
+) -> Dict[QuestionKey, object]:
+    mapping: Dict[QuestionKey, object] = {}
     for entry in entries:
         if not entry:
             continue
@@ -104,34 +106,14 @@ def _map_by_key_prefer_succeeded(
     return mapping
 
 
-def _entry_key_for_debate(entry: Optional[object]):
+def _question_key_for_debate(entry: Optional[object], question_model: Optional[str]) -> Optional[QuestionKey]:
     if not entry:
         return None
-    return entry_key(getattr(entry, "run_id", None), getattr(entry, "topic_slug", None), getattr(entry, "question", None))
+    return question_key(question_model, getattr(entry, "run_id", None))
 
 
-def _question_by_run(entries: Sequence[Optional[BenchmarkEntry]]) -> Dict[str, Tuple[Optional[str], Optional[str]]]:
-    mapping: Dict[str, Tuple[Optional[str], Optional[str]]] = {}
-    for entry in entries:
-        if not entry or entry.run_id is None:
-            continue
-        run_id = str(entry.run_id)
-        if run_id in mapping:
-            continue
-        question = _final_question(entry)
-        if not question:
-            continue
-        mapping[run_id] = (question, entry.topic_slug)
-    return mapping
-
-
-def _task_id(prefix: str, run_id: Optional[str], topic_slug: Optional[str], question: Optional[str]) -> str:
-    if run_id:
-        return f"{prefix}/{run_id}"
-    if topic_slug and question:
-        digest = hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
-        return f"{prefix}/{topic_slug}/{digest}"
-    return f"{prefix}/unknown"
+def _task_key(prefix: str, run_id: Optional[str], _topic_slug: Optional[str], _question: Optional[str]):
+    return task_key_from_prefix(prefix, run_id)
 
 
 def _expected_illposed_by_pair(answers_dir: Path, allowed_slugs: Set[str]) -> Dict[Tuple[str, str], int]:
@@ -143,10 +125,10 @@ def _expected_illposed_by_pair(answers_dir: Path, allowed_slugs: Set[str]) -> Di
         for answer_file in q_dir.glob("*.json"):
             a_slug = answer_file.stem
             entries = load_answer_entries(answer_file)
-            keys: Set[Tuple[Optional[str], Optional[str], Optional[str]]] = set()
+            keys: Set[QuestionKey] = set()
             for entry in entries:
                 if entry and entry.status == STATUS_ILL_POSED:
-                    key = _entry_key_for_answer(entry)
+                    key = _question_key_for_answer(entry)
                     if key:
                         keys.add(key)
             if keys:
@@ -204,7 +186,7 @@ def _expected_critique_debates_by_pair(
                             correct_count += 1
                     expected[key] = max(0, expected_for_file - correct_count)
                 else:
-                    answer_map = _map_by_key(answers, _entry_key_for_answer)
+                    answer_map = _map_by_key(answers, _question_key_for_answer)
                     count = 0
                     for crit_entry in critiques:
                         if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
@@ -212,7 +194,7 @@ def _expected_critique_debates_by_pair(
                         verdict = _final_critique_verdict(crit_entry)
                         if verdict in {None, CRITIQUE_VERDICT_UNKNOWN, CRITIQUE_VERDICT_CORRECT}:
                             continue
-                        entry_key_value = _entry_key_for_critique(crit_entry)
+                        entry_key_value = _question_key_for_critique(crit_entry)
                         if not entry_key_value or entry_key_value not in answer_map:
                             continue
                         count += 1
@@ -486,16 +468,18 @@ def _count_critique_stats(
     custom_pairs: Sequence[Tuple[str, str, str]],
     expected_runs_by_slug: Dict[str, Set[str]],
 ) -> Tuple[Dict[str, Counter], Dict[str, int]]:
-    allowed_slugs = {spec.slug for spec in benchmark_specs}
     expected_by_mode: Dict[str, int] = {}
     actual_by_mode: Dict[str, Counter] = {}
     critic_names = {spec.name for spec in critic_specs}
 
     for mode in critique_modes:
         expected = 0
+        counts: Counter = Counter()
+        tasks_by_file: Dict[Tuple[str, str, str], List[Tuple[str, QuestionKey]]] = {}
+
         for spec in benchmark_specs:
             benchmark_entries = load_benchmark_entries(benchmark_dir / f"{spec.slug}.json")
-            expected += _expected_critiques_for_question(
+            tasks = _expected_critique_tasks_for_question(
                 mode,
                 spec,
                 benchmark_entries,
@@ -507,25 +491,27 @@ def _count_critique_stats(
                 custom_pairs,
                 expected_runs_by_slug.get(spec.slug, set()),
             )
-        expected_by_mode[mode] = expected
+            expected += len(tasks)
+            for critic_slug, answer_slug, run_id, key in tasks:
+                file_key = (spec.slug, critic_slug, answer_slug)
+                tasks_by_file.setdefault(file_key, []).append((run_id, key))
 
-        counts: Counter = Counter()
-        mode_dir = critiques_dir / mode
-        if mode_dir.exists():
-            for q_dir in mode_dir.glob("*"):
-                if q_dir.name not in allowed_slugs:
-                    continue
-                for crit_file in q_dir.glob("*.json"):
-                    entries = load_critique_entries(crit_file)
-                    for entry in entries:
-                        if entry:
-                            counts["generated"] += 1
-                            if entry.status == STATUS_SUCCEEDED:
-                                counts["succeeded"] += 1
-                            else:
-                                counts["failed"] += 1
-                        else:
-                            counts["missing"] += 1
+        for (q_slug, critic_slug, answer_slug), tasks in tasks_by_file.items():
+            crit_file = critiques_dir / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
+            critiques = load_critique_entries(crit_file)
+            critique_map = _map_by_key_prefer_succeeded(critiques, _question_key_for_critique)
+            for _run_id, key in tasks:
+                entry = critique_map.get(key)
+                if entry:
+                    counts["generated"] += 1
+                    if entry.status == STATUS_SUCCEEDED:
+                        counts["succeeded"] += 1
+                    else:
+                        counts["failed"] += 1
+                else:
+                    counts["missing"] += 1
+
+        expected_by_mode[mode] = expected
         actual_by_mode[mode] = counts
 
     return actual_by_mode, expected_by_mode
@@ -553,10 +539,10 @@ def _count_debate_stats(
             continue
         for answer_file in q_dir.glob("*.json"):
             entries = load_answer_entries(answer_file)
-            seen_keys: Set[Tuple[Optional[str], Optional[str], Optional[str]]] = set()
+            seen_keys: Set[QuestionKey] = set()
             for entry in entries:
                 if entry and entry.status == STATUS_ILL_POSED:
-                    key = _entry_key_for_answer(entry)
+                    key = _question_key_for_answer(entry)
                     if key:
                         seen_keys.add(key)
             expected_illposed["expected"] += len(seen_keys)
@@ -604,14 +590,14 @@ def _count_debate_stats(
                             benchmark_entries,
                         )
                         critiques = load_critique_entries(crit_file)
-                        answer_map = _map_by_key(answers, _entry_key_for_answer)
+                        answer_map = _map_by_key(answers, _question_key_for_answer)
                         for crit_entry in critiques:
                             if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
                                 continue
                             verdict = _final_critique_verdict(crit_entry)
                             if verdict in {None, CRITIQUE_VERDICT_UNKNOWN, CRITIQUE_VERDICT_CORRECT}:
                                 continue
-                            key = _entry_key_for_critique(crit_entry)
+                            key = _question_key_for_critique(crit_entry)
                             if not key or key not in answer_map:
                                 continue
                             expected += 1
@@ -652,8 +638,8 @@ def _collect_judging_tasks(
             benchmark_entries,
         )
         debates = load_debate_entries(debate_file)
-        debate_map = _map_by_key(debates, _entry_key_for_answer)
-        answer_map = _map_by_key(answers, _entry_key_for_answer)
+        debate_map = _map_by_key(debates, lambda entry, q_slug=q_slug: _question_key_for_debate(entry, q_slug))
+        answer_map = _map_by_key(answers, _question_key_for_answer)
         keys = set(debate_map) | set(answer_map)
         for key in keys:
             debate = debate_map.get(key)
@@ -672,8 +658,9 @@ def _collect_judging_tasks(
             run_id = (debate.run_id if debate else None) or (answer_entry.run_id if answer_entry else None)
             topic_slug = (debate.topic_slug if debate else None) or (answer_entry.topic_slug if answer_entry else None)
             prefix = f"illposed/{q_slug}/{a_slug}"
-            task_id = _task_id(prefix, run_id, topic_slug, question)
-            tasks[task_id] = (alice_model, bob_model)
+            task_key = _task_key(prefix, run_id, topic_slug, question)
+            if task_key:
+                tasks[task_key] = (alice_model, bob_model)
 
     for mode in critique_modes:
         mode_dir = critiques_dir / mode
@@ -689,7 +676,7 @@ def _collect_judging_tasks(
                 critiques = load_critique_entries(crit_file)
                 debate_file = debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                 debates = load_debate_entries(debate_file)
-                debate_map = _map_by_key(debates, _entry_key_for_critique)
+                debate_map = _map_by_key(debates, lambda entry, q_slug=q_slug: _question_key_for_debate(entry, q_slug))
                 for crit_entry in critiques:
                     if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
                         continue
@@ -698,7 +685,7 @@ def _collect_judging_tasks(
                         continue
                     if verdict == CRITIQUE_VERDICT_CORRECT and not force_correct_critiques:
                         continue
-                    key = _entry_key_for_critique(crit_entry)
+                    key = _question_key_for_critique(crit_entry)
                     debate = debate_map.get(key)
                     history = debate.history if debate else []
                     if not history and not allow_no_debate:
@@ -711,33 +698,35 @@ def _collect_judging_tasks(
                     run_id = (debate.run_id if debate else None) or crit_entry.run_id
                     topic_slug = (debate.topic_slug if debate else None) or crit_entry.topic_slug
                     prefix = f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}"
-                    task_id = _task_id(prefix, run_id, topic_slug, question)
-                    tasks[task_id] = (alice_model, bob_model)
+                    task_key = _task_key(prefix, run_id, topic_slug, question)
+                    if task_key:
+                        tasks[task_key] = (alice_model, bob_model)
 
     return tasks
 
 
 def _count_automated_evaluations(
     automated_dir: Path,
-    tasks: Dict[str, Tuple[str, str]],
+    tasks: Dict[Tuple, Tuple[str, str]],
     judge_specs: Sequence[ModelSpec],
 ) -> Tuple[int, int]:
     judge_names = [spec.name for spec in judge_specs]
     expected = 0
     participants_by_task = {}
-    for task_id, (alice_model, bob_model) in tasks.items():
+    for task_key, (alice_model, bob_model) in tasks.items():
         participants = {alice_model, bob_model}
-        participants_by_task[task_id] = participants
+        participants_by_task[task_key] = participants
         expected += sum(1 for judge in judge_names if judge not in participants)
 
     actual = 0
-    task_ids = set(tasks.keys())
+    task_keys = set(tasks.keys())
     for eval_file in automated_dir.glob("*.json"):
         payload = load_evaluation_entries(eval_file)
         for decision in payload.decisions:
-            if decision.id not in task_ids:
+            decision_key = judging_task_key(decision)
+            if decision_key not in task_keys:
                 continue
-            participants = participants_by_task.get(decision.id, set())
+            participants = participants_by_task.get(decision_key, set())
             if decision.judge_model and decision.judge_model in participants:
                 continue
             actual += 1
@@ -818,8 +807,8 @@ def _expected_critique_tasks_for_question(
     limit: Optional[int],
     custom_pairs: Sequence[Tuple[str, str, str]],
     expected_runs: Set[str],
-) -> List[Tuple[str, str, str, Tuple[Optional[str], Optional[str], Optional[str]]]]:
-    tasks: List[Tuple[str, str, str, Tuple[Optional[str], Optional[str], Optional[str]]]] = []
+) -> List[Tuple[str, str, str, QuestionKey]]:
+    tasks: List[Tuple[str, str, str, QuestionKey]] = []
     q_slug = question_model.slug
     question_author_answers = _load_answer_records(
         answers_dir,
@@ -828,18 +817,12 @@ def _expected_critique_tasks_for_question(
         benchmark_entries,
     )
     question_author_by_run = _entries_by_run(question_author_answers)
-    question_by_run = _question_by_run(benchmark_entries)
-
-    def task_key(run_id: str, answer_entry: Optional[AnswerEntry]) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+    def task_key(run_id: str, answer_entry: Optional[AnswerEntry]) -> QuestionKey:
         if answer_entry:
-            key = _entry_key_for_answer(answer_entry)
+            key = _question_key_for_answer(answer_entry)
             if key:
                 return key
-        question_payload = question_by_run.get(run_id)
-        if question_payload:
-            question, topic_slug = question_payload
-            return entry_key(run_id, topic_slug, question)
-        return entry_key(run_id, None, None)
+        return question_key(q_slug, run_id)
 
     def has_budget(current: int) -> bool:
         return limit is None or current < limit
@@ -936,7 +919,7 @@ def _remaining_critique_tasks(
     custom_pairs: Sequence[Tuple[str, str, str]],
     expected_runs_by_slug: Dict[str, Set[str]],
 ) -> List[str]:
-    tasks_by_file: Dict[Tuple[str, str, str, str], List[Tuple[str, Tuple[Optional[str], Optional[str], Optional[str]]]]] = {}
+    tasks_by_file: Dict[Tuple[str, str, str, str], List[Tuple[str, QuestionKey]]] = {}
     critic_names = {spec.name for spec in critic_specs}
 
     for mode in critique_modes:
@@ -962,7 +945,7 @@ def _remaining_critique_tasks(
     for (mode, q_slug, critic_slug, answer_slug), tasks in tasks_by_file.items():
         crit_file = critiques_dir / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
         critiques = load_critique_entries(crit_file)
-        critique_map = _map_by_key_prefer_succeeded(critiques, _entry_key_for_critique)
+        critique_map = _map_by_key_prefer_succeeded(critiques, _question_key_for_critique)
         for run_id, key in tasks:
             entry = critique_map.get(key)
             if entry and entry.status == STATUS_SUCCEEDED:
@@ -985,7 +968,7 @@ def _remaining_debate_tasks(
     lines: List[str] = []
     allowed_slugs = {spec.slug for spec in benchmark_specs}
 
-    seen_illposed: Set[Tuple[Optional[str], Optional[str], Optional[str]]] = set()
+    seen_illposed: Set[QuestionKey] = set()
     for q_dir in answers_dir.glob("*"):
         q_slug = q_dir.name
         if allowed_slugs and q_slug not in allowed_slugs:
@@ -995,11 +978,11 @@ def _remaining_debate_tasks(
             entries = load_answer_entries(answer_file)
             debate_file = debates_dir / "illposed" / q_slug / f"{a_slug}.json"
             debates = load_debate_entries(debate_file)
-            debate_map = _map_by_key(debates, _entry_key_for_debate)
+            debate_map = _map_by_key(debates, lambda entry, q_slug=q_slug: _question_key_for_debate(entry, q_slug))
             for entry in entries:
                 if not entry or entry.status != STATUS_ILL_POSED:
                     continue
-                key = _entry_key_for_answer(entry)
+                key = _question_key_for_answer(entry)
                 if not key or key in seen_illposed:
                     continue
                 seen_illposed.add(key)
@@ -1028,17 +1011,17 @@ def _remaining_debate_tasks(
                     answer_slug,
                     benchmark_entries,
                 )
-                answer_map = _map_by_key_prefer_succeeded(answers, _entry_key_for_answer)
+                answer_map = _map_by_key_prefer_succeeded(answers, _question_key_for_answer)
                 debate_file = debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                 debates = load_debate_entries(debate_file)
-                debate_map = _map_by_key(debates, _entry_key_for_debate)
+                debate_map = _map_by_key(debates, lambda entry, q_slug=q_slug: _question_key_for_debate(entry, q_slug))
                 for crit_entry in critiques:
                     if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
                         continue
                     verdict = _final_critique_verdict(crit_entry)
                     if verdict in {None, CRITIQUE_VERDICT_UNKNOWN, CRITIQUE_VERDICT_CORRECT}:
                         continue
-                    key = _entry_key_for_critique(crit_entry)
+                    key = _question_key_for_critique(crit_entry)
                     if not key:
                         continue
                     if key in debate_map:
@@ -1053,33 +1036,34 @@ def _remaining_debate_tasks(
 
 def _remaining_evaluation_tasks(
     automated_dir: Path,
-    tasks: Dict[str, Tuple[str, str]],
+    tasks: Dict[Tuple, Tuple[str, str]],
     judge_specs: Sequence[ModelSpec],
 ) -> List[str]:
     judge_names = [spec.name for spec in judge_specs]
-    participants_by_task = {task_id: {alice, bob} for task_id, (alice, bob) in tasks.items()}
-    existing: Set[Tuple[str, str]] = set()
+    participants_by_task = {task_key: {alice, bob} for task_key, (alice, bob) in tasks.items()}
+    existing: Set[Tuple[Tuple, str]] = set()
 
-    task_ids = set(participants_by_task)
+    task_keys = set(participants_by_task)
     for eval_file in automated_dir.glob("*.json"):
         payload = load_evaluation_entries(eval_file)
         for decision in payload.decisions:
-            if decision.id not in task_ids:
+            decision_key = judging_task_key(decision)
+            if decision_key not in task_keys:
                 continue
-            participants = participants_by_task.get(decision.id, set())
+            participants = participants_by_task.get(decision_key, set())
             if decision.judge_model and decision.judge_model in participants:
                 continue
             if decision.judge_model and decision.judge_model in judge_names:
-                existing.add((decision.id, decision.judge_model))
+                existing.add((decision_key, decision.judge_model))
 
     lines: List[str] = []
-    for task_id, participants in participants_by_task.items():
+    for task_key, participants in participants_by_task.items():
         for judge in judge_names:
             if judge in participants:
                 continue
-            if (task_id, judge) in existing:
+            if (task_key, judge) in existing:
                 continue
-            lines.append(f"evaluation/{task_id}/{judge} status=missing")
+            lines.append(f"evaluation/{format_key(task_key)}/{judge} status=missing")
     return lines
 
 

@@ -1,5 +1,4 @@
 import argparse
-import hashlib
 import logging
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -18,7 +17,18 @@ from prompt_library import (
     load_judgment_critique_guidance,
     load_question_guidance,
 )
-from utils import benchmark_answers_from_entries, entry_key, safe_load_json, setup_logging
+from utils import (
+    answer_key,
+    answer_key_from_entry,
+    automated_evaluation_key_for_task,
+    automated_evaluation_key_from_entry,
+    benchmark_answers_from_entries,
+    format_key,
+    judging_task_key,
+    question_key,
+    safe_load_json,
+    setup_logging,
+)
 from constants import (
     CRITIQUE_VERDICT_CORRECT,
     CRITIQUE_VERDICT_UNKNOWN,
@@ -51,58 +61,30 @@ load_dotenv()
 INPUT_TOO_LONG_MARKERS = ("context_length_exceeded", "input too long")
 
 
-def load_decisions(path: Path) -> Dict[str, AutomatedEvaluation]:
+def load_decisions(path: Path) -> Dict[Tuple[str, str, str, str, str, str], AutomatedEvaluation]:
     payload = load_evaluation_entries(path)
-    return {entry.id: entry for entry in payload.decisions if entry.id}
+    decisions: Dict[Tuple[str, str, str, str, str, str], AutomatedEvaluation] = {}
+    for entry in payload.decisions:
+        key = automated_evaluation_key_from_entry(entry)
+        if key:
+            decisions[key] = entry
+    return decisions
 
 
 def save_decisions(path: Path, decisions: Dict[str, AutomatedEvaluation]):
     save_evaluation_entries(path, EvaluationFile(decisions=list(decisions.values())))
 
 
-def build_entry_map(entries):
+def build_entry_map(entries, key_fn):
     mapped = {}
     for entry in entries:
         if not entry:
             continue
-        key = entry_key(entry.run_id, entry.topic_slug, entry.question)
+        key = key_fn(entry)
         if not key or key in mapped:
             continue
         mapped[key] = entry
     return mapped
-
-
-def task_key(task: JudgingTask):
-    return (
-        task.type,
-        task.mode,
-        task.question_model,
-        task.answer_model,
-        task.critic_model,
-        task.run_id,
-        task.topic_slug,
-    )
-
-
-def decision_key(decision: AutomatedEvaluation):
-    return (
-        decision.type,
-        decision.mode,
-        decision.question_model,
-        decision.answer_model,
-        decision.critic_model,
-        decision.run_id,
-        decision.topic_slug,
-    )
-
-
-def task_id(prefix: str, run_id: Optional[str], topic_slug: Optional[str], question: Optional[str]) -> str:
-    if run_id:
-        return f"{prefix}/{run_id}"
-    if topic_slug and question:
-        digest = hashlib.sha1(question.encode("utf-8")).hexdigest()[:10]
-        return f"{prefix}/{topic_slug}/{digest}"
-    return f"{prefix}/unknown"
 
 
 def final_answer(entry: AnswerEntry) -> Optional[str]:
@@ -134,7 +116,6 @@ def is_input_length_error(message: str) -> bool:
 
 def build_failed_decision(task: JudgingTask, judge_slug: str, error_message: str) -> AutomatedEvaluation:
     return AutomatedEvaluation(
-        id=task.id,
         type=task.type,
         mode=task.mode,
         question_model=task.question_model,
@@ -218,10 +199,16 @@ def gather_illposed_tasks(
             q_slug,
             fallback_answers,
         )
-        debate_map = build_entry_map(debates)
-        answer_map = build_entry_map(answers)
-        fallback_map = build_entry_map(fallback_answers)
-        keys = set(debate_map) | set(answer_map) | set(fallback_map)
+        debate_map = build_entry_map(
+            debates,
+            lambda entry: answer_key(q_slug, a_slug, entry.run_id),
+        )
+        answer_map = build_entry_map(answers, answer_key_from_entry)
+        fallback_map = build_entry_map(
+            fallback_answers,
+            lambda entry: question_key(q_slug, entry.run_id),
+        )
+        keys = set(debate_map) | set(answer_map)
         for key in keys:
             debate = debate_map.get(key)
             answer_record = answer_map.get(key)
@@ -231,7 +218,7 @@ def gather_illposed_tasks(
             question = (debate.question if debate else "") or (answer_record.question if answer_record else "")
             answer_text = final_answer(answer_record) if answer_record else ""
             if not answer_text:
-                fallback_record = fallback_map.get(key)
+                fallback_record = fallback_map.get(question_key(q_slug, key[0]))
                 answer_text = final_answer(fallback_record) if fallback_record else ""
                 if not question and fallback_record:
                     question = fallback_record.question
@@ -248,16 +235,15 @@ def gather_illposed_tasks(
             bob_model = registry.resolve_model_name((debate.bob_model if debate else None) or q_slug)
             run_id = (debate.run_id if debate else None) or (answer_record.run_id if answer_record else None)
             topic_slug = (debate.topic_slug if debate else None) or (answer_record.topic_slug if answer_record else None)
-            prefix = f"illposed/{q_slug}/{a_slug}"
             tasks.append(
                 JudgingTask(
-                    id=task_id(prefix, run_id, topic_slug, question),
                     type="illposed",
                     question=question,
                     answer=answer_text,
                     debate_history=history,
                     question_model=q_slug,
                     answer_model=a_slug,
+                    critic_model=None,
                     alice_model=alice_model,
                     bob_model=bob_model,
                     run_id=run_id,
@@ -316,10 +302,23 @@ def gather_critique_tasks(
                 debates = load_debate_entries(
                     debates_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                 )
-                critique_map = build_entry_map(critiques)
-                answer_map = build_entry_map(answers)
-                debate_map = build_entry_map(debates)
-                fallback_map = build_entry_map(fallback_answers)
+                critique_map = build_entry_map(
+                    critiques,
+                    lambda entry: answer_key(
+                        entry.question_author,
+                        entry.answer_author,
+                        entry.run_id,
+                    ),
+                )
+                answer_map = build_entry_map(answers, answer_key_from_entry)
+                debate_map = build_entry_map(
+                    debates,
+                    lambda entry: answer_key(q_slug, answer_slug, entry.run_id),
+                )
+                fallback_map = build_entry_map(
+                    fallback_answers,
+                    lambda entry: question_key(q_slug, entry.run_id),
+                )
                 for key, crit_entry in critique_map.items():
                     if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
                         continue
@@ -338,7 +337,7 @@ def gather_critique_tasks(
                     answer_record = answer_map.get(key)
                     answer_text = final_answer(answer_record) if answer_record else ""
                     if not answer_text:
-                        fallback_record = fallback_map.get(key)
+                        fallback_record = fallback_map.get(question_key(q_slug, key[0]))
                         answer_text = final_answer(fallback_record) if fallback_record else ""
                         if not question and fallback_record:
                             question = fallback_record.question
@@ -357,10 +356,8 @@ def gather_critique_tasks(
                     bob_model = registry.resolve_model_name((debate.bob_model if debate else None) or answer_slug)
                     run_id = (debate.run_id if debate else None) or crit_entry.run_id
                     topic_slug = (debate.topic_slug if debate else None) or crit_entry.topic_slug
-                    prefix = f"critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}"
                     tasks.append(
                         JudgingTask(
-                            id=task_id(prefix, run_id, topic_slug, question),
                             type="critique",
                             mode=mode,
                             question=question,
@@ -549,7 +546,7 @@ def parse_judgment(text: str, task: JudgingTask, judge_slug: str) -> AutomatedEv
         try:
             confidence = parse_confidence(parsed.get("confidence"))
         except ValueError as e:
-            logger.warning(f"Failed to parse confidence for task {task.id}: {e}")
+            logger.warning(f"Failed to parse confidence for task {format_key(judging_task_key(task) or [])}: {e}")
             confidence = None
             # Mark as failed if confidence is required but missing/invalid
             verdict = JUDGE_VERDICT_UNKNOWN
@@ -560,7 +557,6 @@ def parse_judgment(text: str, task: JudgingTask, judge_slug: str) -> AutomatedEv
         verdict = normalize_critique_verdict(verdict)
     status = STATUS_SUCCEEDED if verdict not in {JUDGE_VERDICT_UNKNOWN, "invalid"} else STATUS_FAILED
     return AutomatedEvaluation(
-        id=task.id,
         type=task.type,
         mode=task.mode,
         question_model=task.question_model,
@@ -671,11 +667,10 @@ def main():
     def process_judge(spec: ModelSpec, tasks_for_judge: List[JudgingTask]) -> int:
         out_path = args.output_dir / f"{spec.slug}.json"
         decisions = load_decisions(out_path)
-        decisions_by_key = {decision_key(decision): decision for decision in decisions.values() if decision_key(decision)}
         pending = []
         for task in tasks_for_judge:
-            key = task_key(task)
-            if not args.overwrite and (task.id in decisions or (key and key in decisions_by_key)):
+            eval_key = automated_evaluation_key_for_task(task, spec.slug)
+            if not args.overwrite and eval_key in decisions:
                 continue
             pending.append(task)
             if args.limit is not None and len(pending) >= args.limit:
@@ -705,20 +700,18 @@ def main():
                 if is_input_length_error(message):
                     for task in batch:
                         decision = build_failed_decision(task, spec.slug, message)
-                        decisions[task.id] = decision
-                        key = task_key(task)
-                        if key:
-                            decisions_by_key[key] = decision
+                        eval_key = automated_evaluation_key_for_task(task, spec.slug)
+                        if eval_key:
+                            decisions[eval_key] = decision
                     save_decisions(out_path, decisions)
                     processed += len(batch)
                     logger.info(f"{spec.pretty}: marked {len(batch)} evaluations failed (input too long)")
                 continue
             for task, response in zip(batch, responses):
                 decision = parse_judgment(response, task, spec.slug)
-                decisions[task.id] = decision
-                key = task_key(task)
-                if key:
-                    decisions_by_key[key] = decision
+                eval_key = automated_evaluation_key_for_task(task, spec.slug)
+                if eval_key:
+                    decisions[eval_key] = decision
             processed += len(batch)
             save_decisions(out_path, decisions)
             logger.info(f"{spec.pretty}: processed {len(batch)} evaluations")
@@ -733,11 +726,10 @@ def main():
                 continue
             out_path = args.output_dir / f"{spec.slug}.json"
             decisions = load_decisions(out_path)
-            decisions_by_key = {decision_key(decision): decision for decision in decisions.values() if decision_key(decision)}
             pending = []
             for task in tasks_for_judge:
-                key = task_key(task)
-                if not args.overwrite and (task.id in decisions or (key and key in decisions_by_key)):
+                eval_key = automated_evaluation_key_for_task(task, spec.slug)
+                if not args.overwrite and eval_key in decisions:
                     continue
                 pending.append(task)
                 if args.limit is not None and len(pending) >= args.limit:
@@ -773,44 +765,50 @@ def main():
                 except Exception as exc:
                     message = str(exc)
                     if is_input_length_error(message):
-                        logger.error(f"Judge task failed for {spec.name} {task.id}: {exc}")
+                        logger.error(
+                            "Judge task failed for %s %s: %s",
+                            spec.name,
+                            format_key(judging_task_key(task) or []),
+                            exc,
+                        )
                         failure = build_failed_decision(task, spec.slug, message)
                         lock = lock_for(out_path)
                         with lock:
                             decisions = load_decisions(out_path)
-                            decisions_by_key = {
-                                decision_key(decision): decision
-                                for decision in decisions.values()
-                                if decision_key(decision)
-                            }
-                            key = task_key(task)
-                            if not args.overwrite and (task.id in decisions or (key and key in decisions_by_key)):
+                            eval_key = automated_evaluation_key_for_task(task, spec.slug)
+                            if not args.overwrite and eval_key in decisions:
                                 return
-                            decisions[task.id] = failure
-                            if key:
-                                decisions_by_key[key] = failure
+                            if eval_key:
+                                decisions[eval_key] = failure
                             save_decisions(out_path, decisions)
-                        logger.info(f"{spec.pretty}: recorded failed evaluation {task.id} (input too long)")
+                        logger.info(
+                            "%s: recorded failed evaluation %s (input too long)",
+                            spec.pretty,
+                            format_key(judging_task_key(task) or []),
+                        )
                     else:
-                        logger.error(f"Judge task failed for {spec.name} {task.id}: {exc}")
+                        logger.error(
+                            "Judge task failed for %s %s: %s",
+                            spec.name,
+                            format_key(judging_task_key(task) or []),
+                            exc,
+                        )
                     return
 
                 lock = lock_for(out_path)
                 with lock:
                     decisions = load_decisions(out_path)
-                    decisions_by_key = {
-                        decision_key(decision): decision
-                        for decision in decisions.values()
-                        if decision_key(decision)
-                    }
-                    key = task_key(task)
-                    if not args.overwrite and (task.id in decisions or (key and key in decisions_by_key)):
+                    eval_key = automated_evaluation_key_for_task(task, spec.slug)
+                    if not args.overwrite and eval_key in decisions:
                         return
-                    decisions[task.id] = decision
-                    if key:
-                        decisions_by_key[key] = decision
+                    if eval_key:
+                        decisions[eval_key] = decision
                     save_decisions(out_path, decisions)
-                logger.info(f"{spec.pretty}: processed evaluation {task.id}")
+                logger.info(
+                    "%s: processed evaluation %s",
+                    spec.pretty,
+                    format_key(judging_task_key(task) or []),
+                )
 
             with ThreadPoolExecutor(max_workers=min(32, max(4, len(jobs)))) as pool:
                 futures = [pool.submit(process_task, spec, task, out_path) for spec, task, out_path in jobs]

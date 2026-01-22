@@ -29,7 +29,7 @@ from data_models import (
     load_debate_entries,
     load_evaluation_entries,
 )
-from utils import entry_key
+from utils import question_key
 
 PARSE_ERROR_REGEX = re.compile(
     r"(cannot parse|could not parse|can't parse|cant parse|can not parse|"
@@ -52,56 +52,31 @@ def _as_list(value: Any) -> List[Any]:
     return []
 
 
-def _normalize_question(question: Optional[str]) -> Optional[str]:
-    if not question:
+QuestionKey = Tuple[Optional[str], Optional[str]]
+
+
+def _question_key_from_entry(entry: Any, question_model: Optional[str] = None) -> Optional[QuestionKey]:
+    if not entry:
         return None
-    return question
+    run_id = _get_value(entry, "run_id")
+    q_model = question_model or _get_value(entry, "question_model") or _get_value(entry, "question_author")
+    return question_key(q_model, run_id)
 
 
-def _entry_key_from_fields(
-    run_id: Optional[str],
-    topic_slug: Optional[str],
-    question: Optional[str],
-) -> Optional[Tuple[Optional[str], Optional[str], Optional[str]]]:
-    return entry_key(run_id, topic_slug, _normalize_question(question))
+def _make_key_index() -> Set[QuestionKey]:
+    return set()
 
 
-def _entry_key_from_entry(entry: Any) -> Optional[Tuple[Optional[str], Optional[str], Optional[str]]]:
-    return _entry_key_from_fields(
-        _get_value(entry, "run_id"),
-        _get_value(entry, "topic_slug"),
-        _get_value(entry, "question"),
-    )
-
-
-def _make_key_index() -> Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]:
-    return defaultdict(set)
-
-
-def _add_key_to_index(
-    index: Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]],
-    key: Optional[Tuple[Optional[str], Optional[str], Optional[str]]],
-) -> None:
+def _add_key_to_index(index: Set[QuestionKey], key: Optional[QuestionKey]) -> None:
     if not key:
         return
-    run_id, topic_slug, question = key
-    index[(run_id, topic_slug)].add(_normalize_question(question))
+    index.add(key)
 
 
-def _key_in_index(
-    index: Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]],
-    key: Optional[Tuple[Optional[str], Optional[str], Optional[str]]],
-) -> bool:
+def _key_in_index(index: Set[QuestionKey], key: Optional[QuestionKey]) -> bool:
     if not key:
         return False
-    run_id, topic_slug, question = key
-    bucket = index.get((run_id, topic_slug))
-    if not bucket:
-        return False
-    normalized_question = _normalize_question(question)
-    if normalized_question is None:
-        return True
-    return normalized_question in bucket or None in bucket
+    return key in index
 
 
 def final_benchmark_question(entry: Any) -> str:
@@ -403,9 +378,7 @@ def check_benchmark_issues(file_path: Path) -> Dict[str, int]:
 def check_answer_issues(
     file_path: Path,
     failed_answer_min_attempts: int = 5,
-    benchmark_index: Optional[
-        Dict[str, Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]]
-    ] = None,
+    benchmark_index: Optional[Dict[str, Set[QuestionKey]]] = None,
 ) -> Dict[str, int]:
     """Check for issues in answer files."""
     issues = defaultdict(int)
@@ -431,7 +404,7 @@ def check_answer_issues(
                 q_slug = _get_value(entry, "question_model") or file_path.parent.name
                 question_keys = benchmark_index.get(q_slug)
                 if question_keys:
-                    key = _entry_key_from_entry(entry)
+                    key = _question_key_from_entry(entry, q_slug)
                     if key and not _key_in_index(question_keys, key):
                         issues["missing_question_reference"] += 1
     except Exception:
@@ -442,7 +415,7 @@ def check_answer_issues(
 
 def check_critique_issues(
     file_path: Path,
-    answer_index: Optional[Dict[Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]]] = None,
+    answer_index: Optional[Dict[Tuple[str, str], Set[QuestionKey]]] = None,
 ) -> Dict[str, int]:
     """Check for issues in critique files."""
     issues = defaultdict(int)
@@ -472,7 +445,7 @@ def check_critique_issues(
                 continue
             _merge_issue_counts(issues, _critique_entry_issue_counts(entry))
             if answer_index is not None:
-                key = _entry_key_from_entry(entry)
+                key = _question_key_from_entry(entry, file_path.parent.name)
                 if key and (not answer_keys or not _key_in_index(answer_keys, key)):
                     issues["missing_answer_reference"] += 1
     except Exception:
@@ -484,12 +457,7 @@ def check_critique_issues(
 def check_debate_issues(
     file_path: Path,
     incomplete_min_rounds: int = 5,
-    critique_index: Optional[
-        Dict[
-            Tuple[str, str, str, str],
-            Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]],
-        ]
-    ] = None,
+    critique_index: Optional[Dict[Tuple[str, str, str, str], Set[QuestionKey]]] = None,
 ) -> Dict[str, int]:
     """Check for issues in debate files."""
     issues = defaultdict(int)
@@ -536,7 +504,7 @@ def check_debate_issues(
                 continue
             _merge_issue_counts(issues, _debate_entry_issue_counts(entry, incomplete_min_rounds))
             if check_missing_critique:
-                key = _entry_key_from_entry(entry)
+                key = _question_key_from_entry(entry, q_slug)
                 if key and (not critique_keys or not _key_in_index(critique_keys, key)):
                     issues["missing_critique_reference"] += 1
     except Exception:
@@ -547,15 +515,8 @@ def check_debate_issues(
 
 def check_evaluation_issues(
     file_path: Path,
-    illposed_debate_index: Optional[
-        Dict[Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]]
-    ] = None,
-    critique_debate_index: Optional[
-        Dict[
-            Tuple[str, str, str, str],
-            Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]],
-        ]
-    ] = None,
+    illposed_debate_index: Optional[Dict[Tuple[str, str], Set[QuestionKey]]] = None,
+    critique_debate_index: Optional[Dict[Tuple[str, str, str, str], Set[QuestionKey]]] = None,
 ) -> Dict[str, int]:
     """Check for issues in automated evaluation files."""
     issues = defaultdict(int)
@@ -583,11 +544,7 @@ def check_evaluation_issues(
                 answer_slug = _get_value(evaluation, "answer_model")
                 critic_slug = _get_value(evaluation, "critic_model")
                 mode = _get_value(evaluation, "mode")
-                key = _entry_key_from_fields(
-                    _get_value(evaluation, "run_id"),
-                    _get_value(evaluation, "topic_slug"),
-                    _get_value(evaluation, "question"),
-                )
+                key = question_key(q_slug, _get_value(evaluation, "run_id"))
                 missing_debate = False
                 if eval_type == "illposed":
                     debate_keys = (
@@ -680,21 +637,15 @@ def _parse_pair_file(path: Path) -> Optional[Tuple[str, str]]:
     return parts[0], parts[1]
 
 
-def _benchmark_entry_key(entry: Any) -> Optional[Tuple[Optional[str], Optional[str], Optional[str]]]:
-    return _entry_key_from_fields(
-        _get_value(entry, "run_id"),
-        _get_value(entry, "topic_slug"),
-        final_benchmark_question(entry),
-    )
+def _benchmark_entry_key(entry: Any, question_model: Optional[str]) -> Optional[QuestionKey]:
+    return _question_key_from_entry(entry, question_model)
 
 
 def _build_answer_reference_index(
     answers_dir: Path,
     benchmarks_dir: Path,
-) -> Dict[Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]]:
-    index: Dict[Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]] = defaultdict(
-        _make_key_index
-    )
+) -> Dict[Tuple[str, str], Set[QuestionKey]]:
+    index: Dict[Tuple[str, str], Set[QuestionKey]] = defaultdict(_make_key_index)
     if answers_dir.exists():
         for file_path in answers_dir.glob("*/*.json"):
             data = _load_json_list(file_path)
@@ -705,7 +656,7 @@ def _build_answer_reference_index(
             for entry in data:
                 if not entry:
                     continue
-                key = _entry_key_from_entry(entry)
+                key = _question_key_from_entry(entry, q_slug)
                 _add_key_to_index(index[(q_slug, answer_slug)], key)
 
     if benchmarks_dir.exists():
@@ -723,19 +674,15 @@ def _build_answer_reference_index(
                 question = final_benchmark_question(entry)
                 if not question or not str(question).strip():
                     continue
-                key = _entry_key_from_fields(
-                    _get_value(entry, "run_id"),
-                    _get_value(entry, "topic_slug"),
-                    question,
-                )
+                key = _question_key_from_entry(entry, q_slug)
                 _add_key_to_index(index[(q_slug, q_slug)], key)
     return index
 
 
 def _build_benchmark_reference_index(
     benchmarks_dir: Path,
-) -> Dict[str, Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]]:
-    index: Dict[str, Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]] = defaultdict(_make_key_index)
+) -> Dict[str, Set[QuestionKey]]:
+    index: Dict[str, Set[QuestionKey]] = defaultdict(_make_key_index)
     if not benchmarks_dir.exists():
         return index
     for bench_path in benchmarks_dir.glob("*.json"):
@@ -749,21 +696,15 @@ def _build_benchmark_reference_index(
             question = final_benchmark_question(entry)
             if not question or not str(question).strip():
                 continue
-            key = _entry_key_from_fields(
-                _get_value(entry, "run_id"),
-                _get_value(entry, "topic_slug"),
-                question,
-            )
+            key = _question_key_from_entry(entry, q_slug)
             _add_key_to_index(index[q_slug], key)
     return index
 
 
 def _build_critique_reference_index(
     critiques_dir: Path,
-) -> Dict[Tuple[str, str, str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]]:
-    index: Dict[Tuple[str, str, str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]] = (
-        defaultdict(_make_key_index)
-    )
+) -> Dict[Tuple[str, str, str, str], Set[QuestionKey]]:
+    index: Dict[Tuple[str, str, str, str], Set[QuestionKey]] = defaultdict(_make_key_index)
     if not critiques_dir.exists():
         return index
     for mode_dir in critiques_dir.iterdir():
@@ -785,7 +726,7 @@ def _build_critique_reference_index(
                 for entry in data:
                     if not entry:
                         continue
-                    key = _entry_key_from_entry(entry)
+                    key = _question_key_from_entry(entry, q_slug)
                     _add_key_to_index(index[(mode, q_slug, critic_slug, answer_slug)], key)
     return index
 
@@ -793,16 +734,11 @@ def _build_critique_reference_index(
 def _build_debate_reference_indexes(
     debates_dir: Path,
 ) -> Tuple[
-    Dict[Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]],
-    Dict[Tuple[str, str, str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]],
+    Dict[Tuple[str, str], Set[QuestionKey]],
+    Dict[Tuple[str, str, str, str], Set[QuestionKey]],
 ]:
-    illposed_index: Dict[Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]] = defaultdict(
-        _make_key_index
-    )
-    critique_index: Dict[
-        Tuple[str, str, str, str],
-        Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]],
-    ] = defaultdict(_make_key_index)
+    illposed_index: Dict[Tuple[str, str], Set[QuestionKey]] = defaultdict(_make_key_index)
+    critique_index: Dict[Tuple[str, str, str, str], Set[QuestionKey]] = defaultdict(_make_key_index)
     if not debates_dir.exists():
         return illposed_index, critique_index
 
@@ -820,7 +756,7 @@ def _build_debate_reference_indexes(
                 for entry in data:
                     if not entry:
                         continue
-                    key = _entry_key_from_entry(entry)
+                    key = _question_key_from_entry(entry, q_slug)
                     _add_key_to_index(illposed_index[(q_slug, answer_slug)], key)
 
     critique_dir = debates_dir / "critiques"
@@ -844,7 +780,7 @@ def _build_debate_reference_indexes(
                     for entry in data:
                         if not entry:
                             continue
-                        key = _entry_key_from_entry(entry)
+                        key = _question_key_from_entry(entry, q_slug)
                         _add_key_to_index(critique_index[(mode, q_slug, critic_slug, answer_slug)], key)
     return illposed_index, critique_index
 
@@ -867,27 +803,13 @@ def _drop_entries(
         "evaluation_files": 0,
     }
 
-    benchmark_drop_keys: Dict[str, Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]] = defaultdict(
-        _make_key_index
-    )
-    answer_drop_keys: Dict[
-        Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]
-    ] = defaultdict(_make_key_index)
-    critique_drop_keys: Dict[
-        Tuple[str, str, str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]
-    ] = defaultdict(_make_key_index)
-    critique_drop_by_answer: Dict[
-        Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]
-    ] = defaultdict(_make_key_index)
-    illposed_debate_drop_keys: Dict[
-        Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]
-    ] = defaultdict(_make_key_index)
-    critique_debate_drop_keys: Dict[
-        Tuple[str, str, str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]
-    ] = defaultdict(_make_key_index)
-    critique_debate_drop_by_answer: Dict[
-        Tuple[str, str], Dict[Tuple[Optional[str], Optional[str]], Set[Optional[str]]]
-    ] = defaultdict(_make_key_index)
+    benchmark_drop_keys: Dict[str, Set[QuestionKey]] = defaultdict(_make_key_index)
+    answer_drop_keys: Dict[Tuple[str, str], Set[QuestionKey]] = defaultdict(_make_key_index)
+    critique_drop_keys: Dict[Tuple[str, str, str, str], Set[QuestionKey]] = defaultdict(_make_key_index)
+    critique_drop_by_answer: Dict[Tuple[str, str], Set[QuestionKey]] = defaultdict(_make_key_index)
+    illposed_debate_drop_keys: Dict[Tuple[str, str], Set[QuestionKey]] = defaultdict(_make_key_index)
+    critique_debate_drop_keys: Dict[Tuple[str, str, str, str], Set[QuestionKey]] = defaultdict(_make_key_index)
+    critique_debate_drop_by_answer: Dict[Tuple[str, str], Set[QuestionKey]] = defaultdict(_make_key_index)
 
     # Benchmarks
     benchmarks_dir = Path("benchmarks")
@@ -929,7 +851,7 @@ def _drop_entries(
                 if not entry:
                     continue
                 entry_issues = _answer_entry_issue_counts(entry, failed_answer_min_attempts)
-                key = _entry_key_from_entry(entry)
+                key = _question_key_from_entry(entry, q_slug)
                 drop_due_issue = _issues_match(entry_issues, drop_codes)
                 drop_due_benchmark = bool(benchmark_index and _key_in_index(benchmark_index, key))
                 if drop_due_issue or drop_due_benchmark:
@@ -968,7 +890,7 @@ def _drop_entries(
                         if not entry:
                             continue
                         entry_issues = _critique_entry_issue_counts(entry)
-                        key = _entry_key_from_entry(entry)
+                        key = _question_key_from_entry(entry, q_slug)
                         drop_due_issue = _issues_match(entry_issues, drop_codes)
                         drop_due_answer = bool(answer_index and _key_in_index(answer_index, key))
                         if drop_due_issue or drop_due_answer:
@@ -1007,7 +929,7 @@ def _drop_entries(
                     if not entry:
                         continue
                     entry_issues = _debate_entry_issue_counts(entry, incomplete_debate_min_rounds)
-                    key = _entry_key_from_entry(entry)
+                    key = _question_key_from_entry(entry, q_slug)
                     drop_due_issue = _issues_match(entry_issues, drop_codes)
                     drop_due_answer = bool(answer_index and _key_in_index(answer_index, key))
                     if drop_due_issue or drop_due_answer:
@@ -1047,7 +969,7 @@ def _drop_entries(
                         if not entry:
                             continue
                         entry_issues = _debate_entry_issue_counts(entry, incomplete_debate_min_rounds)
-                        key = _entry_key_from_entry(entry)
+                        key = _question_key_from_entry(entry, q_slug)
                         drop_due_issue = _issues_match(entry_issues, drop_codes)
                         drop_due_answer = bool(answer_index and _key_in_index(answer_index, key))
                         drop_due_critique = bool(critique_index and _key_in_index(critique_index, key))
@@ -1089,12 +1011,8 @@ def _drop_entries(
                     dropped += 1
                     counts["evaluation_entries"] += 1
                     continue
-                key = _entry_key_from_fields(
-                    decision.get("run_id"),
-                    decision.get("topic_slug"),
-                    decision.get("question"),
-                )
                 q_slug = decision.get("question_model")
+                key = question_key(q_slug, decision.get("run_id"))
                 answer_slug = decision.get("answer_model")
                 critic_slug = decision.get("critic_model")
                 mode = decision.get("mode")
