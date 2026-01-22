@@ -36,9 +36,15 @@ from data_models import (
 )
 from utils import (
     benchmark_answers_from_entries,
+    collect_invalid_self_answer_questions,
+    critique_key,
     format_key,
     human_evaluation_key_from_entry,
     judging_task_key,
+    is_latest_outer_attempt,
+    latest_outer_attempt_by_run,
+    normalize_outer_attempt,
+    question_key,
 )
 
 st.set_page_config(layout="wide")
@@ -228,17 +234,97 @@ def normalize_key(
     )
 
 
-def load_key_entries(path: Path) -> List[Dict[str, Any]]:
-    if not path.exists():
-        return []
-    data = json.loads(path.read_text())
+def collect_run_ids(
+    benchmarks_dir: Path,
+    answers_dir: Path,
+    critiques_dir: Path,
+    debates_dir: Path,
+    automated_evals_dir: Path,
+) -> List[Tuple[str, str]]:
+    run_ids = set()
+    for bench_path in benchmarks_dir.glob("*.json"):
+        entries = load_benchmark_entries(bench_path)
+        for entry in entries:
+            if entry and entry.run_id and entry.outer_attempt is not None:
+                run_ids.add((str(entry.run_id), str(entry.outer_attempt)))
+    for ans_path in answers_dir.glob("*/*.json"):
+        entries = load_answer_entries(ans_path)
+        for entry in entries:
+            if entry and entry.run_id and entry.outer_attempt is not None:
+                run_ids.add((str(entry.run_id), str(entry.outer_attempt)))
+    for crit_path in critiques_dir.glob("*/*/*.json"):
+        entries = load_critique_entries(crit_path)
+        for entry in entries:
+            if entry and entry.run_id and entry.outer_attempt is not None:
+                run_ids.add((str(entry.run_id), str(entry.outer_attempt)))
+    for debate_path in debates_dir.glob("**/*.json"):
+        entries = load_debate_entries(debate_path)
+        for entry in entries:
+            if entry and entry.run_id and entry.outer_attempt is not None:
+                run_ids.add((str(entry.run_id), str(entry.outer_attempt)))
+    for eval_path in automated_evals_dir.glob("*.json"):
+        payload = load_evaluation_entries(eval_path)
+        for decision in payload.decisions:
+            if decision and decision.run_id and decision.outer_attempt is not None:
+                run_ids.add((str(decision.run_id), str(decision.outer_attempt)))
+    return sorted(run_ids)
+
+
+def generate_key_entries(
+    run_ids: List[Tuple[str, str]],
+    model_slugs: List[str],
+) -> List[Dict[str, Any]]:
     entries: List[Dict[str, Any]] = []
-    for section in ("illposed", "critiques"):
-        for item in data.get(section, []):
-            if not item:
-                continue
-            entries.append(item)
+    for run_id, outer_attempt in run_ids:
+        for q_slug in model_slugs:
+            for a_slug in model_slugs:
+                illposed_key = critique_key(q_slug, a_slug, None, None, run_id, outer_attempt)
+                if illposed_key:
+                    entries.append(
+                        {
+                            "type": "illposed",
+                            "mode": None,
+                            "question_model": q_slug,
+                            "answer_model": a_slug,
+                            "critic_model": None,
+                            "run_id": run_id,
+                            "outer_attempt": outer_attempt,
+                            "key": list(illposed_key),
+                        }
+                    )
+                for mode in ("evaluator", "contradictor"):
+                    for critic_slug in model_slugs:
+                        crit_key = critique_key(
+                            q_slug,
+                            a_slug,
+                            critic_slug,
+                            mode,
+                            run_id,
+                            outer_attempt,
+                        )
+                        if crit_key:
+                            entries.append(
+                                {
+                                    "type": "critique",
+                                    "mode": mode,
+                                    "question_model": q_slug,
+                                    "answer_model": a_slug,
+                                    "critic_model": critic_slug,
+                                    "run_id": run_id,
+                                    "outer_attempt": outer_attempt,
+                                    "key": list(crit_key),
+                                }
+                            )
     return entries
+
+
+def latest_outer_attempts_by_question(benchmark_dir: Path) -> Dict[str, Dict[str, int]]:
+    latest_by_question: Dict[str, Dict[str, int]] = {}
+    for bench_path in benchmark_dir.glob("*.json"):
+        q_slug = bench_path.stem
+        entries = load_benchmark_entries(bench_path)
+        latest_by_question[q_slug] = latest_outer_attempt_by_run(entries)
+    return latest_by_question
 
 
 def collect_consensus(auto_eval_dir: Path) -> Dict[Tuple, Dict[str, Any]]:
@@ -635,15 +721,30 @@ def main():
     parser.add_argument("--benchmark-dir", type=Path, default=Path("benchmarks"))
     parser.add_argument("--evaluations-dir", type=Path, default=Path("evaluations"))
     parser.add_argument("--automated-evals-dir", type=Path, default=Path("automated_evaluations"))
-    parser.add_argument("--keys", type=Path, default=Path("debate_keys.json"))
     parser.add_argument("--config", type=Path, default=Path("configs/models.json"))
     args, _ = parser.parse_known_args()
 
     registry = load_registry(str(args.config))
 
-    key_entries = load_key_entries(args.keys)
+    run_ids = collect_run_ids(
+        args.benchmark_dir,
+        args.answers_dir,
+        args.critiques_dir,
+        args.debates_dir,
+        args.automated_evals_dir,
+    )
+    model_slugs = [spec.slug for spec in registry.models.values()]
+    key_entries = generate_key_entries(run_ids, model_slugs)
     consensus = collect_consensus(args.automated_evals_dir)
     auto_eval_by_task = collect_auto_evals(args.automated_evals_dir)
+    latest_by_question = latest_outer_attempts_by_question(args.benchmark_dir)
+    invalid_questions = collect_invalid_self_answer_questions(
+        args.critiques_dir,
+        args.automated_evals_dir,
+        args.evaluations_dir,
+        registry,
+        log_automated_disagreements=False,
+    )
 
     answer_cache = build_answer_cache(args.answers_dir)
     benchmark_cache = build_benchmark_cache(args.benchmark_dir)
@@ -658,7 +759,21 @@ def main():
     dropped_no_data = 0
     dropped_no_evals = 0
     dropped_unanimous = 0
+    dropped_non_latest = 0
+    dropped_invalid = 0
     for entry in ordered_keys:
+        q_slug = entry.get("question_model")
+        run_id = entry.get("run_id")
+        outer_attempt = entry.get("outer_attempt")
+        latest_by_run = latest_by_question.get(q_slug or "", {})
+        if run_id is not None and latest_by_run:
+            if not is_latest_outer_attempt(run_id, normalize_outer_attempt(outer_attempt), latest_by_run):
+                dropped_non_latest += 1
+                continue
+        q_key = question_key(q_slug, run_id, outer_attempt)
+        if q_key and q_key in invalid_questions:
+            dropped_invalid += 1
+            continue
         task, has_data = build_task_from_key(
             entry,
             registry,
@@ -739,6 +854,10 @@ def main():
         st.info(f"Dropped {dropped_no_data} keys lacking debate data.")
     if dropped_unanimous:
         st.info(f"Skipped {dropped_unanimous} unanimously judged tasks.")
+    if dropped_non_latest:
+        st.info(f"Dropped {dropped_non_latest} keys from older outer_attempts.")
+    if dropped_invalid:
+        st.info(f"Dropped {dropped_invalid} keys with adjudicated invalid self-answers.")
 
     if "task_idx" not in st.session_state:
         st.session_state["task_idx"] = 0

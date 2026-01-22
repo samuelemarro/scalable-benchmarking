@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse
 import logging
 
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Set, Tuple, Union
 
 from data_models import (
     AutomatedEvaluation,
@@ -30,10 +30,15 @@ from victory import (
     resolve_automated_victory,
     verdict_to_victory_side,
 )
+from model_config import load_registry
 from utils import (
+    collect_invalid_self_answer_questions,
     format_key,
     human_evaluation_key_from_entry,
+    is_latest_outer_attempt,
     judging_task_key,
+    latest_outer_attempt_by_run,
+    normalize_outer_attempt,
     question_key,
     task_key_from_prefix,
 )
@@ -41,13 +46,22 @@ from utils import (
 logger = logging.getLogger(__name__)
 
 
-def count_human_labels(evaluations_dir: Path):
+def count_human_labels(
+    evaluations_dir: Path,
+    latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
+):
     label_counts = defaultdict(int)
     for eval_file in evaluations_dir.glob("*.json"):
         data = load_human_evaluation_entries(eval_file)
         for dec in data.decisions:
             key = human_evaluation_key_from_entry(dec)
             if key:
+                if latest_by_question:
+                    run_id, question_model, _answer_model, _critic_model, _mode, outer_attempt = key
+                    latest_by_run = latest_by_question.get(question_model or "", {})
+                    if run_id is not None and latest_by_run:
+                        if not is_latest_outer_attempt(run_id, normalize_outer_attempt(outer_attempt), latest_by_run):
+                            continue
                 label_counts[key] += 1
     return label_counts
 
@@ -81,12 +95,64 @@ def final_question(entry: BenchmarkEntry) -> Optional[str]:
     return refinements[-1].question
 
 
+def latest_outer_attempts_by_question(benchmarks_dir: Path) -> Dict[str, Dict[str, int]]:
+    latest_by_question: Dict[str, Dict[str, int]] = {}
+    for bench_path in benchmarks_dir.glob("*.json"):
+        q_slug = bench_path.stem
+        entries = load_benchmark_entries(bench_path)
+        latest_by_question[q_slug] = latest_outer_attempt_by_run(entries)
+    return latest_by_question
+
+
+def self_answer_attempt_distribution(
+    benchmarks_dir: Path,
+    invalid_questions: Set[QuestionKey],
+) -> Tuple[Dict[str, Counter], Dict[str, int], Dict[str, int]]:
+    per_model: Dict[str, Counter] = {}
+    totals: Dict[str, int] = {}
+    missing: Dict[str, int] = {}
+    for bench_path in benchmarks_dir.glob("*.json"):
+        q_slug = bench_path.stem
+        entries = load_benchmark_entries(bench_path)
+        attempts_by_run: Dict[str, List[Tuple[int, BenchmarkEntry]]] = defaultdict(list)
+        for entry in entries:
+            if not entry or entry.run_id is None:
+                continue
+            attempt = normalize_outer_attempt(entry.outer_attempt) or 1
+            attempts_by_run[str(entry.run_id)].append((attempt, entry))
+        totals[q_slug] = len(attempts_by_run)
+        counts: Counter = Counter()
+        missing_count = 0
+        for run_id, attempts in attempts_by_run.items():
+            attempts.sort(key=lambda item: item[0])
+            found = False
+            for attempt, entry in attempts:
+                if entry.status != STATUS_SUCCEEDED:
+                    continue
+                if not final_question(entry):
+                    continue
+                q_key = question_key(q_slug, entry.run_id, attempt)
+                if q_key and q_key in invalid_questions:
+                    continue
+                counts[attempt] += 1
+                found = True
+                break
+            if not found:
+                missing_count += 1
+        per_model[q_slug] = counts
+        missing[q_slug] = missing_count
+    return per_model, totals, missing
+
+
 QuestionKey = Tuple[Optional[str], Optional[str], Optional[str]]
 CritiqueKey = Tuple[str, str, str, Union[int, QuestionKey]]
 
 
 def load_critique_verdicts(
     critiques_dir: Path,
+    *,
+    latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
+    invalid_questions: Optional[Set[QuestionKey]] = None,
 ) -> Dict[CritiqueKey, Dict[str, Dict[str, Optional[str]]]]:
     verdicts: Dict[CritiqueKey, Dict[str, Dict[str, Optional[str]]]] = defaultdict(dict)
     if not critiques_dir.exists():
@@ -95,6 +161,7 @@ def load_critique_verdicts(
         mode = mode_dir.name
         for q_dir in mode_dir.glob("*"):
             q_slug = q_dir.name
+            latest_by_run = latest_by_question.get(q_slug, {}) if latest_by_question else {}
             for crit_file in q_dir.glob("*.json"):
                 parts = crit_file.stem.split("__", 1)
                 if len(parts) != 2:
@@ -104,6 +171,10 @@ def load_critique_verdicts(
                 for idx, entry in enumerate(entries):
                     if not entry or entry.status != STATUS_SUCCEEDED:
                         continue
+                    outer_attempt = normalize_outer_attempt(entry.outer_attempt)
+                    if entry.run_id is not None and latest_by_run:
+                        if not is_latest_outer_attempt(entry.run_id, outer_attempt, latest_by_run):
+                            continue
                     attempts = entry.attempts or []
                     if not attempts:
                         continue
@@ -113,11 +184,13 @@ def load_critique_verdicts(
                     info = {
                         "verdict": verdict,
                         "run_id": entry.run_id,
-                        "outer_attempt": entry.outer_attempt,
+                        "outer_attempt": outer_attempt,
                         "topic_slug": entry.topic_slug,
                         "question": entry.question,
                     }
-                    q_key = question_key(entry.question_author, entry.run_id, entry.outer_attempt)
+                    q_key = question_key(entry.question_author, entry.run_id, outer_attempt)
+                    if invalid_questions and q_key in invalid_questions:
+                        continue
                     if q_key:
                         verdicts[(q_slug, critic_slug, answer_slug, q_key)][mode] = info
                     verdicts[(q_slug, critic_slug, answer_slug, idx)][mode] = info
@@ -149,39 +222,79 @@ def find_critique_verdict(
     return mode, modes[mode]
 
 
-def count_items(path: Path, kind: str):
+def count_items(
+    path: Path,
+    kind: str,
+    latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
+):
     counts = 0
     if kind == "questions":
         for file in path.glob("*.json"):
+            q_slug = file.stem
             entries = load_benchmark_entries(file)
-            counts += len(entries)
+            latest_by_run = latest_by_question.get(q_slug, {}) if latest_by_question else latest_outer_attempt_by_run(entries)
+            for entry in entries:
+                if not entry:
+                    continue
+                outer_attempt = normalize_outer_attempt(entry.outer_attempt)
+                if entry.run_id is not None and latest_by_run:
+                    if not is_latest_outer_attempt(entry.run_id, outer_attempt, latest_by_run):
+                        continue
+                counts += 1
     elif kind == "answers":
         for q_dir in path.glob("*"):
+            q_slug = q_dir.name
             for ans_file in q_dir.glob("*.json"):
                 entries = load_answer_entries(ans_file)
-                counts += len(entries)
+                latest_by_run = latest_by_question.get(q_slug, {}) if latest_by_question else latest_outer_attempt_by_run(entries)
+                for entry in entries:
+                    if not entry:
+                        continue
+                    outer_attempt = normalize_outer_attempt(entry.outer_attempt)
+                    if entry.run_id is not None and latest_by_run:
+                        if not is_latest_outer_attempt(entry.run_id, outer_attempt, latest_by_run):
+                            continue
+                    counts += 1
     elif kind in {"critiques", "illposed"}:
         base = "critiques" if kind == "critiques" else "debates/illposed"
         base_path = Path(base)
         for sub in base_path.glob("**/*.json"):
+            q_slug = sub.parent.name
             entries = load_debate_entries(sub) if kind == "illposed" else load_critique_entries(sub)
-            counts += len(entries)
+            latest_by_run = latest_by_question.get(q_slug, {}) if latest_by_question else latest_outer_attempt_by_run(entries)
+            for entry in entries:
+                if not entry:
+                    continue
+                outer_attempt = normalize_outer_attempt(getattr(entry, "outer_attempt", None))
+                if getattr(entry, "run_id", None) is not None and latest_by_run:
+                    if not is_latest_outer_attempt(entry.run_id, outer_attempt, latest_by_run):
+                        continue
+                counts += 1
     return counts
 
 
-def collect_claim_keys(critiques_dir: Path, debates_dir: Path):
+def collect_claim_keys(
+    critiques_dir: Path,
+    debates_dir: Path,
+    latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
+):
     claim_keys = set()
     for mode_dir in critiques_dir.glob("*"):
         for q_dir in mode_dir.glob("*"):
             for crit_file in q_dir.glob("*.json"):
                 q_slug = q_dir.name
                 crit_ids = load_critique_entries(crit_file)
+                latest_by_run = latest_by_question.get(q_slug, {}) if latest_by_question else {}
                 for entry in crit_ids:
                     if not entry:
                         continue
+                    outer_attempt = normalize_outer_attempt(entry.outer_attempt)
+                    if entry.run_id is not None and latest_by_run:
+                        if not is_latest_outer_attempt(entry.run_id, outer_attempt, latest_by_run):
+                            continue
                     prefix = f"critique/{mode_dir.name}/{q_slug}/{crit_file.stem}"
                     claim_key = _task_key(
-                        prefix, entry.run_id, entry.outer_attempt, entry.topic_slug, entry.question
+                        prefix, entry.run_id, outer_attempt, entry.topic_slug, entry.question
                     )
                     if claim_key:
                         claim_keys.add(claim_key)
@@ -189,26 +302,39 @@ def collect_claim_keys(critiques_dir: Path, debates_dir: Path):
         q_slug = debate_file.parent.name
         a_slug = debate_file.stem
         debates = load_debate_entries(debate_file)
+        latest_by_run = latest_by_question.get(q_slug, {}) if latest_by_question else {}
         for entry in debates:
             if not entry:
                 continue
+            outer_attempt = normalize_outer_attempt(entry.outer_attempt)
+            if entry.run_id is not None and latest_by_run:
+                if not is_latest_outer_attempt(entry.run_id, outer_attempt, latest_by_run):
+                    continue
             prefix = f"illposed/{q_slug}/{a_slug}"
-            claim_key = _task_key(prefix, entry.run_id, entry.outer_attempt, entry.topic_slug, entry.question)
+            claim_key = _task_key(prefix, entry.run_id, outer_attempt, entry.topic_slug, entry.question)
             if claim_key:
                 claim_keys.add(claim_key)
     return claim_keys
 
 
-def critique_verdicts(critiques_dir: Path):
+def critique_verdicts(
+    critiques_dir: Path,
+    latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
+):
     verdict_counts = Counter()
     for mode_dir in critiques_dir.glob("*"):
         for q_dir in mode_dir.glob("*"):
             for crit_file in q_dir.glob("*.json"):
+                latest_by_run = latest_by_question.get(q_dir.name, {}) if latest_by_question else {}
                 entries = load_critique_entries(crit_file)
                 for entry in entries:
                     if not entry:
                         verdict_counts["missing"] += 1
                         continue
+                    outer_attempt = normalize_outer_attempt(entry.outer_attempt)
+                    if entry.run_id is not None and latest_by_run:
+                        if not is_latest_outer_attempt(entry.run_id, outer_attempt, latest_by_run):
+                            continue
                     attempts = entry.attempts or []
                     if not attempts:
                         verdict_counts["missing"] += 1
@@ -221,14 +347,25 @@ def critique_verdicts(critiques_dir: Path):
     return verdict_counts
 
 
-def count_illposed_answers(answers_dir: Path):
+def count_illposed_answers(
+    answers_dir: Path,
+    latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
+):
     """Count answers with status='ill-posed'"""
     count = 0
     for q_dir in answers_dir.glob("*"):
+        q_slug = q_dir.name
+        latest_by_run = latest_by_question.get(q_slug, {}) if latest_by_question else None
         for ans_file in q_dir.glob("*.json"):
             entries = load_answer_entries(ans_file)
             for entry in entries:
-                if entry and entry.status == STATUS_ILL_POSED:
+                if not entry:
+                    continue
+                outer_attempt = normalize_outer_attempt(entry.outer_attempt)
+                if latest_by_run and entry.run_id is not None:
+                    if not is_latest_outer_attempt(entry.run_id, outer_attempt, latest_by_run):
+                        continue
+                if entry.status == STATUS_ILL_POSED:
                     count += 1
     return count
 
@@ -354,8 +491,12 @@ def print_protocol_stats(
     fallback_any_mode: bool = False,
     log_automated_disagreements: bool = True,
     list_missing_critiques: bool = False,
+    latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
 ) -> None:
-    critique_verdicts = load_critique_verdicts(critiques_dir)
+    critique_verdicts = load_critique_verdicts(
+        critiques_dir,
+        latest_by_question=latest_by_question,
+    )
     decisions_by_claim = collect_decisions_by_claim(auto_eval_dir)
 
     counts = Counter()
@@ -384,8 +525,17 @@ def print_protocol_stats(
             answers = load_answer_entries(answer_file)
             max_len = max(len(benchmarks), len(answers))
             for idx in range(max_len):
-                counts["pairs_total"] += 1
                 bench_entry = benchmarks[idx] if idx < len(benchmarks) else None
+                if bench_entry:
+                    outer_attempt = normalize_outer_attempt(bench_entry.outer_attempt)
+                    if latest_by_question is not None:
+                        latest_by_run = latest_by_question.get(q_slug, {})
+                    else:
+                        latest_by_run = latest_outer_attempt_by_run(benchmarks)
+                    if bench_entry.run_id is not None and latest_by_run:
+                        if not is_latest_outer_attempt(bench_entry.run_id, outer_attempt, latest_by_run):
+                            continue
+                counts["pairs_total"] += 1
                 if not bench_entry or bench_entry.status != STATUS_SUCCEEDED:
                     counts["drop_question_missing_or_failed"] += 1
                     continue
@@ -394,6 +544,12 @@ def print_protocol_stats(
                     counts["drop_question_missing_or_failed"] += 1
                     continue
                 answer_entry = answers[idx] if idx < len(answers) else None
+                if answer_entry:
+                    latest_by_run = latest_by_question.get(q_slug, {}) if latest_by_question else {}
+                    outer_attempt = normalize_outer_attempt(answer_entry.outer_attempt)
+                    if answer_entry.run_id is not None and latest_by_run:
+                        if not is_latest_outer_attempt(answer_entry.run_id, outer_attempt, latest_by_run):
+                            answer_entry = None
                 if not answer_entry:
                     counts["drop_answer_missing"] += 1
                     continue
@@ -407,7 +563,11 @@ def print_protocol_stats(
                     a_slug,
                     q_slug,
                     idx,
-                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id, answer_entry.outer_attempt),
+                    question_key(
+                        answer_entry.question_model or q_slug,
+                        answer_entry.run_id,
+                        normalize_outer_attempt(answer_entry.outer_attempt),
+                    ),
                     self_answer_critique_mode,
                     fallback_any_mode,
                 )
@@ -503,7 +663,11 @@ def print_protocol_stats(
                     q_slug,
                     a_slug,
                     idx,
-                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id, answer_entry.outer_attempt),
+                    question_key(
+                        answer_entry.question_model or q_slug,
+                        answer_entry.run_id,
+                        normalize_outer_attempt(answer_entry.outer_attempt),
+                    ),
                     answer_critique_mode,
                     fallback_any_mode,
                 )
@@ -662,7 +826,10 @@ def _illposed_target_key(task_key: Tuple) -> Optional[Tuple[str, str]]:
     return (run_id, question_model)
 
 
-def count_inter_judge_disagreements(auto_eval_dir: Path) -> Tuple[int, int]:
+def count_inter_judge_disagreements(
+    auto_eval_dir: Path,
+    latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
+) -> Tuple[int, int]:
     """Count claims with non-unanimous judge verdicts."""
     decisions = collect_automated_evaluations(auto_eval_dir)
     decisions_by_claim = defaultdict(list)
@@ -680,6 +847,12 @@ def count_inter_judge_disagreements(auto_eval_dir: Path) -> Tuple[int, int]:
         claim_type = claim_decisions[0].type
         if claim_type not in {"critique", "critique_debate", "illposed"}:
             continue
+        run_id, question_model, _answer_model, _critic_model, _mode, outer_attempt = claim_key
+        if latest_by_question:
+            latest_by_run = latest_by_question.get(question_model or "", {})
+            if run_id is not None and latest_by_run:
+                if not is_latest_outer_attempt(run_id, normalize_outer_attempt(outer_attempt), latest_by_run):
+                    continue
         verdicts = [d.verdict for d in claim_decisions if d.verdict]
         if len(verdicts) < 2:
             continue
@@ -696,7 +869,10 @@ def count_inter_judge_disagreements(auto_eval_dir: Path) -> Tuple[int, int]:
     return naive_count, len(dedup_targets)
 
 
-def build_critique_verdict_map(critiques_dir: Path) -> Dict[str, Dict]:
+def build_critique_verdict_map(
+    critiques_dir: Path,
+    latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
+) -> Dict[str, Dict]:
     """
     Build a map of critique IDs to verdict metadata.
     This is used by both compute_model_stats and main to avoid duplication.
@@ -714,9 +890,14 @@ def build_critique_verdict_map(critiques_dir: Path) -> Dict[str, Dict]:
             for crit_file in q_dir.glob("*.json"):
                 q_slug = q_dir.name
                 entries = load_critique_entries(crit_file)
+                latest_by_run = latest_by_question.get(q_slug, {}) if latest_by_question else {}
                 for entry in entries:
                     if not entry:
                         continue
+                    outer_attempt = normalize_outer_attempt(entry.outer_attempt)
+                    if entry.run_id is not None and latest_by_run:
+                        if not is_latest_outer_attempt(entry.run_id, outer_attempt, latest_by_run):
+                            continue
                     attempts = entry.attempts if entry else None
                     verdict = normalize_critique_verdict(attempts[-1].verdict) if attempts else None
                     # Extract answer author and question author from entry
@@ -726,7 +907,7 @@ def build_critique_verdict_map(critiques_dir: Path) -> Dict[str, Dict]:
 
                     prefix = f"critique/{mode_dir.name}/{q_slug}/{crit_file.stem}"
                     task_key = _task_key(
-                        prefix, entry.run_id, entry.outer_attempt, entry.topic_slug, entry.question
+                        prefix, entry.run_id, outer_attempt, entry.topic_slug, entry.question
                     )
                     if not task_key:
                         continue
@@ -743,6 +924,7 @@ def compute_model_stats(
     auto_eval_dir: Path,
     critiques_dir: Path,
     log_automated_disagreements: bool = True,
+    latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
 ):
     """Compute agreement statistics for various model roles."""
     decisions = collect_automated_evaluations(auto_eval_dir)
@@ -761,6 +943,17 @@ def compute_model_stats(
                 model_name = getattr(decision, key)
                 if model_name:
                     encountered_models.add(model_name)
+
+    if latest_by_question:
+        filtered = defaultdict(list)
+        for claim_key, claim_decisions in decisions_by_claim.items():
+            run_id, question_model, _answer_model, _critic_model, _mode, outer_attempt = claim_key
+            latest_by_run = latest_by_question.get(question_model or "", {})
+            if run_id is not None and latest_by_run:
+                if not is_latest_outer_attempt(run_id, normalize_outer_attempt(outer_attempt), latest_by_run):
+                    continue
+            filtered[claim_key] = claim_decisions
+        decisions_by_claim = filtered
 
     # For each model, track self-answer correctness victory rates.
     model_self_answers = defaultdict(list)
@@ -783,7 +976,7 @@ def compute_model_stats(
     }))
 
     # Build critique verdict map to identify "correct" verdicts (no debate)
-    critique_verdict_map = build_critique_verdict_map(critiques_dir)
+    critique_verdict_map = build_critique_verdict_map(critiques_dir, latest_by_question=latest_by_question)
 
     for claim_key, claim_decisions in decisions_by_claim.items():
         if not claim_decisions:
@@ -895,6 +1088,7 @@ def main():
     parser = argparse.ArgumentParser(description="Report aggregate stats for benchmarks.")
     parser.add_argument("--disable-disagreement-logs", action="store_true")
     parser.add_argument("--list-missing-critiques", action="store_true")
+    parser.add_argument("--config", type=Path, default=Path("configs/models.json"))
     args, _ = parser.parse_known_args()
     log_automated_disagreements = not args.disable_disagreement_logs
 
@@ -904,22 +1098,32 @@ def main():
     debates_dir = Path("debates")
     evaluations_dir = Path("evaluations")
     auto_eval_dir = Path("automated_evaluations")
+    registry = load_registry(str(args.config))
 
-    questions = count_items(benchmarks_dir, "questions")
-    answers = count_items(answers_dir, "answers")
-    critiques_count = count_items(critiques_dir, "critiques")
-    illposed_debate_count = count_items(Path(debates_dir), "illposed")
-    illposed_answer_count = count_illposed_answers(answers_dir)
+    latest_by_question = latest_outer_attempts_by_question(benchmarks_dir)
+    invalid_questions = collect_invalid_self_answer_questions(
+        critiques_dir,
+        auto_eval_dir,
+        evaluations_dir,
+        registry,
+        log_automated_disagreements=False,
+    )
 
-    labels = count_human_labels(evaluations_dir)
-    claim_keys = collect_claim_keys(critiques_dir, debates_dir)
+    questions = count_items(benchmarks_dir, "questions", latest_by_question)
+    answers = count_items(answers_dir, "answers", latest_by_question)
+    critiques_count = count_items(critiques_dir, "critiques", latest_by_question)
+    illposed_debate_count = count_items(Path(debates_dir), "illposed", latest_by_question)
+    illposed_answer_count = count_illposed_answers(answers_dir, latest_by_question)
+
+    labels = count_human_labels(evaluations_dir, latest_by_question)
+    claim_keys = collect_claim_keys(critiques_dir, debates_dir, latest_by_question)
 
     # Only count labels for critique claims with non-correct verdicts and all illposed claims
     filtered_claim_keys = set()
-    verdicts = critique_verdicts(critiques_dir)
+    verdicts = critique_verdicts(critiques_dir, latest_by_question)
 
     # Build shared verdict map (reused by compute_model_stats)
-    critique_verdict_map = build_critique_verdict_map(critiques_dir)
+    critique_verdict_map = build_critique_verdict_map(critiques_dir, latest_by_question)
 
     for cid in claim_keys:
         is_critique = bool(cid and (cid[3] or cid[4]))
@@ -938,7 +1142,7 @@ def main():
     print(f"- Answers claiming ill-posed: {illposed_answer_count}")
     print(f"- Critiques: {critiques_count}")
     print(f"- Ill-posed debates: {illposed_debate_count}")
-    v_counts = critique_verdicts(critiques_dir)
+    v_counts = critique_verdicts(critiques_dir, latest_by_question)
     print("\nCritiques by final verdict (including missing/unknown):")
     for verdict, count in v_counts.items():
         print(f"  {verdict}: {count}")
@@ -946,7 +1150,26 @@ def main():
     for n_labels in sorted(label_hist):
         print(f"  {n_labels}: {label_hist[n_labels]}")
 
-    inter_judge_naive, inter_judge_dedup = count_inter_judge_disagreements(auto_eval_dir)
+    attempt_counts, totals_by_model, missing_by_model = self_answer_attempt_distribution(
+        benchmarks_dir,
+        invalid_questions,
+    )
+    print("\nValid self-answer by outer_attempt (percent of run IDs):")
+    for model in sorted(attempt_counts.keys()):
+        total = totals_by_model.get(model, 0)
+        if total == 0:
+            continue
+        print(f"  {model}:")
+        for attempt in sorted(attempt_counts[model].keys()):
+            count = attempt_counts[model][attempt]
+            pct = 100.0 * count / total
+            print(f"    outer_attempt {attempt}: {count} ({pct:.1f}%)")
+        missing = missing_by_model.get(model, 0)
+        if missing:
+            pct = 100.0 * missing / total
+            print(f"    missing valid self-answer: {missing} ({pct:.1f}%)")
+
+    inter_judge_naive, inter_judge_dedup = count_inter_judge_disagreements(auto_eval_dir, latest_by_question)
     print("\nInter-judge disagreements (critiques/ill-posed claims):")
     print(f"  naive: {inter_judge_naive}")
     print(f"  deduped by answer/question: {inter_judge_dedup}")
@@ -958,6 +1181,7 @@ def main():
         auto_eval_dir,
         log_automated_disagreements=log_automated_disagreements,
         list_missing_critiques=args.list_missing_critiques,
+        latest_by_question=latest_by_question,
     )
 
     # Compute and print automated evaluation statistics
@@ -965,6 +1189,7 @@ def main():
         auto_eval_dir,
         critiques_dir,
         log_automated_disagreements=log_automated_disagreements,
+        latest_by_question=latest_by_question,
     )
 
     print_agreement_stats(

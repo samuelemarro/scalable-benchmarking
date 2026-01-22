@@ -1,12 +1,29 @@
 import json
 import logging
 import sys
+from collections import defaultdict
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Iterable, Dict, List, Optional, Sequence, Tuple
 
 
 from model_api import query_llm_single
-from data_models import AnswerAttempt, AnswerEntry, BenchmarkEntry
+from constants import (
+    CRITIQUE_VERDICT_INCORRECT,
+    CRITIQUE_VERDICT_INSUFFICIENT,
+    CRITIQUE_VERDICT_OBSCURE,
+)
+from data_models import (
+    AnswerAttempt,
+    AnswerEntry,
+    AutomatedEvaluation,
+    BenchmarkEntry,
+    HumanEvaluation,
+    load_critique_entries,
+    load_evaluation_entries,
+    load_human_evaluation_entries,
+)
+from model_config import ModelRegistry
+from victory import ConflictingHumanJudgmentError, VictorySide, resolve_victory_from_verdicts
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +45,61 @@ def _normalize_part(value: Optional[str]) -> Optional[str]:
     if value is None:
         return None
     return str(value)
+
+
+def normalize_outer_attempt(value: Optional[object], default: Optional[int] = 1) -> Optional[int]:
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def latest_outer_attempt_by_run(
+    entries: Sequence[Any],
+    *,
+    default_outer_attempt: int = 1,
+) -> Dict[str, int]:
+    latest: Dict[str, int] = {}
+    for entry in entries:
+        if not entry:
+            continue
+        run_id = entry.get("run_id") if isinstance(entry, dict) else getattr(entry, "run_id", None)
+        if run_id is None:
+            continue
+        outer_attempt = entry.get("outer_attempt") if isinstance(entry, dict) else getattr(entry, "outer_attempt", None)
+        attempt = normalize_outer_attempt(outer_attempt, default_outer_attempt)
+        if attempt is None:
+            continue
+        run_key = _normalize_part(run_id)
+        if run_key is None:
+            continue
+        existing = latest.get(run_key)
+        if existing is None or attempt > existing:
+            latest[run_key] = attempt
+    return latest
+
+
+def is_latest_outer_attempt(
+    run_id: Optional[object],
+    outer_attempt: Optional[object],
+    latest_by_run: Dict[str, int],
+    *,
+    default_outer_attempt: int = 1,
+) -> bool:
+    if run_id is None:
+        return True
+    run_key = _normalize_part(run_id)
+    if run_key is None:
+        return True
+    latest = latest_by_run.get(run_key)
+    if latest is None:
+        return True
+    attempt = normalize_outer_attempt(outer_attempt, default_outer_attempt)
+    if attempt is None:
+        return True
+    return attempt >= latest
 
 
 def question_key(
@@ -211,6 +283,282 @@ def automated_evaluation_key_for_task(entry: Any, judge_model: Optional[str]) ->
 
 def human_evaluation_key_from_entry(entry: Any) -> Optional[CritiqueKey]:
     return judging_task_key(entry)
+
+
+def _auto_claim_type_matches(decision: AutomatedEvaluation, claim_type: Optional[str]) -> bool:
+    if not claim_type:
+        return True
+    if claim_type == "critique":
+        return decision.type in {"critique", "critique_debate"}
+    return decision.type == claim_type
+
+
+def load_automated_decisions(
+    auto_eval_dir: Path,
+    *,
+    claim_type: Optional[str] = None,
+) -> Dict[CritiqueKey, List[AutomatedEvaluation]]:
+    decisions_by_key: Dict[CritiqueKey, List[AutomatedEvaluation]] = defaultdict(list)
+    if not auto_eval_dir.exists():
+        return decisions_by_key
+    for eval_file in auto_eval_dir.glob("*.json"):
+        payload = load_evaluation_entries(eval_file)
+        for decision in payload.decisions:
+            if not decision or not _auto_claim_type_matches(decision, claim_type):
+                continue
+            key = judging_task_key(decision)
+            if key:
+                decisions_by_key[key].append(decision)
+    return decisions_by_key
+
+
+def load_human_decisions(
+    human_eval_dir: Path,
+    *,
+    claim_type: Optional[str] = None,
+) -> Dict[CritiqueKey, List[HumanEvaluation]]:
+    decisions_by_key: Dict[CritiqueKey, List[HumanEvaluation]] = defaultdict(list)
+    if not human_eval_dir.exists():
+        return decisions_by_key
+    for eval_file in human_eval_dir.glob("*.json"):
+        payload = load_human_evaluation_entries(eval_file)
+        for decision in payload.decisions:
+            if not decision:
+                continue
+            if claim_type and decision.type != claim_type:
+                continue
+            key = human_evaluation_key_from_entry(decision)
+            if key:
+                decisions_by_key[key].append(decision)
+    return decisions_by_key
+
+
+def required_judge_quorum(
+    registry: Optional[ModelRegistry],
+    *,
+    claim_type: str,
+    question_model: Optional[str],
+    answer_model: Optional[str],
+    critic_model: Optional[str],
+) -> Optional[int]:
+    if registry is None:
+        return None
+    judge_specs = registry.by_role("judge")
+    if not judge_specs:
+        return None
+    if claim_type == "illposed":
+        participants: Iterable[Optional[str]] = (question_model, answer_model)
+    else:
+        participants = (answer_model, critic_model)
+    participant_names = {
+        registry.resolve_model_name(name)
+        for name in participants
+        if name
+    }
+    return sum(1 for spec in judge_specs if spec.name not in participant_names)
+
+
+def adjudicate_claim(
+    claim_type: str,
+    *,
+    automated_decisions: Sequence[AutomatedEvaluation],
+    human_decisions: Sequence[HumanEvaluation],
+    required_automated: Optional[int] = None,
+    context: Optional[str] = None,
+    log_automated_disagreements: bool = True,
+) -> Optional[VictorySide]:
+    human_verdicts = [d.verdict for d in human_decisions if d and d.verdict]
+    if human_verdicts:
+        try:
+            return resolve_victory_from_verdicts(
+                claim_type,
+                human_verdicts=human_verdicts,
+                context=context,
+            )
+        except ConflictingHumanJudgmentError:
+            logger.warning("Conflicting human judgments for %s", context or "claim")
+            return None
+
+    if required_automated is not None and len(automated_decisions) < required_automated:
+        return None
+
+    automated_verdicts = [d.verdict for d in automated_decisions if d and d.verdict]
+    return resolve_victory_from_verdicts(
+        claim_type,
+        automated_verdicts=automated_verdicts,
+        context=context,
+        log_automated_disagreements=log_automated_disagreements,
+    )
+
+
+def adjudicated_claim_outcome(
+    claim_key: Optional[CritiqueKey],
+    *,
+    claim_type: str,
+    auto_by_key: Dict[CritiqueKey, List[AutomatedEvaluation]],
+    human_by_key: Dict[CritiqueKey, List[HumanEvaluation]],
+    registry: Optional[ModelRegistry] = None,
+    required_automated: Optional[int] = None,
+    log_automated_disagreements: bool = True,
+) -> Optional[VictorySide]:
+    if not claim_key:
+        return None
+    if required_automated is None and registry is not None:
+        required_automated = required_judge_quorum(
+            registry,
+            claim_type=claim_type,
+            question_model=claim_key[1],
+            answer_model=claim_key[2],
+            critic_model=claim_key[3],
+        )
+    return adjudicate_claim(
+        claim_type,
+        automated_decisions=auto_by_key.get(claim_key, []),
+        human_decisions=human_by_key.get(claim_key, []),
+        required_automated=required_automated,
+        context=format_key(claim_key),
+        log_automated_disagreements=log_automated_disagreements,
+    )
+
+
+_NONCORRECTNESS_VERDICTS = {
+    CRITIQUE_VERDICT_INCORRECT,
+    CRITIQUE_VERDICT_INSUFFICIENT,
+    CRITIQUE_VERDICT_OBSCURE,
+}
+
+
+def collect_self_answer_critique_claims(
+    critiques_dir: Path,
+    *,
+    mode: str = "contradictor",
+    noncorrect_verdicts: Optional[Iterable[str]] = None,
+) -> Dict[QuestionKey, List[CritiqueKey]]:
+    claims_by_question: Dict[QuestionKey, List[CritiqueKey]] = defaultdict(list)
+    mode_dir = critiques_dir / mode
+    if not mode_dir.exists():
+        return claims_by_question
+    allowed_verdicts = set(noncorrect_verdicts or _NONCORRECTNESS_VERDICTS)
+    for q_dir in mode_dir.glob("*"):
+        for crit_file in q_dir.glob("*.json"):
+            entries = load_critique_entries(crit_file)
+            for entry in entries:
+                if not entry or entry.status != "succeeded":
+                    continue
+                if entry.question_author != entry.answer_author:
+                    continue
+                attempts = entry.attempts or []
+                if not attempts:
+                    continue
+                verdict = attempts[-1].verdict
+                if verdict not in allowed_verdicts:
+                    continue
+                q_key = question_key(entry.question_author, entry.run_id, entry.outer_attempt)
+                claim_key = critique_key(
+                    entry.question_author,
+                    entry.answer_author,
+                    entry.critic,
+                    mode,
+                    entry.run_id,
+                    entry.outer_attempt,
+                )
+                if q_key and claim_key:
+                    claims_by_question[q_key].append(claim_key)
+    return claims_by_question
+
+
+def adjudicated_self_answer_outcome(
+    question_key_value: Optional[QuestionKey],
+    *,
+    claims_by_question: Dict[QuestionKey, List[CritiqueKey]],
+    auto_by_key: Dict[CritiqueKey, List[AutomatedEvaluation]],
+    human_by_key: Dict[CritiqueKey, List[HumanEvaluation]],
+    registry: Optional[ModelRegistry] = None,
+    log_automated_disagreements: bool = True,
+) -> Optional[VictorySide]:
+    if not question_key_value:
+        return None
+    claim_keys = claims_by_question.get(question_key_value, [])
+    if not claim_keys:
+        return None
+    outcomes: List[VictorySide] = []
+    for claim_key in claim_keys:
+        outcome = adjudicated_claim_outcome(
+            claim_key,
+            claim_type="critique",
+            auto_by_key=auto_by_key,
+            human_by_key=human_by_key,
+            registry=registry,
+            log_automated_disagreements=log_automated_disagreements,
+        )
+        if outcome is not None:
+            outcomes.append(outcome)
+    if not outcomes:
+        return None
+    if VictorySide.ALICE in outcomes:
+        return VictorySide.ALICE
+    if VictorySide.BOB in outcomes:
+        return VictorySide.BOB
+    return VictorySide.DROP
+
+
+def collect_self_answer_adjudications(
+    critiques_dir: Path,
+    auto_eval_dir: Path,
+    human_eval_dir: Path,
+    registry: Optional[ModelRegistry],
+    *,
+    mode: str = "contradictor",
+    noncorrect_verdicts: Optional[Iterable[str]] = None,
+    log_automated_disagreements: bool = True,
+) -> Dict[QuestionKey, VictorySide]:
+    claims_by_question = collect_self_answer_critique_claims(
+        critiques_dir,
+        mode=mode,
+        noncorrect_verdicts=noncorrect_verdicts,
+    )
+    if not claims_by_question:
+        return {}
+    auto_by_key = load_automated_decisions(auto_eval_dir, claim_type="critique")
+    human_by_key = load_human_decisions(human_eval_dir, claim_type="critique")
+    adjudications: Dict[QuestionKey, VictorySide] = {}
+    for q_key in claims_by_question:
+        outcome = adjudicated_self_answer_outcome(
+            q_key,
+            claims_by_question=claims_by_question,
+            auto_by_key=auto_by_key,
+            human_by_key=human_by_key,
+            registry=registry,
+            log_automated_disagreements=log_automated_disagreements,
+        )
+        if outcome is not None:
+            adjudications[q_key] = outcome
+    return adjudications
+
+
+def collect_invalid_self_answer_questions(
+    critiques_dir: Path,
+    auto_eval_dir: Path,
+    human_eval_dir: Path,
+    registry: Optional[ModelRegistry],
+    *,
+    mode: str = "contradictor",
+    noncorrect_verdicts: Optional[Iterable[str]] = None,
+    log_automated_disagreements: bool = True,
+) -> set[QuestionKey]:
+    adjudications = collect_self_answer_adjudications(
+        critiques_dir,
+        auto_eval_dir,
+        human_eval_dir,
+        registry,
+        mode=mode,
+        noncorrect_verdicts=noncorrect_verdicts,
+        log_automated_disagreements=log_automated_disagreements,
+    )
+    return {
+        q_key for q_key, outcome in adjudications.items()
+        if outcome == VictorySide.ALICE
+    }
 
 
 def format_key(parts: Sequence[Optional[str]]) -> str:

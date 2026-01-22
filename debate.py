@@ -20,7 +20,11 @@ from model_api import query_llm_single
 from utils import (
     benchmark_answers_from_entries,
     clean_math,
+    collect_invalid_self_answer_questions,
     debate_key as debate_task_key,
+    is_latest_outer_attempt,
+    latest_outer_attempt_by_run,
+    normalize_outer_attempt,
     question_key,
     safe_load_json,
     setup_logging,
@@ -125,6 +129,22 @@ def final_answer(entry: AnswerEntry) -> Optional[str]:
     if not attempts:
         return None
     return attempts[-1].answer
+
+
+def is_latest_valid_question(
+    question_slug: str,
+    run_id: Optional[str],
+    outer_attempt: Optional[int],
+    latest_by_run: Dict[str, int],
+    invalid_questions: Set[Tuple[Optional[str], Optional[str], Optional[str]]],
+) -> bool:
+    outer_value = normalize_outer_attempt(outer_attempt)
+    if run_id is not None and not is_latest_outer_attempt(run_id, outer_value, latest_by_run):
+        return False
+    q_key = question_key(question_slug, run_id, outer_value)
+    if q_key and q_key in invalid_questions:
+        return False
+    return True
 
 
 def format_illposed_claim(claim: Dict[str, Any], context: str) -> str:
@@ -341,6 +361,8 @@ def main():
     parser.add_argument("--answers-dir", type=Path, default=Path("answers"))
     parser.add_argument("--critiques-dir", type=Path, default=Path("critiques"))
     parser.add_argument("--output-dir", type=Path, default=Path("debates"))
+    parser.add_argument("--auto-evals-dir", type=Path, default=Path("automated_evaluations"))
+    parser.add_argument("--human-evals-dir", type=Path, default=Path("evaluations"))
     parser.add_argument("--rounds", type=int, default=5)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--no-allow-concede", action="store_true", help="Disable early stop on concession.")
@@ -359,6 +381,13 @@ def main():
     guidance_c = load_critique_guidance()
     guidance_d_illposed = load_debate_illposed_guidance()
     guidance_d_critique = load_debate_critique_guidance()
+    invalid_questions = collect_invalid_self_answer_questions(
+        args.critiques_dir,
+        args.auto_evals_dir,
+        args.human_evals_dir,
+        registry,
+        log_automated_disagreements=False,
+    )
 
     debates = 0
 
@@ -370,6 +399,8 @@ def main():
                 question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
                 if not question_model:
                     continue
+                benchmark_entries = load_benchmark_entries(bench_path)
+                latest_by_run = latest_outer_attempt_by_run(benchmark_entries)
                 answers_dir = args.answers_dir / q_slug
                 for answer_file in answers_dir.glob("*.json"):
                     answer_model_slug = answer_file.stem
@@ -388,6 +419,14 @@ def main():
                         if args.limit is not None and len(tasks) >= args.limit:
                             break
                         if not rec or rec.status != STATUS_ILL_POSED:
+                            continue
+                        if not is_latest_valid_question(
+                            q_slug,
+                            rec.run_id,
+                            rec.outer_attempt,
+                            latest_by_run,
+                            invalid_questions,
+                        ):
                             continue
                         if len(existing) > idx and existing[idx]:
                             continue
@@ -517,6 +556,8 @@ def main():
                 question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
                 if not question_model:
                     continue
+                benchmark_entries = load_benchmark_entries(bench_path)
+                latest_by_run = latest_outer_attempt_by_run(benchmark_entries)
                 answers_dir = args.answers_dir / q_slug
                 for answer_file in answers_dir.glob("*.json"):
                     answer_model_slug = answer_file.stem
@@ -532,6 +573,14 @@ def main():
                         if args.limit is not None and total_tasks >= args.limit:
                             break
                         if not rec or rec.status != STATUS_ILL_POSED:
+                            continue
+                        if not is_latest_valid_question(
+                            q_slug,
+                            rec.run_id,
+                            rec.outer_attempt,
+                            latest_by_run,
+                            invalid_questions,
+                        ):
                             continue
                         debate_path = args.output_dir / "illposed" / q_slug / f"{answer_model_slug}.json"
                         existing = load_debate_entries(debate_path)
@@ -561,6 +610,8 @@ def main():
                 question_model = next((spec for spec in registry.models.values() if spec.slug == q_slug), None)
                 if not question_model:
                     continue
+                benchmark_entries = load_benchmark_entries(bench_path)
+                latest_by_run = latest_outer_attempt_by_run(benchmark_entries)
                 answers_dir = args.answers_dir / q_slug
                 for answer_file in answers_dir.glob("*.json"):
                     answer_model_slug = answer_file.stem
@@ -582,6 +633,14 @@ def main():
                         if args.limit is not None and debates >= args.limit:
                             break
                         if not rec or rec.status != STATUS_ILL_POSED:
+                            continue
+                        if not is_latest_valid_question(
+                            q_slug,
+                            rec.run_id,
+                            rec.outer_attempt,
+                            latest_by_run,
+                            invalid_questions,
+                        ):
                             continue
                         claim = rec.ill_posed_claim or {}
                         context = f"{q_slug}/{answer_model_slug}/{idx}"
@@ -653,6 +712,9 @@ def main():
                     if not question_model:
                         continue
                     benchmark_entries = load_benchmark_entries(args.benchmark_dir / f"{q_slug}.json")
+                    latest_by_run = latest_outer_attempt_by_run(benchmark_entries)
+                    latest_by_run = latest_outer_attempt_by_run(benchmark_entries)
+                    latest_by_run = latest_outer_attempt_by_run(benchmark_entries)
                     for crit_file in q_dir.glob("*.json"):
                         parts = crit_file.stem.split("__")
                         if len(parts) != 2:
@@ -692,6 +754,14 @@ def main():
                                 )
                                 continue
                             if verdict == CRITIQUE_VERDICT_CORRECT:
+                                continue
+                            if not is_latest_valid_question(
+                                q_slug,
+                                crit_entry.run_id,
+                                crit_entry.outer_attempt,
+                                latest_by_run,
+                                invalid_questions,
+                            ):
                                 continue
                             question_key_value = question_key(q_slug, crit_entry.run_id, crit_entry.outer_attempt)
                             if not question_key_value:
@@ -873,6 +943,14 @@ def main():
                                 continue
                             if final_critique_verdict(crit_entry) == CRITIQUE_VERDICT_CORRECT:
                                 continue
+                            if not is_latest_valid_question(
+                                q_slug,
+                                crit_entry.run_id,
+                                crit_entry.outer_attempt,
+                                latest_by_run,
+                                invalid_questions,
+                            ):
+                                continue
                             debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                             existing = load_debate_entries(debate_path)
                             existing_keys = collect_debate_keys(existing, q_slug, answer_slug, critic_slug, mode)
@@ -942,6 +1020,14 @@ def main():
                                 logger.warning(f"Skipping critique/{mode}/{q_slug}/{critic_slug}__{answer_slug}/{idx}: unknown final verdict")
                                 continue
                             if verdict == CRITIQUE_VERDICT_CORRECT:
+                                continue
+                            if not is_latest_valid_question(
+                                q_slug,
+                                crit_entry.run_id,
+                                crit_entry.outer_attempt,
+                                latest_by_run,
+                                invalid_questions,
+                            ):
                                 continue
                             question_key_value = question_key(q_slug, crit_entry.run_id, crit_entry.outer_attempt)
                             if not question_key_value:

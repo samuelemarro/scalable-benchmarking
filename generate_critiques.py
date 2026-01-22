@@ -22,7 +22,11 @@ from utils import (
     _ensure_non_empty_responses,
     benchmark_answers_from_entries,
     clean_math,
+    collect_invalid_self_answer_questions,
     critique_key,
+    is_latest_outer_attempt,
+    latest_outer_attempt_by_run,
+    normalize_outer_attempt,
     question_key,
     safe_load_json,
     setup_logging,
@@ -162,12 +166,22 @@ def _batched_query(model: str, prompts: List[str], disable_batch: bool, temperat
     return responses
 
 
-def build_answer_map(entries: List[Optional[AnswerEntry]]) -> Dict[Tuple[Optional[str], Optional[str], Optional[str]], AnswerEntry]:
+def build_answer_map(
+    entries: List[Optional[AnswerEntry]],
+    latest_by_run: Optional[Dict[str, int]] = None,
+    invalid_questions: Optional[Set[Tuple[Optional[str], Optional[str], Optional[str]]]] = None,
+) -> Dict[Tuple[Optional[str], Optional[str], Optional[str]], AnswerEntry]:
     mapped: Dict[Tuple[Optional[str], Optional[str], Optional[str]], AnswerEntry] = {}
     for entry in entries:
         if not entry:
             continue
-        key = question_key(entry.question_model, entry.run_id, entry.outer_attempt)
+        outer_attempt = normalize_outer_attempt(entry.outer_attempt)
+        if latest_by_run and entry.run_id is not None:
+            if not is_latest_outer_attempt(entry.run_id, outer_attempt, latest_by_run):
+                continue
+        key = question_key(entry.question_model, entry.run_id, outer_attempt)
+        if invalid_questions and key in invalid_questions:
+            continue
         if not key:
             continue
         existing = mapped.get(key)
@@ -204,6 +218,8 @@ def prepare_pairs(
     limit: Optional[int],
     benchmark_entries: List[Optional[BenchmarkEntry]],
     critic_names: Optional[Set[str]],
+    latest_by_run: Dict[str, int],
+    invalid_questions: Set[Tuple[Optional[str], Optional[str], Optional[str]]],
 ) -> List[Tuple[Tuple[Optional[str], Optional[str], Optional[str]], str, str]]:
     pairs = []
     critic_name_set = set(critic_names or [])
@@ -214,7 +230,11 @@ def prepare_pairs(
         question_model,
         benchmark_entries,
     )
-    question_author_map = build_answer_map(question_author_answers)
+    question_author_map = build_answer_map(
+        question_author_answers,
+        latest_by_run=latest_by_run,
+        invalid_questions=invalid_questions,
+    )
 
     if mode == "contradictor":
         critic_list = sorted(critic_name_set) if critic_name_set else answer_models
@@ -242,7 +262,11 @@ def prepare_pairs(
         if answer_model == question_model and not answer_records:
             answer_records = question_author_answers
 
-        answer_map = build_answer_map(answer_records)
+        answer_map = build_answer_map(
+            answer_records,
+            latest_by_run=latest_by_run,
+            invalid_questions=invalid_questions,
+        )
         for key, target_entry in answer_map.items():
             if limit is not None and len(pairs) >= limit:
                 break
@@ -423,6 +447,8 @@ def main():
     parser.add_argument("--benchmark-dir", type=Path, default=Path("benchmarks"))
     parser.add_argument("--answers-dir", type=Path, default=Path("answers"))
     parser.add_argument("--output-dir", type=Path, default=Path("critiques"))
+    parser.add_argument("--auto-evals-dir", type=Path, default=Path("automated_evaluations"))
+    parser.add_argument("--human-evals-dir", type=Path, default=Path("evaluations"))
     parser.add_argument("--max-rounds", type=int, default=5, help="Max self-improvement rounds. Ignored if self-improve disabled.")
     parser.add_argument("--no-self-improve", action="store_false", dest="self_improve", help="Disable critique self-improvement.",)
     parser.add_argument("--disable-batch", action="store_true")
@@ -441,6 +467,13 @@ def main():
 
     critic_specs = registry.pick(args.models) if args.models else registry.by_role("critique")
     critic_names = {spec.name for spec in critic_specs}
+    invalid_questions = collect_invalid_self_answer_questions(
+        args.output_dir,
+        args.auto_evals_dir,
+        args.human_evals_dir,
+        registry,
+        log_automated_disagreements=False,
+    )
 
     custom_pairs: List[Tuple[str, str, str]] = []
     if args.mode == "custom":
@@ -461,6 +494,7 @@ def main():
         if not question_model:
             continue
         benchmark_entries = load_benchmark_entries(bench_path)
+        latest_by_run = latest_outer_attempt_by_run(benchmark_entries)
         answer_models = [spec.name for spec in registry.models.values() if "answer" in spec.roles]
 
         pairs: List[Tuple[Tuple[Optional[str], Optional[str], Optional[str]], str, str]] = []
@@ -476,7 +510,11 @@ def main():
                     answerer,
                     benchmark_entries,
                 )
-                answer_map = build_answer_map(answer_records)
+                answer_map = build_answer_map(
+                    answer_records,
+                    latest_by_run=latest_by_run,
+                    invalid_questions=invalid_questions,
+                )
                 for key, rec in answer_map.items():
                     if args.limit is not None and len(pairs) >= args.limit:
                         break
@@ -490,6 +528,8 @@ def main():
                 args.limit,
                 benchmark_entries,
                 critic_names,
+                latest_by_run,
+                invalid_questions,
             )
 
         if not pairs:
@@ -503,7 +543,12 @@ def main():
             question_text = final_question(entry)
             if not question_text:
                 continue
-            key = question_key(q_slug, entry.run_id, entry.outer_attempt)
+            outer_attempt = normalize_outer_attempt(entry.outer_attempt)
+            if entry.run_id is not None and not is_latest_outer_attempt(entry.run_id, outer_attempt, latest_by_run):
+                continue
+            key = question_key(q_slug, entry.run_id, outer_attempt)
+            if key and key in invalid_questions:
+                continue
             if key and key not in benchmark_question_map:
                 benchmark_question_map[key] = question_text
 
@@ -519,7 +564,11 @@ def main():
                 answer_author,
                 benchmark_entries,
             )
-            answer_map = build_answer_map(answer_records)
+            answer_map = build_answer_map(
+                answer_records,
+                latest_by_run=latest_by_run,
+                invalid_questions=invalid_questions,
+            )
             answer_entry = answer_map.get(key)
             if not answer_entry or answer_entry.status in {STATUS_FAILED, STATUS_ILL_POSED}:
                 run_id = key[0] if key else None

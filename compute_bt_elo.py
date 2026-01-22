@@ -3,7 +3,7 @@ import csv
 import math
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Set, Tuple, Union
 
 from constants import (
     CRITIQUE_VERDICT_CORRECT,
@@ -21,7 +21,17 @@ from data_models import (
     load_evaluation_entries,
 )
 from model_config import load_registry
-from utils import format_key, judging_task_key, question_key, task_key_from_prefix
+from utils import (
+    collect_invalid_self_answer_questions,
+    collect_self_answer_adjudications,
+    format_key,
+    is_latest_outer_attempt,
+    judging_task_key,
+    latest_outer_attempt_by_run,
+    normalize_outer_attempt,
+    question_key,
+    task_key_from_prefix,
+)
 from victory import VictorySide, resolve_automated_victory
 
 
@@ -60,6 +70,9 @@ CritiqueKey = Tuple[str, str, str, Union[int, QuestionKey]]
 
 def load_critique_verdicts(
     critiques_dir: Path,
+    *,
+    latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
+    invalid_questions: Optional[Set[QuestionKey]] = None,
 ) -> Dict[CritiqueKey, Dict[str, Dict[str, Optional[str]]]]:
     verdicts: Dict[CritiqueKey, Dict[str, Dict[str, Optional[str]]]] = defaultdict(dict)
     if not critiques_dir.exists():
@@ -68,6 +81,7 @@ def load_critique_verdicts(
         mode = mode_dir.name
         for q_dir in mode_dir.glob("*"):
             q_slug = q_dir.name
+            latest_by_run = latest_by_question.get(q_slug, {}) if latest_by_question else {}
             for crit_file in q_dir.glob("*.json"):
                 parts = crit_file.stem.split("__", 1)
                 if len(parts) != 2:
@@ -77,6 +91,10 @@ def load_critique_verdicts(
                 for idx, entry in enumerate(entries):
                     if not entry or entry.status != STATUS_SUCCEEDED:
                         continue
+                    outer_attempt = normalize_outer_attempt(entry.outer_attempt)
+                    if entry.run_id is not None and latest_by_run:
+                        if not is_latest_outer_attempt(entry.run_id, outer_attempt, latest_by_run):
+                            continue
                     attempts = entry.attempts or []
                     if not attempts:
                         continue
@@ -86,11 +104,13 @@ def load_critique_verdicts(
                     info = {
                         "verdict": verdict,
                         "run_id": entry.run_id,
-                        "outer_attempt": entry.outer_attempt,
+                        "outer_attempt": outer_attempt,
                         "topic_slug": entry.topic_slug,
                         "question": entry.question,
                     }
-                    q_key = question_key(entry.question_author, entry.run_id, entry.outer_attempt)
+                    q_key = question_key(entry.question_author, entry.run_id, outer_attempt)
+                    if invalid_questions and q_key in invalid_questions:
+                        continue
                     if q_key:
                         verdicts[(q_slug, critic_slug, answer_slug, q_key)][mode] = info
                     verdicts[(q_slug, critic_slug, answer_slug, idx)][mode] = info
@@ -204,10 +224,36 @@ def collect_games(
     answer_critique_mode: str,
     self_answer_critique_mode: str,
     fallback_any_mode: bool,
+    human_eval_dir: Optional[Path] = None,
     log_automated_disagreements: bool = True,
 ) -> Tuple[List[Tuple[str, str, int]], Counter]:
     registry = load_registry(str(registry_path)) if registry_path and registry_path.exists() else None
-    critique_verdicts = load_critique_verdicts(critiques_dir)
+    if human_eval_dir is None:
+        human_eval_dir = Path("evaluations")
+    latest_by_question: Dict[str, Dict[str, int]] = {}
+    for bench_path in benchmarks_dir.glob("*.json"):
+        q_slug = bench_path.stem
+        entries = load_benchmark_entries(bench_path)
+        latest_by_question[q_slug] = latest_outer_attempt_by_run(entries)
+    invalid_questions = collect_invalid_self_answer_questions(
+        critiques_dir,
+        auto_eval_dir,
+        human_eval_dir,
+        registry,
+        log_automated_disagreements=log_automated_disagreements,
+    )
+    self_answer_outcomes = collect_self_answer_adjudications(
+        critiques_dir,
+        auto_eval_dir,
+        human_eval_dir,
+        registry,
+        log_automated_disagreements=log_automated_disagreements,
+    )
+    critique_verdicts = load_critique_verdicts(
+        critiques_dir,
+        latest_by_question=latest_by_question,
+        invalid_questions=invalid_questions,
+    )
     decisions_by_claim = collect_decisions(auto_eval_dir)
     skip_counts: Counter = Counter()
     games: List[Tuple[str, str, int]] = []
@@ -215,6 +261,7 @@ def collect_games(
     for bench_path in benchmarks_dir.glob("*.json"):
         q_slug = bench_path.stem
         benchmarks = load_benchmark_entries(bench_path)
+        latest_by_run = latest_by_question.get(q_slug, {})
         q_name = resolve_model(registry, q_slug) or q_slug
         answers_root = answers_dir / q_slug
         if not answers_root.exists():
@@ -222,30 +269,74 @@ def collect_games(
         for answer_file in answers_root.glob("*.json"):
             a_slug = answer_file.stem
             answers = load_answer_entries(answer_file)
-            max_len = max(len(benchmarks), len(answers))
-            for idx in range(max_len):
-                bench_entry = benchmarks[idx] if idx < len(benchmarks) else None
+            answers_by_key: Dict[Tuple[Optional[str], Optional[str], Optional[str]], Tuple[int, AnswerEntry]] = {}
+            for idx, answer_entry in enumerate(answers):
+                if not answer_entry:
+                    continue
+                outer_attempt = normalize_outer_attempt(answer_entry.outer_attempt)
+                if answer_entry.run_id is not None and latest_by_run:
+                    if not is_latest_outer_attempt(answer_entry.run_id, outer_attempt, latest_by_run):
+                        continue
+                answer_key_value = question_key(
+                    answer_entry.question_model or q_slug,
+                    answer_entry.run_id,
+                    outer_attempt,
+                )
+                if not answer_key_value:
+                    skip_counts["answer_missing_key"] += 1
+                    continue
+                if answer_key_value in invalid_questions:
+                    skip_counts["question_invalid_self_answer"] += 1
+                    continue
+                prior = answers_by_key.get(answer_key_value)
+                if not prior or (
+                    prior[1].status != STATUS_SUCCEEDED
+                    and answer_entry.status == STATUS_SUCCEEDED
+                ):
+                    answers_by_key[answer_key_value] = (idx, answer_entry)
+
+            for idx, bench_entry in enumerate(benchmarks):
                 if not bench_entry or bench_entry.status != STATUS_SUCCEEDED:
                     skip_counts["question_missing_or_failed"] += 1
                     continue
+                outer_attempt = normalize_outer_attempt(bench_entry.outer_attempt)
+                if bench_entry.run_id is not None and latest_by_run:
+                    if not is_latest_outer_attempt(bench_entry.run_id, outer_attempt, latest_by_run):
+                        continue
                 question_text = final_question(bench_entry)
                 if not question_text:
                     skip_counts["question_missing_or_failed"] += 1
                     continue
-                answer_entry = answers[idx] if idx < len(answers) else None
-                if not answer_entry:
+                bench_key = question_key(q_slug, bench_entry.run_id, outer_attempt)
+                if not bench_key:
+                    skip_counts["question_missing_key"] += 1
+                    continue
+                if bench_key in invalid_questions:
+                    skip_counts["question_invalid_self_answer"] += 1
+                    continue
+                answer_match = answers_by_key.get(bench_key)
+                if not answer_match:
                     skip_counts["answer_missing"] += 1
                     continue
+                answer_idx, answer_entry = answer_match
 
-                answer_name = resolve_model(registry, answer_entry.answer_model) or resolve_model(registry, a_slug) or a_slug
+                answer_name = (
+                    resolve_model(registry, answer_entry.answer_model)
+                    or resolve_model(registry, a_slug)
+                    or a_slug
+                )
 
                 self_mode, self_info = find_critique_verdict(
                     critique_verdicts,
                     q_slug,
                     a_slug,
                     q_slug,
-                    idx,
-                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id, answer_entry.outer_attempt),
+                    answer_idx,
+                    question_key(
+                        answer_entry.question_model or q_slug,
+                        answer_entry.run_id,
+                        outer_attempt,
+                    ),
                     self_answer_critique_mode,
                     fallback_any_mode,
                 )
@@ -257,20 +348,8 @@ def collect_games(
                         skip_counts["self_answer_unknown"] += 1
                         continue
                     else:
-                        prefix = f"critique/{self_mode}/{q_slug}/{a_slug}__{q_slug}"
-                        claim_key = _task_key(
-                            prefix,
-                            self_info.get("run_id"),
-                            self_info.get("outer_attempt"),
-                            self_info.get("topic_slug"),
-                            self_info.get("question"),
-                        )
-                        outcome = resolve_automated_victory(
-                            "critique",
-                            decisions_by_claim.get(claim_key, []),
-                            context=format_key(claim_key or ()),
-                            log_automated_disagreements=log_automated_disagreements,
-                        )
+                        q_key = question_key(q_slug, self_info.get("run_id"), self_info.get("outer_attempt"))
+                        outcome = self_answer_outcomes.get(q_key)
                         if outcome == VictorySide.ALICE:
                             skip_counts["self_answer_invalid"] += 1
                             continue
@@ -315,8 +394,12 @@ def collect_games(
                     q_slug,
                     q_slug,
                     a_slug,
-                    idx,
-                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id, answer_entry.outer_attempt),
+                    answer_idx,
+                    question_key(
+                        answer_entry.question_model or q_slug,
+                        answer_entry.run_id,
+                        outer_attempt,
+                    ),
                     answer_critique_mode,
                     fallback_any_mode,
                 )
@@ -414,6 +497,7 @@ def main() -> int:
     parser.add_argument("--answers-dir", type=Path, default=Path("answers"))
     parser.add_argument("--critiques-dir", type=Path, default=Path("critiques"))
     parser.add_argument("--automated-dir", type=Path, default=Path("automated_evaluations"))
+    parser.add_argument("--human-evals-dir", type=Path, default=Path("evaluations"))
     parser.add_argument("--config", type=Path, default=Path("configs/models.json"))
     parser.add_argument("--answer-critique-mode", type=str, default="evaluator")
     parser.add_argument("--self-answer-critique-mode", type=str, default="contradictor")
@@ -437,6 +521,7 @@ def main() -> int:
         args.answer_critique_mode,
         args.self_answer_critique_mode,
         args.fallback_any_mode,
+        args.human_evals_dir,
         log_automated_disagreements=not args.disable_disagreement_logs,
     )
 

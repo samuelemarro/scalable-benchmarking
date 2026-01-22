@@ -46,7 +46,12 @@ def load_judgment_critique_guidance(base: str = "guidance") -> str:
     return read_guidance(str(Path(base) / "judgment_critique_quality.md"))
 
 
-def build_question_prompt(topic: str, guidance_text: str, previous_questions: Optional[List[str]]) -> str:
+def build_question_prompt(
+    topic: str,
+    guidance_text: str,
+    previous_questions: Optional[List[str]],
+    previous_context: Optional[str] = None,
+) -> str:
     """
     Prompt for generating a challenging mathematics question with solution.
     This implements the tester/questioner role in the benchmarking framework.
@@ -54,10 +59,13 @@ def build_question_prompt(topic: str, guidance_text: str, previous_questions: Op
     extra = ""
     if previous_questions:
         attempts = "\n".join(f"- {q}" for q in previous_questions)
+        context = previous_context or (
+            "The following questions on this topic failed the self-solve gate or meaningfulness check.\n"
+            "Generate a materially different, well-posed replacement that avoids these issues:"
+        )
         extra = (
             "\n\n**Previous Attempts:**\n"
-            "The following questions on this topic failed the self-solve gate or meaningfulness check.\n"
-            "Generate a materially different, well-posed replacement that avoids these issues:\n"
+            f"{context}\n"
             f"{attempts}\n"
         )
     return (

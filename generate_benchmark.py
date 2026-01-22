@@ -27,7 +27,16 @@ from data_models import (
     load_benchmark_entries,
     save_benchmark_entries,
 )
-from utils import _ensure_non_empty_responses, _load_parsing_config, clean_math, setup_logging
+from utils import (
+    _ensure_non_empty_responses,
+    _load_parsing_config,
+    clean_math,
+    collect_invalid_self_answer_questions,
+    latest_outer_attempt_by_run,
+    normalize_outer_attempt,
+    question_key,
+    setup_logging,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -159,16 +168,25 @@ def generate_questions(
         run_id = run["run_id"]
         topic_name = run["topic_name"]
         outer_attempt = run.get("outer_attempt", 1)
-        previous_attempts: List[str] = []
-        prev_entry = prev_map.get((run_id, outer_attempt))
-        if prev_entry and prev_entry.status in {STATUS_FAILED, STATUS_ILL_POSED}:
-            for gen_round in prev_entry.generation_rounds or []:
-                refinements = gen_round.refinement_rounds or []
-                if refinements:
-                    question = refinements[-1].question
-                    if question:
-                        previous_attempts.append(question)
-        prompts.append(build_question_prompt(topic_name, guidance, previous_attempts if previous_attempts else None))
+        previous_attempts = list(run.get("previous_questions") or [])
+        previous_context = run.get("previous_context")
+        if not previous_attempts:
+            prev_entry = prev_map.get((run_id, outer_attempt))
+            if prev_entry and prev_entry.status in {STATUS_FAILED, STATUS_ILL_POSED}:
+                for gen_round in prev_entry.generation_rounds or []:
+                    refinements = gen_round.refinement_rounds or []
+                    if refinements:
+                        question = refinements[-1].question
+                        if question:
+                            previous_attempts.append(question)
+        prompts.append(
+            build_question_prompt(
+                topic_name,
+                guidance,
+                previous_attempts if previous_attempts else None,
+                previous_context,
+            )
+        )
 
     if len(prompts) == 1:
         responses = [query_llm_single(model, prompts[0], temperature=temperature, reasoning=reasoning)]
@@ -194,7 +212,11 @@ def main():
     parser.add_argument("--models", nargs="*", help="Subset of model names to run.")
     parser.add_argument("--config", type=Path, default=Path("configs/models.json"), help="Model registry JSON.")
     parser.add_argument("--output-dir", type=Path, default=Path("benchmarks"), help="Where to store benchmark files.")
+    parser.add_argument("--critiques-dir", type=Path, default=Path("critiques"), help="Directory with critiques.")
+    parser.add_argument("--auto-evals-dir", type=Path, default=Path("automated_evaluations"), help="Directory with automated evaluations.")
+    parser.add_argument("--human-evals-dir", type=Path, default=Path("evaluations"), help="Directory with human evaluations.")
     parser.add_argument("--max-rounds", type=int, default=5, help="Self-critique rounds.")
+    parser.add_argument("--max-outer-attempts", type=int, default=1, help="Max outer attempts when self-answers are adjudicated incorrect.")
     parser.add_argument(
         "--max-question-attempts",
         type=int,
@@ -216,6 +238,13 @@ def main():
     runs = load_runs(args.runs_file, topic_info)
     if args.limit is not None:
         runs = runs[: args.limit]
+    invalid_questions = collect_invalid_self_answer_questions(
+        args.critiques_dir,
+        args.auto_evals_dir,
+        args.human_evals_dir,
+        registry,
+        log_automated_disagreements=False,
+    )
 
     models = registry.pick(args.models) if args.models else registry.by_role("benchmark")
 
@@ -231,6 +260,53 @@ def main():
             outer_attempt = entry.outer_attempt if entry.outer_attempt is not None else 1
             run_id_to_entry[(entry.run_id, outer_attempt)] = entry
 
+        latest_by_run = latest_outer_attempt_by_run(current_entries)
+        run_info_by_id = {run["run_id"]: run for run in runs}
+        model_runs = list(runs)
+        run_keys = {(run["run_id"], run.get("outer_attempt", 1)) for run in model_runs}
+
+        def previous_questions_for_run(run_id: str, max_attempt: int) -> List[str]:
+            collected = []
+            for entry in current_entries:
+                if not entry or entry.run_id != run_id:
+                    continue
+                attempt_num = normalize_outer_attempt(entry.outer_attempt)
+                if attempt_num is None or attempt_num > max_attempt:
+                    continue
+                question = final_question(entry)
+                if question:
+                    collected.append((attempt_num, question))
+            collected.sort(key=lambda item: item[0])
+            return [question for _attempt, question in collected]
+
+        if args.max_outer_attempts and args.max_outer_attempts > 1:
+            for run_id, run_info in run_info_by_id.items():
+                base_attempt = normalize_outer_attempt(run_info.get("outer_attempt", 1))
+                current_max = latest_by_run.get(run_id, base_attempt or 1)
+                if current_max is None or current_max >= args.max_outer_attempts:
+                    continue
+                q_key = question_key(slug, run_id, current_max)
+                if not q_key or q_key not in invalid_questions:
+                    continue
+                next_attempt = current_max + 1
+                if (run_id, next_attempt) in run_keys:
+                    continue
+                previous_questions = previous_questions_for_run(run_id, current_max)
+                model_runs.append(
+                    {
+                        "run_id": run_id,
+                        "outer_attempt": next_attempt,
+                        "topic_slug": run_info["topic_slug"],
+                        "topic_name": run_info["topic_name"],
+                        "previous_questions": previous_questions,
+                        "previous_context": (
+                            "The following questions on this topic had self-answers adjudicated incorrect. "
+                            "Generate a materially different, well-posed replacement that is simpler than these questions:"
+                        ),
+                    }
+                )
+                run_keys.add((run_id, next_attempt))
+
         def question_attempts(entry: Optional[BenchmarkEntry]) -> int:
             if not entry or not entry.generation_rounds:
                 return 0
@@ -238,7 +314,7 @@ def main():
 
         def select_pending_runs() -> List[Dict]:
             pending = []
-            for run in runs:
+            for run in model_runs:
                 entry = run_id_to_entry.get((run["run_id"], run.get("outer_attempt", 1)))
                 if entry and entry.status == STATUS_SUCCEEDED:
                     continue

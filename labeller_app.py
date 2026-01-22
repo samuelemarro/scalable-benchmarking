@@ -22,9 +22,13 @@ from utils import (
     answer_key,
     answer_key_from_entry,
     benchmark_answers_from_entries,
+    collect_invalid_self_answer_questions,
     format_key,
     human_evaluation_key_from_entry,
+    is_latest_outer_attempt,
     judging_task_key,
+    latest_outer_attempt_by_run,
+    normalize_outer_attempt,
     question_key,
 )
 
@@ -70,7 +74,14 @@ def benchmark_answer_map(benchmark_dir: Path, q_slug: str) -> Dict:
     return mapping
 
 
-def gather_illposed(debates_dir: Path, answers_dir: Path, benchmark_dir: Path, registry) -> List[JudgingTask]:
+def gather_illposed(
+    debates_dir: Path,
+    answers_dir: Path,
+    benchmark_dir: Path,
+    registry,
+    latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
+    invalid_questions: Optional[set] = None,
+) -> List[JudgingTask]:
     items = []
     for debate_file in debates_dir.glob("illposed/*/*.json"):
         q_slug = debate_file.parent.name
@@ -95,13 +106,22 @@ def gather_illposed(debates_dir: Path, answers_dir: Path, benchmark_dir: Path, r
             if key and key not in answer_map:
                 answer_map[key] = answer
         keys = set(debate_map) | set(answer_map)
+        latest_by_run = latest_by_question.get(q_slug, {}) if latest_by_question else {}
         for key in keys:
+            run_id, _q_model, _a_model, outer_attempt = key
+            attempt = normalize_outer_attempt(outer_attempt)
+            if run_id is not None and latest_by_run:
+                if not is_latest_outer_attempt(run_id, attempt, latest_by_run):
+                    continue
+            q_key = question_key(q_slug, run_id, outer_attempt)
+            if invalid_questions and q_key in invalid_questions:
+                continue
             debate = debate_map.get(key)
             question = debate.question if debate else ""
             answer_record = answer_map.get(key)
             answer_text = final_answer(answer_record) if answer_record else ""
             if not answer_text:
-                answer_text = benchmark_answers.get(question_key(q_slug, key[0], key[3]), "")
+            answer_text = benchmark_answers.get(question_key(q_slug, key[0], key[3]), "")
             run_id = (debate.run_id if debate else None) or (answer_record.run_id if answer_record else None)
             outer_attempt = (debate.outer_attempt if debate else None) or (
                 answer_record.outer_attempt if answer_record else None
@@ -126,12 +146,21 @@ def gather_illposed(debates_dir: Path, answers_dir: Path, benchmark_dir: Path, r
     return items
 
 
-def gather_critiques(debates_dir: Path, critiques_dir: Path, answers_dir: Path, benchmark_dir: Path, registry) -> List[JudgingTask]:
+def gather_critiques(
+    debates_dir: Path,
+    critiques_dir: Path,
+    answers_dir: Path,
+    benchmark_dir: Path,
+    registry,
+    latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
+    invalid_questions: Optional[set] = None,
+) -> List[JudgingTask]:
     items = []
     for crit_mode_dir in critiques_dir.glob("*"):
         mode = crit_mode_dir.name
         for q_dir in crit_mode_dir.glob("*"):
             q_slug = q_dir.name
+            latest_by_run = latest_by_question.get(q_slug, {}) if latest_by_question else {}
             question_model = q_slug
             for crit_file in q_dir.glob("*.json"):
                 critic_slug, answer_slug = crit_file.stem.split("__")
@@ -159,6 +188,13 @@ def gather_critiques(debates_dir: Path, critiques_dir: Path, answers_dir: Path, 
 
                 for critique_entry in critiques:
                     if not critique_entry:
+                        continue
+                    outer_attempt = normalize_outer_attempt(critique_entry.outer_attempt)
+                    if critique_entry.run_id is not None and latest_by_run:
+                        if not is_latest_outer_attempt(critique_entry.run_id, outer_attempt, latest_by_run):
+                            continue
+                    q_key = question_key(q_slug, critique_entry.run_id, outer_attempt)
+                    if invalid_questions and q_key in invalid_questions:
                         continue
                     critique_attempts = critique_entry.attempts or []
                     if critique_attempts and critique_attempts[-1].verdict == CRITIQUE_VERDICT_CORRECT:
@@ -291,13 +327,42 @@ def main():
     parser.add_argument("--debates-dir", type=Path, default=Path("debates"))
     parser.add_argument("--benchmark-dir", type=Path, default=Path("benchmarks"))
     parser.add_argument("--evaluations-dir", type=Path, default=Path("evaluations"))
+    parser.add_argument("--automated-evals-dir", type=Path, default=Path("automated_evaluations"))
     parser.add_argument("--config", type=Path, default=Path("configs/models.json"))
     args, _ = parser.parse_known_args()
 
     registry = load_registry(str(args.config))
 
-    illposed = gather_illposed(args.debates_dir, args.answers_dir, args.benchmark_dir, registry)
-    critiques = gather_critiques(args.debates_dir, args.critiques_dir, args.answers_dir, args.benchmark_dir, registry)
+    latest_by_question = {}
+    for bench_path in args.benchmark_dir.glob("*.json"):
+        q_slug = bench_path.stem
+        entries = load_benchmark_entries(bench_path)
+        latest_by_question[q_slug] = latest_outer_attempt_by_run(entries)
+    invalid_questions = collect_invalid_self_answer_questions(
+        args.critiques_dir,
+        args.automated_evals_dir,
+        args.evaluations_dir,
+        registry,
+        log_automated_disagreements=False,
+    )
+
+    illposed = gather_illposed(
+        args.debates_dir,
+        args.answers_dir,
+        args.benchmark_dir,
+        registry,
+        latest_by_question,
+        invalid_questions,
+    )
+    critiques = gather_critiques(
+        args.debates_dir,
+        args.critiques_dir,
+        args.answers_dir,
+        args.benchmark_dir,
+        registry,
+        latest_by_question,
+        invalid_questions,
+    )
     tasks = illposed + critiques
 
     eval_path = args.evaluations_dir / f"{args.username}.json"

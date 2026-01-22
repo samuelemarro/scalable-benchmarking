@@ -23,8 +23,12 @@ from utils import (
     automated_evaluation_key_for_task,
     automated_evaluation_key_from_entry,
     benchmark_answers_from_entries,
+    collect_invalid_self_answer_questions,
     format_key,
+    is_latest_outer_attempt,
     judging_task_key,
+    latest_outer_attempt_by_run,
+    normalize_outer_attempt,
     question_key,
     safe_load_json,
     setup_logging,
@@ -85,6 +89,15 @@ def build_entry_map(entries, key_fn):
             continue
         mapped[key] = entry
     return mapped
+
+
+def latest_outer_attempts_by_question(benchmark_dir: Path) -> Dict[str, Dict[str, int]]:
+    latest_by_question: Dict[str, Dict[str, int]] = {}
+    for bench_path in benchmark_dir.glob("*.json"):
+        q_slug = bench_path.stem
+        entries = load_benchmark_entries(bench_path)
+        latest_by_question[q_slug] = latest_outer_attempt_by_run(entries)
+    return latest_by_question
 
 
 def final_answer(entry: AnswerEntry) -> Optional[str]:
@@ -620,6 +633,7 @@ def main():
     parser.add_argument("--critiques-dir", type=Path, default=Path("critiques"))
     parser.add_argument("--debates-dir", type=Path, default=Path("debates"))
     parser.add_argument("--output-dir", type=Path, default=Path("automated_evaluations"))
+    parser.add_argument("--human-evals-dir", type=Path, default=Path("evaluations"))
     parser.add_argument("--batch-size", type=int, default=None)
     parser.add_argument("--disable-batch", action="store_true")
     parser.add_argument("--parallel", action="store_true", help="Process judgments in parallel per task (no batch APIs).")
@@ -655,6 +669,29 @@ def main():
                 args.force_correct_critiques,
             )
         )
+
+    invalid_questions = collect_invalid_self_answer_questions(
+        args.critiques_dir,
+        args.output_dir,
+        args.human_evals_dir,
+        registry,
+        log_automated_disagreements=False,
+    )
+    latest_by_question = latest_outer_attempts_by_question(args.benchmark_dir)
+    if tasks:
+        filtered_tasks: List[JudgingTask] = []
+        for task in tasks:
+            q_slug = task.question_model
+            latest_by_run = latest_by_question.get(q_slug or "")
+            outer_attempt = normalize_outer_attempt(task.outer_attempt)
+            if latest_by_run and task.run_id is not None:
+                if not is_latest_outer_attempt(task.run_id, outer_attempt, latest_by_run):
+                    continue
+            q_key = question_key(q_slug, task.run_id, outer_attempt)
+            if q_key and q_key in invalid_questions:
+                continue
+            filtered_tasks.append(task)
+        tasks = filtered_tasks
 
     if args.models:
         judges = registry.pick(args.models)

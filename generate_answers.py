@@ -3,7 +3,7 @@ import json
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 from dotenv import load_dotenv
 from tqdm import tqdm
@@ -27,7 +27,18 @@ from data_models import (
     load_benchmark_entries,
     save_answer_entries,
 )
-from utils import _ensure_non_empty_responses, answer_key, answer_key_from_entry, clean_math, setup_logging
+from utils import (
+    _ensure_non_empty_responses,
+    answer_key,
+    answer_key_from_entry,
+    clean_math,
+    collect_invalid_self_answer_questions,
+    is_latest_outer_attempt,
+    latest_outer_attempt_by_run,
+    normalize_outer_attempt,
+    question_key,
+    setup_logging,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +78,9 @@ def prepare_batch(
     rerun_failures: bool,
     limit: Optional[int],
     allow_self_answering: bool,
+    latest_by_run: Dict[str, int],
+    invalid_questions: Set,
+    question_slug: str,
 ) -> List[Tuple[int, Dict, str]]:
     if question_model == answer_model and not allow_self_answering:
         return []
@@ -87,6 +101,12 @@ def prepare_batch(
         if not entry or entry.status != STATUS_SUCCEEDED:
             status = entry.status if entry else "missing"
             logger.info(f"Skipping question {question_model}-{idx} (status: {status})")
+            continue
+        outer_attempt = normalize_outer_attempt(entry.outer_attempt)
+        if entry.run_id is not None and not is_latest_outer_attempt(entry.run_id, outer_attempt, latest_by_run):
+            continue
+        q_key = question_key(question_slug, entry.run_id, outer_attempt)
+        if q_key and q_key in invalid_questions:
             continue
         question_text = final_question(entry)
         if not question_text:
@@ -193,6 +213,9 @@ def main():
     parser.add_argument("--config", type=Path, default=Path("configs/models.json"), help="Model registry.")
     parser.add_argument("--benchmark-dir", type=Path, default=Path("benchmarks"), help="Directory with benchmark JSON files.")
     parser.add_argument("--output-dir", type=Path, default=Path("answers"), help="Directory to store answers.")
+    parser.add_argument("--critiques-dir", type=Path, default=Path("critiques"), help="Directory with critiques.")
+    parser.add_argument("--auto-evals-dir", type=Path, default=Path("automated_evaluations"), help="Directory with automated evaluations.")
+    parser.add_argument("--human-evals-dir", type=Path, default=Path("evaluations"), help="Directory with human evaluations.")
     parser.add_argument("--models", nargs="*", help="Subset of models to use as answerers.")
     parser.add_argument("--max-rounds", type=int, default=5, help="Self-improvement rounds.")
     parser.add_argument("--disable-batch", action="store_true", help="Disable batching.")
@@ -209,6 +232,13 @@ def main():
     answer_guidance = load_answer_guidance()
     self_critique_guidance = load_self_critique_guidance()
     overrides = load_json(args.illposed_overrides, {"overrides": {}})
+    invalid_questions = collect_invalid_self_answer_questions(
+        args.critiques_dir,
+        args.auto_evals_dir,
+        args.human_evals_dir,
+        registry,
+        log_automated_disagreements=False,
+    )
 
     answer_models = registry.pick(args.models) if args.models else registry.by_role("answer")
     benchmark_files = list(args.benchmark_dir.glob("*.json"))
@@ -224,6 +254,7 @@ def main():
             if not benchmark_entries:
                 logger.info(f"Skipping empty benchmark: {bench_path}")
                 continue
+            latest_by_run = latest_outer_attempt_by_run(benchmark_entries)
             for answer_spec in answer_models:
                 if answer_spec.name == question_model and not args.allow_self_answering:
                     continue
@@ -237,6 +268,9 @@ def main():
                     args.rerun_failures,
                     args.limit,
                     args.allow_self_answering,
+                    latest_by_run,
+                    invalid_questions,
+                    q_slug,
                 )
                 if not batch:
                     continue
