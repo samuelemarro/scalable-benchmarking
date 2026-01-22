@@ -651,7 +651,14 @@ def main():
             )
         )
 
-    judges = registry.pick(args.models) if args.models else list(registry.models.values())
+    if args.models:
+        judges = registry.pick(args.models)
+        non_judges = [spec.name for spec in judges if "judge" not in spec.roles]
+        if non_judges:
+            logger.warning("Skipping non-judge models: %s", ", ".join(non_judges))
+            judges = [spec for spec in judges if "judge" in spec.roles]
+    else:
+        judges = registry.by_role("judge")
     jobs_by_judge: Dict[str, Dict[str, object]] = {spec.name: {"spec": spec, "tasks": []} for spec in judges}
 
     for task in tasks:
