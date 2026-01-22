@@ -38,7 +38,8 @@
           "improvements": "Your critique is accurate and well-justified: it correctly notes that the answer gives a family $(\\varphi_n)$ rather than a single sentence, that no fixed $\\varphi_n$ excludes all finite structures because $R$ can be interpreted arbitrarily (e.g. as $N\\times N$), that the answer incorrectly treats $R$ as if it must be $<$, and that $(\\mathbb Z,<)$ is not dense. The critique JSON format is valid. A minor optional improvement would be to mention the (usually nonstandard) empty-domain caveat: if empty finite domains were allowed, many universal sentences would be vacuously true, strengthening your point that the proposed $\\varphi_n$ cannot work."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider a set $S = \\{1, 2, 3, \\ldots, 20\\}$. We want to select a subset $A \\subseteq S$ such that no two elements in $A$ are consecutive integers. Determine the number of such subsets $A$.",
@@ -61,7 +62,8 @@
           "improvements": "The critique is accurate: the recurrence $a_n=a_{n-1}+a_{n-2}$ and base cases $a_1=2$, $a_2=3$ are correct, and the computed value $a_{20}=17711$ matches $F_{22}$ under $a_n=F_{n+2}$. As a minor enhancement, you could mention the implicit base case $a_0=1$ (empty subset of $\\{\\}$) to make the Fibonacci-indexing relation $a_n=F_{n+2}$ fully explicit, but this is not necessary for correctness."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $p$ be a prime number greater than 3. Prove that $p^2 \\equiv 1 \\pmod{24}$.",
@@ -85,7 +87,8 @@
           "improvements": "The critique is accurate: the proof\u2019s claims that $k$ must be even in $p=6k+1$ and $k$ must be odd in $p=6k-1$ are false because $6k\\pm1$ is odd for every integer $k$. Since the argument for divisibility by $24$ relies on those incorrect parity restrictions, it fails to cover primes such as $p=7$ (where $p=6\\cdot 1+1$ with $k$ odd). The suggested fix (showing $k(3k\\pm1)$ is always even) is correct. The critique also follows the stated critique JSON format (valid JSON; `verdict` is an allowed value; `notes` is a string; `suggestions` is provided appropriately). If you want to strengthen it further, you could explicitly cite a counterexample subcase like $p=7$ to illustrate the gap."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $(L, \\leq)$ be a complete lattice, and let $f: L \\to L$ be an order-preserving function (i.e., if $x \\leq y$ in $L$, then $f(x) \\leq f(y)$). Prove that the set of fixed points of $f$, denoted by $F = \\{ x \\in L \\mid f(x) = x \\}$, is a complete sublattice of $L$.",
@@ -109,7 +112,8 @@
           "improvements": "If you want to make the critique even tighter, you could (i) add an explicit counterexample to the claim that $\\operatorname{Fix}(f)$ is closed under $\\bigvee_L$/$\\bigwedge_L$ for arbitrary monotone $f$ (e.g. on $\\mathcal P(\\{1,2,3\\})$ define $f(X)=X$ except $f(\\{1,2\\})=\\{1,2,3\\}$; then $\\{1\\},\\{2\\}$ are fixed but their join $\\{1,2\\}$ is not), and (ii) note the potential terminology ambiguity: some authors might loosely say \u201ccomplete sublattice\u201d meaning \u201ccomplete lattice under the induced order,\u201d in which case Knaster\u2013Tarski gives completeness but not closure under ambient joins/meets."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $G$ be a group of order 56. Prove that $G$ has a normal subgroup of order 7.",
@@ -133,7 +137,8 @@
           "improvements": "The critique is accurate and evidence-based: it correctly identifies the counting error ($56-(1+8\\cdot 6)=7$, not 8), explains why \u201c8 elements outside\u201d would not contradict the existence of a Sylow $2$-subgroup of order 8, and correctly notes the statement of the problem is false by giving a valid counterexample (e.g. $\\mathrm{AGL}(1,8)\\cong C_2^3\\rtimes C_7$ with $n_7=8$). The critique is also valid JSON and uses the expected fields (\"verdict\", \"notes\", optional \"suggestions\")."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $K = \\mathbb{Q}(\\sqrt{2}, \\sqrt{3})$ be a field extension of $\\mathbb{Q}$. Determine the degree of the field extension $[K : \\mathbb{Q}]$ and find a basis for $K$ over $\\mathbb{Q}$.",
@@ -156,7 +161,8 @@
           "improvements": "The critique is accurate and properly justified. A minor optional improvement would be to explicitly note that from $3=a^2+2b^2+2ab\\sqrt{2}$ one concludes $2ab=0$ by linear independence of $1$ and $\\sqrt{2}$ over $\\mathbb{Q}$ (i.e., $\\sqrt{2}\\notin\\mathbb{Q}$), but the current explanation is already sufficient. The critique JSON format (with `verdict` and `notes`) is valid."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $R$ be a commutative ring with unity, and let $I$ and $J$ be ideals of $R$. Suppose that $I + J = R$. Prove that $I \\cap J = IJ$.",
@@ -180,7 +186,8 @@
           "improvements": "Your critique correctly identifies the key flaw: the proof\u2019s step (1) uses an invalid implication (\u201c$xi\\in IJ$ because $x,i\\in I$\u201d and similarly for $xj$), since $IJ$ requires one factor from $I$ and one from $J$. Your suggested fix (use $x\\in J$ with $i\\in I$, and $x\\in I$ with $j\\in J$) is accurate. The critique JSON format (with `verdict`, `notes`, optional `suggestions`) is valid. If you want to be extra precise, you could add that although the stated *reason* is wrong, the *membership* claims $xi\\in IJ$ and $xj\\in IJ$ are still true because $x\\in I\\cap J$; thus one might classify the solution as having a correct idea but a justification error (potentially \u201cinsufficient\u201d depending on strictness)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $V$ be the affine variety in $\\mathbb{C}^3$ defined by the ideal $I = \\langle x^2 + y^2 + z^2 - 1, x^2 + y^2 - z \\rangle$. Determine the dimension of $V$ and describe its irreducible components.",
@@ -204,7 +211,8 @@
           "improvements": "No changes needed. The critique correctly identifies the key error (using the real inequality $x^2+y^2\\ge 0$ over $\\mathbb{C}$), correctly keeps both roots of $u^2+u-1=0$, and accurately concludes that $V$ is the union of two 1-dimensional irreducible components. The critique is also valid JSON in the required (verdict/notes/suggestions) format."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $A$ be a $3 \\times 3$ matrix with real entries such that $A^3 = I$, where $I$ is the $3 \\times 3$ identity matrix. Determine all possible eigenvalues of $A$ and prove your result.",
@@ -227,7 +235,8 @@
           "improvements": "Your critique is accurate and appropriately justified: it correctly confirms the key implication $A^3=I \\Rightarrow \\lambda^3=1$ for any eigenvalue $\\lambda$, identifies the cube roots of unity, and correctly applies the conjugate-pair condition for real matrices to describe allowable eigenvalue multisets in dimension 3. If you wanted to strengthen the critique further, you could optionally note that since the minimal polynomial divides $x^3-1$ (which has distinct roots over $\\mathbb{C}$), $A$ is automatically diagonalizable over $\\mathbb{C}$, though this is not necessary for the eigenvalue classification."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $R$ be a commutative ring with unity, and let $I$ and $J$ be ideals of $R$. Define the product of $I$ and $J$, denoted $IJ$, as the set of all finite sums of elements of the form $ab$ where $a \\in I$ and $b \\in J$. Prove that $IJ$ is an ideal of $R$.",
@@ -251,7 +260,8 @@
           "improvements": "If you want to be even more evidence-based, you could quote the exact line where the answer claims \u201c$IJ$ is a subring of $R$\u201d and explicitly note that the proof as written does not check additive inverses (required for an additive subgroup) and does not check multiplicative closure (required for a subring, though irrelevant for being an ideal). You could also note that because $R$ is commutative, checking $rx\\in IJ$ suffices for the ideal absorption property (no separate check of $xr$ is needed)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $A$ be a nonassociative algebra over the field $\\mathbb{R}$ with a basis $\\{e_1, e_2, e_3\\}$. The multiplication in $A$ is defined by the following rules:\n\n1. $e_1 e_1 = e_2$,\n2. $e_1 e_2 = e_3$,\n3. $e_2 e_1 = -e_3$,\n4. $e_2 e_2 = e_1$,\n5. $e_3 e_1 = e_1$,\n6. $e_3 e_2 = e_2$,\n7. $e_3 e_3 = e_3$.\n\nDetermine whether $A$ is a Lie algebra. If it is, find the dimension of its center. If it is not, provide a reason why it fails to be a Lie algebra.",
@@ -274,7 +284,8 @@
           "improvements": "The critique is accurate and evidence-based: over $\\mathbb R$ a Lie bracket must be alternating, so $[x,x]=0$ for all $x$, and the given product has $e_1e_1=e_2\\neq 0$ (similarly $e_2e_2=e_1$, $e_3e_3=e_3$), which immediately rules out a Lie algebra. The critique also correctly notes (as a minor point) that an algebra product is normally specified on all basis pairs and that calling missing products \u201cnot defined\u201d is nonstandard, but this does not affect the conclusion. The critique itself is valid JSON and matches the stated critique-format expectations (fields `verdict` and `notes`)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $\\mathcal{A}$ be an abelian category, and consider the following short exact sequence of objects in $\\mathcal{A}$:\n\n$$ 0 \\to A \\xrightarrow{f} B \\xrightarrow{g} C \\to 0. $$\n\nAssume that $C$ is a projective object in $\\mathcal{A}$. Prove that the sequence splits, i.e., show that there exists a morphism $h: C \\to B$ such that $g \\circ h = \\text{id}_C$.",
@@ -297,7 +308,8 @@
           "improvements": "The critique is accurate: it correctly confirms the core lifting argument using projectivity of $C$ and rightly flags the minor misstatement that epimorphicity of $g$ comes from exactness at $C$ (or from being a short exact sequence), not from exactness at $B$. The critique also conforms to the required critique JSON format (it is valid JSON with a permitted `verdict` value and a string `notes`)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $X$ be a compact Hausdorff space, and let $C(X, \\mathbb{C})$ denote the algebra of continuous complex-valued functions on $X$. Consider the vector bundle $E \\to X$ associated with a projection $p \\in M_n(C(X, \\mathbb{C}))$, where $M_n(C(X, \\mathbb{C}))$ is the algebra of $n \\times n$ matrices with entries in $C(X, \\mathbb{C})$. \n\nSuppose $p$ is a projection such that $p^2 = p$ and $p^* = p$. The K-theory group $K^0(X)$ is defined as the Grothendieck group of isomorphism classes of vector bundles over $X$. \n\nProve that the class $[E]$ in $K^0(X)$ is independent of the choice of the projection $p$ within its homotopy class. In other words, if $p_t \\in M_n(C(X, \\mathbb{C}))$ is a continuous family of projections with $p_0 = p$ and $p_1 = q$, then $[E_p] = [E_q]$ in $K^0(X)$.",
@@ -321,7 +333,8 @@
           "improvements": "Optionally note explicitly that compact Hausdorff spaces are paracompact, so the standard lemma \u201chomotopic maps induce isomorphic pullback bundles\u201d applies cleanly. You could also mention that $X\\times\\{0\\}$ and $X\\times\\{1\\}$ are related by a deformation retraction of $X\\times[0,1]$, which is the extra structure missing from the answer\u2019s Step 4."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $G$ be a finite group of order 56. Prove that $G$ has a normal subgroup of order 7.",
@@ -345,7 +358,8 @@
           "improvements": "Your critique is accurate and well-supported: it correctly flags that $n_2$ can be $7$ as well as $1$, and that an order-$8$ Sylow $2$-subgroup can indeed \u201caccount for\u201d $8$ elements (including the identity), so the purported contradiction does not follow. The critique is also valid JSON and matches the expected critique-field structure (with `verdict`, `notes`, and optional `suggestions`).\n\nOptional strengthening: you could additionally note a separate counting slip in the original solution: with $n_7=8$, the union of Sylow $7$-subgroups has size $1+8\\cdot 6=49$, not $48$, since the identity is shared; but this does not rescue the original argument. Your suggested fix via the action $H\\to\\mathrm{Aut}(C_7)\\cong C_6$ is correct as stated."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $G$ be a connected Lie group and let $H$ be a closed subgroup of $G$. Prove that the quotient space $G/H$ is a smooth manifold. Furthermore, determine the dimension of $G/H$ in terms of the dimensions of $G$ and $H$.",
@@ -369,7 +383,8 @@
           "improvements": "Your critique is accurate and evidence-based: it correctly flags that the solution mostly asserts standard results without constructing charts or proving that the projection $\\pi:G\\to G/H$ is a smooth submersion, and it correctly identifies the imprecision in the claimed local trivialization (the map $(u,h)\\mapsto uh$ with $u$ near $e$ cannot give a neighborhood of an arbitrary $g$ without left translation, and one typically needs $u$ in a transversal submanifold/complement). It also correctly notes that the dimension formula needs justification (e.g., constant rank theorem/submersion theorem or explicit local product decomposition). The critique JSON is valid and uses an allowed verdict. Minor possible improvement: explicitly quote the exact problematic sentence(s) from the answer when criticizing the local trivialization, but the critique is already sufficiently specific."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a continuous function such that for all $x \\in \\mathbb{R}$, $f(x) = f(x^2)$. Prove that $f$ is a constant function.",
@@ -393,7 +408,8 @@
           "improvements": "The critique is accurate and evidence-based: it correctly flags the unjustified step for $x>1$ (continuity does not imply anything about $t\\to\\infty$), notes the downstream dependence of the $x<0$ case on the faulty $x\\ge 0$ argument, and observes that the solution never establishes $f(0)=f(1)$. The suggested repair (iterate square roots so $x^{1/2^n}\\to 1$ and use continuity, then show $f(1)=f(0)$ via $(0,1)$) is also mathematically appropriate. Formatting-wise, the critique is valid JSON with the required fields for the critique itself."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f: [0, 1] \\to \\mathbb{R}$ be a Lebesgue integrable function such that $\\int_0^1 f(x) \\, dx = 0$. Prove that for any $\\epsilon > 0$, there exists a measurable set $E \\subseteq [0, 1]$ with measure $m(E) < \\epsilon$ such that $\\int_{[0, 1] \\setminus E} f(x) \\, dx = 0$.",
@@ -417,7 +433,8 @@
           "improvements": "Your critique correctly identifies two substantive logical errors in the proposed proof: (1) integrability plus $\\int f=0$ does not imply $m(A_n)\\to 0$ or $m(B_n)\\to 0$, and your counterexample $f=\\mathbf 1_{[0,1/2]}-\\mathbf 1_{(1/2,1]}$ directly disproves that claim; (2) Step 4 incorrectly takes $n\\to\\infty$ after fixing $E=A_n\\cup B_n$, even though changing $n$ changes $E$, so the conclusion $\\int_{[0,1]\\setminus E} f=0$ does not follow for a single chosen $E$. The critique\u2019s additional observation that the problem as stated is trivial via $E=\\varnothing$ is also accurate. The critique itself is valid JSON and uses an allowed critique-format schema (with keys `verdict`, `notes`, and optional `suggestions`)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f(z) = z^3 - 3z + 2$ be a polynomial function of a complex variable $z$. Determine all the roots of $f(z)$ in the complex plane.",
@@ -440,7 +457,8 @@
           "improvements": "The critique is accurate: $f(1)=0$ and $f(-2)=0$, and dividing $z^3-3z+2$ by $(z-1)(z+2)=z^2+z-2$ indeed yields the remaining factor $z-1$, so $f(z)=(z-1)^2(z+2)$. The critique also uses the expected JSON format (keys `verdict` and `notes`, with an allowed verdict value). If desired, it could be strengthened slightly by explicitly noting that a cubic must have exactly three roots over $\\mathbb{C}$ counting multiplicity, so the multiplicities account for all roots."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $D$ be the open unit disk in the complex plane, i.e., $D = \\{ z \\in \\mathbb{C} : |z| < 1 \\}$. Consider the function $u: D \\to \\mathbb{R}$ defined by\n\n$$ u(z) = \\log \\left( \\frac{1}{1 - |z|^2} \\right). $$\n\nProve that $u$ is a harmonic function on $D$. Furthermore, determine whether $u$ can be extended to a harmonic function on the closed unit disk $\\overline{D} = \\{ z \\in \\mathbb{C} : |z| \\leq 1 \\}$.",
@@ -464,7 +482,8 @@
           "improvements": "The critique is mathematically accurate: the original answer\u2019s second-derivative computation is wrong, and the corrected computation gives $\\Delta u=\\frac{4}{(1-x^2-y^2)^2}>0$, so $u$ is not harmonic on $D$ (indeed strictly subharmonic). The critique also correctly notes that any harmonic extension agreeing with $u$ on $D$ is impossible, since the restriction of a harmonic function to an open subset is harmonic.\n\nA minor optional improvement would be to clarify what \u201charmonic on $\\overline D$\u201d is intended to mean (typically: harmonic on an open neighborhood of $\\overline D$, or harmonic on $D$ and continuous on $\\overline D$). Under either common interpretation, the blow-up as $|z|\\to 1$ rules out such an extension."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f: \\mathbb{C}^2 \\to \\mathbb{C}$ be a holomorphic function defined by $f(z_1, z_2) = z_1^2 + z_2^2 - 1$. Consider the set $V = \\{ (z_1, z_2) \\in \\mathbb{C}^2 \\mid f(z_1, z_2) = 0 \\}$, which is an analytic variety in $\\mathbb{C}^2$. Determine whether $V$ is irreducible, and if it is not, find its irreducible components.",
@@ -488,7 +507,8 @@
           "improvements": "Your critique is accurate: the answer\u2019s conclusion (irreducible) is correct, but its core irreducibility justification is largely asserted (\u201cit does not have any linear factors\u201d / \u201cit\u2019s a conic, not a union of hyperplanes\u201d) rather than proved. Your critique also correctly notes that in $\\mathbb C^2$ a union of two complex lines is still a 1-dimensional complex analytic set, so the \u201cconic\u201d description alone doesn\u2019t preclude reducibility. The critique is valid JSON and uses an allowed verdict. If you wanted to strengthen it further, you could add a concrete counterpoint such as: reducibility would force a factorization into affine linear forms, and one can rule this out by explicit coefficient comparison (or by the invertible linear change $(u,v)=(z_1+i z_2, z_1-i z_2)$ giving $uv-1$, then showing $uv-1$ cannot factor)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider the Gamma function $\\Gamma(z)$, which is defined for complex numbers $z$ with $\\Re(z) > 0$ by the integral\n\n$$ \\Gamma(z) = \\int_0^\\infty t^{z-1} e^{-t} \\, dt. $$\n\nThe Gamma function satisfies the functional equation $\\Gamma(z+1) = z\\Gamma(z)$ and is related to the factorial by $\\Gamma(n) = (n-1)!$ for natural numbers $n$. \n\nProve that for any positive integer $n$, the following identity holds:\n\n$$ \\Gamma\\left(\\frac{1}{2}\\right) \\Gamma\\left(n + \\frac{1}{2}\\right) = \\frac{(2n-1)!! \\sqrt{\\pi}}{2^n}, $$\n\nwhere $(2n-1)!!$ denotes the double factorial, defined as the product of all odd numbers up to $(2n-1)$.",
@@ -512,7 +532,8 @@
           "improvements": "The critique is accurate: the provided solution derives $\\Gamma(n+\\tfrac12)=\\frac{(2n-1)!!}{2^n}\\sqrt\\pi$, so multiplying by $\\Gamma(\\tfrac12)=\\sqrt\\pi$ necessarily gives $\\frac{(2n-1)!!\\,\\pi}{2^n}$, not $\\frac{(2n-1)!!\\sqrt\\pi}{2^n}$. The $n=1$ check ($\\Gamma(\\tfrac12)\\Gamma(\\tfrac32)=\\pi/2$) correctly shows the problem\u2019s stated identity (with only $\\sqrt\\pi$) is false. The critique JSON format is also valid (object with string fields and optional suggestions). If desired, the critique could additionally note that the *correct* identity is $\\Gamma(\\tfrac12)\\Gamma(n+\\tfrac12)=\\frac{(2n-1)!!\\,\\pi}{2^n}$ (or equivalently $\\Gamma(n+\\tfrac12)=\\frac{(2n-1)!!}{2^n}\\sqrt\\pi$), so the error is in the problem statement rather than the computation up to the final line."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider the second-order linear ordinary differential equation given by:\n\n$$ y'' - 4y' + 4y = e^{2x}, $$\n\nwhere $y(x)$ is a function of $x$. Find the general solution of this differential equation.",
@@ -536,7 +557,8 @@
           "improvements": "If you want to be extra precise about grading standards, you could note that some graders might still accept the solution because the final general solution $y=C_1e^{2x}+C_2xe^{2x}+\\tfrac12 x^2e^{2x}$ is correct; however, under a rigor/derivation-based rubric, the miscomputed derivative $y_p''$ and the resulting invalid cancellation justify the \"incorrect\" verdict."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider the partial differential equation (PDE) given by:\n\n$$ u_{xx} + u_{yy} = 0 $$\n\nwhere $u(x, y)$ is a twice continuously differentiable function defined on the entire plane $\\mathbb{R}^2$. This is known as the Laplace equation in two dimensions. \n\nSuppose $u(x, y)$ is subject to the boundary condition:\n\n$$ u(x, 0) = \\sin(x) $$\n\nfor all $x \\in \\mathbb{R}$.\n\nFind a function $u(x, y)$ that satisfies both the PDE and the given boundary condition.",
@@ -579,7 +601,8 @@
           "improvements": "Rephrase that part to make the quantifier precise, e.g.: \u201cTo match the later symmetric choice $e^y+e^{-y}$ you must divide by 2 (equivalently take $C=D=\\tfrac12$), giving $u=\\sin x\\,\\cosh y$.\u201d You could also mention explicitly that other valid choices exist (e.g. $u=\\sin x\\,e^y$) to reinforce the non-uniqueness point."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider the discrete dynamical system defined by the map $T: [0, 1] \\to [0, 1]$ given by\n\n$$ T(x) = \\begin{cases} \n2x, & \\text{if } 0 \\leq x < \\frac{1}{2}, \\\\\n2x - 1, & \\text{if } \\frac{1}{2} \\leq x \\leq 1.\n\\end{cases} $$\n\nThis map is known as the tent map. Determine the set of all periodic points of period 2 for this map. A point $x \\in [0, 1]$ is a periodic point of period 2 if $T^2(x) = x$ and $T(x) \\neq x$.",
@@ -602,7 +625,8 @@
           "improvements": "The critique is accurate: the final set of period-2 points is $\\{\\tfrac13,\\tfrac23\\}$, and it correctly flags the answer\u2019s minor mistake that it claims $T(0)\\neq 0$ and $T(1)\\neq 1$ even though $T(0)=0$ and $T(1)=1$ (so they are fixed points, not period-2). To make the critique more evidence-based, you could quote the exact erroneous sentences from the answer. Optionally, you could also note that the given formula is the doubling map rather than the usual tent map, though this does not affect correctness relative to the map as defined in the prompt."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f: \\mathbb{Z} \\to \\mathbb{Z}$ be a function satisfying the functional equation $f(n+2) = f(n) + 2n + 3$ for all integers $n$. Given that $f(0) = 1$, find the explicit formula for $f(n)$.",
@@ -626,7 +650,8 @@
           "improvements": "The critique is mathematically accurate: the recurrence step size $2$ plus only $f(0)=1$ leaves the odd values (equivalently $f(1)$) undetermined, so the provided closed form is only one member of a family of solutions differing by a $2$-periodic function. The proposed general form $f(n)=\\tfrac{n(n+1)}2+1+h(n)$ with $h(n+2)=h(n)$ and $h(0)=0$ (or the equivalent parity-based constant shift) is correct. For even stronger evidence, you could add a concrete counterexample such as choosing $f(1)=3$ to produce a different valid solution that still satisfies $f(0)=1$."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider the sequence $\\{a_n\\}_{n=1}^{\\infty}$ defined by the recurrence relation $a_1 = 1$, and for $n \\geq 1$, $a_{n+1} = \\frac{1}{2}a_n + \\frac{1}{2^n}$. Determine the limit of the sequence $\\{a_n\\}$ as $n \\to \\infty$.",
@@ -650,7 +675,8 @@
           "improvements": "Your critique is accurate: the solution\u2019s step \u201chypothesize $a_n\\to L$\u201d and then solving $L=\\tfrac12L+\\lim 2^{-n}$ only identifies a *candidate* limit and is not, by itself, a proof that the sequence converges. The later claim that \u201cthe negative term dominates\u201d is indeed heuristic and does not establish convergence rigorously. Your suggested fix (rescaling with $b_n=2^{n-1}a_n$ to get $b_{n+1}=b_n+1$ and thus $a_n=\\frac{n}{2^{n-1}}\\to 0$) is correct and provides a complete argument. The critique also satisfies the stated critique-JSON requirements (valid JSON; allowed verdict; string notes; optional suggestions)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider the function $f(x) = e^{x^2}$. Find the first four non-zero terms of the Taylor series expansion of $f(x)$ about $x = 0$.",
@@ -674,7 +700,8 @@
           "improvements": "If you want to make the critique even tighter, you could explicitly note that the original solution\u2019s inconsistency (wrong $f^{(5)}$ and contradictory $f^{(5)}(0)$) is sufficient to mark the work incorrect under the rubric even though the final series happens to match $e^{x^2}=\\sum_{n\\ge 0}\\frac{x^{2n}}{n!}$. Otherwise, the critique\u2019s identified error and reasoning are accurate, and the critique JSON format (keys `verdict`, `notes`, optional `suggestions`) is valid."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f: \\mathbb{R}^2 \\to \\mathbb{R}$ be a function defined by $f(x, y) = e^{-(x^2 + y^2)}$. Consider the Fourier transform $\\mathcal{F}\\{f\\}$ of $f$, defined by\n\n$$ \\mathcal{F}\\{f\\}(\\xi, \\eta) = \\int_{\\mathbb{R}^2} f(x, y) e^{-2\\pi i (x \\xi + y \\eta)} \\, dx \\, dy. $$\n\nFind the exact value of $\\mathcal{F}\\{f\\}(\\xi, \\eta)$ for all $(\\xi, \\eta) \\in \\mathbb{R}^2$.",
@@ -697,7 +724,8 @@
           "improvements": "Optionally note that the result depends on the $e^{-2\\pi i x\\xi}$ Fourier transform convention, and would differ by scaling factors under other common conventions. Otherwise the critique is accurate and in valid JSON with the required keys."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $G$ be a locally compact abelian group, and let $\\widehat{G}$ denote its Pontryagin dual, the group of continuous homomorphisms from $G$ to the circle group $\\mathbb{T} = \\{ z \\in \\mathbb{C} : |z| = 1 \\}$, equipped with pointwise multiplication. Suppose $f \\in L^1(G)$, the space of integrable functions on $G$. Define the Fourier transform of $f$ as $\\widehat{f}(\\chi) = \\int_G f(x) \\overline{\\chi(x)} \\, dx$ for $\\chi \\in \\widehat{G}$.\n\nProve that if $f \\in L^1(G)$ and $\\widehat{f} = 0$ on a neighborhood of the identity in $\\widehat{G}$, then $f = 0$ almost everywhere on $G$.",
@@ -721,7 +749,8 @@
           "improvements": "The critique is accurate and evidence-based: it correctly identifies the key logical error (a continuous function can vanish on a nonempty open set without being identically zero), notes the irrelevant/misused \u201cdensity of characters\u201d claim, and flags the unjustified use of an inversion theorem for general $f\\in L^1(G)$. It also correctly observes the problem statement is false in general and supplies valid counterexamples (e.g. $G=\\mathbb R$ with a Schwartz function whose Fourier transform vanishes on an open neighborhood of $0$, and $G$ compact where $\\widehat G$ is discrete so vanishing at the identity just means $\\int f=0$). The critique JSON format is valid (it is proper JSON with the required fields `verdict`, `notes`, and optional `suggestions`, and `verdict` is in the allowed set). If you want to strengthen it further, you could add a one-line justification that $C_c^\\infty(\\mathbb R)\\subset \\mathcal S(\\mathbb R)$, hence its inverse Fourier transform lies in $\\mathcal S(\\mathbb R)\\subset L^1(\\mathbb R)$, making the counterexample completely airtight."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f(t) = e^{-2t} \\sin(3t)$ for $t \\geq 0$. Compute the Laplace transform $\\mathcal{L}\\{f(t)\\}(s)$, where $s$ is a complex number with $\\text{Re}(s) > -2$.",
@@ -744,7 +773,8 @@
           "improvements": "No substantive changes needed. Optionally, the critique could explicitly note that the region of convergence follows from requiring $\\Re(s+2)>0$ for the standard $\\int_0^\\infty e^{-pt}\\sin(bt)\\,dt$ formula, but the current justification is already accurate."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider the integral equation involving a real-valued function $f(x)$ defined on the interval $[0, 1]$:\n\n$$ f(x) = \\int_0^1 (x^2 + t) f(t) \\, dt + x^3. $$\n\nFind the explicit form of the function $f(x)$.",
@@ -768,7 +798,8 @@
           "improvements": "Your critique is accurate and evidence-based: (i) the direct substitution check correctly shows $f(x)=x^3$ fails since $\\int_0^1(x^2+t)t^3\\,dt=\\frac{x^2}{4}+\\frac15$, giving RHS $x^3+\\frac{x^2}{4}+\\frac15\\neq x^3$; (ii) you correctly identify a concrete computational mistake in the proposed solution: the last integrand term is $dt$ (i.e., $d\\,t$), so $\\int_0^1 d\\,t\\,dt=d/2$, not $1$. The critique JSON format is also valid (proper JSON object with the stated fields). If you want to strengthen it further, you could also note that even with the corrected $d/2$ term, the coefficient-matching system would not force $b=c=d=0$, so the conclusion cannot follow."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $X$ be a Banach space, and let $T: X \\to X$ be a bounded linear operator. Suppose that $T$ is compact and that the spectrum of $T$, denoted by $\\sigma(T)$, contains only the point $\\{0\\}$. Prove that $T$ is the zero operator.",
@@ -807,7 +838,8 @@
           "improvements": "Your critique is accurate and evidence-based: it correctly observes that the problem statement is false in general (e.g., nonzero nilpotent finite-rank operators have $\\sigma(T)=\\{0\\}$), and it correctly identifies specific logical/mathematical errors in the proposed proof (notably the false claim that compactness makes $\\operatorname{Ran}(T)$ compact, and the confusion between lack of nonzero eigenvalues and surjectivity onto the range). The critique is also valid JSON in the expected critique format (keys present; `verdict` in the allowed set; `notes` is a string; `suggestions` optional).\n\nIf you want to strengthen it further, you could note that the counterexample exists already in any Banach space of dimension $\\ge 2$ (including finite-dimensional spaces), so the statement fails even without assuming infinite-dimensionality."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $T: \\mathbb{R}^3 \\to \\mathbb{R}^3$ be a linear operator represented by the matrix $A = \\begin{pmatrix} 2 & -1 & 0 \\\\ -1 & 2 & -1 \\\\ 0 & -1 & 2 \\end{pmatrix}$. Determine whether $T$ is invertible, and if so, find the inverse operator $T^{-1}$.",
@@ -831,7 +863,8 @@
           "improvements": "Optionally, you could strengthen the critique by explicitly stating the correct inverse matrix $A^{-1}=\\frac14\\begin{pmatrix}3&2&1\\\\2&4&2\\\\1&2&3\\end{pmatrix}$ and/or by checking another entry of $AA^{-1}$ or $A^{-1}A$ to further confirm the error. But the existing evidence (incorrect cofactor $C_{21}$ and the product giving first row $[1,-1,0]$) is already sufficient."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider the functional $J[y] = \\int_0^1 \\left( y'(x)^2 + (y(x) - x)^2 \\right) \\, dx$, where $y(x)$ is a twice-differentiable function satisfying the boundary conditions $y(0) = 0$ and $y(1) = 1$. Find the function $y(x)$ that minimizes the functional $J[y]$.",
@@ -855,7 +888,8 @@
           "improvements": "No substantive changes needed. If you want to strengthen the critique further, you could explicitly quote the problematic line (the claim that computing $J[x]=1$ \u201cconfirms\u201d minimality) and briefly note a standard sufficiency theorem (strict convexity of $F$ in $(y,y')$ implies the Euler\u2013Lagrange extremal is the unique global minimizer)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider a triangle $ABC$ with sides $AB = c$, $BC = a$, and $CA = b$. Let $D$ be a point on side $BC$ such that $AD$ is the angle bisector of $\\angle BAC$. The angle bisector theorem states that $\\frac{BD}{DC} = \\frac{AB}{AC}$. Given that $a = 7$, $b = 5$, and $c = 6$, find the length of $BD$.",
@@ -878,7 +912,8 @@
           "improvements": "No changes needed. The critique accurately verifies the use of the angle bisector theorem $\\frac{BD}{DC}=\\frac{AB}{AC}=\\frac{6}{5}$, correctly uses $BD+DC=BC=7$, and confirms the computed result $BD=\\frac{42}{11}$. The critique is also valid JSON and uses an allowed verdict value (\"correct\") with a string \"notes\" field."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider a convex polygon $P$ with $n$ vertices, where $n \\geq 4$. Each vertex of the polygon is labeled with a distinct integer from the set $\\{1, 2, \\ldots, n\\}$. A diagonal of the polygon is a line segment connecting two non-adjacent vertices. Define the weight of a diagonal as the absolute difference between the integers labeling its endpoints. \n\nProve that there exists a diagonal in the polygon whose weight is at least $\\left\\lceil \\frac{n}{2} \\right\\rceil$.",
@@ -902,7 +937,8 @@
           "improvements": "Your critique correctly identifies the central fatal flaw: the solution\u2019s \u201cWLOG assume labels increase around the polygon\u201d is invalid because it changes the adjacency relation that determines which pairs form diagonals. You also correctly note that the constructed pair (e.g., labels $1$ and $\\lceil n/2\\rceil+1$) is not guaranteed to be a diagonal under an arbitrary labeling (it could be an edge), so the proof does not establish the claim.\n\nThe critique is also in valid JSON with the expected fields (`verdict`, `notes`, optional `suggestions`).\n\nIf you wanted to strengthen the critique further (not required for correctness), you could additionally point out a secondary concrete error internal to the proposed WLOG ordering: even if labels were in increasing cyclic order, vertex $1$ is adjacent to both $2$ and $n$, so the set of possible diagonal endpoints from $1$ would exclude $n$ as well (i.e., would be $\\{3,\\dots,n-1\\}$, not $\\{3,\\dots,n\\}$)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $M$ be a smooth manifold and let $\\omega$ be a differential 2-form on $M$. Suppose that $\\omega$ is closed, meaning $d\\omega = 0$, where $d$ is the exterior derivative. Assume further that $M$ is simply connected. Prove that $\\omega$ is exact, i.e., there exists a differential 1-form $\\alpha$ on $M$ such that $\\omega = d\\alpha$.",
@@ -926,7 +962,8 @@
           "improvements": "No substantive changes needed. The critique correctly identifies the key mathematical error (simple connectivity does not imply $H^2_{\\mathrm{dR}}(M)=0$) and gives a valid counterexample ($S^2$ with its area form). It also correctly notes that only $H^1_{\\mathrm{dR}}(M)$ vanishes under simple connectivity (over $\\mathbb{R}$). The critique JSON is valid and uses the expected fields."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $X$ be a topological space and let $A \\subseteq X$ be a subset. Define the closure of $A$, denoted $\\overline{A}$, as the set of all points $x \\in X$ such that every open set $U$ containing $x$ intersects $A$. \n\nConsider the space $X = \\mathbb{R}$ with the standard topology, and let $A = \\{ \\frac{1}{n} \\mid n \\in \\mathbb{N} \\}$. Determine the closure $\\overline{A}$ of the set $A$ in $\\mathbb{R}$.",
@@ -949,7 +986,8 @@
           "improvements": "Optionally, you could strengthen the note about the minor imprecision by quoting the exact sentence from the answer (e.g., the claim about $(x-\\varepsilon,x+\\varepsilon)$ containing no points of $A$ for $x\\neq 0$) and explicitly clarifying that the intended statement is \u201cno points of $A$ other than possibly $x$ itself.\u201d The critique\u2019s format is already valid JSON with the required fields."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $X$ be a topological space that is homotopy equivalent to the wedge sum of two circles, $S^1 \\vee S^1$. Consider the fundamental group $\\pi_1(X, x_0)$, where $x_0$ is a base point in $X$. Determine the structure of $\\pi_1(X, x_0)$ and provide a proof of your result.",
@@ -973,7 +1011,8 @@
           "improvements": "The critique is accurate: it correctly flags that the proposed $A,B$ are not a valid Seifert\u2013van Kampen cover (not open, likely empty intersection, and the claimed deformation retractions/fundamental groups are wrong because removing a neighborhood of the wedge point from a circle leaves a contractible arc). It also correctly notes that the conclusion $\\pi_1(X,x_0)\\cong F_2$ remains true via homotopy invariance, and it suggests an appropriate fix (choose an actual open cover with contractible intersection). If you wanted to refine further, you could mention that one could alternatively label the solution as \u201cinsufficient\u201d rather than \u201cincorrect\u201d since the final claim is right but the proof is invalid; however, calling it \u201cincorrect\u201d is still justified for a proof-based question."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $M$ be a compact, connected, orientable 2-dimensional manifold without boundary. Suppose $M$ is homeomorphic to a surface of genus $g$. Consider the Euler characteristic $\\chi(M)$ of the manifold $M$. \n\n(a) Express the Euler characteristic $\\chi(M)$ in terms of the genus $g$.\n\n(b) If $M$ is triangulated with $V$ vertices, $E$ edges, and $F$ faces, use the Euler characteristic to derive a relationship between $V$, $E$, and $F$.\n\n(c) Suppose $M$ is a torus (i.e., $g = 1$). If $M$ is triangulated with 10 vertices, determine the number of edges and faces in this triangulation.",
@@ -996,7 +1035,8 @@
           "improvements": "No changes needed. The critique is accurate (parts (a)\u2013(c) are correct, including use of $3F=2E$ for a closed triangulated surface) and it conforms to the required critique JSON format (with `verdict` in {correct, incorrect, insufficient, obscure} and `notes` as a string)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $M$ be a compact, oriented 2-dimensional Riemannian manifold without boundary. Consider a smooth vector field $X$ on $M$. Prove that the Euler characteristic $\\chi(M)$ of the manifold $M$ is equal to the sum of the indices of the isolated zeros of $X$. Assume that $X$ has only isolated zeros.",
@@ -1020,7 +1060,8 @@
           "improvements": "You could add one nuance: if the setting allows citing the Poincar\u00e9\u2013Hopf theorem as a known result, then the provided answer is essentially complete (it is a correct invocation of the theorem), though still very short. If, as the prompt suggests, the task is to *prove* this equality (i.e., prove Poincar\u00e9\u2013Hopf in dimension 2), then your \"insufficient\" verdict and the explanation about circularity/missing global argument are exactly right. Explicitly stating this dependency on what is allowed to be assumed would make the critique maximally precise."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider a continuous-time Markov chain with state space $S = \\{1, 2, 3\\}$ and generator matrix $Q$ given by:\n\n$$\nQ = \\begin{pmatrix}\n-3 & 3 & 0 \\\\\n1 & -4 & 3 \\\\\n0 & 2 & -2\n\\end{pmatrix}.\n$$\n\n(a) Determine the stationary distribution $\\pi = (\\pi_1, \\pi_2, \\pi_3)$ of the Markov chain.\n\n(b) Calculate the expected time to absorption if the chain starts in state 1, assuming state 3 is an absorbing state.",
@@ -1044,7 +1085,8 @@
           "improvements": "You could add one clarifying sentence that the computed $t_1=7/9$ is the expected hitting time of state 3 from state 1 and that making state 3 absorbing by setting the third row of $Q$ to zeros does not change this value (since only the dynamics before hitting 3 matter). You might also note the minor ill-posedness that if state 3 were truly absorbing, the stationary distribution in (a) would change (indeed become $(0,0,1)$), so (a) and (b) implicitly refer to different chains."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider a random variable $X$ that follows a normal distribution with an unknown mean $\\mu$ and a known standard deviation $\\sigma = 3$. You are given a random sample of size $n = 25$ from this distribution, with a sample mean $\\bar{x} = 10$. Construct a 95% confidence interval for the population mean $\\mu$.",
@@ -1067,7 +1109,8 @@
           "improvements": "No changes needed. The critique correctly verifies the use of the $z$-interval (known $\\sigma$), checks the computations ($\\sigma/\\sqrt{n}=0.6$, margin $=1.176$), and the resulting interval $(8.824,11.176)$. It is also valid JSON and matches the required critique format (keys `verdict` and `notes`, with `verdict \\in \\{\\\"correct\\\",\\\"incorrect\\\",\\\"insufficient\\\",\\\"obscure\\\"\\}`)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider the function $f(x) = e^{-x^2}$, which is defined for all real numbers $x$. We are interested in approximating the definite integral $I = \\int_{0}^{1} e^{-x^2} \\, dx$ using numerical methods.\n\n1. Use the Trapezoidal Rule with $n = 4$ subintervals to approximate $I$.\n2. Use Simpson's Rule with $n = 4$ subintervals to approximate $I$.\n3. Compare the two approximations and discuss which one is likely to be more accurate and why.",
@@ -1090,6 +1133,7 @@
           "improvements": "The critique is accurate: both $T_4\\approx 0.74298409$ and $S_4\\approx 0.74685538$ match the stated function values and correct formulas, and the error-order comparison ($O(h^2)$ vs. $O(h^4)$ for smooth $f$) is appropriate. As a minor enhancement, you could cite the true value $\\int_0^1 e^{-x^2}\\,dx=\\tfrac{\\sqrt\\pi}{2}\\,\\operatorname{erf}(1)\\approx 0.74682413$ to empirically confirm Simpson\u2019s Rule is closer here."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   }
 ]

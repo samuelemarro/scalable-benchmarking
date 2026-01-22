@@ -20,7 +20,8 @@
           "improvements": "Optionally note the (minor) domain ambiguity in $\\forall x\\,(P(x)\\to Q(x))$: the counterexample $x=2$ refutes it for the standard domain of natural numbers/integers where \u201cprime\u201d is defined. Your critique already gestures at this with \u201cintended domain,\u201d so no substantive change is needed."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $S$ be a set containing $n$ distinct elements. A subset $A$ of $S$ is called \"special\" if it satisfies the following conditions:\n1. $A$ contains at least two elements.\n2. The sum of the elements in $A$ is divisible by $n$.\n\nGiven that $n = 5$, how many special subsets does the set $S = \\{1, 2, 3, 4, 5\\}$ have?",
@@ -44,7 +45,8 @@
           "improvements": "Your critique is accurate: the original answer\u2019s counts for $k=2$ and $k=3$ are wrong, and the corrected enumeration yields $2+2+1+1=6$ special subsets. Your critique is also valid JSON and uses the required fields (`verdict`, `notes`, optional `suggestions`) with an allowed verdict value."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $p$ be a prime number. Prove that there are infinitely many positive integers $n$ such that $p \\mid 2^n - n$.",
@@ -68,7 +70,8 @@
           "improvements": "The critique is accurate and evidence-based: it correctly flags (i) the false congruence $2^{kp}\\equiv 1\\pmod p$ (generally $2^{kp}=(2^p)^k\\equiv 2^k\\pmod p$ for odd primes by FLT), (ii) the fact that $2+kp\\equiv 2\\pmod p$ so choosing $k$ cannot force $0\\pmod p$ (except the degenerate $p=2$ case), and (iii) the logical error that $x\\equiv 1\\pmod p$ implies $p\\nmid x$. The critique also conforms to the required critique-JSON structure (has `verdict`, `notes` as a string, and optional `suggestions`)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $L$ be a lattice with elements $a, b, c \\in L$. Suppose that $a \\vee b = a \\wedge c$ and $a \\wedge b = a \\vee c$. Prove that $a = b = c$.",
@@ -92,7 +95,8 @@
           "improvements": "Your critique accurately identifies the key logical flaw: the solution unjustifiably replaces $c$ with expressions involving $a,b$ (e.g., writing $a\\vee b=a\\wedge(a\\wedge b)$ from $a\\vee b=a\\wedge c$). Your suggested corrected approach via order inequalities is valid and evidence-based. The critique is also in the expected critique-JSON style (with \"verdict\", \"notes\", and optional \"suggestions\")."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $G$ be a group with identity element $e$. Consider two elements $a, b \\in G$ such that $ab = ba$ and $a^3 = b^2$. Prove that $ab$ is also an element of order $6$ in $G$.",
@@ -116,7 +120,8 @@
           "improvements": "The critique is accurate and evidence-based: it correctly flags invalid exponent manipulations (e.g., treating $a^6$ as $a^3a^3a^3$), the unsupported claim that $b^4=e$, and the false inference $b^{-k}=b^k$. It also correctly notes a genuine counterexample (cyclic group of order $12$ with $a=g^2$, $b=g^3$) showing the original problem statement is not true in general. The critique\u2019s JSON format (keys `verdict`, `notes`, optional `suggestions` with an allowed verdict value) is valid. A minor enhancement would be to explicitly state the correct computation $(ab)^6=a^6b^6=(a^3)^2(b^2)^3=b^{10}$ (or $a^9b^4$), to pinpoint exactly what it equals and why it need not be $e$."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $F$ be a field and consider the polynomial $f(x) = x^4 - 3x^3 + 4x^2 - 6x + 2$ in $F[x]$, the ring of polynomials over $F$. Define $K$ as the splitting field of $f(x)$ over $F$. Determine the degree $[K:F]$ of the field extension $K$ over $F$.",
@@ -140,7 +145,8 @@
           "improvements": "Your critique is accurate and evidence-based: it correctly checks the claimed factorization by expansion and shows it does not match $f(x)$, so the root analysis and the conclusion \"$[K:F]$ is either $2$ or $4$\" are unsupported. The additional remark that even a factorization into quadratics does not automatically force degree $2$ or $4$ (because quadratic subextensions can coincide) is also correct. One possible enhancement would be to more explicitly flag that the original problem is underdetermined unless $F$ (or at least $\\,\\mathrm{char}(F)$ and whether certain elements lie in $F$) is specified, since $[K:F]$ can vary with $F$."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $R$ be a commutative ring with unity and let $I$ be an ideal in $R$. Define the radical of $I$, denoted $\\sqrt{I}$, as the set of all elements $r \\in R$ such that there exists a positive integer $n$ satisfying $r^n \\in I$. \n\nConsider the ring $R = \\mathbb{Z}[x]$ of polynomials with integer coefficients and the ideal $I = \\langle 2, x^2 - 3x + 2 \\rangle$ generated by $2$ and $x^2 - 3x + 2$. Determine the radical $\\sqrt{I}$ of the ideal $I$ in $R$.",
@@ -164,7 +170,8 @@
           "improvements": "Your critique is accurate and evidence-based: it correctly flags multiple invalid steps in the proposed solution (non-cancellation of 2, incorrect polynomial multiplication, unjustified membership claims, and the false coefficientwise power expansion). It also correctly identifies the true situation: since $I=(2, x^2-3x+2)=(2, x(x-1))$ and $\\mathbb Z[x]/I\\cong \\mathbb F_2[x]/(x(x+1))$ is reduced (squarefree factorization), $I$ is radical and hence $\\sqrt I=I$. The critique JSON format (keys \"verdict\", \"notes\", optional \"suggestions\") is valid JSON and matches the requested critique structure. If you wanted to strengthen it further, you could briefly justify why $\\mathbb F_2[x]/(x(x+1))$ is reduced (e.g., via CRT $\\cong \\mathbb F_2\\times \\mathbb F_2$) and explicitly note that the primes over $I$ are $(2,x)$ and $(2,x-1)$."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $C$ be the curve defined by the equation $y^2 = x^3 - 3x + 2$. Consider the point $P = (1, 0)$ on $C$. Find the equation of the tangent line to $C$ at point $P$.",
@@ -188,7 +195,8 @@
           "improvements": "The critique is accurate and evidence-based: it correctly flags that evaluating $\\frac{dy}{dx}=\\frac{3x^2-3}{2y}$ at $(1,0)$ produces $\\frac{0}{0}$ (not $-3$), correctly identifies $(1,0)$ as a singular point via vanishing partial derivatives, and correctly derives the two tangents $y=\\pm\\sqrt{3}(x-1)$ from the factorization $x^3-3x+2=(x-1)^2(x+2)$. The critique JSON structure (keys `verdict`, `notes`, optional `suggestions`) is valid."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $A$ be a square matrix of size $n \\times n$ with real entries. Define the matrix $B$ as the matrix obtained by replacing each entry of $A$ with its absolute value. Prove or disprove the following statement:\n\n\"If $A$ is invertible, then $B$ is also invertible.\"",
@@ -228,7 +236,8 @@
           "improvements": "No changes needed. The critique correctly identifies the logical flaw (a single example cannot prove a universal claim), notes the missing proof of invertibility for $B$, and provides a valid counterexample $A=\\begin{pmatrix}1&-1\\\\1&1\\end{pmatrix}$ with $\\det(A)=2\\neq 0$ while $|A|=\\begin{pmatrix}1&1\\\\1&1\\end{pmatrix}$ has $\\det(|A|)=0$. The critique is also valid JSON and matches the required critique format (fields `verdict`, `notes`, and optional `suggestions`)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $R$ be a commutative ring with unity and let $M$ be a finitely generated $R$-module. Consider the set $S = \\{n \\in \\mathbb{N} \\mid \\text{there exists a surjective } R\\text{-module homomorphism } R^n \\to M\\}$.\n\nProve that $S$ is a finite set.",
@@ -252,7 +261,8 @@
           "improvements": "The critique is accurate: the original claim that $S$ is finite is generally false since any surjection $R^m\\twoheadrightarrow M$ yields surjections $R^n\\twoheadrightarrow M$ for all $n\\ge m$, making $S$ infinite (including the $M=0$ case). It also correctly flags the misused structure theorem and the incorrect finiteness reasoning about $R^m$. The critique is valid JSON and matches the expected critique-object format (with keys `verdict`, `notes`, and optional `suggestions`)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $R$ be a nonassociative ring with the following properties:\n1. There exists an element $a \\in R$ such that for all $x \\in R$, $ax = xa$.\n2. For any $x, y \\in R$, the following identity holds: $(xy)a = x(ya)$.\n\nGiven that $a^2 = a$, prove that for any $x \\in R$, $x^2 = x$.",
@@ -276,7 +286,8 @@
           "improvements": "The critique is accurate and well-justified: it correctly flags the unjustified inferences $ax=xa=a$ and $x^2=(x^2)a$, and it correctly notes that the conclusion would absurdly force all $x$ to equal $a$.\n\nTo strengthen the critique, you could additionally note that the *problem statement itself* (as written) appears false: taking $a=0$ in any (nonassociative) ring satisfies (1), (2), and $a^2=a$, but does not imply $x^2=x$ (e.g., in $\\mathbb Z$). This would clarify that no \u201ccorrect proof\u201d exists without extra hypotheses (such as $a$ being a multiplicative identity and/or further identities)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $R$ be a commutative ring with unity. Consider a chain complex $C_{\\bullet}: \\cdots \\rightarrow C_{n+1} \\xrightarrow{d_{n+1}} C_n \\xrightarrow{d_n} C_{n-1} \\rightarrow \\cdots$ in the category of $R$-modules, where each $C_n$ is a finitely generated $R$-module for all $n \\in \\mathbb{Z}$. Suppose that $H_n(C_{\\bullet})$ denotes the $n$-th homology module of $C_{\\bullet}$.\n\nProve that if $H_n(C_{\\bullet}) = 0$ for all $n \\in \\mathbb{Z}$, then the chain complex $C_{\\bullet}$ is acyclic, i.e., $C_n \\cong \\text{ker}(d_n) \\oplus \\text{im}(d_{n+1})$ for all $n \\in \\mathbb{Z}$.",
@@ -300,7 +311,8 @@
           "improvements": "The critique is accurate: it correctly flags the incorrect short exact sequence, the invalid inference that $H_n=0$ forces a splitting, and the fact that the claimed direct-sum decomposition is not true over an arbitrary commutative ring without extra hypotheses (e.g. projectivity). To make the critique even stronger/evidence-based, you could add an explicit non-split exact sequence example (yielding an exact chain complex with $H_n=0$ but no decomposition) and briefly note the terminology mismatch: many texts use \u201cacyclic\u201d to mean $H_n=0$, whereas the problem\u2019s definition is \u201csplit exact\u201d at each degree."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $X$ be a compact Hausdorff space and $A$ be a separable $C^*$-algebra. Consider the $K_0$-group of $A$, denoted by $K_0(A)$. Define the map $\\phi: K_0(A) \\to K(X, A)$ by $\\phi([p]) = [p \\otimes 1_X]$, where $p$ is a projection in $M_n(A)$ for some $n \\in \\mathbb{N}$, $1_X$ is the identity function on $X$, and $K(X, A)$ denotes the $K$-theory group of $X$ with coefficients in $A$. \n\nProve that $\\phi$ is a well-defined group homomorphism.",
@@ -324,7 +336,8 @@
           "improvements": "Optionally clarify that the statement \u201cif $[p]=[q]$ then there exists a unitary $u$ with $p\\oplus 0=u(q\\oplus 0)u^*$\u201d depends on the chosen model of $K_0(A)$ (e.g., projections in $M_\\infty(A^\\sim)$ modulo stable unitary equivalence/homotopy). But this does not affect the main (correct) objection about additivity needing $p\\oplus q$ rather than $p+q$."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $G$ be a group with identity element $e$. Consider two elements $a, b \\in G$ such that $ab = ba$ and $a^3 = b^2 = e$. Prove that $ba = ab$.",
@@ -348,7 +361,8 @@
           "improvements": "You could strengthen the critique by explicitly noting that the clean proof is one line: since $ab=ba$ is given and equality is symmetric, immediately $ba=ab$. Also, if desired, you could add a brief justification/counterpoint for the aside in your suggestions (e.g., in $S_3$ elements of orders $3$ and $2$ need not commute), to support the claim that $a^3=e$ and $b^2=e$ alone do not force commutativity."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $G$ be a topological group and $H$ be a closed subgroup of $G$. Prove that the quotient space $G/H$ equipped with the quotient topology is a topological space.",
@@ -389,7 +403,8 @@
           "improvements": "Your critique is accurate and well-supported. If you want to strengthen it slightly, you could explicitly note that the question is essentially: \u201cshow the quotient topology is a topology,\u201d i.e. verify the topology axioms for $\\{U\\subseteq G/H: \\pi^{-1}(U)\\text{ open in }G\\}$, and that this verification does not require any group structure at all (the group structure only matters for extra properties like $T_0/T_1$/Hausdorff, openness of $\\pi$, etc.)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a continuous function that satisfies the following functional equation:\n$$f(x+y) = f(x) + f(y) + 2xy$$\nfor all real numbers $x$ and $y$. If $f(1) = 3$, find the value of $f(2022)$.",
@@ -413,7 +428,8 @@
           "improvements": "Optionally quote the exact erroneous line in the answer (e.g., \"$f(2022)=\\dots=4088488$\") when flagging the arithmetic mistake, but the critique is already accurate, evidence-based, and in valid critique JSON format."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f: [0, 1] \\to \\mathbb{R}$ be a continuous function such that $\\int_{0}^{1} f(x) \\, dx = 5$. Define $g(x) = \\int_{0}^{x} f(t) \\, dt$. Find the value of $\\int_{0}^{1} g(x) \\, dx$.",
@@ -437,7 +453,8 @@
           "improvements": "The critique is mathematically accurate: it correctly flags the invalid step $\\int_0^1 g(x)\\,dx=\\int_0^1 g'(x)\\,dx$ and correctly notes that FTC gives $\\int_0^1 g'(x)\\,dx=g(1)-g(0)$ instead. It also correctly derives $\\int_0^1 g(x)\\,dx=\\int_0^1\\int_0^x f(t)\\,dt\\,dx=\\int_0^1 (1-t)f(t)\\,dt$, and the conclusion that this is not determined solely by $\\int_0^1 f=5$ is correct. To strengthen the critique further, you could add a concrete counterexample (two continuous functions with integral 5 that yield different values of $\\int_0^1 (1-t)f(t)\\,dt$) and explicitly label the original problem as ill-posed/underdetermined given only the single integral constraint."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f(z)$ be a complex function defined by $f(z) = z^3 - 3z^2 + 2z$. Determine all complex numbers $z$ such that $f(z) = \\overline{z}$, where $\\overline{z}$ denotes the complex conjugate of $z$.",
@@ -461,7 +478,8 @@
           "improvements": "Your critique is accurate and evidence-based: it correctly notes that $\\overline z$ must equal $x-iy$ (so $a=x$ and $b=y$ must be enforced), and it correctly identifies the real/imaginary-part separation error (missing $+3y^2$ in the real part and incorrectly adding $+3y^2$ to the imaginary part). It also correctly observes the solution is incomplete because it stops without solving for $z$. The critique is also valid JSON in the expected critique format (with `verdict`, `notes`, and optional `suggestions`)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a continuous function such that for any real numbers $a$ and $b$, the following equation holds:\n\n$$\\int_{a}^{b} f(x) \\, dx = f(a) + f(b).$$\n\nIf $f(0) = 1$, determine the value of $f(1)$.",
@@ -487,7 +505,8 @@
           "improvements": "Keep the core contradiction via $a=b$ (which correctly shows no such function exists with $f(0)=1$), but refine the differentiability remark to: the differentiation step is *justifiable* because the identity implies $f(x)=\\int_0^x f(t)\\,dt-1$, hence $f$ is differentiable and satisfies $f'(x)=f(x)$. This makes the critique tighter and fully accurate."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f: \\mathbb{C}^2 \\to \\mathbb{C}$ be a holomorphic function defined by $f(z, w) = z^3 + 2zw^2 - 3w^3$. Consider the subset $S \\subset \\mathbb{C}^2$ defined by $S = \\{(z, w) \\in \\mathbb{C}^2 \\mid |z|^2 + |w|^2 = 1\\}$. Determine all points $(z, w) \\in S$ such that $f(z, w) = 0$.",
@@ -511,7 +530,8 @@
           "improvements": "The critique is accurate and evidence-based: it correctly notes the solution is incomplete (it never actually solves for $(z,w)\\in S$ with $f(z,w)=0$) and it correctly identifies the substitution error in the $2zw^2$ term (it should be $2rs^2 e^{i(\\theta+2\\phi)}$, not $2rs e^{i(\\theta+2\\phi)}$). The suggested alternative approach $z=kw$ is also valid here because any solution on $S$ cannot have $w=0$ (since $w=0$ would force $z^3=0$ contradicting $|z|=1$). The critique JSON format is valid (has a permitted verdict string, a string-valued notes field, and an optional suggestions field)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f(x)$ be the Bessel function of the first kind of order $n$, denoted as $J_n(x)$. Consider the equation $J_2(x) = 0$. Find all real solutions $x$ to this equation.",
@@ -535,7 +555,8 @@
           "improvements": "If you want to strengthen the critique further, you could (i) explicitly cite the identity $J_n(-x)=(-1)^nJ_n(x)$ to justify the symmetry of zeros for $n=2$, and (ii) optionally mention a few numerical values of the positive zeros (e.g., $j_{2,1}\\approx 5.1356$, $j_{2,2}\\approx 8.4172$, etc.) to illustrate what \u201call real solutions\u201d looks like in practice. But the critique is already accurate, evidence-based, and in valid JSON with the expected keys."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider the following second-order linear homogeneous ordinary differential equation:\n$$y'' - 4y' + 4y = 0$$\nwhere $y = y(x)$ is a function of $x$. Find the general solution to this differential equation.",
@@ -558,7 +579,8 @@
           "improvements": "No changes needed. The critique correctly verifies the characteristic equation $(r-2)^2=0$ and the repeated-root general solution $y(x)=(c_1+c_2x)e^{2x}$, and it uses the required JSON keys (`verdict`, `notes`) with a permitted verdict value."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider the following partial differential equation (PDE) defined on a domain $\\Omega \\subset \\mathbb{R}^2$:\n$$\\frac{\\partial u}{\\partial t} = k \\left( \\frac{\\partial^2 u}{\\partial x^2} + \\frac{\\partial^2 u}{\\partial y^2} \\right)$$\nsubject to the initial condition $u(x, y, 0) = f(x, y)$ for $(x, y) \\in \\Omega$, where $k$ is a positive constant and $f(x, y)$ is a given function.\n\nGiven that the domain $\\Omega$ is the unit square $[0, 1] \\times [0, 1]$ and the function $f(x, y) = x(1-x)y(1-y)$, determine the solution $u(x, y, t)$ to this PDE for $t > 0$.",
@@ -582,7 +604,8 @@
           "improvements": "Your critique is accurate: it correctly flags that the provided solution (i) assumes homogeneous Dirichlet boundary conditions $u=0$ on $\\partial\\Omega$ even though none are stated, so the problem is not well-posed as written, and (ii) does not actually compute the Fourier coefficients $c_{nm}$, which is required to \u201cdetermine\u201d $u(x,y,t)$ for the specific $f(x,y)$. Your conditional confirmation of the modal form under zero-Dirichlet BCs is also correct. The critique JSON format is valid (object with string fields `verdict`, `notes`, and optional `suggestions`). If you wanted to strengthen it further, you could quote the exact line where the answer imposes boundary conditions and optionally include (or reference) the explicit closed-form for $c_{nm}$ to demonstrate completeness."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider a discrete dynamical system defined by the iteration $x_{n+1} = 2x_n \\mod 1$ for $n \\geq 0$, where $x_0 \\in [0, 1)$.\n\nProve that this dynamical system is ergodic.",
@@ -605,7 +628,8 @@
           "improvements": "Optionally refine point (1) by noting that the claimed criterion should be an a.e. statement (Birkhoff): for ergodic, measure-preserving $T$, one has $\\frac1n\\sum_{k=0}^{n-1}1_A(T^k x)\\to \\lambda(A)$ for $\\lambda$-a.e. $x$, not for every $x_0$. You could also add a brief indication of a correct proof route for the doubling map (e.g., identify $T$ with the left shift on binary expansions and show $T$-invariant measurable sets have Lebesgue measure $0$ or $1$, or use Fourier coefficients to show $T$-invariant $L^2$ functions are a.e. constant)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a continuous function that satisfies the functional equation:\n$$f(x + y) = f(x) + f(y) + 2xy$$\nfor all real numbers $x$ and $y$. If $f(1) = 3$, find the value of $f(2022)$.",
@@ -629,7 +653,8 @@
           "improvements": "The critique is accurate and evidence-based: it correctly points out the contradiction between the claim $f(n)=3n^2$ and the already-computed value $f(2)=8\\neq 12$, and it gives the standard, valid transformation $g(x)=f(x)-x^2$ leading (via continuity) to $f(x)=x^2+cx$ and $c=2$, hence $f(2022)=2022^2+4044=4{,}092{,}528$. The critique JSON format is also valid (has a permitted verdict and string fields). A minor optional improvement would be to explicitly note that continuity is what forces additive $g$ to be linear."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $\\{a_n\\}$ be a sequence defined as $a_1 = 1$ and $a_{n+1} = \\frac{1}{2}a_n + \\frac{1}{n}$ for $n \\geq 1$. Determine the limit of the sequence $\\{a_n\\}$ as $n$ approaches infinity.",
@@ -653,7 +678,8 @@
           "improvements": "No changes needed. The critique correctly flags the invalid limiting step (turning an $n$-dependent finite sum into a fixed infinite series), correctly notes that $\\sum_{k\\ge1}2^k/k$ diverges so it cannot equal $\\ln 2$, and provides a valid reindexing/bounding argument showing the sum is $O(1/n)$ and thus $a_n\\to 0$. The critique itself is also valid JSON with the expected fields."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f(x) = \\sin(x)$. Consider the Taylor series expansion of $f(x)$ centered at $x = 0$:\n$$f(x) = \\sum_{n=0}^{\\infty} a_n x^n.$$\nDetermine the coefficient $a_{10}$ of the $x^{10}$ term in the Taylor series expansion of $f(x)$.",
@@ -677,7 +703,8 @@
           "improvements": "No changes needed. The critique correctly notes that $\\sin x$ has only odd-power terms in its Maclaurin series, so the coefficient of $x^{10}$ is $0$, and it correctly identifies the answer\u2019s index mismatch (using $n=5$ produces the $x^{11}$ term). The critique is also valid JSON with the required fields for its own stated format."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a continuous function such that for all $x, y \\in \\mathbb{R}$, the following equation holds:\n$$f(x+y) = f(x) + f(y) + xy.$$\n\nGiven that $f(1) = 2$, find the value of $f(2022)$.",
@@ -701,7 +728,8 @@
           "improvements": "The critique is accurate: it correctly flags the internal contradiction ($f(3)=9$ vs the claimed $f(n)=n^2+1$ giving $10$), and it provides a correct, evidence-based derivation of the true form by setting $y=0$ to get $f(0)=0$ and using the standard substitution $h(x)=f(x)-\\tfrac{x^2}{2}$ to reduce to Cauchy\u2019s equation. The computed constant $c=\\tfrac{3}{2}$ from $f(1)=2$ and the resulting value $f(2022)=2047275$ are correct. The critique also conforms to the expected critique JSON structure (valid JSON; includes `verdict` and `notes`, with optional `suggestions`)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $G$ be a locally compact abelian group and $\\widehat{G}$ be its dual group. Consider a function $f: G \\to \\mathbb{C}$ that is continuous and has compact support. Define the Fourier transform of $f$ as $\\mathcal{F}(f)(\\xi) = \\int_{G} f(x) \\overline{\\chi(\\xi, x)} \\, dx$, where $\\chi(\\xi, x) = e^{2\\pi i \\langle \\xi, x \\rangle}$ for $\\xi \\in \\widehat{G}$ and $x \\in G$.\n\nProve that the Fourier transform of $f$ is a continuous function on $\\widehat{G}$.",
@@ -725,7 +753,8 @@
           "improvements": "You could add one clarifying sentence noting that if the topology on $\\widehat G$ is explicitly the compact-open topology (as is standard), then the needed uniform neighborhood $U$ can be viewed directly as a basic neighborhood, so the fix is largely a matter of stating the correct topological fact. Otherwise, the critique is accurate: the original proof implicitly assumes a uniform-in-$x$ continuity that does not follow from pointwise continuity alone."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $f(x)$ be a continuous function defined on the interval $[0, 1]$. Given that the Laplace transform of $f(x)$ is $\\mathcal{L}\\{f(x)\\} = \\frac{1}{s^2 + 1}$, find the value of the definite integral $\\int_{0}^{1} f(x) \\sin(x) \\, dx$.",
@@ -748,7 +777,8 @@
           "improvements": "To strengthen the critique, you could (i) explicitly compute $\\int_0^1 \\sin^2 x\\,dx=\\frac12-\\frac{\\sin 2}{4}$ to contrast with the incorrect $-\\cos(1)+\\sin(1)$, and (ii) briefly note the mild formulation issue that a Laplace transform typically requires $f$ on $[0,\\infty)$ (though uniqueness still identifies $f(t)=\\sin t$ under standard assumptions)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider the following integral equation:\n\n$$f(x) = 1 + \\lambda \\int_{0}^{1} \\frac{e^{-xy}}{1 + f(y)} \\, dy$$\n\nwhere $f$ is the unknown function to be determined and $\\lambda$ is a positive constant. Find the function $f(x)$ in terms of $\\lambda$.",
@@ -774,7 +804,8 @@
           "improvements": "Keep points (1), (2), and (4) as they are (they correctly identify decisive errors: the spurious $f'(y)$ term, the unjustified integrating-factor/ODE reduction, and lack of verification). In point (3), soften the claim to avoid relying on an unstated sign assumption: emphasize that $f(0)$ is not given as an initial condition and is constrained by the integral equation, so setting $f(0)=1$ is unjustified unless one proves the integral term is zero (which generally it is not)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $X$ be a Banach space and $T: X \\to X$ be a bounded linear operator. Define the set $A = \\{x \\in X : \\|Tx\\| = \\|x\\|\\}$. Prove that $A$ is a closed subspace of $X$.",
@@ -798,7 +829,8 @@
           "improvements": "No substantive changes needed. Optionally, you could add the observation (for completeness) that while $A$ need not be a subspace, it is always a closed set because $x\\mapsto \\|Tx\\| - \\|x\\|$ is continuous and $A=f^{-1}(\\{0\\})$."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $T$ be a bounded linear operator on a Hilbert space $\\mathcal{H}$ with inner product $\\langle \\cdot, \\cdot \\rangle$. Suppose that $T$ is self-adjoint, meaning $T^* = T$, where $T^*$ denotes the adjoint of $T$. \n\nGiven that $T$ has a spectral resolution, meaning there exists a projection-valued measure $E$ associated with $T$, show that the spectrum of $T$, denoted by $\\sigma(T)$, is contained in the essential range of $E$.",
@@ -822,7 +854,8 @@
           "improvements": "If you want to strengthen the critique further, note that the phrase \u201cessential range of $E$\u201d is somewhat nonstandard for a projection-valued measure (unlike for scalar-valued functions). One common precise replacement is the support of the PVM, defined by $\\lambda\\in\\operatorname{supp}(E)$ iff $E(U)\\neq 0$ for every open neighborhood $U$ of $\\lambda$, or alternatively the essential range defined via the family of scalar measures $\\mu_x(B)=\\langle E(B)x,x\\rangle$ (e.g. $\\lambda$ is in the essential range iff for every neighborhood $U$ of $\\lambda$ there exists $x\\neq 0$ with $\\mu_x(U)>0$). Mentioning this would make the critique even more clearly evidence-based and aligned with standard definitions."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider the following optimization problem in the calculus of variations:\n\nGiven the functional $J[y] = \\int_{0}^{1} (y^2 + y'^2) \\, dx$ subject to the boundary conditions $y(0) = 0$ and $y(1) = 1$, where $y = y(x)$ and $y' = \\frac{dy}{dx}$.\n\nDetermine the function $y(x)$ that minimizes the functional $J[y]$.",
@@ -846,7 +879,8 @@
           "improvements": "No substantive changes needed. The critique correctly derives the Euler\u2013Lagrange equation $y''-y=0$ (so no factor of $\\pi$ should appear), correctly identifies the boundary-condition check error in the proposed answer (at $x=0$ the numerator is $1$, not $0$), and provides a correct corrected minimizer $y(x)=\\sinh(x)/\\sinh(1)$. The critique is also valid JSON in the requested critique-object format (with `verdict`, `notes`, and optional `suggestions`)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $ABC$ be a triangle with side lengths $AB = 13$, $BC = 14$, and $CA = 15$. Let $D$ be a point on side $BC$ such that $AD$ is the angle bisector of $\\angle BAC$. If the incircle of triangle $ABC$ is tangent to $BC$ at point $E$, find the length of $DE$.",
@@ -870,7 +904,8 @@
           "improvements": "Your critique is mathematically accurate and the reasoning is evidence-based: $BE=s-CA=6$, $BD=\\tfrac{13}{28}\\cdot 14=6.5$, so $DE=|BD-BE|=0.5$, and you correctly flag the invalid steps (unjustified right angle in $\\triangle ADE$, misuse of $AE=AF-EF$, and the false formula $AD=\\sqrt{BD\\,DC}$). The critique also satisfies the required JSON format (valid JSON with `verdict`, `notes`, and optional `suggestions`).\n\nOne optional improvement: explicitly note that the original answer\u2019s claim $AF=s-CA=6$ is itself incorrect; in fact $AF=s-BC=21-14=7$ (though this doesn\u2019t affect your computed $DE$, since $DE$ can be found directly on $BC$)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $P$ be a convex polygon with $n$ sides, where $n \\geq 3$. Each vertex of $P$ is colored either red or blue. Prove that there exists a diagonal of $P$ (a line segment connecting two non-adjacent vertices) such that its endpoints have the same color.",
@@ -894,7 +929,8 @@
           "improvements": "Your critique is accurate and evidence-based: it correctly flags (i) the explicit color mismatch (\"$A$ is blue, and $B$ is red\" vs. claiming they have the same color), (ii) the unjustified/false claim about a vertex inside $\\triangle VAB$, (iii) the ill-defined infinite-process/repetition argument, and (iv) the $n=3$ edge case where no diagonals exist.\n\nMinor strengthening: in point (2) you could add the sharper observation that if $A$ and $B$ are the two neighbors of $V$ and $n\\ge 4$, then $AB$ is automatically a diagonal, so the proof\u2019s split into cases (\u201cif $AB$ is a diagonal / not a diagonal\u201d) is unnecessary and already indicates confusion about adjacency. Also, $\\triangle AVB$ (three consecutive vertices) contains no other polygon vertices in a convex polygon, not merely \u201ctypically\u201d none.\n\nFormat check: your critique is valid JSON and matches the stated critique-format requirements (keys `verdict`, `notes` as a string, and optional `suggestions`)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $C$ be a smooth curve in $\\mathbb{R}^3$ parametrized by $\\mathbf{r}(t) = (x(t), y(t), z(t))$. Suppose that the curve $C$ lies on the surface of a sphere of radius $R$ centered at the origin. Prove that the tangent vector $\\mathbf{T}(t)$ to the curve $C$ is orthogonal to the position vector $\\mathbf{r}(t)$ at each point $t$ on the curve.",
@@ -917,7 +953,8 @@
           "improvements": "Your critique is accurate: the solution correctly differentiates $\\|\\mathbf r(t)\\|^2=R^2$ to obtain $\\mathbf r(t)\\cdot \\mathbf r'(t)=0$ and then concludes $\\mathbf T(t)\\cdot \\mathbf r(t)=0$ (assuming a regular parametrization so $\\mathbf r'(t)\\neq 0$). The critique is also in the expected critique JSON format (it is valid JSON and uses the standard keys `verdict` and `notes`). If you want to be slightly more explicit, you could note that orthogonality of $\\mathbf r(t)$ with $\\mathbf r'(t)$ already shows the velocity vector is orthogonal to the radius, and the unit tangent inherits this when defined."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $X$ be a topological space and $A, B \\subseteq X$ be closed sets. Prove or disprove the following statement:\n\n\"If $A \\cap B = \\varnothing$, then there exist disjoint open sets $U$ and $V$ in $X$ such that $A \\subseteq U$ and $B \\subseteq V$.\"",
@@ -957,7 +994,8 @@
           "improvements": "Your critique is accurate and evidence-based. It correctly identifies the key logical error in the proposed solution: from $A\\cap B=\\varnothing$ it does not follow that $(X\\setminus A)\\cap (X\\setminus B)=\\varnothing$, since $(X\\setminus B)\\cap (X\\setminus A)=X\\setminus(A\\cup B)$ can be nonempty (your $\\mathbb{R}$ example with $A=\\{0\\}$, $B=\\{1\\}$ is valid). It also correctly notes the global statement is false in arbitrary topological spaces and characterizes it as (equivalent to) normality, with standard non-normal spaces providing counterexamples. The critique itself is valid JSON and uses the required fields (verdict/notes/suggestions) for its own stated format."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $X$ be a topological space and $A \\subset X$ a subspace. Define the **reduced homology group** $\\tilde{H}_n(X, A)$ as the $n$-th homology group of the pair $(X, A)$ with the basepoint $A$ removed. \n\nConsider the pair $(S^2, S^1)$ where $S^2$ is the 2-dimensional sphere and $S^1$ is the circle in $S^2$.\n\nDetermine the reduced homology groups $\\tilde{H}_0(S^2, S^1)$, $\\tilde{H}_1(S^2, S^1)$, and $\\tilde{H}_2(S^2, S^1)$.",
@@ -981,7 +1019,8 @@
           "improvements": "Optionally add an independent check that $(S^2,S^1)$ satisfies $\\tilde H_n(S^2,S^1)\\cong \\tilde H_n(S^2/S^1)$ and note $S^2/S^1\\simeq S^2\\vee S^2$, which immediately gives $\\tilde H_2\\cong \\mathbb Z\\oplus\\mathbb Z$ and $\\tilde H_1=\\tilde H_0=0$. This would further substantiate the computation and avoid any ambiguity about reduced vs. unreduced relative homology at $n=0$."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $M$ be a smooth $n$-dimensional manifold and $f: M \\to \\mathbb{R}$ a smooth function. Define the set $S = \\{p \\in M \\mid f(p) = 0\\}$. Prove that $S$ is a closed subset of $M$.",
@@ -1005,7 +1044,8 @@
           "improvements": "Your critique is accurate: the answer\u2019s key gap is the unsupported claim that there exists a neighborhood $U$ of $p$ on which $f\\neq 0$, which should be justified via continuity (smooth $\\Rightarrow$ continuous) and $f(p)\\neq 0$. You also correctly note the circular/redundant nature of introducing $g=1/f$ after already assuming $f$ is nonzero on $U$, and you give standard fixes (an $\\varepsilon$-argument or the preimage-of-closed-set argument). The critique itself is valid JSON in the expected format (keys `verdict`, `notes`, and optional `suggestions`, with `verdict` in the allowed set)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $M$ be a smooth manifold and $f: M \\to \\mathbb{R}$ a smooth function. Consider the set $S = \\{p \\in M \\mid f(p) = 0\\}$.\n\nProve that if $S$ is a compact subset of $M$, then there exists a smooth function $g: M \\to \\mathbb{R}$ such that $f = g^2$.",
@@ -1029,7 +1069,8 @@
           "improvements": "The critique is accurate and evidence-based: it correctly identifies the algebraic error ($g=hf$ does not imply $g^2=f$), the misuse of the Tietze extension theorem (continuous vs. smooth), and that the underlying claim is false without extra hypotheses (e.g., $f(x)=x$ on $\\mathbb R$ has compact zero set but no smooth square root). If anything, you could additionally note that \u201ccompact implies bounded\u201d is not a meaningful statement on a general manifold (only in metric/embedded contexts), but this is secondary to the main fatal issues."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Let $X$ be a random variable following a Poisson distribution with parameter $\\lambda = 3$. Define a new random variable $Y$ as $Y = e^{X}$. Determine the probability mass function of $Y$, i.e., find $P(Y = y)$ for all possible values of $y$.",
@@ -1053,7 +1094,8 @@
           "improvements": "No substantive changes needed. The critique correctly identifies the key mathematical error: $Y=e^X$ has discrete support $\\{e^k:k\\in\\mathbb{Z}_{\\ge 0}\\}$, so writing a pmf over all $y>0$ with terms like $(\\ln y)!$ is invalid. The suggested correction $P(Y=e^k)=e^{-3}3^k/k!$ (and $0$ otherwise) is accurate. The critique also satisfies the required critique-JSON structure (has `verdict`, `notes`, and optional `suggestions`)."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Suppose you have a dataset of 100 observations on a single variable $X$, which is known to follow a normal distribution with an unknown mean $\\mu$ and a known standard deviation of 5. You want to test the null hypothesis $H_0: \\mu = 20$ against the alternative hypothesis $H_1: \\mu \\neq 20$ at a significance level of 0.05. \n\nDetermine the critical values for a two-tailed hypothesis test using the standard normal distribution table.",
@@ -1076,7 +1118,8 @@
           "improvements": "Optionally note that while the reported critical values $\\pm 1.96$ are correct for the standardized test statistic $Z$, the problem context ($n=100$, $\\sigma=5$) also allows translating these into critical values for $\\bar X$: $20 \\pm 1.96\\cdot(5/\\sqrt{100}) = 20 \\pm 0.98$, i.e., reject for $\\bar X<19.02$ or $\\bar X>20.98$. This is not required if the question intends only the $z$ cutoffs."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   },
   {
     "question": "Consider the following integral:\n\n$$\\int_{0}^{1} \\frac{x^3}{1 + x^2} \\, dx$$\n\nDetermine the exact value of this integral.",
@@ -1100,6 +1143,7 @@
           "improvements": "No substantive changes needed. The critique correctly identifies the invalid decomposition (the claimed equality $\\frac{x^3}{1+x^2}=\\frac{1}{1+x^2}$ is false), explains why this breaks the solution, and gives a correct alternative method (division to $x-\\frac{x}{1+x^2}$ leading to $\\frac12-\\frac12\\ln 2$). The critique JSON format is valid and uses an allowed verdict value (\"incorrect\") with string-valued \"notes\" and optional \"suggestions\"."
         }
       }
-    ]
+    ],
+    "outer_attempt": 1
   }
 ]
