@@ -35,7 +35,7 @@ def list_illposed(answers_dir: Path, debates_dir: Path) -> List[Dict]:
             for debate in debates:
                 if not debate:
                     continue
-                key = answer_key(q_slug, a_slug, debate.run_id)
+                key = answer_key(q_slug, a_slug, debate.run_id, debate.outer_attempt)
                 if key and key not in debate_map:
                     debate_map[key] = debate
             for idx, rec in enumerate(records):
@@ -44,7 +44,8 @@ def list_illposed(answers_dir: Path, debates_dir: Path) -> List[Dict]:
                 key = answer_key_from_entry(rec)
                 debate_history = debate_map.get(key)
                 run_id = rec.run_id or (debate_history.run_id if debate_history else None)
-                task_key = critique_key(q_slug, a_slug, None, None, run_id)
+                outer_attempt = rec.outer_attempt or (debate_history.outer_attempt if debate_history else None)
+                task_key = critique_key(q_slug, a_slug, None, None, run_id, outer_attempt)
                 if not task_key:
                     continue
                     items.append(
@@ -53,6 +54,7 @@ def list_illposed(answers_dir: Path, debates_dir: Path) -> List[Dict]:
                             "task_key": task_key,
                             "type": "illposed",
                             "run_id": run_id,
+                            "outer_attempt": outer_attempt,
                             "question_model": q_slug,
                             "answer_model": a_slug,
                             "critic_model": None,
@@ -83,7 +85,7 @@ def list_critiques(critiques_dir: Path, debates_dir: Path) -> List[Dict]:
                 for debate in debates:
                     if not debate:
                         continue
-                    key = answer_key(q_slug, answer_slug, debate.run_id)
+                    key = answer_key(q_slug, answer_slug, debate.run_id, debate.outer_attempt)
                     if key and key not in debate_map:
                         debate_map[key] = debate
                 for idx, crit in enumerate(critiques):
@@ -95,10 +97,12 @@ def list_critiques(critiques_dir: Path, debates_dir: Path) -> List[Dict]:
                         crit.question_author,
                         crit.answer_author,
                         crit.run_id,
+                        crit.outer_attempt,
                     )
                     debate_history = debate_map.get(key)
                     run_id = crit.run_id or (debate_history.run_id if debate_history else None)
-                    task_key = critique_key(q_slug, answer_slug, critic_slug, mode, run_id)
+                    outer_attempt = crit.outer_attempt or (debate_history.outer_attempt if debate_history else None)
+                    task_key = critique_key(q_slug, answer_slug, critic_slug, mode, run_id, outer_attempt)
                     if not task_key:
                         continue
                     items.append(
@@ -107,6 +111,7 @@ def list_critiques(critiques_dir: Path, debates_dir: Path) -> List[Dict]:
                             "task_key": task_key,
                             "type": "critique",
                             "run_id": run_id,
+                            "outer_attempt": outer_attempt,
                             "question_model": q_slug,
                             "answer_model": answer_slug,
                             "critic_model": critic_slug,
@@ -145,6 +150,7 @@ def record_evaluation(
             decisions[key] = decision
     new_decision = HumanEvaluation(
         run_id=task.get("run_id"),
+        outer_attempt=task.get("outer_attempt"),
         type=eval_type,
         mode=task.get("mode"),
         question_model=task.get("question_model"),

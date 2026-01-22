@@ -10,10 +10,11 @@ from data_models import AnswerAttempt, AnswerEntry, BenchmarkEntry
 
 logger = logging.getLogger(__name__)
 
-QuestionKey = Tuple[Optional[str], Optional[str]]
-AnswerKey = Tuple[Optional[str], Optional[str], Optional[str]]
-CritiqueKey = Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]
+QuestionKey = Tuple[Optional[str], Optional[str], Optional[str]]
+AnswerKey = Tuple[Optional[str], Optional[str], Optional[str], Optional[str]]
+CritiqueKey = Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]
 EvaluationKey = Tuple[
+    Optional[str],
     Optional[str],
     Optional[str],
     Optional[str],
@@ -29,31 +30,54 @@ def _normalize_part(value: Optional[str]) -> Optional[str]:
     return str(value)
 
 
-def question_key(question_model: Optional[str], run_id: Optional[str]) -> Optional[QuestionKey]:
-    if run_id is None or not question_model:
+def question_key(
+    question_model: Optional[str], run_id: Optional[str], outer_attempt: Optional[str]
+) -> Optional[QuestionKey]:
+    if run_id is None or not question_model or outer_attempt is None:
         return None
-    return (_normalize_part(run_id), _normalize_part(question_model))
+    return (_normalize_part(run_id), _normalize_part(question_model), _normalize_part(outer_attempt))
 
 
 def question_key_from_entry(entry: Any, question_model: Optional[str]) -> Optional[QuestionKey]:
     if not entry:
         return None
     run_id = entry.get("run_id") if isinstance(entry, dict) else getattr(entry, "run_id", None)
-    return question_key(question_model, run_id)
+    outer_attempt = entry.get("outer_attempt") if isinstance(entry, dict) else getattr(entry, "outer_attempt", None)
+    return question_key(question_model, run_id, outer_attempt)
 
 
-def answer_key(question_model: Optional[str], answer_model: Optional[str], run_id: Optional[str]) -> Optional[AnswerKey]:
-    if run_id is None or not question_model or not answer_model:
+def answer_key(
+    question_model: Optional[str],
+    answer_model: Optional[str],
+    run_id: Optional[str],
+    outer_attempt: Optional[str],
+) -> Optional[AnswerKey]:
+    if run_id is None or not question_model or not answer_model or outer_attempt is None:
         return None
-    return (_normalize_part(run_id), _normalize_part(question_model), _normalize_part(answer_model))
+    return (
+        _normalize_part(run_id),
+        _normalize_part(question_model),
+        _normalize_part(answer_model),
+        _normalize_part(outer_attempt),
+    )
 
 
 def answer_key_from_entry(entry: Any) -> Optional[AnswerKey]:
     if not entry:
         return None
     if isinstance(entry, dict):
-        return answer_key(entry.get("question_model"), entry.get("answer_model"), entry.get("run_id"))
-    return answer_key(getattr(entry, "question_model", None), getattr(entry, "answer_model", None), getattr(entry, "run_id", None))
+        return answer_key(
+            entry.get("question_model"),
+            entry.get("answer_model"),
+            entry.get("run_id"),
+            entry.get("outer_attempt"),
+        )
+    return answer_key(
+        getattr(entry, "question_model", None),
+        getattr(entry, "answer_model", None),
+        getattr(entry, "run_id", None),
+        getattr(entry, "outer_attempt", None),
+    )
 
 
 def critique_key(
@@ -62,8 +86,9 @@ def critique_key(
     critic_model: Optional[str],
     mode: Optional[str],
     run_id: Optional[str],
+    outer_attempt: Optional[str],
 ) -> Optional[CritiqueKey]:
-    if run_id is None or not question_model or not answer_model:
+    if run_id is None or not question_model or not answer_model or outer_attempt is None:
         return None
     return (
         _normalize_part(run_id),
@@ -71,6 +96,7 @@ def critique_key(
         _normalize_part(answer_model),
         _normalize_part(critic_model),
         _normalize_part(mode),
+        _normalize_part(outer_attempt),
     )
 
 
@@ -84,6 +110,7 @@ def critique_key_from_entry(entry: Any, mode: Optional[str]) -> Optional[Critiqu
             entry.get("critic"),
             mode,
             entry.get("run_id"),
+            entry.get("outer_attempt"),
         )
     return critique_key(
         getattr(entry, "question_author", None),
@@ -91,6 +118,7 @@ def critique_key_from_entry(entry: Any, mode: Optional[str]) -> Optional[Critiqu
         getattr(entry, "critic", None),
         mode,
         getattr(entry, "run_id", None),
+        getattr(entry, "outer_attempt", None),
     )
 
 
@@ -100,8 +128,9 @@ def debate_key(
     critic_model: Optional[str],
     mode: Optional[str],
     run_id: Optional[str],
+    outer_attempt: Optional[str],
 ) -> Optional[CritiqueKey]:
-    return critique_key(question_model, answer_model, critic_model, mode, run_id)
+    return critique_key(question_model, answer_model, critic_model, mode, run_id, outer_attempt)
 
 
 def debate_key_from_entry(
@@ -114,7 +143,8 @@ def debate_key_from_entry(
     if not entry:
         return None
     run_id = entry.get("run_id") if isinstance(entry, dict) else getattr(entry, "run_id", None)
-    return debate_key(question_model, answer_model, critic_model, mode, run_id)
+    outer_attempt = entry.get("outer_attempt") if isinstance(entry, dict) else getattr(entry, "outer_attempt", None)
+    return debate_key(question_model, answer_model, critic_model, mode, run_id, outer_attempt)
 
 
 def automated_evaluation_key_from_entry(entry: Any) -> Optional[EvaluationKey]:
@@ -128,6 +158,7 @@ def automated_evaluation_key_from_entry(entry: Any) -> Optional[EvaluationKey]:
             _normalize_part(entry.get("critic_model")),
             _normalize_part(entry.get("mode")),
             _normalize_part(entry.get("judge_model")),
+            _normalize_part(entry.get("outer_attempt")),
         )
     return (
         _normalize_part(getattr(entry, "run_id", None)),
@@ -136,6 +167,7 @@ def automated_evaluation_key_from_entry(entry: Any) -> Optional[EvaluationKey]:
         _normalize_part(getattr(entry, "critic_model", None)),
         _normalize_part(getattr(entry, "mode", None)),
         _normalize_part(getattr(entry, "judge_model", None)),
+        _normalize_part(getattr(entry, "outer_attempt", None)),
     )
 
 
@@ -149,6 +181,7 @@ def judging_task_key(entry: Any) -> Optional[CritiqueKey]:
             entry.get("critic_model"),
             entry.get("mode"),
             entry.get("run_id"),
+            entry.get("outer_attempt"),
         )
     return critique_key(
         getattr(entry, "question_model", None),
@@ -156,6 +189,7 @@ def judging_task_key(entry: Any) -> Optional[CritiqueKey]:
         getattr(entry, "critic_model", None),
         getattr(entry, "mode", None),
         getattr(entry, "run_id", None),
+        getattr(entry, "outer_attempt", None),
     )
 
 
@@ -163,7 +197,7 @@ def automated_evaluation_key_for_task(entry: Any, judge_model: Optional[str]) ->
     base = judging_task_key(entry)
     if not base:
         return None
-    run_id, question_model, answer_model, critic_model, mode = base
+    run_id, question_model, answer_model, critic_model, mode, outer_attempt = base
     return (
         _normalize_part(run_id),
         _normalize_part(question_model),
@@ -171,6 +205,7 @@ def automated_evaluation_key_for_task(entry: Any, judge_model: Optional[str]) ->
         _normalize_part(critic_model),
         _normalize_part(mode),
         _normalize_part(judge_model),
+        _normalize_part(outer_attempt),
     )
 
 
@@ -182,8 +217,8 @@ def format_key(parts: Sequence[Optional[str]]) -> str:
     return "/".join("unknown" if part in (None, "") else str(part) for part in parts)
 
 
-def task_key_from_prefix(prefix: str, run_id: Optional[str]) -> Optional[CritiqueKey]:
-    if run_id is None:
+def task_key_from_prefix(prefix: str, run_id: Optional[str], outer_attempt: Optional[str]) -> Optional[CritiqueKey]:
+    if run_id is None or outer_attempt is None:
         return None
     if not prefix:
         return None
@@ -193,7 +228,7 @@ def task_key_from_prefix(prefix: str, run_id: Optional[str]) -> Optional[Critiqu
     if parts[0] == "illposed":
         if len(parts) < 3:
             return None
-        return critique_key(parts[1], parts[2], None, None, run_id)
+        return critique_key(parts[1], parts[2], None, None, run_id, outer_attempt)
     if parts[0] == "critique":
         if len(parts) < 4:
             return None
@@ -203,7 +238,7 @@ def task_key_from_prefix(prefix: str, run_id: Optional[str]) -> Optional[Critiqu
         if "__" not in pair:
             return None
         critic_model, answer_model = pair.split("__", 1)
-        return critique_key(question_model, answer_model, critic_model, mode, run_id)
+        return critique_key(question_model, answer_model, critic_model, mode, run_id, outer_attempt)
     return None
 
 
@@ -294,6 +329,7 @@ def benchmark_answers_from_entries(
                 answer_model=question_model_slug,
                 question=last_ref.question,
                 run_id=entry.run_id,
+                outer_attempt=entry.outer_attempt,
                 topic_slug=entry.topic_slug,
                 status=entry.status,
                 attempts=attempts,

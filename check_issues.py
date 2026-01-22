@@ -52,15 +52,16 @@ def _as_list(value: Any) -> List[Any]:
     return []
 
 
-QuestionKey = Tuple[Optional[str], Optional[str]]
+QuestionKey = Tuple[Optional[str], Optional[str], Optional[str]]
 
 
 def _question_key_from_entry(entry: Any, question_model: Optional[str] = None) -> Optional[QuestionKey]:
     if not entry:
         return None
     run_id = _get_value(entry, "run_id")
+    outer_attempt = _get_value(entry, "outer_attempt")
     q_model = question_model or _get_value(entry, "question_model") or _get_value(entry, "question_author")
-    return question_key(q_model, run_id)
+    return question_key(q_model, run_id, outer_attempt)
 
 
 def _make_key_index() -> Set[QuestionKey]:
@@ -544,7 +545,11 @@ def check_evaluation_issues(
                 answer_slug = _get_value(evaluation, "answer_model")
                 critic_slug = _get_value(evaluation, "critic_model")
                 mode = _get_value(evaluation, "mode")
-                key = question_key(q_slug, _get_value(evaluation, "run_id"))
+                key = question_key(
+                    q_slug,
+                    _get_value(evaluation, "run_id"),
+                    _get_value(evaluation, "outer_attempt"),
+                )
                 missing_debate = False
                 if eval_type == "illposed":
                     debate_keys = (
@@ -1012,7 +1017,7 @@ def _drop_entries(
                     counts["evaluation_entries"] += 1
                     continue
                 q_slug = decision.get("question_model")
-                key = question_key(q_slug, decision.get("run_id"))
+                key = question_key(q_slug, decision.get("run_id"), decision.get("outer_attempt"))
                 answer_slug = decision.get("answer_model")
                 critic_slug = decision.get("critic_model")
                 mode = decision.get("mode")

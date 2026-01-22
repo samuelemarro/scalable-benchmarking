@@ -64,7 +64,7 @@ def benchmark_answer_map(benchmark_dir: Path, q_slug: str) -> Dict:
     for entry in answers:
         if not entry:
             continue
-        key = question_key(q_slug, entry.run_id)
+        key = question_key(q_slug, entry.run_id, entry.outer_attempt)
         if key and key not in mapping:
             mapping[key] = final_answer(entry) or ""
     return mapping
@@ -84,7 +84,7 @@ def gather_illposed(debates_dir: Path, answers_dir: Path, benchmark_dir: Path, r
         for debate in debates:
             if not debate:
                 continue
-            key = answer_key(q_slug, a_slug, debate.run_id)
+            key = answer_key(q_slug, a_slug, debate.run_id, debate.outer_attempt)
             if key and key not in debate_map:
                 debate_map[key] = debate
         answer_map: Dict = {}
@@ -101,8 +101,11 @@ def gather_illposed(debates_dir: Path, answers_dir: Path, benchmark_dir: Path, r
             answer_record = answer_map.get(key)
             answer_text = final_answer(answer_record) if answer_record else ""
             if not answer_text:
-                answer_text = benchmark_answers.get(question_key(q_slug, key[0]), "")
+                answer_text = benchmark_answers.get(question_key(q_slug, key[0], key[3]), "")
             run_id = (debate.run_id if debate else None) or (answer_record.run_id if answer_record else None)
+            outer_attempt = (debate.outer_attempt if debate else None) or (
+                answer_record.outer_attempt if answer_record else None
+            )
             topic_slug = (debate.topic_slug if debate else None) or (answer_record.topic_slug if answer_record else None)
             claim_text = build_illposed_claim(answer_record)
             items.append(
@@ -112,6 +115,7 @@ def gather_illposed(debates_dir: Path, answers_dir: Path, benchmark_dir: Path, r
                     answer_model=answer_model,
                     critic_model=None,
                     run_id=run_id,
+                    outer_attempt=outer_attempt,
                     topic_slug=topic_slug,
                     question=question or (answer_record.question if answer_record else ""),
                     answer=answer_text,
@@ -142,7 +146,7 @@ def gather_critiques(debates_dir: Path, critiques_dir: Path, answers_dir: Path, 
                 for debate in debates:
                     if not debate:
                         continue
-                    key = answer_key(q_slug, answer_slug, debate.run_id)
+                    key = answer_key(q_slug, answer_slug, debate.run_id, debate.outer_attempt)
                     if key and key not in debate_map:
                         debate_map[key] = debate
                 answer_map: Dict = {}
@@ -163,15 +167,17 @@ def gather_critiques(debates_dir: Path, critiques_dir: Path, answers_dir: Path, 
                         critique_entry.question_author,
                         critique_entry.answer_author,
                         critique_entry.run_id,
+                        critique_entry.outer_attempt,
                     )
                     debate = debate_map.get(key)
                     question = (debate.question if debate else "") or critique_entry.question
                     answer_record = answer_map.get(key)
                     answer_text = final_answer(answer_record) if answer_record else ""
                     if not answer_text:
-                        answer_text = benchmark_answers.get(question_key(q_slug, key[0]), "")
+                        answer_text = benchmark_answers.get(question_key(q_slug, key[0], key[3]), "")
                     critique_text = critique_attempts[-1].raw_critique if critique_attempts else ""
                     run_id = (debate.run_id if debate else None) or critique_entry.run_id
+                    outer_attempt = (debate.outer_attempt if debate else None) or critique_entry.outer_attempt
                     topic_slug = (debate.topic_slug if debate else None) or critique_entry.topic_slug
                     items.append(
                         JudgingTask(
@@ -181,6 +187,7 @@ def gather_critiques(debates_dir: Path, critiques_dir: Path, answers_dir: Path, 
                             answer_model=answer_model,
                             critic_model=critic_model,
                             run_id=run_id,
+                            outer_attempt=outer_attempt,
                             topic_slug=topic_slug,
                             question=question,
                             answer=answer_text,
@@ -262,6 +269,7 @@ def render_task(task: JudgingTask, existing: Optional[HumanEvaluation], save_cb)
         save_cb(
             HumanEvaluation(
                 run_id=task.run_id,
+                outer_attempt=task.outer_attempt,
                 type=task.type,
                 mode=task.mode,
                 question_model=task.question_model,

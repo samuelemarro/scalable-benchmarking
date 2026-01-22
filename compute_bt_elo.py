@@ -35,8 +35,10 @@ def final_question(entry: BenchmarkEntry) -> Optional[str]:
     return refinements[-1].question
 
 
-def _task_key(prefix: str, run_id: Optional[str], _topic_slug: Optional[str], _question: Optional[str]):
-    return task_key_from_prefix(prefix, run_id)
+def _task_key(
+    prefix: str, run_id: Optional[str], outer_attempt: Optional[str], _topic_slug: Optional[str], _question: Optional[str]
+):
+    return task_key_from_prefix(prefix, run_id, outer_attempt)
 
 
 def collect_decisions(auto_eval_dir: Path) -> Dict[Tuple, List[AutomatedEvaluation]]:
@@ -52,7 +54,7 @@ def collect_decisions(auto_eval_dir: Path) -> Dict[Tuple, List[AutomatedEvaluati
     return decisions_by_claim
 
 
-QuestionKey = Tuple[Optional[str], Optional[str]]
+QuestionKey = Tuple[Optional[str], Optional[str], Optional[str]]
 CritiqueKey = Tuple[str, str, str, Union[int, QuestionKey]]
 
 
@@ -84,10 +86,11 @@ def load_critique_verdicts(
                     info = {
                         "verdict": verdict,
                         "run_id": entry.run_id,
+                        "outer_attempt": entry.outer_attempt,
                         "topic_slug": entry.topic_slug,
                         "question": entry.question,
                     }
-                    q_key = question_key(entry.question_author, entry.run_id)
+                    q_key = question_key(entry.question_author, entry.run_id, entry.outer_attempt)
                     if q_key:
                         verdicts[(q_slug, critic_slug, answer_slug, q_key)][mode] = info
                     verdicts[(q_slug, critic_slug, answer_slug, idx)][mode] = info
@@ -242,7 +245,7 @@ def collect_games(
                     a_slug,
                     q_slug,
                     idx,
-                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id),
+                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id, answer_entry.outer_attempt),
                     self_answer_critique_mode,
                     fallback_any_mode,
                 )
@@ -258,6 +261,7 @@ def collect_games(
                         claim_key = _task_key(
                             prefix,
                             self_info.get("run_id"),
+                            self_info.get("outer_attempt"),
                             self_info.get("topic_slug"),
                             self_info.get("question"),
                         )
@@ -283,6 +287,7 @@ def collect_games(
                     claim_key = _task_key(
                         prefix,
                         answer_entry.run_id,
+                        answer_entry.outer_attempt,
                         answer_entry.topic_slug,
                         answer_entry.question,
                     )
@@ -311,7 +316,7 @@ def collect_games(
                     q_slug,
                     a_slug,
                     idx,
-                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id),
+                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id, answer_entry.outer_attempt),
                     answer_critique_mode,
                     fallback_any_mode,
                 )
@@ -330,6 +335,7 @@ def collect_games(
                 claim_key = _task_key(
                     prefix,
                     verdict_info.get("run_id"),
+                    verdict_info.get("outer_attempt"),
                     verdict_info.get("topic_slug"),
                     verdict_info.get("question"),
                 )

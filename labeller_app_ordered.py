@@ -212,16 +212,19 @@ def max_other_confidence(other_labels: List[HumanEvaluation]) -> int:
     return max(confidences) if confidences else 0
 
 
-def normalize_key(raw: Optional[List[Any]]) -> Optional[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]]:
-    if not raw or len(raw) != 5:
+def normalize_key(
+    raw: Optional[List[Any]],
+) -> Optional[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]]:
+    if not raw or len(raw) != 6:
         return None
-    run_id, question_model, answer_model, critic_model, mode = raw
+    run_id, question_model, answer_model, critic_model, mode, outer_attempt = raw
     return (
         str(run_id) if run_id is not None else None,
         question_model,
         answer_model,
         critic_model,
         mode,
+        str(outer_attempt) if outer_attempt is not None else None,
     )
 
 
@@ -272,63 +275,65 @@ def collect_auto_evals(auto_eval_dir: Path) -> Dict[Tuple, List[AutomatedEvaluat
     return by_task_key
 
 
-KeyTuple = Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]
+KeyTuple = Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]
 
 
-def build_answer_cache(answers_dir: Path) -> Dict[Tuple[str, str], Dict[str, AnswerEntry]]:
-    cache: Dict[Tuple[str, str], Dict[str, AnswerEntry]] = {}
+def build_answer_cache(answers_dir: Path) -> Dict[Tuple[str, str], Dict[Tuple[str, str], AnswerEntry]]:
+    cache: Dict[Tuple[str, str], Dict[Tuple[str, str], AnswerEntry]] = {}
     for q_dir in answers_dir.glob("*"):
         q_slug = q_dir.name
         for ans_file in q_dir.glob("*.json"):
             a_slug = ans_file.stem
             records = load_answer_entries(ans_file)
-            mapping: Dict[str, AnswerEntry] = {}
+            mapping: Dict[Tuple[str, str], AnswerEntry] = {}
             for entry in records:
-                if not entry or entry.run_id is None:
+                if not entry or entry.run_id is None or entry.outer_attempt is None:
                     continue
-                key = str(entry.run_id)
+                key = (str(entry.run_id), str(entry.outer_attempt))
                 if key not in mapping:
                     mapping[key] = entry
             cache[(q_slug, a_slug)] = mapping
     return cache
 
 
-def build_benchmark_cache(benchmark_dir: Path) -> Dict[str, Dict[str, AnswerEntry]]:
-    cache: Dict[str, Dict[str, AnswerEntry]] = {}
+def build_benchmark_cache(benchmark_dir: Path) -> Dict[str, Dict[Tuple[str, str], AnswerEntry]]:
+    cache: Dict[str, Dict[Tuple[str, str], AnswerEntry]] = {}
     for bench_path in benchmark_dir.glob("*.json"):
         q_slug = bench_path.stem
         entries = load_benchmark_entries(bench_path)
         answers = benchmark_answers_from_entries(q_slug, entries)
-        mapping: Dict[str, AnswerEntry] = {}
+        mapping: Dict[Tuple[str, str], AnswerEntry] = {}
         for entry in answers:
-            if not entry or entry.run_id is None:
+            if not entry or entry.run_id is None or entry.outer_attempt is None:
                 continue
-            key = str(entry.run_id)
+            key = (str(entry.run_id), str(entry.outer_attempt))
             if key not in mapping:
                 mapping[key] = entry
         cache[q_slug] = mapping
     return cache
 
 
-def build_debate_cache_illposed(debates_dir: Path) -> Dict[Tuple[str, str], Dict[str, Any]]:
-    cache: Dict[Tuple[str, str], Dict[str, Any]] = {}
+def build_debate_cache_illposed(debates_dir: Path) -> Dict[Tuple[str, str], Dict[Tuple[str, str], Any]]:
+    cache: Dict[Tuple[str, str], Dict[Tuple[str, str], Any]] = {}
     for debate_file in debates_dir.glob("illposed/*/*.json"):
         q_slug = debate_file.parent.name
         a_slug = debate_file.stem
         entries = load_debate_entries(debate_file)
-        mapping: Dict[str, Any] = {}
+        mapping: Dict[Tuple[str, str], Any] = {}
         for entry in entries:
-            if not entry or entry.run_id is None:
+            if not entry or entry.run_id is None or entry.outer_attempt is None:
                 continue
-            key = str(entry.run_id)
+            key = (str(entry.run_id), str(entry.outer_attempt))
             if key not in mapping:
                 mapping[key] = entry
         cache[(q_slug, a_slug)] = mapping
     return cache
 
 
-def build_debate_cache_critiques(debates_dir: Path) -> Dict[Tuple[str, str, str, str], Dict[str, Any]]:
-    cache: Dict[Tuple[str, str, str, str], Dict[str, Any]] = {}
+def build_debate_cache_critiques(
+    debates_dir: Path,
+) -> Dict[Tuple[str, str, str, str], Dict[Tuple[str, str], Any]]:
+    cache: Dict[Tuple[str, str, str, str], Dict[Tuple[str, str], Any]] = {}
     critiques_root = debates_dir / "critiques"
     if not critiques_root.exists():
         return cache
@@ -342,19 +347,19 @@ def build_debate_cache_critiques(debates_dir: Path) -> Dict[Tuple[str, str, str,
                     continue
                 critic_slug, answer_slug = parts
                 entries = load_debate_entries(debate_file)
-                mapping: Dict[str, Any] = {}
+                mapping: Dict[Tuple[str, str], Any] = {}
                 for entry in entries:
-                    if not entry or entry.run_id is None:
+                    if not entry or entry.run_id is None or entry.outer_attempt is None:
                         continue
-                    key = str(entry.run_id)
+                    key = (str(entry.run_id), str(entry.outer_attempt))
                     if key not in mapping:
                         mapping[key] = entry
                 cache[(mode, q_slug, critic_slug, answer_slug)] = mapping
     return cache
 
 
-def build_critique_cache(critiques_dir: Path) -> Dict[Tuple[str, str, str, str], Dict[str, Any]]:
-    cache: Dict[Tuple[str, str, str, str], Dict[str, Any]] = {}
+def build_critique_cache(critiques_dir: Path) -> Dict[Tuple[str, str, str, str], Dict[Tuple[str, str], Any]]:
+    cache: Dict[Tuple[str, str, str, str], Dict[Tuple[str, str], Any]] = {}
     for mode_dir in critiques_dir.glob("*"):
         mode = mode_dir.name
         for q_dir in mode_dir.glob("*"):
@@ -365,21 +370,21 @@ def build_critique_cache(critiques_dir: Path) -> Dict[Tuple[str, str, str, str],
                     continue
                 critic_slug, answer_slug = parts
                 entries = load_critique_entries(crit_file)
-                mapping: Dict[str, Any] = {}
+                mapping: Dict[Tuple[str, str], Any] = {}
                 for entry in entries:
-                    if not entry or entry.run_id is None:
+                    if not entry or entry.run_id is None or entry.outer_attempt is None:
                         continue
-                    key = str(entry.run_id)
+                    key = (str(entry.run_id), str(entry.outer_attempt))
                     if key not in mapping:
                         mapping[key] = entry
                 cache[(mode, q_slug, critic_slug, answer_slug)] = mapping
     return cache
 
 
-def _lookup_run(mapping: Dict[str, Any], run_id: Optional[str]) -> Any:
-    if run_id is None:
+def _lookup_run(mapping: Dict[Tuple[str, str], Any], run_id: Optional[str], outer_attempt: Optional[str]) -> Any:
+    if run_id is None or outer_attempt is None:
         return None
-    return mapping.get(str(run_id))
+    return mapping.get((str(run_id), str(outer_attempt)))
 
 
 def build_task_from_key(
@@ -394,7 +399,7 @@ def build_task_from_key(
     key_tuple = normalize_key(key_entry.get("key"))
     if not key_tuple:
         return None, False
-    run_id, key_question_model, key_answer_model, key_critic_model, key_mode = key_tuple
+    run_id, key_question_model, key_answer_model, key_critic_model, key_mode, outer_attempt = key_tuple
     k_type = key_entry.get("type")
     if k_type == "illposed":
         q_slug = key_entry.get("question_model") or key_question_model
@@ -403,10 +408,10 @@ def build_task_from_key(
             return None, False
         answers = answer_cache.get((q_slug, a_slug), {})
         debates = debate_cache_illposed.get((q_slug, a_slug), {})
-        debate = _lookup_run(debates, run_id)
-        answer_entry = _lookup_run(answers, run_id)
+        debate = _lookup_run(debates, run_id, outer_attempt)
+        answer_entry = _lookup_run(answers, run_id, outer_attempt)
         fallback_answers = benchmark_cache.get(q_slug, {})
-        fallback_entry = _lookup_run(fallback_answers, run_id)
+        fallback_entry = _lookup_run(fallback_answers, run_id, outer_attempt)
         question_text = (debate.question if debate else "") or (answer_entry.question if answer_entry else key_entry.get("question") or "") or (fallback_entry.question if fallback_entry else "")
         answer_text = final_answer(answer_entry) if answer_entry else ""
         if not answer_text and fallback_entry:
@@ -426,6 +431,7 @@ def build_task_from_key(
                 answer_model=a_slug,
                 critic_model=None,
                 run_id=run_id,
+                outer_attempt=int(outer_attempt) if outer_attempt is not None else None,
                 topic_slug=topic_slug,
                 question=question_text,
                 answer=answer_text,
@@ -443,14 +449,14 @@ def build_task_from_key(
             return None, False
 
         answers = answer_cache.get((q_slug, answer_slug), {})
-        answer_entry = _lookup_run(answers, run_id)
+        answer_entry = _lookup_run(answers, run_id, outer_attempt)
         fallback_answers = benchmark_cache.get(q_slug, {})
-        fallback_entry = _lookup_run(fallback_answers, run_id)
+        fallback_entry = _lookup_run(fallback_answers, run_id, outer_attempt)
 
         debates = debate_cache_critiques.get((mode, q_slug, critic_slug, answer_slug), {})
         critiques = critique_cache.get((mode, q_slug, critic_slug, answer_slug), {})
-        debate = _lookup_run(debates, run_id)
-        critique_entry = _lookup_run(critiques, run_id)
+        debate = _lookup_run(debates, run_id, outer_attempt)
+        critique_entry = _lookup_run(critiques, run_id, outer_attempt)
 
         if not debate or not debate.history:
             return None, False
@@ -484,6 +490,7 @@ def build_task_from_key(
                 answer_model=answer_slug,
                 critic_model=display_critic_slug,
                 run_id=run_id,
+                outer_attempt=int(outer_attempt) if outer_attempt is not None else None,
                 topic_slug=topic_slug,
                 question=question_text,
                 answer=answer_text,
@@ -600,6 +607,7 @@ def render_task(
         ok, message, output = save_cb(
             HumanEvaluation(
                 run_id=task.run_id,
+                outer_attempt=task.outer_attempt,
                 type=task.type,
                 mode=task.mode,
                 question_model=task.question_model,

@@ -52,8 +52,10 @@ def count_human_labels(evaluations_dir: Path):
     return label_counts
 
 
-def _task_key(prefix: str, run_id: Optional[str], _topic_slug: Optional[str], _question: Optional[str]):
-    return task_key_from_prefix(prefix, run_id)
+def _task_key(
+    prefix: str, run_id: Optional[str], outer_attempt: Optional[str], _topic_slug: Optional[str], _question: Optional[str]
+):
+    return task_key_from_prefix(prefix, run_id, outer_attempt)
 
 
 _CRITIQUE_INCORRECT_EQUIV = {
@@ -79,7 +81,7 @@ def final_question(entry: BenchmarkEntry) -> Optional[str]:
     return refinements[-1].question
 
 
-QuestionKey = Tuple[Optional[str], Optional[str]]
+QuestionKey = Tuple[Optional[str], Optional[str], Optional[str]]
 CritiqueKey = Tuple[str, str, str, Union[int, QuestionKey]]
 
 
@@ -111,10 +113,11 @@ def load_critique_verdicts(
                     info = {
                         "verdict": verdict,
                         "run_id": entry.run_id,
+                        "outer_attempt": entry.outer_attempt,
                         "topic_slug": entry.topic_slug,
                         "question": entry.question,
                     }
-                    q_key = question_key(entry.question_author, entry.run_id)
+                    q_key = question_key(entry.question_author, entry.run_id, entry.outer_attempt)
                     if q_key:
                         verdicts[(q_slug, critic_slug, answer_slug, q_key)][mode] = info
                     verdicts[(q_slug, critic_slug, answer_slug, idx)][mode] = info
@@ -177,7 +180,9 @@ def collect_claim_keys(critiques_dir: Path, debates_dir: Path):
                     if not entry:
                         continue
                     prefix = f"critique/{mode_dir.name}/{q_slug}/{crit_file.stem}"
-                    claim_key = _task_key(prefix, entry.run_id, entry.topic_slug, entry.question)
+                    claim_key = _task_key(
+                        prefix, entry.run_id, entry.outer_attempt, entry.topic_slug, entry.question
+                    )
                     if claim_key:
                         claim_keys.add(claim_key)
     for debate_file in (debates_dir / "illposed").glob("*/*.json"):
@@ -188,7 +193,7 @@ def collect_claim_keys(critiques_dir: Path, debates_dir: Path):
             if not entry:
                 continue
             prefix = f"illposed/{q_slug}/{a_slug}"
-            claim_key = _task_key(prefix, entry.run_id, entry.topic_slug, entry.question)
+            claim_key = _task_key(prefix, entry.run_id, entry.outer_attempt, entry.topic_slug, entry.question)
             if claim_key:
                 claim_keys.add(claim_key)
     return claim_keys
@@ -402,7 +407,7 @@ def print_protocol_stats(
                     a_slug,
                     q_slug,
                     idx,
-                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id),
+                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id, answer_entry.outer_attempt),
                     self_answer_critique_mode,
                     fallback_any_mode,
                 )
@@ -425,6 +430,7 @@ def print_protocol_stats(
                     claim_key = _task_key(
                         prefix,
                         self_info.get("run_id"),
+                        self_info.get("outer_attempt"),
                         self_info.get("topic_slug"),
                         self_info.get("question"),
                     )
@@ -459,6 +465,7 @@ def print_protocol_stats(
                     claim_key = _task_key(
                         prefix,
                         answer_entry.run_id,
+                        answer_entry.outer_attempt,
                         answer_entry.topic_slug,
                         answer_entry.question,
                     )
@@ -496,7 +503,7 @@ def print_protocol_stats(
                     q_slug,
                     a_slug,
                     idx,
-                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id),
+                    question_key(answer_entry.question_model or q_slug, answer_entry.run_id, answer_entry.outer_attempt),
                     answer_critique_mode,
                     fallback_any_mode,
                 )
@@ -537,6 +544,7 @@ def print_protocol_stats(
                 claim_key = _task_key(
                     prefix,
                     verdict_info.get("run_id"),
+                    verdict_info.get("outer_attempt"),
                     verdict_info.get("topic_slug"),
                     verdict_info.get("question"),
                 )
@@ -717,7 +725,9 @@ def build_critique_verdict_map(critiques_dir: Path) -> Dict[str, Dict]:
                     critic_model_name = entry.critic if entry else None
 
                     prefix = f"critique/{mode_dir.name}/{q_slug}/{crit_file.stem}"
-                    task_key = _task_key(prefix, entry.run_id, entry.topic_slug, entry.question)
+                    task_key = _task_key(
+                        prefix, entry.run_id, entry.outer_attempt, entry.topic_slug, entry.question
+                    )
                     if not task_key:
                         continue
                     critique_verdict_map[task_key] = {

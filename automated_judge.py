@@ -128,6 +128,7 @@ def build_failed_decision(task: JudgingTask, judge_slug: str, error_message: str
         error=error_message,
         raw_response=None,
         run_id=task.run_id,
+        outer_attempt=task.outer_attempt,
         topic_slug=task.topic_slug,
         judge_model=judge_slug,
     )
@@ -201,12 +202,12 @@ def gather_illposed_tasks(
         )
         debate_map = build_entry_map(
             debates,
-            lambda entry: answer_key(q_slug, a_slug, entry.run_id),
+            lambda entry: answer_key(q_slug, a_slug, entry.run_id, entry.outer_attempt),
         )
         answer_map = build_entry_map(answers, answer_key_from_entry)
         fallback_map = build_entry_map(
             fallback_answers,
-            lambda entry: question_key(q_slug, entry.run_id),
+            lambda entry: question_key(q_slug, entry.run_id, entry.outer_attempt),
         )
         keys = set(debate_map) | set(answer_map)
         for key in keys:
@@ -218,7 +219,7 @@ def gather_illposed_tasks(
             question = (debate.question if debate else "") or (answer_record.question if answer_record else "")
             answer_text = final_answer(answer_record) if answer_record else ""
             if not answer_text:
-                fallback_record = fallback_map.get(question_key(q_slug, key[0]))
+                fallback_record = fallback_map.get(question_key(q_slug, key[0], key[3]))
                 answer_text = final_answer(fallback_record) if fallback_record else ""
                 if not question and fallback_record:
                     question = fallback_record.question
@@ -234,6 +235,9 @@ def gather_illposed_tasks(
             alice_model = registry.resolve_model_name((debate.alice_model if debate else None) or a_slug)
             bob_model = registry.resolve_model_name((debate.bob_model if debate else None) or q_slug)
             run_id = (debate.run_id if debate else None) or (answer_record.run_id if answer_record else None)
+            outer_attempt = (debate.outer_attempt if debate else None) or (
+                answer_record.outer_attempt if answer_record else None
+            )
             topic_slug = (debate.topic_slug if debate else None) or (answer_record.topic_slug if answer_record else None)
             tasks.append(
                 JudgingTask(
@@ -247,6 +251,7 @@ def gather_illposed_tasks(
                     alice_model=alice_model,
                     bob_model=bob_model,
                     run_id=run_id,
+                    outer_attempt=outer_attempt,
                     topic_slug=topic_slug,
                 )
             )
@@ -308,16 +313,17 @@ def gather_critique_tasks(
                         entry.question_author,
                         entry.answer_author,
                         entry.run_id,
+                        entry.outer_attempt,
                     ),
                 )
                 answer_map = build_entry_map(answers, answer_key_from_entry)
                 debate_map = build_entry_map(
                     debates,
-                    lambda entry: answer_key(q_slug, answer_slug, entry.run_id),
+                    lambda entry: answer_key(q_slug, answer_slug, entry.run_id, entry.outer_attempt),
                 )
                 fallback_map = build_entry_map(
                     fallback_answers,
-                    lambda entry: question_key(q_slug, entry.run_id),
+                    lambda entry: question_key(q_slug, entry.run_id, entry.outer_attempt),
                 )
                 for key, crit_entry in critique_map.items():
                     if not crit_entry or crit_entry.status != STATUS_SUCCEEDED:
@@ -337,7 +343,7 @@ def gather_critique_tasks(
                     answer_record = answer_map.get(key)
                     answer_text = final_answer(answer_record) if answer_record else ""
                     if not answer_text:
-                        fallback_record = fallback_map.get(question_key(q_slug, key[0]))
+                        fallback_record = fallback_map.get(question_key(q_slug, key[0], key[3]))
                         answer_text = final_answer(fallback_record) if fallback_record else ""
                         if not question and fallback_record:
                             question = fallback_record.question
@@ -355,6 +361,7 @@ def gather_critique_tasks(
                     alice_model = registry.resolve_model_name((debate.alice_model if debate else None) or critic_slug)
                     bob_model = registry.resolve_model_name((debate.bob_model if debate else None) or answer_slug)
                     run_id = (debate.run_id if debate else None) or crit_entry.run_id
+                    outer_attempt = (debate.outer_attempt if debate else None) or crit_entry.outer_attempt
                     topic_slug = (debate.topic_slug if debate else None) or crit_entry.topic_slug
                     tasks.append(
                         JudgingTask(
@@ -370,6 +377,7 @@ def gather_critique_tasks(
                             alice_model=alice_model,
                             bob_model=bob_model,
                             run_id=run_id,
+                            outer_attempt=outer_attempt,
                             topic_slug=topic_slug,
                         )
                     )
@@ -568,6 +576,7 @@ def parse_judgment(text: str, task: JudgingTask, judge_slug: str) -> AutomatedEv
         status=status,
         raw_response=text,
         run_id=task.run_id,
+        outer_attempt=task.outer_attempt,
         topic_slug=task.topic_slug,
         judge_model=judge_slug,
     )

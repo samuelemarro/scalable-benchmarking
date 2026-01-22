@@ -91,7 +91,7 @@ def prepare_batch(
         question_text = final_question(entry)
         if not question_text:
             continue
-        key = answer_key(question_model, answer_model, entry.run_id)
+        key = answer_key(question_model, answer_model, entry.run_id, entry.outer_attempt)
         prior = existing_by_key.get(key) if key else None
         if prior and prior.status == STATUS_SUCCEEDED:
             continue
@@ -178,6 +178,7 @@ def run_generation(
             answer_model=a_slug,
             question=question_text,
             run_id=entry.run_id,
+            outer_attempt=entry.outer_attempt,
             topic_slug=entry.topic_slug,
             ill_posed_claim=ill_posed_claim,
             status=improved.status,

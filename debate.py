@@ -50,10 +50,17 @@ def _debate_key_for_entry(
     answer_model: Optional[str],
     critic_model: Optional[str],
     mode: Optional[str],
-) -> Optional[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]]:
+) -> Optional[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]]:
     if not entry:
         return None
-    return debate_task_key(question_model, answer_model, critic_model, mode, entry.run_id)
+    return debate_task_key(
+        question_model,
+        answer_model,
+        critic_model,
+        mode,
+        entry.run_id,
+        entry.outer_attempt,
+    )
 
 
 def collect_debate_keys(
@@ -62,8 +69,8 @@ def collect_debate_keys(
     answer_model: Optional[str],
     critic_model: Optional[str],
     mode: Optional[str],
-) -> Set[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]]:
-    keys: Set[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]] = set()
+) -> Set[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]]:
+    keys: Set[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]] = set()
     for entry in entries:
         key = _debate_key_for_entry(entry, question_model, answer_model, critic_model, mode)
         if key:
@@ -71,12 +78,16 @@ def collect_debate_keys(
     return keys
 
 
-def build_entry_map(entries: List[Optional[Any]]) -> Dict[Tuple[Optional[str], Optional[str]], Any]:
-    mapped: Dict[Tuple[Optional[str], Optional[str]], Any] = {}
+def build_entry_map(entries: List[Optional[Any]]) -> Dict[Tuple[Optional[str], Optional[str], Optional[str]], Any]:
+    mapped: Dict[Tuple[Optional[str], Optional[str], Optional[str]], Any] = {}
     for entry in entries:
         if not entry:
             continue
-        key = question_key(getattr(entry, "question_model", None), getattr(entry, "run_id", None))
+        key = question_key(
+            getattr(entry, "question_model", None),
+            getattr(entry, "run_id", None),
+            getattr(entry, "outer_attempt", None),
+        )
         if not key:
             continue
         existing = mapped.get(key)
@@ -96,8 +107,10 @@ def index_by_key(
     answer_model: Optional[str],
     critic_model: Optional[str],
     mode: Optional[str],
-) -> Dict[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]], int]:
-    index: Dict[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]], int] = {}
+) -> Dict[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]], int]:
+    index: Dict[
+        Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]], int
+    ] = {}
     for idx, entry in enumerate(entries):
         if not entry:
             continue
@@ -378,7 +391,14 @@ def main():
                             continue
                         if len(existing) > idx and existing[idx]:
                             continue
-                        key = debate_task_key(q_slug, answer_model_slug, None, None, rec.run_id)
+                        key = debate_task_key(
+                            q_slug,
+                            answer_model_slug,
+                            None,
+                            None,
+                            rec.run_id,
+                            rec.outer_attempt,
+                        )
                         if key and key in existing_keys:
                             continue
                         tasks.append(
@@ -447,7 +467,14 @@ def main():
                         existing_keys = collect_debate_keys(existing, q_slug, answer_model_slug, None, None)
                         if len(existing) > idx and existing[idx]:
                             return False
-                        key = debate_task_key(q_slug, answer_model_slug, None, None, rec.run_id)
+                        key = debate_task_key(
+                            q_slug,
+                            answer_model_slug,
+                            None,
+                            None,
+                            rec.run_id,
+                            rec.outer_attempt,
+                        )
                         if key and key in existing_keys:
                             return False
                         if len(existing) <= idx:
@@ -458,6 +485,7 @@ def main():
                             bob_model=question_model.slug,
                             claimant=answer_model.slug,
                             run_id=rec.run_id,
+                            outer_attempt=rec.outer_attempt,
                             topic_slug=rec.topic_slug,
                             history=history,
                         )
@@ -510,7 +538,14 @@ def main():
                         existing_keys = collect_debate_keys(existing, q_slug, answer_model_slug, None, None)
                         if len(existing) > idx and existing[idx]:
                             continue
-                        key = debate_task_key(q_slug, answer_model_slug, None, None, rec.run_id)
+                        key = debate_task_key(
+                            q_slug,
+                            answer_model_slug,
+                            None,
+                            None,
+                            rec.run_id,
+                            rec.outer_attempt,
+                        )
                         if key and key in existing_keys:
                             continue
                         total_tasks += 1
@@ -554,7 +589,14 @@ def main():
 
                         if len(existing) > idx and existing[idx]:
                             continue
-                        key = debate_task_key(q_slug, answer_model_slug, None, None, rec.run_id)
+                        key = debate_task_key(
+                            q_slug,
+                            answer_model_slug,
+                            None,
+                            None,
+                            rec.run_id,
+                            rec.outer_attempt,
+                        )
                         if key and key in existing_keys:
                             continue
 
@@ -581,6 +623,7 @@ def main():
                                 bob_model=question_model.slug,
                                 claimant=answer_model.slug,
                                 run_id=rec.run_id,
+                                outer_attempt=rec.outer_attempt,
                                 topic_slug=rec.topic_slug,
                                 history=history,
                             )
@@ -650,7 +693,7 @@ def main():
                                 continue
                             if verdict == CRITIQUE_VERDICT_CORRECT:
                                 continue
-                            question_key_value = question_key(q_slug, crit_entry.run_id)
+                            question_key_value = question_key(q_slug, crit_entry.run_id, crit_entry.outer_attempt)
                             if not question_key_value:
                                 continue
                             debate_key_value = debate_task_key(
@@ -659,6 +702,7 @@ def main():
                                 critic_slug,
                                 mode,
                                 crit_entry.run_id,
+                                crit_entry.outer_attempt,
                             )
                             if debate_key_value and debate_key_value in existing_keys:
                                 continue
@@ -745,6 +789,7 @@ def main():
                             critic_slug,
                             mode,
                             crit_entry.run_id,
+                            crit_entry.outer_attempt,
                         )
                         if not key:
                             return False
@@ -753,6 +798,7 @@ def main():
                             alice_model=critic_model.slug,
                             bob_model=answer_model.slug,
                             run_id=crit_entry.run_id,
+                            outer_attempt=crit_entry.outer_attempt,
                             topic_slug=crit_entry.topic_slug,
                             answer_author=answer_model.slug,
                             critic=critic_model.slug,
@@ -830,7 +876,7 @@ def main():
                             debate_path = args.output_dir / "critiques" / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
                             existing = load_debate_entries(debate_path)
                             existing_keys = collect_debate_keys(existing, q_slug, answer_slug, critic_slug, mode)
-                            question_key_value = question_key(q_slug, crit_entry.run_id)
+                            question_key_value = question_key(q_slug, crit_entry.run_id, crit_entry.outer_attempt)
                             if not question_key_value:
                                 continue
                             debate_key_value = debate_task_key(
@@ -839,6 +885,7 @@ def main():
                                 critic_slug,
                                 mode,
                                 crit_entry.run_id,
+                                crit_entry.outer_attempt,
                             )
                             if debate_key_value and debate_key_value in existing_keys:
                                 continue
@@ -896,7 +943,7 @@ def main():
                                 continue
                             if verdict == CRITIQUE_VERDICT_CORRECT:
                                 continue
-                            question_key_value = question_key(q_slug, crit_entry.run_id)
+                            question_key_value = question_key(q_slug, crit_entry.run_id, crit_entry.outer_attempt)
                             if not question_key_value:
                                 continue
                             debate_key_value = debate_task_key(
@@ -905,6 +952,7 @@ def main():
                                 critic_slug,
                                 mode,
                                 crit_entry.run_id,
+                                crit_entry.outer_attempt,
                             )
                             if debate_key_value and debate_key_value in existing_keys:
                                 continue
@@ -937,6 +985,7 @@ def main():
                                     alice_model=critic_model.slug,
                                     bob_model=answer_model.slug,
                                     run_id=crit_entry.run_id,
+                                    outer_attempt=crit_entry.outer_attempt,
                                     topic_slug=crit_entry.topic_slug,
                                     answer_author=answer_model.slug,
                                     critic=critic_model.slug,

@@ -52,7 +52,15 @@ def load_runs(path: Path, topic_info: Dict[str, Dict]) -> List[Dict]:
         if topic_slug not in topic_info:
             raise ValueError(f"Invalid topic slug '{topic_slug}' in run {run_id}. Valid topics: {list(topic_info.keys())}")
         topic_name = topic_info[topic_slug]["name"]
-        runs.append({"run_id": str(run_id), "topic_slug": topic_slug, "topic_name": topic_name})
+        outer_attempt = payload.get("outer_attempt", 1)
+        runs.append(
+            {
+                "run_id": str(run_id),
+                "outer_attempt": outer_attempt,
+                "topic_slug": topic_slug,
+                "topic_name": topic_name,
+            }
+        )
     return runs
 
 
@@ -118,14 +126,16 @@ def parse_question_answer(text: str) -> Tuple[str, str]:
 def upsert(
     entries: List[Optional[BenchmarkEntry]],
     run_id: str,
+    outer_attempt: int,
     topic_slug: str,
     topic_name: str,
 ) -> BenchmarkEntry:
     for entry in entries:
-        if entry and entry.run_id == run_id:
+        if entry and entry.run_id == run_id and entry.outer_attempt == outer_attempt:
             return entry
     entry = BenchmarkEntry(
         run_id=run_id,
+        outer_attempt=outer_attempt,
         topic_slug=topic_slug,
         topic_name=topic_name,
         status=STATUS_PENDING,
@@ -138,7 +148,7 @@ def upsert(
 def generate_questions(
     model: str,
     runs: List[Dict],
-    prev_map: Dict[str, BenchmarkEntry],
+    prev_map: Dict[Tuple[str, int], BenchmarkEntry],
     disable_batch: bool,
     guidance: str,
     temperature: float,
@@ -148,8 +158,9 @@ def generate_questions(
     for run in runs:
         run_id = run["run_id"]
         topic_name = run["topic_name"]
+        outer_attempt = run.get("outer_attempt", 1)
         previous_attempts: List[str] = []
-        prev_entry = prev_map.get(run_id)
+        prev_entry = prev_map.get((run_id, outer_attempt))
         if prev_entry and prev_entry.status in {STATUS_FAILED, STATUS_ILL_POSED}:
             for gen_round in prev_entry.generation_rounds or []:
                 refinements = gen_round.refinement_rounds or []
@@ -213,7 +224,12 @@ def main():
         output_path = args.output_dir / f"{slug}.json"
         current_entries = load_benchmark_entries(output_path)
 
-        run_id_to_entry = {entry.run_id: entry for entry in current_entries if entry}
+        run_id_to_entry = {}
+        for entry in current_entries:
+            if not entry:
+                continue
+            outer_attempt = entry.outer_attempt if entry.outer_attempt is not None else 1
+            run_id_to_entry[(entry.run_id, outer_attempt)] = entry
 
         def question_attempts(entry: Optional[BenchmarkEntry]) -> int:
             if not entry or not entry.generation_rounds:
@@ -223,7 +239,7 @@ def main():
         def select_pending_runs() -> List[Dict]:
             pending = []
             for run in runs:
-                entry = run_id_to_entry.get(run["run_id"])
+                entry = run_id_to_entry.get((run["run_id"], run.get("outer_attempt", 1)))
                 if entry and entry.status == STATUS_SUCCEEDED:
                     continue
                 if question_attempts(entry) >= args.max_question_attempts:
@@ -279,8 +295,14 @@ def main():
             )
 
             for run, question, result in zip(pending_runs, questions, improvements):
-                entry = upsert(current_entries, run["run_id"], run["topic_slug"], run["topic_name"])
-                run_id_to_entry[entry.run_id] = entry
+                entry = upsert(
+                    current_entries,
+                    run["run_id"],
+                    run.get("outer_attempt", 1),
+                    run["topic_slug"],
+                    run["topic_name"],
+                )
+                run_id_to_entry[(entry.run_id, entry.outer_attempt or 1)] = entry
                 attempt_records = [
                     RefinementAttempt(
                         round=att.round,
