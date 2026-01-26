@@ -20,7 +20,7 @@ from model_api import query_llm_single
 from utils import (
     benchmark_answers_from_entries,
     clean_math,
-    collect_invalid_self_answer_questions,
+    collect_invalid_questions,
     debate_key as debate_task_key,
     is_latest_outer_attempt,
     latest_outer_attempt_by_run,
@@ -381,8 +381,9 @@ def main():
     guidance_c = load_critique_guidance()
     guidance_d_illposed = load_debate_illposed_guidance()
     guidance_d_critique = load_debate_critique_guidance()
-    invalid_questions = collect_invalid_self_answer_questions(
+    invalid_questions = collect_invalid_questions(
         args.critiques_dir,
+        args.answers_dir,
         args.auto_evals_dir,
         args.human_evals_dir,
         registry,
@@ -906,6 +907,7 @@ def main():
                     if not question_model:
                         continue
                     benchmark_entries = load_benchmark_entries(args.benchmark_dir / f"{q_slug}.json")
+                    latest_by_run = latest_outer_attempt_by_run(benchmark_entries)
                     for crit_file in q_dir.glob("*.json"):
                         parts = crit_file.stem.split("__")
                         if len(parts) != 2:

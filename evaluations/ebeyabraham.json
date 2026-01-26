@@ -1,17 +1,6 @@
 {
   "decisions": [
     {
-      "run_id": "24",
-      "outer_attempt": 1,
-      "type": "illposed",
-      "question_model": "google-gemini-3-pro-preview",
-      "answer_model": "meta-llama-llama-4-maverick",
-      "critic_model": "meta-llama-llama-4-maverick",
-      "verdict": "defender_wins_incorrect",
-      "confidence": 3,
-      "comment": "Alice incorrectly hallucinates that the result is 42 which is incorrect. Bob identifies this in his rebuttal."
-    },
-    {
       "run_id": "34",
       "outer_attempt": 1,
       "type": "critique",
@@ -22,17 +11,6 @@
       "verdict": "claimant_wins",
       "confidence": 3,
       "comment": "Bob's solution is correct in the first half but then he assumes that the minimizing curve is a circle, which cannot be proved. Also in the final steps Bob calculates sqrt(2)/2 = 2 which is incorrect. Both of these are pointed out by Alice."
-    },
-    {
-      "run_id": "29",
-      "outer_attempt": 1,
-      "type": "illposed",
-      "question_model": "anthropic-claude-opus-4.5",
-      "answer_model": "meta-llama-llama-4-maverick",
-      "critic_model": "meta-llama-llama-4-maverick",
-      "verdict": "defender_wins_incorrect",
-      "confidence": 4,
-      "comment": "Alice's interprets the question incorrectly and hallucinates information in their claim."
     },
     {
       "run_id": "27",
@@ -130,18 +108,6 @@
       "comment": "Alice claims that method used to calculate the inradius is incorrect but infact the method used is correct as it does A/s where A is the area of the triangle computed using heron's formula and s is the semi-perimenter of the triangle. The other claims of Alice are correct."
     },
     {
-      "run_id": "9",
-      "outer_attempt": 1,
-      "type": "critique",
-      "mode": "evaluator",
-      "question_model": "openai-gpt-4o-2024-08-06",
-      "answer_model": "openai-gpt-3.5-turbo-0125",
-      "critic_model": "openai-gpt-4o-2024-08-06",
-      "verdict": "claimant_wins",
-      "confidence": 4,
-      "comment": "The answer finds the solutions for the eigenvalues but does not prove how it fits into the solution for cases where A has real entries"
-    },
-    {
       "run_id": "36",
       "outer_attempt": 1,
       "type": "critique",
@@ -213,18 +179,6 @@
       "comment": "Alice's claim is correct as there is no valid f(x) which satisfies this condition"
     },
     {
-      "run_id": "8",
-      "outer_attempt": 1,
-      "type": "critique",
-      "mode": "evaluator",
-      "question_model": "anthropic-claude-opus-4.5",
-      "answer_model": "microsoft-phi-4",
-      "critic_model": "anthropic-claude-opus-4.5",
-      "verdict": "claimant_wins",
-      "confidence": 3,
-      "comment": ""
-    },
-    {
       "run_id": "5",
       "outer_attempt": 1,
       "type": "critique",
@@ -247,6 +201,86 @@
       "verdict": "defender_wins_incorrect",
       "confidence": 3,
       "comment": "Alice claims that 1^2 + 1^2 is not equal to 2, but it is indeed!"
+    },
+    {
+      "run_id": "31",
+      "outer_attempt": 1,
+      "type": "critique",
+      "mode": "contradictor",
+      "question_model": "anthropic-claude-opus-4.5",
+      "answer_model": "anthropic-claude-opus-4.5",
+      "critic_model": "openai-gpt-4o-2024-08-06",
+      "verdict": "defender_wins_incorrect",
+      "confidence": 3,
+      "comment": ""
+    },
+    {
+      "run_id": "26",
+      "outer_attempt": 1,
+      "type": "critique",
+      "mode": "contradictor",
+      "question_model": "anthropic-claude-opus-4.5",
+      "answer_model": "anthropic-claude-opus-4.5",
+      "critic_model": "meta-llama-llama-4-maverick",
+      "verdict": "defender_wins_incorrect",
+      "confidence": 3,
+      "comment": ""
+    },
+    {
+      "run_id": "9",
+      "outer_attempt": 1,
+      "type": "critique",
+      "mode": "evaluator",
+      "question_model": "openai-gpt-4o-2024-08-06",
+      "answer_model": "openai-gpt-3.5-turbo-0125",
+      "critic_model": "openai-gpt-4o-2024-08-06",
+      "verdict": "claimant_wins",
+      "confidence": 4,
+      "comment": "The answer finds the solutions for the eigenvalues but does not prove how it fits into the solution for cases where A has real entries"
+    },
+    {
+      "run_id": "29",
+      "outer_attempt": 1,
+      "type": "illposed",
+      "question_model": "anthropic-claude-opus-4.5",
+      "answer_model": "meta-llama-llama-4-maverick",
+      "critic_model": "meta-llama-llama-4-maverick",
+      "verdict": "defender_wins_incorrect",
+      "confidence": 4,
+      "comment": "Alice's interprets the question incorrectly and hallucinates information in their claim."
+    },
+    {
+      "run_id": "24",
+      "outer_attempt": 1,
+      "type": "illposed",
+      "question_model": "google-gemini-3-pro-preview",
+      "answer_model": "meta-llama-llama-4-maverick",
+      "critic_model": "meta-llama-llama-4-maverick",
+      "verdict": "defender_wins_incorrect",
+      "confidence": 3,
+      "comment": "Alice incorrectly hallucinates that the result is 42 which is incorrect. Bob identifies this in his rebuttal."
+    },
+    {
+      "run_id": "24",
+      "outer_attempt": 1,
+      "type": "illposed",
+      "question_model": "google-gemini-3-pro-preview",
+      "answer_model": "meta-llama-llama-4-maverick",
+      "verdict": "wrong_problem",
+      "confidence": 3,
+      "comment": "the density measurement used it step 6 is incorrect, it should be that of a beta transformation not a continuous fraction map"
+    },
+    {
+      "run_id": "8",
+      "outer_attempt": 1,
+      "type": "critique",
+      "mode": "evaluator",
+      "question_model": "anthropic-claude-opus-4.5",
+      "answer_model": "microsoft-phi-4",
+      "critic_model": "anthropic-claude-opus-4.5",
+      "verdict": "claimant_wins",
+      "confidence": 3,
+      "comment": ""
     },
     {
       "run_id": "27",
@@ -273,28 +307,6 @@
       "comment": ""
     },
     {
-      "run_id": "24",
-      "outer_attempt": 1,
-      "type": "illposed",
-      "question_model": "google-gemini-3-pro-preview",
-      "answer_model": "meta-llama-llama-4-maverick",
-      "verdict": "wrong_problem",
-      "confidence": 3,
-      "comment": "the density measurement used it step 6 is incorrect, it should be that of a beta transformation not a continuous fraction map"
-    },
-    {
-      "run_id": "31",
-      "outer_attempt": 1,
-      "type": "critique",
-      "mode": "contradictor",
-      "question_model": "anthropic-claude-opus-4.5",
-      "answer_model": "anthropic-claude-opus-4.5",
-      "critic_model": "openai-gpt-4o-2024-08-06",
-      "verdict": "defender_wins_incorrect",
-      "confidence": 3,
-      "comment": ""
-    },
-    {
       "run_id": "11",
       "outer_attempt": 1,
       "type": "critique",
@@ -305,18 +317,6 @@
       "verdict": "defender_wins_minor",
       "confidence": 3,
       "comment": "Alice identifies an issue correctly but it is just skipping one step in the answer and does not affect the final answer "
-    },
-    {
-      "run_id": "26",
-      "outer_attempt": 1,
-      "type": "critique",
-      "mode": "contradictor",
-      "question_model": "anthropic-claude-opus-4.5",
-      "answer_model": "anthropic-claude-opus-4.5",
-      "critic_model": "meta-llama-llama-4-maverick",
-      "verdict": "defender_wins_incorrect",
-      "confidence": 3,
-      "comment": ""
     }
   ]
 }

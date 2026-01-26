@@ -23,7 +23,7 @@ from utils import (
     automated_evaluation_key_for_task,
     automated_evaluation_key_from_entry,
     benchmark_answers_from_entries,
-    collect_invalid_self_answer_questions,
+    collect_invalid_questions,
     format_key,
     is_latest_outer_attempt,
     judging_task_key,
@@ -670,8 +670,9 @@ def main():
             )
         )
 
-    invalid_questions = collect_invalid_self_answer_questions(
+    invalid_questions = collect_invalid_questions(
         args.critiques_dir,
+        args.answers_dir,
         args.output_dir,
         args.human_evals_dir,
         registry,

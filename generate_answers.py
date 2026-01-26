@@ -32,7 +32,7 @@ from utils import (
     answer_key,
     answer_key_from_entry,
     clean_math,
-    collect_invalid_self_answer_questions,
+    collect_invalid_questions,
     is_latest_outer_attempt,
     latest_outer_attempt_by_run,
     normalize_outer_attempt,
@@ -111,7 +111,12 @@ def prepare_batch(
         question_text = final_question(entry)
         if not question_text:
             continue
-        key = answer_key(question_model, answer_model, entry.run_id, entry.outer_attempt)
+        key = answer_key(
+            _slugify(question_model),
+            _slugify(answer_model),
+            entry.run_id,
+            normalize_outer_attempt(entry.outer_attempt),
+        )
         prior = existing_by_key.get(key) if key else None
         if prior and prior.status == STATUS_SUCCEEDED:
             continue
@@ -232,8 +237,9 @@ def main():
     answer_guidance = load_answer_guidance()
     self_critique_guidance = load_self_critique_guidance()
     overrides = load_json(args.illposed_overrides, {"overrides": {}})
-    invalid_questions = collect_invalid_self_answer_questions(
+    invalid_questions = collect_invalid_questions(
         args.critiques_dir,
+        args.output_dir,
         args.auto_evals_dir,
         args.human_evals_dir,
         registry,

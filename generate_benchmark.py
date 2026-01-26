@@ -31,7 +31,7 @@ from utils import (
     _ensure_non_empty_responses,
     _load_parsing_config,
     clean_math,
-    collect_invalid_self_answer_questions,
+    collect_invalid_questions,
     latest_outer_attempt_by_run,
     normalize_outer_attempt,
     question_key,
@@ -130,6 +130,18 @@ def parse_question_answer(text: str) -> Tuple[str, str]:
     raise ValueError("Response missing required [QUESTION] and [ANSWER] tags")
 
 
+def final_question(entry: Optional[BenchmarkEntry]) -> Optional[str]:
+    if not entry:
+        return None
+    generations = entry.generation_rounds or []
+    if not generations:
+        return None
+    refinements = generations[-1].refinement_rounds or []
+    if not refinements:
+        return None
+    return refinements[-1].question
+
+
 
 
 def upsert(
@@ -179,6 +191,22 @@ def generate_questions(
                         question = refinements[-1].question
                         if question:
                             previous_attempts.append(question)
+                if (
+                    previous_attempts
+                    and previous_context is None
+                    and outer_attempt > 1
+                    and (prev_entry.generation_rounds or [])
+                ):
+                    prior_entry = prev_map.get((run_id, outer_attempt - 1))
+                    prior_question = final_question(prior_entry)
+                    if prior_question:
+                        previous_context = (
+                            "The following questions on this topic failed the self-solve gate or meaningfulness check.\n"
+                            "Generate a materially different, well-posed replacement that avoids these issues.\n"
+                            "Additionally, ensure the new question is simpler than the last question from "
+                            f"outer_attempt {outer_attempt - 1}:\n"
+                            f"{prior_question}"
+                        )
         prompts.append(
             build_question_prompt(
                 topic_name,
@@ -213,6 +241,7 @@ def main():
     parser.add_argument("--config", type=Path, default=Path("configs/models.json"), help="Model registry JSON.")
     parser.add_argument("--output-dir", type=Path, default=Path("benchmarks"), help="Where to store benchmark files.")
     parser.add_argument("--critiques-dir", type=Path, default=Path("critiques"), help="Directory with critiques.")
+    parser.add_argument("--answers-dir", type=Path, default=Path("answers"), help="Directory with answers.")
     parser.add_argument("--auto-evals-dir", type=Path, default=Path("automated_evaluations"), help="Directory with automated evaluations.")
     parser.add_argument("--human-evals-dir", type=Path, default=Path("evaluations"), help="Directory with human evaluations.")
     parser.add_argument("--max-rounds", type=int, default=5, help="Self-critique rounds.")
@@ -238,8 +267,9 @@ def main():
     runs = load_runs(args.runs_file, topic_info)
     if args.limit is not None:
         runs = runs[: args.limit]
-    invalid_questions = collect_invalid_self_answer_questions(
+    invalid_questions = collect_invalid_questions(
         args.critiques_dir,
+        args.answers_dir,
         args.auto_evals_dir,
         args.human_evals_dir,
         registry,
@@ -285,13 +315,32 @@ def main():
                 current_max = latest_by_run.get(run_id, base_attempt or 1)
                 if current_max is None or current_max >= args.max_outer_attempts:
                     continue
+                current_entry = run_id_to_entry.get((run_id, current_max))
+                failed_status = current_entry is not None and current_entry.status == STATUS_FAILED
                 q_key = question_key(slug, run_id, current_max)
-                if not q_key or q_key not in invalid_questions:
+                invalidated = q_key is not None and q_key in invalid_questions
+                if not (invalidated or failed_status):
                     continue
                 next_attempt = current_max + 1
                 if (run_id, next_attempt) in run_keys:
                     continue
                 previous_questions = previous_questions_for_run(run_id, current_max)
+                if invalidated and failed_status:
+                    previous_context = (
+                        "The following questions on this topic had self-answers adjudicated incorrect or "
+                        "failed the self-solve gate. Generate a materially different, well-posed replacement "
+                        "that is simpler than these questions:"
+                    )
+                elif invalidated:
+                    previous_context = (
+                        "The following questions on this topic had self-answers adjudicated incorrect. "
+                        "Generate a materially different, well-posed replacement that is simpler than these questions:"
+                    )
+                else:
+                    previous_context = (
+                        "The following questions on this topic failed the self-solve gate. "
+                        "Generate a materially different, well-posed replacement that is simpler than these questions:"
+                    )
                 model_runs.append(
                     {
                         "run_id": run_id,
@@ -299,10 +348,7 @@ def main():
                         "topic_slug": run_info["topic_slug"],
                         "topic_name": run_info["topic_name"],
                         "previous_questions": previous_questions,
-                        "previous_context": (
-                            "The following questions on this topic had self-answers adjudicated incorrect. "
-                            "Generate a materially different, well-posed replacement that is simpler than these questions:"
-                        ),
+                        "previous_context": previous_context,
                     }
                 )
                 run_keys.add((run_id, next_attempt))
