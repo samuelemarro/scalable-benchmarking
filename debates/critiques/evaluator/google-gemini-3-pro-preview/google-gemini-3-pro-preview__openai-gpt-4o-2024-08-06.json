@@ -682,5 +682,41 @@
         "concede": true
       }
     ]
+  },
+  {
+    "question": "Compute the exact value of the following definite integral using methods from complex analysis:\n\n$$ I = \\int_{0}^{\\infty} \\frac{\\ln x}{x^2 + 2x + 2} \\, dx $$\n\nEnsure you justify your choice of contour and branch cuts, and clearly derive the residues required for the evaluation.",
+    "run_id": "18",
+    "outer_attempt": 1,
+    "topic_slug": "functions_of_a_complex_variable",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "Thank you for your critique. You are correct that the method I used was not appropriate for isolating the integral $I = \\int_0^\\infty \\frac{\\ln x}{x^2+2x+2} \\, dx$. The standard approach for such integrals involves using a keyhole contour and considering $f(z) = R(z)(\\ln z)^2$ to properly account for the branch cut. Additionally, the final result I provided was incorrect. The correct value of the integral is indeed $\\frac{\\pi}{8} \\ln 2$. I appreciate your detailed feedback.",
+        "concede": true
+      }
+    ]
+  },
+  {
+    "question": "Let $n=3$. Consider the function $f: \\mathbb{R}^3 \\to \\mathbb{R}$ defined by $f(x) = \\chi_{B}(x)$, where $\\chi_{B}$ is the indicator function of the unit ball $B = \\{x \\in \\mathbb{R}^3 : |x| \\le 1\\}$. Here, $|x|$ denotes the standard Euclidean norm.\n\nWe adopt the following definition for the Fourier transform of a function $g \\in L^1(\\mathbb{R}^3) \\cap L^2(\\mathbb{R}^3)$:\n$$ \\widehat{g}(\\xi) = \\int_{\\mathbb{R}^3} g(x) e^{-2\\pi i x \\cdot \\xi} \\, dx $$\n\n1.  Derive the explicit expression for $\\widehat{f}(\\xi)$. Your final answer should be in terms of the radial frequency $\\rho = |\\xi|$ and standard trigonometric functions.\n2.  Use the Plancherel theorem, which asserts that $\\|f\\|_{L^2(\\mathbb{R}^3)} = \\|\\widehat{f}\\|_{L^2(\\mathbb{R}^3)}$, to determine the exact value of the integral:\n    $$ I = \\int_0^\\infty \\frac{(\\sin t - t \\cos t)^2}{t^4} \\, dt $$",
+    "run_id": "28",
+    "outer_attempt": 1,
+    "topic_slug": "harmonic_analysis_on_euclidean_spaces",
+    "alice_model": "google-gemini-3-pro-preview",
+    "bob_model": "openai-gpt-4o-2024-08-06",
+    "answer_author": "openai-gpt-4o-2024-08-06",
+    "critic": "google-gemini-3-pro-preview",
+    "history": [
+      {
+        "round": 1,
+        "speaker": "Bob",
+        "message": "Thank you for pointing out the errors. \n\n1. You're correct about the integration by parts mistake. The term should indeed be $\\frac{\\sin(2\\pi \\rho)}{(2\\pi \\rho)^2}$, not $\\frac{\\sin(2\\pi \\rho)}{2\\pi \\rho}$.\n\n2. This error led to an incorrect coefficient in the expression for $\\widehat{f}(\\xi)$. The correct prefactor should be $\\frac{1}{2\\pi^2 \\rho^3}$.\n\n3. Regarding the integral $I$, I acknowledge the mishandling of the substitution. The correct value should indeed be $I = \\frac{\\pi}{6}$.\n\nI appreciate your detailed critique and corrections.",
+        "concede": true
+      }
+    ]
   }
 ]
