@@ -1,1 +1,351 @@
-[]
+[
+  {
+    "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a twice differentiable function such that for all $x \\in \\mathbb{R}$, the following conditions hold:\n\n1. $f''(x) + f(x) = 0$\n2. $f(0) = 1$\n3. $f'(0) = 0$\n\nDetermine the exact form of the function $f(x)$.",
+    "run_id": "16",
+    "outer_attempt": 1,
+    "topic_slug": "real_functions",
+    "question_author": "microsoft-phi-4",
+    "critic": "microsoft-phi-4",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the characteristic equation $r^2 + 1 = 0$ with roots $r = \\\\pm i$, leading to the general solution $f(x) = A\\\\cos(x) + B\\\\sin(x)$. The initial conditions $f(0) = 1$ and $f'(0) = 0$ are correctly applied to determine $A = 1$ and $B = 0$, resulting in the specific solution $f(x) = \\\\cos(x)$. All steps are logically valid and the solution is complete and rigorous.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the characteristic equation $r^2 + 1 = 0$ with roots $r = \\\\pm i$, leading to the general solution $f(x) = A\\\\cos(x) + B\\\\sin(x)$. The initial conditions $f(0) = 1$ and $f'(0) = 0$ are correctly applied to determine $A = 1$ and $B = 0$, resulting in the specific solution $f(x) = \\\\cos(x)$. All steps are logically valid and the solution is complete and rigorous.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the characteristic equation $r^2 + 1 = 0$ with roots $r = \\pm i$, leading to the general solution $f(x) = A\\cos(x) + B\\sin(x)$. The initial conditions $f(0) = 1$ and $f'(0) = 0$ are correctly applied to determine $A = 1$ and $B = 0$, resulting in the specific solution $f(x) = \\cos(x)$. All steps are logically valid and the solution is complete and rigorous.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the second-order linear ordinary differential equation (ODE) given by:\n\n$$\ny'' + p(x)y' + q(x)y = 0\n$$\n\nwhere $p(x) = \\frac{2}{x}$ and $q(x) = \\frac{2}{x^2}$ for $x > 0$. \n\n1. Find the general solution to this differential equation.\n2. Determine the particular solution that satisfies the initial conditions $y(1) = 1$ and $y'(1) = 0$.",
+    "run_id": "22",
+    "outer_attempt": 1,
+    "topic_slug": "ordinary_differential_equations",
+    "question_author": "microsoft-phi-4",
+    "critic": "microsoft-phi-4",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the form of the differential equation and applies the method of assuming a solution of the form $y = x^m$. The characteristic equation is derived correctly, and the roots $m = -1, -2$ are found accurately. The general solution $y(x) = c_1x^{-1} + c_2x^{-2}$ is correctly stated. The initial conditions are applied correctly to find $c_1 = -2$ and $c_2 = 3$, leading to the particular solution $y(x) = -2x^{-1} + 3x^{-2}$. All steps are logically valid and complete, with no errors in computation or reasoning.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly identifies the form of the differential equation and applies the method of assuming a solution of the form $y = x^m$. The characteristic equation is derived correctly, and the roots $m = -1, -2$ are found accurately. The general solution $y(x) = c_1x^{-1} + c_2x^{-2}$ is correctly stated. The initial conditions are applied correctly to find $c_1 = -2$ and $c_2 = 3$, leading to the particular solution $y(x) = -2x^{-1} + 3x^{-2}$. All steps are logically valid and complete, with no errors in computation or reasoning.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly identifies the form of the differential equation and applies the method of assuming a solution of the form $y = x^m$. The characteristic equation is derived correctly, and the roots $m = -1, -2$ are found accurately. The general solution $y(x) = c_1x^{-1} + c_2x^{-2}$ is correctly stated. The initial conditions are applied correctly to find $c_1 = -2$ and $c_2 = 3$, leading to the particular solution $y(x) = -2x^{-1} + 3x^{-2}$. All steps are logically valid and complete, with no errors in computation or reasoning.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the function $f(t) = e^{-t^2}$ for $t \\in \\mathbb{R}$. Define the Laplace transform of $f$ as $\\mathcal{L}\\{f\\}(s) = \\int_0^\\infty e^{-st} f(t) \\, dt$ for $s \\in \\mathbb{C}$ with $\\Re(s) > 0$.\n\n1. Show that the Laplace transform $\\mathcal{L}\\{f\\}(s)$ can be expressed in terms of the error function $\\operatorname{erf}(z)$, defined by\n   $$\n   \\operatorname{erf}(z) = \\frac{2}{\\sqrt{\\pi}} \\int_0^z e^{-u^2} \\, du.\n   $$\n\n2. Using the expression from part 1, evaluate $\\mathcal{L}\\{f\\}(s)$ explicitly for $s = 1$.",
+    "run_id": "30",
+    "outer_attempt": 1,
+    "topic_slug": "integral_transforms_and_operational_calculus",
+    "question_author": "microsoft-phi-4",
+    "critic": "microsoft-phi-4",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the Laplace transform of the function $f(t) = e^{-t^2}$ in terms of the error function. The steps include completing the square in the exponent, making a substitution, and using the definition of the error function. The final expression for the Laplace transform is correctly given as $\\\\mathcal{L}\\\\{f\\\\}(s) = e^{\\\\frac{s^2}{4}} \\\\left(1 - \\\\operatorname{erf}\\\\left(\\\\frac{s}{2}\\\\right)\\\\right)$. For $s = 1$, the solution correctly evaluates $\\\\mathcal{L}\\\\{f\\\\}(1) = e^{\\\\frac{1}{4}} \\\\left(1 - \\\\operatorname{erf}\\\\left(\\\\frac{1}{2}\\\\right)\\\\right)$. All steps are logically valid and the reasoning is rigorous.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The solution correctly derives the Laplace transform of the function $f(t) = e^{-t^2}$ in terms of the error function. The steps include completing the square in the exponent, making a substitution, and using the definition of the error function. The final expression for the Laplace transform is correctly given as $\\\\mathcal{L}\\\\{f\\\\}(s) = e^{\\\\frac{s^2}{4}} \\\\left(1 - \\\\operatorname{erf}\\\\left(\\\\frac{s}{2}\\\\right)\\\\right)$. For $s = 1$, the solution correctly evaluates $\\\\mathcal{L}\\\\{f\\\\}(1) = e^{\\\\frac{1}{4}} \\\\left(1 - \\\\operatorname{erf}\\\\left(\\\\frac{1}{2}\\\\right)\\\\right)$. All steps are logically valid and the reasoning is rigorous.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The solution correctly derives the Laplace transform of the function $f(t) = e^{-t^2}$ in terms of the error function. The steps include completing the square in the exponent, making a substitution, and using the definition of the error function. The final expression for the Laplace transform is correctly given as $\\mathcal{L}\\{f\\}(s) = e^{\\frac{s^2}{4}} \\left(1 - \\operatorname{erf}\\left(\\frac{s}{2}\\right)\\right)$. For $s = 1$, the solution correctly evaluates $\\mathcal{L}\\{f\\}(1) = e^{\\frac{1}{4}} \\left(1 - \\operatorname{erf}\\left(\\frac{1}{2}\\right)\\right)$. All steps are logically valid and the reasoning is rigorous.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $R$ be a commutative ring with unity, and let $I$ and $J$ be two ideals of $R$. Suppose that $I + J = R$ and that $I \\cap J = (0)$. Consider the ring homomorphism $\\varphi: R \\to R/I \\times R/J$ defined by $\\varphi(r) = (r + I, r + J)$.\n\n1. Prove that $\\varphi$ is a surjective ring homomorphism.\n2. Show that the kernel of $\\varphi$ is $I \\cap J$.\n3. Using the First Isomorphism Theorem, conclude that $R \\cong R/I \\times R/J$.",
+    "run_id": "7",
+    "outer_attempt": 2,
+    "topic_slug": "commutative_algebra",
+    "question_author": "microsoft-phi-4",
+    "critic": "microsoft-phi-4",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly demonstrates that the homomorphism \\$\\\\varphi\\$ is surjective by constructing an element \\$r = a + b\\$ in \\$R\\$ for any \\$(a + I, b + J) \\\\in R/I \\\\times R/J\\$. It accurately identifies the kernel of \\$\\\\varphi\\$ as \\$I \\\\cap J\\$ by showing that \\$r \\\\in I\\$ and \\$r \\\\in J\\$ implies \\$r \\\\in I \\\\cap J\\$. Finally, it correctly applies the First Isomorphism Theorem, using the given condition \\$I \\\\cap J = (0)\\$ to conclude \\$R \\\\cong R/I \\\\times R/J\\$. The reasoning is logically valid, and all steps are justified.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly demonstrates that the homomorphism \\\\(\\\\varphi\\\\) is surjective by constructing an element \\\\(r = a + b\\\\) in \\\\(R\\\\) for any \\\\((a + I, b + J) \\\\in R/I \\\\times R/J\\\\). It accurately identifies the kernel of \\\\(\\\\varphi\\\\) as \\\\(I \\\\cap J\\\\) by showing that \\\\(r \\\\in I\\\\) and \\\\(r \\\\in J\\\\) implies \\\\(r \\\\in I \\\\cap J\\\\). Finally, it correctly applies the First Isomorphism Theorem, using the given condition \\\\(I \\\\cap J = (0)\\\\) to conclude \\\\(R \\\\cong R/I \\\\times R/J\\\\). The reasoning is logically valid, and all steps are justified.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly demonstrates that the homomorphism \\$\\varphi\\$ is surjective by constructing an element \\$r = a + b\\$ in \\$R\\$ for any \\$(a + I, b + J) \\in R/I \\times R/J\\$. It accurately identifies the kernel of \\$\\varphi\\$ as \\$I \\cap J\\$ by showing that \\$r \\in I\\$ and \\$r \\in J\\$ implies \\$r \\in I \\cap J\\$. Finally, it correctly applies the First Isomorphism Theorem, using the given condition \\$I \\cap J = (0)\\$ to conclude \\$R \\cong R/I \\times R/J\\$. The reasoning is logically valid, and all steps are justified.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $A$ be a $4 \\times 4$ real matrix with the following properties:\n- The characteristic polynomial of $A$ is $p(\\lambda) = (\\lambda - 2)^2 (\\lambda - 3)^2$.\n- The minimal polynomial of $A$ is $m(\\lambda) = (\\lambda - 2)(\\lambda - 3)^2$.\n- The trace of $A$ is 10.\n\nDetermine the Jordan canonical form of $A$.",
+    "run_id": "9",
+    "outer_attempt": 2,
+    "topic_slug": "linear_and_multilinear_algebra",
+    "question_author": "microsoft-phi-4",
+    "critic": "microsoft-phi-4",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly concludes that the Jordan canonical form consists of four 1x1 Jordan blocks. The minimal polynomial $m(\\\\lambda) = (\\\\lambda - 2)(\\\\lambda - 3)^2$ indicates that there is a single Jordan block of size 1 for $\\\\lambda = 2$ and a single Jordan block of size 2 for $\\\\lambda = 3$. The characteristic polynomial $p(\\\\lambda) = (\\\\lambda - 2)^2 (\\\\lambda - 3)^2$ confirms the algebraic multiplicities, but the minimal polynomial dictates the sizes of the Jordan blocks. Therefore, the correct Jordan form should have one 1x1 block for $\\\\lambda = 2$ and one 2x2 block for $\\\\lambda = 3$.\",\n  \"suggestions\": \"Re-evaluate the Jordan block sizes based on the minimal polynomial. The correct Jordan canonical form should be $J = \\\\begin{pmatrix} 2 & 0 & 0 & 0 \\\\\\\\ 0 & 3 & 1 & 0 \\\\\\\\ 0 & 0 & 3 & 0 \\\\\\\\ 0 & 0 & 0 & 0 \\\\end{pmatrix}$, with one 1x1 block for $\\\\lambda = 2$ and one 2x2 block for $\\\\lambda = 3$.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer incorrectly concludes that the Jordan canonical form consists of four 1x1 Jordan blocks. The minimal polynomial $m(\\\\lambda) = (\\\\lambda - 2)(\\\\lambda - 3)^2$ indicates that there is a single Jordan block of size 1 for $\\\\lambda = 2$ and a single Jordan block of size 2 for $\\\\lambda = 3$. The characteristic polynomial $p(\\\\lambda) = (\\\\lambda - 2)^2 (\\\\lambda - 3)^2$ confirms the algebraic multiplicities, but the minimal polynomial dictates the sizes of the Jordan blocks. Therefore, the correct Jordan form should have one 1x1 block for $\\\\lambda = 2$ and one 2x2 block for $\\\\lambda = 3$.\",\n  \"suggestions\": \"Re-evaluate the Jordan block sizes based on the minimal polynomial. The correct Jordan canonical form should be $J = \\\\begin{pmatrix} 2 & 0 & 0 & 0 \\\\\\\\ 0 & 3 & 1 & 0 \\\\\\\\ 0 & 0 & 3 & 0 \\\\\\\\ 0 & 0 & 0 & 0 \\\\end{pmatrix}$, with one 1x1 block for $\\\\lambda = 2$ and one 2x2 block for $\\\\lambda = 3$.\"\n}\n```",
+        "verdict": "incorrect",
+        "notes": "The answer incorrectly concludes that the Jordan canonical form consists of four 1x1 Jordan blocks. The minimal polynomial $m(\\lambda) = (\\lambda - 2)(\\lambda - 3)^2$ indicates that there is a single Jordan block of size 1 for $\\lambda = 2$ and a single Jordan block of size 2 for $\\lambda = 3$. The characteristic polynomial $p(\\lambda) = (\\lambda - 2)^2 (\\lambda - 3)^2$ confirms the algebraic multiplicities, but the minimal polynomial dictates the sizes of the Jordan blocks. Therefore, the correct Jordan form should have one 1x1 block for $\\lambda = 2$ and one 2x2 block for $\\lambda = 3$.",
+        "suggestions": "Re-evaluate the Jordan block sizes based on the minimal polynomial. The correct Jordan canonical form should be $J = \\begin{pmatrix} 2 & 0 & 0 & 0 \\\\ 0 & 3 & 1 & 0 \\\\ 0 & 0 & 3 & 0 \\\\ 0 & 0 & 0 & 0 \\end{pmatrix}$, with one 1x1 block for $\\lambda = 2$ and one 2x2 block for $\\lambda = 3$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the special function known as the Beta function, $B(x, y)$, which is defined for $x, y > 0$ by the integral\n\n$$\nB(x, y) = \\int_0^1 t^{x-1} (1-t)^{y-1} \\, dt.\n$$\n\nThe Beta function is related to the Gamma function by the identity\n\n$$\nB(x, y) = \\frac{\\Gamma(x) \\Gamma(y)}{\\Gamma(x+y)}.\n$$\n\nLet $g(x, y)$ be a function defined by\n\n$$\ng(x, y) = \\frac{B(x, y)}{B(x+1, y+1)}.\n$$\n\n1. Determine the domain of $g(x, y)$.\n2. Simplify $g(x, y)$ in terms of the Gamma function.\n3. Evaluate the limit $\\lim_{x \\to \\infty} g(x, y)$ for a fixed $y > 0$.",
+    "run_id": "21",
+    "outer_attempt": 2,
+    "topic_slug": "special_functions",
+    "question_author": "microsoft-phi-4",
+    "critic": "microsoft-phi-4",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the domain of $g(x, y)$ as $x > 0$ and $y > -1$, which is consistent with the conditions for the Beta function. The simplification of $g(x, y)$ using the Gamma function identity is accurate, leading to $g(x, y) = \\\\frac{x}{y+1}$. The limit evaluation as $x \\\\to \\\\infty$ is also correct, resulting in $\\\\infty$ for fixed $y > 0$. All steps are logically valid and complete, with no errors or gaps in reasoning.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the domain of $g(x, y)$ as $x > 0$ and $y > -1$, which is consistent with the conditions for the Beta function. The simplification of $g(x, y)$ using the Gamma function identity is accurate, leading to $g(x, y) = \\\\frac{x}{y+1}$. The limit evaluation as $x \\\\to \\\\infty$ is also correct, resulting in $\\\\infty$ for fixed $y > 0$. All steps are logically valid and complete, with no errors or gaps in reasoning.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the domain of $g(x, y)$ as $x > 0$ and $y > -1$, which is consistent with the conditions for the Beta function. The simplification of $g(x, y)$ using the Gamma function identity is accurate, leading to $g(x, y) = \\frac{x}{y+1}$. The limit evaluation as $x \\to \\infty$ is also correct, resulting in $\\infty$ for fixed $y > 0$. All steps are logically valid and complete, with no errors or gaps in reasoning.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the function $f(x) = \\ln(1 + x)$ defined for $x > -1$. We are interested in approximating $f(x)$ using a Taylor series expansion around $x = 0$.\n\n1. Determine the Taylor series expansion of $f(x)$ up to and including the term of degree 5.\n2. Using this expansion, approximate the value of the integral $I = \\int_0^1 \\ln(1 + x) \\, dx$ by integrating the Taylor series term-by-term from 0 to 1.\n3. Compare your approximation to the known exact value of the integral $I = 2\\ln(2) - 1$ and discuss the accuracy of the approximation.",
+    "run_id": "27",
+    "outer_attempt": 2,
+    "topic_slug": "approximations_and_expansions",
+    "question_author": "microsoft-phi-4",
+    "critic": "microsoft-phi-4",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the Taylor series expansion of $f(x) = \\\\ln(1 + x)$ around $x = 0$ up to the term of degree 5. The series is accurately given as $x - \\\\frac{x^2}{2} + \\\\frac{x^3}{3} - \\\\frac{x^4}{4} + \\\\frac{x^5}{5} + O(x^6)$. The integration of each term from 0 to 1 is performed correctly, resulting in the expression $\\\\left[\\\\frac{x^2}{2}\\\\right]_0^1 - \\\\left[\\\\frac{x^3}{6}\\\\right]_0^1 + \\\\left[\\\\frac{x^4}{12}\\\\right]_0^1 - \\\\left[\\\\frac{x^5}{20}\\\\right]_0^1 + \\\\left[\\\\frac{x^6}{30}\\\\right]_0^1$. The answer acknowledges the need to compare the approximation to the exact value $2\\\\ln(2) - 1$, though it does not compute the numerical approximation or the error explicitly. However, the steps provided are mathematically sound and complete for the scope of the question.\",\n  \"suggestions\": \"To enhance completeness, the answer could explicitly compute the numerical value of the approximation and compare it to the exact value $2\\\\ln(2) - 1$ to discuss the accuracy quantitatively.\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly derives the Taylor series expansion of $f(x) = \\\\ln(1 + x)$ around $x = 0$ up to the term of degree 5. The series is accurately given as $x - \\\\frac{x^2}{2} + \\\\frac{x^3}{3} - \\\\frac{x^4}{4} + \\\\frac{x^5}{5} + O(x^6)$. The integration of each term from 0 to 1 is performed correctly, resulting in the expression $\\\\left[\\\\frac{x^2}{2}\\\\right]_0^1 - \\\\left[\\\\frac{x^3}{6}\\\\right]_0^1 + \\\\left[\\\\frac{x^4}{12}\\\\right]_0^1 - \\\\left[\\\\frac{x^5}{20}\\\\right]_0^1 + \\\\left[\\\\frac{x^6}{30}\\\\right]_0^1$. The answer acknowledges the need to compare the approximation to the exact value $2\\\\ln(2) - 1$, though it does not compute the numerical approximation or the error explicitly. However, the steps provided are mathematically sound and complete for the scope of the question.\",\n  \"suggestions\": \"To enhance completeness, the answer could explicitly compute the numerical value of the approximation and compare it to the exact value $2\\\\ln(2) - 1$ to discuss the accuracy quantitatively.\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly derives the Taylor series expansion of $f(x) = \\ln(1 + x)$ around $x = 0$ up to the term of degree 5. The series is accurately given as $x - \\frac{x^2}{2} + \\frac{x^3}{3} - \\frac{x^4}{4} + \\frac{x^5}{5} + O(x^6)$. The integration of each term from 0 to 1 is performed correctly, resulting in the expression $\\left[\\frac{x^2}{2}\\right]_0^1 - \\left[\\frac{x^3}{6}\\right]_0^1 + \\left[\\frac{x^4}{12}\\right]_0^1 - \\left[\\frac{x^5}{20}\\right]_0^1 + \\left[\\frac{x^6}{30}\\right]_0^1$. The answer acknowledges the need to compare the approximation to the exact value $2\\ln(2) - 1$, though it does not compute the numerical approximation or the error explicitly. However, the steps provided are mathematically sound and complete for the scope of the question.",
+        "suggestions": "To enhance completeness, the answer could explicitly compute the numerical value of the approximation and compare it to the exact value $2\\ln(2) - 1$ to discuss the accuracy quantitatively.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathcal{H}$ be a separable Hilbert space, and let $T: \\mathcal{H} \\to \\mathcal{H}$ be a compact, self-adjoint operator. Consider the spectral decomposition of $T$ given by $T = \\sum_{n=1}^{\\infty} \\lambda_n \\langle \\cdot, e_n \\rangle e_n$, where $\\{e_n\\}$ is an orthonormal basis of $\\mathcal{H}$ consisting of eigenvectors of $T$, and $\\{\\lambda_n\\}$ are the corresponding eigenvalues.\n\n1. Prove that the sequence $\\{\\lambda_n\\}$ converges to zero.\n2. Determine the conditions under which the series $\\sum_{n=1}^{\\infty} |\\lambda_n|^2$ converges.\n3. Explain the significance of this convergence in the context of the operator $T$.",
+    "run_id": "33",
+    "outer_attempt": 2,
+    "topic_slug": "operator_theory",
+    "question_author": "microsoft-phi-4",
+    "critic": "microsoft-phi-4",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves that the sequence of eigenvalues \\$\\\\{\\\\lambda_n\\\\}\\$ converges to zero by leveraging the compactness of the operator \\$T\\$. The argument is logically sound, using a contradiction approach to show that if there were infinitely many eigenvalues with magnitude at least \\$\\\\epsilon\\$, it would contradict the compactness of \\$T\\$. The conditions for the convergence of the series \\$\\\\sum_{n=1}^{\\\\infty} |\\\\lambda_n|^2\\$ are correctly identified as the trace class property of \\$T\\$, and the significance of this convergence is well-explained in terms of the properties and implications of trace class operators. The answer is complete, addressing all parts of the question, and is rigorous in its reasoning.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves that the sequence of eigenvalues \\\\(\\\\{\\\\lambda_n\\\\}\\\\) converges to zero by leveraging the compactness of the operator \\\\(T\\\\). The argument is logically sound, using a contradiction approach to show that if there were infinitely many eigenvalues with magnitude at least \\\\(\\\\epsilon\\\\), it would contradict the compactness of \\\\(T\\\\). The conditions for the convergence of the series \\\\(\\\\sum_{n=1}^{\\\\infty} |\\\\lambda_n|^2\\\\) are correctly identified as the trace class property of \\\\(T\\\\), and the significance of this convergence is well-explained in terms of the properties and implications of trace class operators. The answer is complete, addressing all parts of the question, and is rigorous in its reasoning.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly proves that the sequence of eigenvalues \\$\\{\\lambda_n\\}\\$ converges to zero by leveraging the compactness of the operator \\$T\\$. The argument is logically sound, using a contradiction approach to show that if there were infinitely many eigenvalues with magnitude at least \\$\\epsilon\\$, it would contradict the compactness of \\$T\\$. The conditions for the convergence of the series \\$\\sum_{n=1}^{\\infty} |\\lambda_n|^2\\$ are correctly identified as the trace class property of \\$T\\$, and the significance of this convergence is well-explained in terms of the properties and implications of trace class operators. The answer is complete, addressing all parts of the question, and is rigorous in its reasoning.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a convex polytope $P$ in $\\mathbb{R}^3$ defined as the convex hull of the points $A = (1, 0, 0)$, $B = (0, 1, 0)$, $C = (0, 0, 1)$, and $D = (1, 1, 1)$. Let $Q$ be a point inside $P$ such that the sum of the squared distances from $Q$ to the vertices of $P$ is minimized. Determine the coordinates of $Q$.",
+    "run_id": "36",
+    "outer_attempt": 2,
+    "topic_slug": "convex_and_discrete_geometry",
+    "question_author": "microsoft-phi-4",
+    "critic": "microsoft-phi-4",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the function to minimize as the sum of squared distances from a point $Q = (x, y, z)$ to the vertices of the polytope $P$. The expression for the sum of squared distances is correctly derived and simplified to $f(x, y, z) = 4x^2 + 4y^2 + 4z^2 - 4x - 4y - 4z + 3$. The partial derivatives are correctly calculated, and setting them to zero yields the correct critical point $Q = \\\\left(\\\\frac{1}{2}, \\\\frac{1}{2}, \\\\frac{1}{2}\\\\right)$. The solution is mathematically sound, complete, and adequately rigorous.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the function to minimize as the sum of squared distances from a point $Q = (x, y, z)$ to the vertices of the polytope $P$. The expression for the sum of squared distances is correctly derived and simplified to $f(x, y, z) = 4x^2 + 4y^2 + 4z^2 - 4x - 4y - 4z + 3$. The partial derivatives are correctly calculated, and setting them to zero yields the correct critical point $Q = \\\\left(\\\\frac{1}{2}, \\\\frac{1}{2}, \\\\frac{1}{2}\\\\right)$. The solution is mathematically sound, complete, and adequately rigorous.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the function to minimize as the sum of squared distances from a point $Q = (x, y, z)$ to the vertices of the polytope $P$. The expression for the sum of squared distances is correctly derived and simplified to $f(x, y, z) = 4x^2 + 4y^2 + 4z^2 - 4x - 4y - 4z + 3$. The partial derivatives are correctly calculated, and setting them to zero yields the correct critical point $Q = \\left(\\frac{1}{2}, \\frac{1}{2}, \\frac{1}{2}\\right)$. The solution is mathematically sound, complete, and adequately rigorous.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a discrete-time Markov chain $\\{Y_n : n \\geq 0\\}$ with state space $S = \\{A, B, C\\}$ and transition matrix $P$ given by:\n\n$$\nP = \\begin{bmatrix}\n0.5 & 0.3 & 0.2 \\\\\n0.4 & 0.4 & 0.2 \\\\\n0.3 & 0.3 & 0.4\n\\end{bmatrix}\n$$\n\nAssume the process starts in state $A$ at time $n = 0$. Determine the probability that the process is in state $C$ at time $n = 3$.",
+    "run_id": "42",
+    "outer_attempt": 2,
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "question_author": "microsoft-phi-4",
+    "critic": "microsoft-phi-4",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly computes the probability of being in state C at time n = 3 given the initial state A by calculating the (1,3) entry of the matrix P^3. The matrix multiplications are performed correctly, and the final result of 0.212 is accurate. All steps are logically valid and follow from the given transition matrix.\",\n  \"suggestions\": \"N/A\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly computes the probability of being in state C at time n = 3 given the initial state A by calculating the (1,3) entry of the matrix P^3. The matrix multiplications are performed correctly, and the final result of 0.212 is accurate. All steps are logically valid and follow from the given transition matrix.\",\n  \"suggestions\": \"N/A\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly computes the probability of being in state C at time n = 3 given the initial state A by calculating the (1,3) entry of the matrix P^3. The matrix multiplications are performed correctly, and the final result of 0.212 is accurate. All steps are logically valid and follow from the given transition matrix.",
+        "suggestions": "N/A",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified. It correctly identifies the solution as correct, with no errors in the calculations or logic."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider a random sample $X_1, X_2, \\ldots, X_n$ drawn from a normal distribution with unknown mean $\\mu$ and known variance $\\sigma^2$. Define the sample mean $\\bar{X} = \\frac{1}{n} \\sum_{i=1}^n X_i$.\n\n1. Show that $\\bar{X}$ is an unbiased estimator of $\\mu$.\n2. Derive the variance of $\\bar{X}$.\n3. Suppose you want to construct a $95\\%$ confidence interval for $\\mu$. Derive the formula for this confidence interval using the sample mean $\\bar{X}$ and the known variance $\\sigma^2$.\n4. Given a sample of size $n = 25$, with sample mean $\\bar{X} = 50$ and known variance $\\sigma^2 = 16$, calculate the $95\\%$ confidence interval for $\\mu$. Use the standard normal distribution quantile $z_{0.975} \\approx 1.96$.",
+    "run_id": "43",
+    "outer_attempt": 2,
+    "topic_slug": "statistics",
+    "question_author": "microsoft-phi-4",
+    "critic": "microsoft-phi-4",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly shows that the sample mean $\\\\bar{X}$ is an unbiased estimator of $\\\\mu$ by demonstrating $E(\\\\bar{X}) = \\\\mu$. The variance of $\\\\bar{X}$ is correctly derived as $\\\\frac{\\\\sigma^2}{n}$. The formula for the $95\\\\%$ confidence interval is correctly stated using the standard normal distribution quantile $z_{0.975} \\\\approx 1.96$. The calculation of the confidence interval for the given sample data is accurate, resulting in the interval $[48.432, 51.568]$. All parts of the question are addressed, and the reasoning is rigorous and complete.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly shows that the sample mean $\\\\bar{X}$ is an unbiased estimator of $\\\\mu$ by demonstrating $E(\\\\bar{X}) = \\\\mu$. The variance of $\\\\bar{X}$ is correctly derived as $\\\\frac{\\\\sigma^2}{n}$. The formula for the $95\\\\%$ confidence interval is correctly stated using the standard normal distribution quantile $z_{0.975} \\\\approx 1.96$. The calculation of the confidence interval for the given sample data is accurate, resulting in the interval $[48.432, 51.568]$. All parts of the question are addressed, and the reasoning is rigorous and complete.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly shows that the sample mean $\\bar{X}$ is an unbiased estimator of $\\mu$ by demonstrating $E(\\bar{X}) = \\mu$. The variance of $\\bar{X}$ is correctly derived as $\\frac{\\sigma^2}{n}$. The formula for the $95\\%$ confidence interval is correctly stated using the standard normal distribution quantile $z_{0.975} \\approx 1.96$. The calculation of the confidence interval for the given sample data is accurate, resulting in the interval $[48.432, 51.568]$. All parts of the question are addressed, and the reasoning is rigorous and complete.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Consider the set $\\mathcal{P}$ of all propositional logic formulas over a finite set of propositional variables $\\{p_1, p_2, \\ldots, p_n\\}$. Define a relation $\\sim$ on $\\mathcal{P}$ by $\\phi \\sim \\psi$ if and only if $\\phi$ and $\\psi$ are logically equivalent, i.e., they have the same truth table.\n\n1. Prove that $\\sim$ is an equivalence relation on $\\mathcal{P}$.\n2. Determine the number of equivalence classes under this relation.",
+    "run_id": "1",
+    "outer_attempt": 3,
+    "topic_slug": "mathematical_logic_and_foundations",
+    "question_author": "microsoft-phi-4",
+    "critic": "microsoft-phi-4",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves that the relation \\$\\\\sim\\$ is an equivalence relation by demonstrating reflexivity, symmetry, and transitivity. The explanation for each property is logically sound and follows from the definition of logical equivalence. The answer also correctly determines the number of equivalence classes by recognizing that each equivalence class corresponds to a unique truth table. Since there are \\$2^n\\$ possible assignments of truth values to \\$n\\$ propositional variables, there are \\$2^{2^n}\\$ possible truth tables, which is the number of equivalence classes. The reasoning and calculations are accurate and complete.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly proves that the relation \\\\(\\\\sim\\\\) is an equivalence relation by demonstrating reflexivity, symmetry, and transitivity. The explanation for each property is logically sound and follows from the definition of logical equivalence. The answer also correctly determines the number of equivalence classes by recognizing that each equivalence class corresponds to a unique truth table. Since there are \\\\(2^n\\\\) possible assignments of truth values to \\\\(n\\\\) propositional variables, there are \\\\(2^{2^n}\\\\) possible truth tables, which is the number of equivalence classes. The reasoning and calculations are accurate and complete.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly proves that the relation $\\sim$ is an equivalence relation by demonstrating reflexivity, symmetry, and transitivity. The explanation for each property is logically sound and follows from the definition of logical equivalence. The answer also correctly determines the number of equivalence classes by recognizing that each equivalence class corresponds to a unique truth table. Since there are $2^n$ possible assignments of truth values to $n$ propositional variables, there are $2^{2^n}$ possible truth tables, which is the number of equivalence classes. The reasoning and calculations are accurate and complete.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $X$ be a compact, connected, orientable surface of genus $g \\geq 2$. Consider the universal cover $\\tilde{X}$ of $X$, which is homeomorphic to the hyperbolic plane $\\mathbb{H}^2$. Let $\\pi_1(X)$ denote the fundamental group of $X$, and let $\\rho: \\pi_1(X) \\to \\text{Isom}^+(\\mathbb{H}^2)$ be the action of $\\pi_1(X)$ on $\\tilde{X}$ by deck transformations.\n\n1. Determine the structure of the first homology group $H_1(X; \\mathbb{Z})$.\n2. Prove that the Euler characteristic $\\chi(X)$ is related to the genus $g$ by the formula $\\chi(X) = 2 - 2g$.\n3. Using the action $\\rho$, show that the quotient space $\\mathbb{H}^2 / \\pi_1(X)$ is homeomorphic to $X$.",
+    "run_id": "39",
+    "outer_attempt": 3,
+    "topic_slug": "algebraic_topology",
+    "question_author": "microsoft-phi-4",
+    "critic": "microsoft-phi-4",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the structure of the first homology group $H_1(X; \\\\mathbb{Z})$ as $\\\\mathbb{Z}^{2g}$, which is accurate for a compact, connected, orientable surface of genus $g$. The relationship between the Euler characteristic $\\\\chi(X)$ and the genus $g$ is correctly stated as $\\\\chi(X) = 2 - 2g$, which is a well-known result for closed surfaces. The explanation that the quotient space $\\\\mathbb{H}^2 / \\\\pi_1(X)$ is homeomorphic to $X$ is valid, as it follows from the covering space theory where the universal cover $\\\\tilde{X}$ of $X$ is $\\\\mathbb{H}^2$ and the action of $\\\\pi_1(X)$ on $\\\\tilde{X}$ by deck transformations results in $X$ as the quotient space. All parts of the question are addressed, and the reasoning is rigorous and complete.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The answer correctly identifies the structure of the first homology group $H_1(X; \\\\mathbb{Z})$ as $\\\\mathbb{Z}^{2g}$, which is accurate for a compact, connected, orientable surface of genus $g$. The relationship between the Euler characteristic $\\\\chi(X)$ and the genus $g$ is correctly stated as $\\\\chi(X) = 2 - 2g$, which is a well-known result for closed surfaces. The explanation that the quotient space $\\\\mathbb{H}^2 / \\\\pi_1(X)$ is homeomorphic to $X$ is valid, as it follows from the covering space theory where the universal cover $\\\\tilde{X}$ of $X$ is $\\\\mathbb{H}^2$ and the action of $\\\\pi_1(X)$ on $\\\\tilde{X}$ by deck transformations results in $X$ as the quotient space. All parts of the question are addressed, and the reasoning is rigorous and complete.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The answer correctly identifies the structure of the first homology group $H_1(X; \\mathbb{Z})$ as $\\mathbb{Z}^{2g}$, which is accurate for a compact, connected, orientable surface of genus $g$. The relationship between the Euler characteristic $\\chi(X)$ and the genus $g$ is correctly stated as $\\chi(X) = 2 - 2g$, which is a well-known result for closed surfaces. The explanation that the quotient space $\\mathbb{H}^2 / \\pi_1(X)$ is homeomorphic to $X$ is valid, as it follows from the covering space theory where the universal cover $\\tilde{X}$ of $X$ is $\\mathbb{H}^2$ and the action of $\\pi_1(X)$ on $\\tilde{X}$ by deck transformations results in $X$ as the quotient space. All parts of the question are addressed, and the reasoning is rigorous and complete.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $G = \\mathbb{R}$ be the real line, and let $\\hat{G} = \\mathbb{R}$ be its dual group under the standard Fourier transform. Consider the Fourier transform $\\mathcal{F}: L^1(\\mathbb{R}) \\to C_0(\\mathbb{R})$ defined by\n\n$$\n\\mathcal{F}(f)(\\xi) = \\int_{\\mathbb{R}} f(x) e^{-2\\pi i x \\xi} \\, dx\n$$\n\nfor $f \\in L^1(\\mathbb{R})$ and $\\xi \\in \\mathbb{R}$.\n\nProve that the Fourier transform $\\mathcal{F}$ is a contraction from $L^1(\\mathbb{R})$ to $C_0(\\mathbb{R})$ when equipped with the $L^1$-norm on $\\mathbb{R}$ and the supremum norm on $\\mathbb{R}$. Specifically, show that for any $f \\in L^1(\\mathbb{R})$,\n\n$$\n\\|\\mathcal{F}(f)\\|_\\infty \\leq \\|f\\|_1\n$$\n\nwhere $\\|f\\|_1 = \\int_{\\mathbb{R}} |f(x)| \\, dx$ and $\\|\\mathcal{F}(f)\\|_\\infty = \\sup_{\\xi \\in \\mathbb{R}} |\\mathcal{F}(f)(\\xi)|$.",
+    "run_id": "29",
+    "outer_attempt": 4,
+    "topic_slug": "abstract_harmonic_analysis",
+    "question_author": "microsoft-phi-4",
+    "critic": "microsoft-phi-4",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The proof correctly demonstrates that the Fourier transform is a contraction from $L^1(\\\\mathbb{R})$ to $C_0(\\\\mathbb{R})$. It uses the triangle inequality to bound $|\\\\mathcal{F}(f)(\\\\xi)|$ by $\\\\|f\\\\|_1$ and then takes the supremum over $\\\\xi$ to establish the desired inequality $\\\\|\\\\mathcal{F}(f)\\\\|_\\\\infty \\\\leq \\\\|f\\\\|_1$. The reasoning is logically valid and complete, addressing all necessary components of the problem.\",\n  \"suggestions\": \"\"\n}\n```",
+        "raw_critique": "```json\n{\n  \"verdict\": \"correct\",\n  \"notes\": \"The proof correctly demonstrates that the Fourier transform is a contraction from $L^1(\\\\mathbb{R})$ to $C_0(\\\\mathbb{R})$. It uses the triangle inequality to bound $|\\\\mathcal{F}(f)(\\\\xi)|$ by $\\\\|f\\\\|_1$ and then takes the supremum over $\\\\xi$ to establish the desired inequality $\\\\|\\\\mathcal{F}(f)\\\\|_\\\\infty \\\\leq \\\\|f\\\\|_1$. The reasoning is logically valid and complete, addressing all necessary components of the problem.\",\n  \"suggestions\": \"\"\n}\n```",
+        "verdict": "correct",
+        "notes": "The proof correctly demonstrates that the Fourier transform is a contraction from $L^1(\\mathbb{R})$ to $C_0(\\mathbb{R})$. It uses the triangle inequality to bound $|\\mathcal{F}(f)(\\xi)|$ by $\\|f\\|_1$ and then takes the supremum over $\\xi$ to establish the desired inequality $\\|\\mathcal{F}(f)\\|_\\infty \\leq \\|f\\|_1$. The reasoning is logically valid and complete, addressing all necessary components of the problem.",
+        "suggestions": "",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  }
+]
