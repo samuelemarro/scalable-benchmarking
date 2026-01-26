@@ -1142,5 +1142,55 @@
         }
       }
     ]
+  },
+  {
+    "question": "Find the general solution of the differential equation\n$$ (x^2 + y^2 + x)\\,dx + y\\,dy = 0. $$",
+    "run_id": "22",
+    "outer_attempt": 1,
+    "topic_slug": "ordinary_differential_equations",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer claims that after multiplying by the integrating factor, the left-hand side is the differential of $\\\\frac{x}{x^2+y^2}$. However, computing $d\\\\left(\\\\frac{x}{x^2+y^2}\\\\right)$ yields $\\\\frac{y^2-x^2}{(x^2+y^2)^2}dx -\\\\frac{2xy}{(x^2+y^2)^2}dy$, which does not match $\\\\left(1+\\\\frac{x}{x^2+y^2}\\\\right)dx + \\\\frac{y}{x^2+y^2}dy$. Therefore the general solution $\\\\frac{x}{x^2+y^2}=C$ is incorrect. The correct solution is $x+\\\\frac12\\\\ln(x^2+y^2)=C$ (or equivalent).\",\n  \"suggestions\": \"Re-evaluate the potential function: integrate $\\\\frac{\\\\partial F}{\\\\partial x}=1+\\\\frac{x}{x^2+y^2}$ with respect to $x$, then determine $F$ by matching $\\\\frac{\\\\partial F}{\\\\partial y}=\\\\frac{y}{x^2+y^2}$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer claims that after multiplying by the integrating factor, the left-hand side is the differential of $\\\\frac{x}{x^2+y^2}$. However, computing $d\\\\left(\\\\frac{x}{x^2+y^2}\\\\right)$ yields $\\\\frac{y^2-x^2}{(x^2+y^2)^2}dx -\\\\frac{2xy}{(x^2+y^2)^2}dy$, which does not match $\\\\left(1+\\\\frac{x}{x^2+y^2}\\\\right)dx + \\\\frac{y}{x^2+y^2}dy$. Therefore the general solution $\\\\frac{x}{x^2+y^2}=C$ is incorrect. The correct solution is $x+\\\\frac12\\\\ln(x^2+y^2)=C$ (or equivalent).\",\n  \"suggestions\": \"Re-evaluate the potential function: integrate $\\\\frac{\\\\partial F}{\\\\partial x}=1+\\\\frac{x}{x^2+y^2}$ with respect to $x$, then determine $F$ by matching $\\\\frac{\\\\partial F}{\\\\partial y}=\\\\frac{y}{x^2+y^2}$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer claims that after multiplying by the integrating factor, the left-hand side is the differential of $\\frac{x}{x^2+y^2}$. However, computing $d\\left(\\frac{x}{x^2+y^2}\\right)$ yields $\\frac{y^2-x^2}{(x^2+y^2)^2}dx -\\frac{2xy}{(x^2+y^2)^2}dy$, which does not match $\\left(1+\\frac{x}{x^2+y^2}\\right)dx + \\frac{y}{x^2+y^2}dy$. Therefore the general solution $\\frac{x}{x^2+y^2}=C$ is incorrect. The correct solution is $x+\\frac12\\ln(x^2+y^2)=C$ (or equivalent).",
+        "suggestions": "Re-evaluate the potential function: integrate $\\frac{\\partial F}{\\partial x}=1+\\frac{x}{x^2+y^2}$ with respect to $x$, then determine $F$ by matching $\\frac{\\partial F}{\\partial y}=\\frac{y}{x^2+y^2}$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique correctly identifies the error, provides evidence via differential computation, and gives the correct solution. It follows the required format."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\triangle ABC$ have side lengths $AB = 13$, $AC = 15$, and $BC = 14$. Denote by $D$ the foot of the internal angle bisector from $A$ to side $BC$. Let the incircle of $\\triangle ABC$ touch side $BC$ at $E$. The line through $E$ perpendicular to $BC$ meets $AD$ at $F$. Find the length of $DF$.",
+    "run_id": "35",
+    "outer_attempt": 1,
+    "topic_slug": "geometry",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors. (1) The incircle tangency lengths are wrong: BE = s - AC = 6 and EC = s - AB = 8, not both 7. (2) The construction of point X is inconsistent: EF is the line through E perpendicular to BC, so its intersection with BC is exactly E, not a distinct point X. The subsequent triangles (BEX, BDX, DFX) are therefore ill-defined. (3) The Pythagorean applications are based on incorrect segment assignments. Thus the solution is invalid.\",\n  \"suggestions\": \"Recalculate using correct incircle segment lengths. One approach: place BC on x-axis, compute coordinates of A using side lengths, find D via angle bisector theorem, find E via incircle tangency, then find F as intersection of AD with line through E perpendicular to BC, and compute DF.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors. (1) The incircle tangency lengths are wrong: BE = s - AC = 6 and EC = s - AB = 8, not both 7. (2) The construction of point X is inconsistent: EF is the line through E perpendicular to BC, so its intersection with BC is exactly E, not a distinct point X. The subsequent triangles (BEX, BDX, DFX) are therefore ill-defined. (3) The Pythagorean applications are based on incorrect segment assignments. Thus the solution is invalid.\",\n  \"suggestions\": \"Recalculate using correct incircle segment lengths. One approach: place BC on x-axis, compute coordinates of A using side lengths, find D via angle bisector theorem, find E via incircle tangency, then find F as intersection of AD with line through E perpendicular to BC, and compute DF.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains multiple mathematical errors. (1) The incircle tangency lengths are wrong: BE = s - AC = 6 and EC = s - AB = 8, not both 7. (2) The construction of point X is inconsistent: EF is the line through E perpendicular to BC, so its intersection with BC is exactly E, not a distinct point X. The subsequent triangles (BEX, BDX, DFX) are therefore ill-defined. (3) The Pythagorean applications are based on incorrect segment assignments. Thus the solution is invalid.",
+        "suggestions": "Recalculate using correct incircle segment lengths. One approach: place BC on x-axis, compute coordinates of A using side lengths, find D via angle bisector theorem, find E via incircle tangency, then find F as intersection of AD with line through E perpendicular to BC, and compute DF.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "None needed."
+        }
+      }
+    ]
   }
 ]

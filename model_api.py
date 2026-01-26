@@ -104,6 +104,9 @@ EFFORT_RATIOS = {
     "low": 0.2
 } # OpenRouter effort to token ratio
 
+# Disable Anthropic batch API usage when True.
+DISABLE_ANTHROPIC_BATCH_PROCESSING = True
+
 def _validate_response_format(response_format):
     """Validate response_format parameter is in the correct format."""
     if response_format is None:
@@ -884,6 +887,19 @@ def query_llm_batch(model: str, messages_list: List[str], prompt: str = "You are
     if 'anthropic' in model:
         if temperature is not None and reasoning is not None:
             raise ValueError("Cannot set both temperature and reasoning in Anthropic requests")
+        if DISABLE_ANTHROPIC_BATCH_PROCESSING:
+            return query_llm_parallel(
+                model,
+                messages_list,
+                prompt=prompt,
+                response_format=response_format,
+                temperature=temperature,
+                api_kwargs=api_kwargs,
+                reasoning=reasoning,
+                max_workers=max_workers,
+                show_progress=True,
+                desc=f"Processing {model}",
+            )
         norm_model = ANTHROPIC_INTERNAL_NAMES.get(model.replace('anthropic/', ''), model.replace('anthropic/', ''))
         return _query_anthropic_batch(norm_model, messages_list, prompt, response_format, temperature, api_kwargs, reasoning=reasoning)
     if 'openai' in model:

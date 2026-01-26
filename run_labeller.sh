@@ -17,6 +17,5 @@ streamlit run labeller_app_ordered.py \
   --server.headless true \
   -- \
   --username "${USERNAME}" \
-  --keys debate_keys.json \
   --automated-evals-dir automated_evaluations \
   "$@"
