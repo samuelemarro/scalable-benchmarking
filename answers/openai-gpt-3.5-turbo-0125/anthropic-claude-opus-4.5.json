@@ -4,6 +4,7 @@
     "answer_model": "anthropic-claude-opus-4.5",
     "question": "Let $P(x)$ be the statement \"$x$ is a prime number\" and $Q(x)$ be the statement \"$x$ is an odd number.\" Consider the following logical statement:\n\n$\\forall x (P(x) \\rightarrow Q(x))$\n\nDetermine whether the statement is true or false. Provide a clear explanation for your answer.",
     "run_id": "1",
+    "outer_attempt": 1,
     "topic_slug": "mathematical_logic_and_foundations",
     "status": "succeeded",
     "attempts": [
@@ -18,8 +19,7 @@
           "improvements": ""
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question_model": "openai-gpt-3.5-turbo-0125",
@@ -483,6 +483,7 @@
     "answer_model": "anthropic-claude-opus-4.5",
     "question": "Consider the following second-order linear homogeneous ordinary differential equation:\n$$y'' - 4y' + 4y = 0$$\nwhere $y = y(x)$ is a function of $x$. Find the general solution to this differential equation.",
     "run_id": "22",
+    "outer_attempt": 1,
     "topic_slug": "ordinary_differential_equations",
     "status": "succeeded",
     "attempts": [
@@ -497,8 +498,7 @@
           "improvements": ""
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question_model": "openai-gpt-3.5-turbo-0125",
@@ -845,6 +845,7 @@
     "answer_model": "anthropic-claude-opus-4.5",
     "question": "Let $C$ be a smooth curve in $\\mathbb{R}^3$ parametrized by $\\mathbf{r}(t) = (x(t), y(t), z(t))$. Suppose that the curve $C$ lies on the surface of a sphere of radius $R$ centered at the origin. Prove that the tangent vector $\\mathbf{T}(t)$ to the curve $C$ is orthogonal to the position vector $\\mathbf{r}(t)$ at each point $t$ on the curve.",
     "run_id": "37",
+    "outer_attempt": 1,
     "topic_slug": "differential_geometry",
     "status": "succeeded",
     "attempts": [
@@ -859,8 +860,7 @@
           "improvements": ""
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question_model": "openai-gpt-3.5-turbo-0125",
@@ -989,6 +989,7 @@
     "answer_model": "anthropic-claude-opus-4.5",
     "question": "Suppose you have a dataset of 100 observations on a single variable $X$, which is known to follow a normal distribution with an unknown mean $\\mu$ and a known standard deviation of 5. You want to test the null hypothesis $H_0: \\mu = 20$ against the alternative hypothesis $H_1: \\mu \\neq 20$ at a significance level of 0.05. \n\nDetermine the critical values for a two-tailed hypothesis test using the standard normal distribution table.",
     "run_id": "43",
+    "outer_attempt": 1,
     "topic_slug": "statistics",
     "status": "succeeded",
     "attempts": [
@@ -1003,8 +1004,7 @@
           "improvements": ""
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question_model": "openai-gpt-3.5-turbo-0125",
@@ -1019,6 +1019,94 @@
         "round": 1,
         "answer": "# Evaluating the Integral $\\int_{0}^{1} \\frac{x^3}{1 + x^2} \\, dx$\n\n## Step 1: Simplify the Integrand via Polynomial Division\n\nTo simplify $\\frac{x^3}{1+x^2}$, I perform polynomial long division:\n\n$$x^3 = x \\cdot (1 + x^2) - x$$\n\nTherefore:\n$$\\frac{x^3}{1 + x^2} = x - \\frac{x}{1 + x^2}$$\n\n**Verification:** \n$$x - \\frac{x}{1+x^2} = \\frac{x(1+x^2) - x}{1+x^2} = \\frac{x + x^3 - x}{1+x^2} = \\frac{x^3}{1+x^2} \\checkmark$$\n\n## Step 2: Split into Two Integrals\n\n$$\\int_{0}^{1} \\frac{x^3}{1 + x^2} \\, dx = \\int_{0}^{1} x \\, dx - \\int_{0}^{1} \\frac{x}{1 + x^2} \\, dx$$\n\n### Integral 1: $\\int_{0}^{1} x \\, dx$\n\n$$\\int_{0}^{1} x \\, dx = \\left[\\frac{x^2}{2}\\right]_0^1 = \\frac{1}{2} - 0 = \\frac{1}{2}$$\n\n### Integral 2: $\\int_{0}^{1} \\frac{x}{1 + x^2} \\, dx$\n\nUse the substitution $u = 1 + x^2$:\n- $du = 2x \\, dx \\implies x \\, dx = \\frac{1}{2} du$\n- When $x = 0$: $u = 1$\n- When $x = 1$: $u = 2$\n\n$$\\int_{0}^{1} \\frac{x}{1 + x^2} \\, dx = \\int_{1}^{2} \\frac{1}{u} \\cdot \\frac{1}{2} \\, du = \\frac{1}{2} \\int_{1}^{2} \\frac{1}{u} \\, du$$\n\n$$= \\frac{1}{2} \\left[\\ln|u|\\right]_1^2 = \\frac{1}{2}(\\ln 2 - \\ln 1) = \\frac{1}{2} \\ln 2$$\n\n## Step 3: Combine Results\n\n$$\\int_{0}^{1} \\frac{x^3}{1 + x^2} \\, dx = \\frac{1}{2} - \\frac{1}{2} \\ln 2 = \\frac{1}{2}(1 - \\ln 2)$$\n\n## Verification via Alternative Method\n\nUsing direct substitution $u = 1 + x^2$ on the original integral, with $x^2 = u - 1$ and $x^3 \\, dx = (u-1) \\cdot \\frac{1}{2} du$:\n\n$$\\int_{1}^{2} \\frac{u-1}{u} \\cdot \\frac{1}{2} \\, du = \\frac{1}{2} \\int_{1}^{2} \\left(1 - \\frac{1}{u}\\right) du = \\frac{1}{2}\\left[u - \\ln u\\right]_1^2$$\n\n$$= \\frac{1}{2}\\left[(2 - \\ln 2) - (1 - 0)\\right] = \\frac{1}{2}(1 - \\ln 2) \\checkmark$$\n\n---\n\n## Final Answer\n\n$$\\boxed{\\int_{0}^{1} \\frac{x^3}{1 + x^2} \\, dx = \\frac{1 - \\ln 2}{2}}$$",
         "raw_answer": "# Evaluating the Integral $\\int_{0}^{1} \\frac{x^3}{1 + x^2} \\, dx$\n\n## Step 1: Simplify the Integrand via Polynomial Division\n\nTo simplify $\\frac{x^3}{1+x^2}$, I perform polynomial long division:\n\n$$x^3 = x \\cdot (1 + x^2) - x$$\n\nTherefore:\n$$\\frac{x^3}{1 + x^2} = x - \\frac{x}{1 + x^2}$$\n\n**Verification:** \n$$x - \\frac{x}{1+x^2} = \\frac{x(1+x^2) - x}{1+x^2} = \\frac{x + x^3 - x}{1+x^2} = \\frac{x^3}{1+x^2} \\checkmark$$\n\n## Step 2: Split into Two Integrals\n\n$$\\int_{0}^{1} \\frac{x^3}{1 + x^2} \\, dx = \\int_{0}^{1} x \\, dx - \\int_{0}^{1} \\frac{x}{1 + x^2} \\, dx$$\n\n### Integral 1: $\\int_{0}^{1} x \\, dx$\n\n$$\\int_{0}^{1} x \\, dx = \\left[\\frac{x^2}{2}\\right]_0^1 = \\frac{1}{2} - 0 = \\frac{1}{2}$$\n\n### Integral 2: $\\int_{0}^{1} \\frac{x}{1 + x^2} \\, dx$\n\nUse the substitution $u = 1 + x^2$:\n- $du = 2x \\, dx \\implies x \\, dx = \\frac{1}{2} du$\n- When $x = 0$: $u = 1$\n- When $x = 1$: $u = 2$\n\n$$\\int_{0}^{1} \\frac{x}{1 + x^2} \\, dx = \\int_{1}^{2} \\frac{1}{u} \\cdot \\frac{1}{2} \\, du = \\frac{1}{2} \\int_{1}^{2} \\frac{1}{u} \\, du$$\n\n$$= \\frac{1}{2} \\left[\\ln|u|\\right]_1^2 = \\frac{1}{2}(\\ln 2 - \\ln 1) = \\frac{1}{2} \\ln 2$$\n\n## Step 3: Combine Results\n\n$$\\int_{0}^{1} \\frac{x^3}{1 + x^2} \\, dx = \\frac{1}{2} - \\frac{1}{2} \\ln 2 = \\frac{1}{2}(1 - \\ln 2)$$\n\n## Verification via Alternative Method\n\nUsing direct substitution $u = 1 + x^2$ on the original integral, with $x^2 = u - 1$ and $x^3 \\, dx = (u-1) \\cdot \\frac{1}{2} du$:\n\n$$\\int_{1}^{2} \\frac{u-1}{u} \\cdot \\frac{1}{2} \\, du = \\frac{1}{2} \\int_{1}^{2} \\left(1 - \\frac{1}{u}\\right) du = \\frac{1}{2}\\left[u - \\ln u\\right]_1^2$$\n\n$$= \\frac{1}{2}\\left[(2 - \\ln 2) - (1 - 0)\\right] = \\frac{1}{2}(1 - \\ln 2) \\checkmark$$\n\n---\n\n## Final Answer\n\n$$\\boxed{\\int_{0}^{1} \\frac{x^3}{1 + x^2} \\, dx = \\frac{1 - \\ln 2}{2}}$$",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "openai-gpt-3.5-turbo-0125",
+    "answer_model": "anthropic-claude-opus-4.5",
+    "question": "Let $f(x) = e^x$. Consider the Maclaurin series expansion of $f(x)$:\n$$f(x) = \\sum_{n=0}^{\\infty} a_n x^n.$$\nDetermine the coefficient $a_{10}$ of the $x^{10}$ term in the Maclaurin series expansion of $f(x)$.",
+    "run_id": "27",
+    "outer_attempt": 2,
+    "topic_slug": "approximations_and_expansions",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "# Finding the Coefficient $a_{10}$ in the Maclaurin Series of $e^x$\n\n## Maclaurin Series Formula\n\nThe Maclaurin series of a function $f(x)$ is a Taylor series centered at $x = 0$:\n\n$$f(x) = \\sum_{n=0}^{\\infty} \\frac{f^{(n)}(0)}{n!} x^n$$\n\nwhere $f^{(n)}(0)$ denotes the $n$-th derivative of $f$ evaluated at $x = 0$.\n\nComparing with the form $\\sum_{n=0}^{\\infty} a_n x^n$, we have:\n$$a_n = \\frac{f^{(n)}(0)}{n!}$$\n\n## Computing the Derivatives of $f(x) = e^x$\n\nFor $f(x) = e^x$, we observe that:\n- $f(x) = e^x$\n- $f'(x) = e^x$\n- $f''(x) = e^x$\n- In general: $f^{(n)}(x) = e^x$ for all $n \\geq 0$\n\nThis is easily verified by induction: the base case holds, and if $f^{(n)}(x) = e^x$, then $f^{(n+1)}(x) = \\frac{d}{dx}e^x = e^x$.\n\n## Evaluating at $x = 0$\n\nFor all $n \\geq 0$:\n$$f^{(n)}(0) = e^0 = 1$$\n\n## General Coefficient Formula\n\nTherefore:\n$$a_n = \\frac{f^{(n)}(0)}{n!} = \\frac{1}{n!}$$\n\nThe Maclaurin series of $e^x$ is:\n$$e^x = \\sum_{n=0}^{\\infty} \\frac{x^n}{n!} = 1 + x + \\frac{x^2}{2!} + \\frac{x^3}{3!} + \\cdots$$\n\n(This series converges for all $x \\in \\mathbb{R}$, as can be verified by the ratio test: $\\lim_{n\\to\\infty} \\frac{|x|}{n+1} = 0 < 1$ for any fixed $x$.)\n\n## Finding $a_{10}$\n\nFor $n = 10$:\n$$a_{10} = \\frac{1}{10!}$$\n\nComputing $10!$:\n$$10! = 10 \\times 9 \\times 8 \\times 7 \\times 6 \\times 5 \\times 4 \\times 3 \\times 2 \\times 1 = 3628800$$\n\n## Final Answer\n\n$$\\boxed{a_{10} = \\frac{1}{10!} = \\frac{1}{3628800}}$$",
+        "raw_answer": "# Finding the Coefficient $a_{10}$ in the Maclaurin Series of $e^x$\n\n## Maclaurin Series Formula\n\nThe Maclaurin series of a function $f(x)$ is a Taylor series centered at $x = 0$:\n\n$$f(x) = \\sum_{n=0}^{\\infty} \\frac{f^{(n)}(0)}{n!} x^n$$\n\nwhere $f^{(n)}(0)$ denotes the $n$-th derivative of $f$ evaluated at $x = 0$.\n\nComparing with the form $\\sum_{n=0}^{\\infty} a_n x^n$, we have:\n$$a_n = \\frac{f^{(n)}(0)}{n!}$$\n\n## Computing the Derivatives of $f(x) = e^x$\n\nFor $f(x) = e^x$, we observe that:\n- $f(x) = e^x$\n- $f'(x) = e^x$\n- $f''(x) = e^x$\n- In general: $f^{(n)}(x) = e^x$ for all $n \\geq 0$\n\nThis is easily verified by induction: the base case holds, and if $f^{(n)}(x) = e^x$, then $f^{(n+1)}(x) = \\frac{d}{dx}e^x = e^x$.\n\n## Evaluating at $x = 0$\n\nFor all $n \\geq 0$:\n$$f^{(n)}(0) = e^0 = 1$$\n\n## General Coefficient Formula\n\nTherefore:\n$$a_n = \\frac{f^{(n)}(0)}{n!} = \\frac{1}{n!}$$\n\nThe Maclaurin series of $e^x$ is:\n$$e^x = \\sum_{n=0}^{\\infty} \\frac{x^n}{n!} = 1 + x + \\frac{x^2}{2!} + \\frac{x^3}{3!} + \\cdots$$\n\n(This series converges for all $x \\in \\mathbb{R}$, as can be verified by the ratio test: $\\lim_{n\\to\\infty} \\frac{|x|}{n+1} = 0 < 1$ for any fixed $x$.)\n\n## Finding $a_{10}$\n\nFor $n = 10$:\n$$a_{10} = \\frac{1}{10!}$$\n\nComputing $10!$:\n$$10! = 10 \\times 9 \\times 8 \\times 7 \\times 6 \\times 5 \\times 4 \\times 3 \\times 2 \\times 1 = 3628800$$\n\n## Final Answer\n\n$$\\boxed{a_{10} = \\frac{1}{10!} = \\frac{1}{3628800}}$$",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "openai-gpt-3.5-turbo-0125",
+    "answer_model": "anthropic-claude-opus-4.5",
+    "question": "Let $f(x) = x^3 - 3x^2 + 4x - 2$. Consider the following numerical analysis problem:\n\nUsing the bisection method, find an approximate root of the equation $f(x) = 0$ within the interval $[0, 2]$ with a tolerance of $0.01$.",
+    "run_id": "44",
+    "outer_attempt": 5,
+    "topic_slug": "numerical_analysis",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "# Solution: Bisection Method for $f(x) = x^3 - 3x^2 + 4x - 2$\n\n## Step 1: Verify Prerequisites for Bisection Method\n\nThe bisection method requires:\n1. **Continuity**: $f(x) = x^3 - 3x^2 + 4x - 2$ is a polynomial, hence continuous on $[0, 2]$ \u2713\n2. **Sign change**: We need $f(a)$ and $f(b)$ to have opposite signs\n\nEvaluating at the endpoints:\n- $f(0) = (0)^3 - 3(0)^2 + 4(0) - 2 = -2$\n- $f(2) = (2)^3 - 3(2)^2 + 4(2) - 2 = 8 - 12 + 8 - 2 = 2$\n\nSince $f(0) = -2 < 0$ and $f(2) = 2 > 0$, by the Intermediate Value Theorem, at least one root exists in $(0, 2)$ \u2713\n\n## Step 2: Determine Required Iterations\n\nFor tolerance $\\epsilon = 0.01$ with initial interval $[a, b] = [0, 2]$:\n$$\\frac{b - a}{2^n} < 0.01 \\implies \\frac{2}{2^n} < 0.01 \\implies 2^n > 200$$\n\nSince $2^7 = 128$ and $2^8 = 256$, we need at most $n = 8$ iterations.\n\n## Step 3: Apply Bisection Method\n\n**Iteration 1:**\n- Current interval: $[a_0, b_0] = [0, 2]$\n- Midpoint: $c_0 = \\frac{0 + 2}{2} = 1$\n- Evaluate: $f(1) = (1)^3 - 3(1)^2 + 4(1) - 2 = 1 - 3 + 4 - 2 = 0$\n\nSince $f(1) = 0$ **exactly**, we have found an exact root at $c_0 = 1$.\n\n## Verification\n\nLet me verify that $x = 1$ is indeed a root and confirm there are no other real roots in $[0, 2]$:\n\n**Direct verification:**\n$$f(1) = 1 - 3 + 4 - 2 = 0 \\checkmark$$\n\n**Factorization:**\nSince $x = 1$ is a root, $(x-1)$ divides $f(x)$:\n$$f(x) = x^3 - 3x^2 + 4x - 2 = (x-1)(x^2 - 2x + 2)$$\n\nVerification by expansion:\n$(x-1)(x^2 - 2x + 2) = x^3 - 2x^2 + 2x - x^2 + 2x - 2 = x^3 - 3x^2 + 4x - 2$ \u2713\n\nFor the quadratic factor $x^2 - 2x + 2$:\n$$\\Delta = (-2)^2 - 4(1)(2) = 4 - 8 = -4 < 0$$\n\nThe negative discriminant means $x^2 - 2x + 2$ has no real roots. Therefore, $x = 1$ is the **unique real root** of $f(x)$.\n\n## Summary of Bisection Iterations\n\n| Iteration | $a$ | $b$ | $c = \\frac{a+b}{2}$ | $f(c)$ | Action |\n|-----------|-----|-----|---------------------|--------|--------|\n| 1 | 0 | 2 | 1 | 0 | **Root found** |\n\n## Final Answer\n\nThe bisection method terminates after **one iteration** with the exact root:\n\n$$\\boxed{x = 1}$$\n\nThis satisfies the tolerance requirement of $0.01$ (in fact, the error is exactly $0$ since we found the exact root). The early termination occurs because the midpoint of the initial interval happens to be exactly the root of the equation.",
+        "raw_answer": "# Solution: Bisection Method for $f(x) = x^3 - 3x^2 + 4x - 2$\n\n## Step 1: Verify Prerequisites for Bisection Method\n\nThe bisection method requires:\n1. **Continuity**: $f(x) = x^3 - 3x^2 + 4x - 2$ is a polynomial, hence continuous on $[0, 2]$ \u2713\n2. **Sign change**: We need $f(a)$ and $f(b)$ to have opposite signs\n\nEvaluating at the endpoints:\n- $f(0) = (0)^3 - 3(0)^2 + 4(0) - 2 = -2$\n- $f(2) = (2)^3 - 3(2)^2 + 4(2) - 2 = 8 - 12 + 8 - 2 = 2$\n\nSince $f(0) = -2 < 0$ and $f(2) = 2 > 0$, by the Intermediate Value Theorem, at least one root exists in $(0, 2)$ \u2713\n\n## Step 2: Determine Required Iterations\n\nFor tolerance $\\epsilon = 0.01$ with initial interval $[a, b] = [0, 2]$:\n$$\\frac{b - a}{2^n} < 0.01 \\implies \\frac{2}{2^n} < 0.01 \\implies 2^n > 200$$\n\nSince $2^7 = 128$ and $2^8 = 256$, we need at most $n = 8$ iterations.\n\n## Step 3: Apply Bisection Method\n\n**Iteration 1:**\n- Current interval: $[a_0, b_0] = [0, 2]$\n- Midpoint: $c_0 = \\frac{0 + 2}{2} = 1$\n- Evaluate: $f(1) = (1)^3 - 3(1)^2 + 4(1) - 2 = 1 - 3 + 4 - 2 = 0$\n\nSince $f(1) = 0$ **exactly**, we have found an exact root at $c_0 = 1$.\n\n## Verification\n\nLet me verify that $x = 1$ is indeed a root and confirm there are no other real roots in $[0, 2]$:\n\n**Direct verification:**\n$$f(1) = 1 - 3 + 4 - 2 = 0 \\checkmark$$\n\n**Factorization:**\nSince $x = 1$ is a root, $(x-1)$ divides $f(x)$:\n$$f(x) = x^3 - 3x^2 + 4x - 2 = (x-1)(x^2 - 2x + 2)$$\n\nVerification by expansion:\n$(x-1)(x^2 - 2x + 2) = x^3 - 2x^2 + 2x - x^2 + 2x - 2 = x^3 - 3x^2 + 4x - 2$ \u2713\n\nFor the quadratic factor $x^2 - 2x + 2$:\n$$\\Delta = (-2)^2 - 4(1)(2) = 4 - 8 = -4 < 0$$\n\nThe negative discriminant means $x^2 - 2x + 2$ has no real roots. Therefore, $x = 1$ is the **unique real root** of $f(x)$.\n\n## Summary of Bisection Iterations\n\n| Iteration | $a$ | $b$ | $c = \\frac{a+b}{2}$ | $f(c)$ | Action |\n|-----------|-----|-----|---------------------|--------|--------|\n| 1 | 0 | 2 | 1 | 0 | **Root found** |\n\n## Final Answer\n\nThe bisection method terminates after **one iteration** with the exact root:\n\n$$\\boxed{x = 1}$$\n\nThis satisfies the tolerance requirement of $0.01$ (in fact, the error is exactly $0$ since we found the exact root). The early termination occurs because the midpoint of the initial interval happens to be exactly the root of the equation.",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "openai-gpt-3.5-turbo-0125",
+    "answer_model": "anthropic-claude-opus-4.5",
+    "question": "Let $R$ be a commutative ring with unity and let $I$ be an ideal in $R$. Define the radical of $I$, denoted $\\sqrt{I}$, as the set of all elements $r \\in R$ such that there exists a positive integer $n$ satisfying $r^n \\in I$. \n\nConsider the ring $R = \\mathbb{Z}[x]$ of polynomials with integer coefficients and the ideal $I = \\langle x^2 - 4 \\rangle$ generated by $x^2 - 4$. Determine the radical $\\sqrt{I}$ of the ideal $I$ in $R$.",
+    "run_id": "7",
+    "outer_attempt": 5,
+    "topic_slug": "commutative_algebra",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "# Finding the Radical of $I = \\langle x^2 - 4 \\rangle$ in $\\mathbb{Z}[x]$\n\n## Setup and Key Factorization\n\nWe have $R = \\mathbb{Z}[x]$ and $I = \\langle x^2 - 4 \\rangle$. Note that:\n$$x^2 - 4 = (x-2)(x+2)$$\n\nThe radical is defined as:\n$$\\sqrt{I} = \\{f \\in \\mathbb{Z}[x] : f^n \\in I \\text{ for some positive integer } n\\}$$\n\n## Main Result\n\n**Theorem:** $\\sqrt{I} = I = \\langle x^2 - 4 \\rangle$\n\n## Proof\n\nSince $I \\subseteq \\sqrt{I}$ always holds (taking $n=1$), it suffices to prove $\\sqrt{I} \\subseteq I$.\n\n### Step 1: $\\mathbb{Z}[x]$ is a UFD\n\nSince $\\mathbb{Z}$ is a UFD, and if $R$ is a UFD then $R[x]$ is a UFD, it follows that $\\mathbb{Z}[x]$ is a UFD.\n\n### Step 2: $x-2$ and $x+2$ are prime elements in $\\mathbb{Z}[x]$\n\nBoth $x-2$ and $x+2$ are degree-1 polynomials with content 1 (the gcd of their coefficients is 1). Any factorization $x - 2 = g \\cdot h$ forces one factor to be a constant. Since the content is 1, that constant must divide 1, hence be $\\pm 1$ (a unit). Thus $x-2$ is irreducible.\n\nIn a UFD, irreducible elements are prime, so both $x-2$ and $x+2$ are prime in $\\mathbb{Z}[x]$.\n\n### Step 3: $\\gcd(x-2, x+2) = 1$\n\nComputing: $(x+2) - (x-2) = 4$, so $\\gcd(x-2, x+2)$ divides 4.\n\nAny common divisor $d$ of $x-2$ and $x+2$ must also divide the primitive polynomial $x-2$. Since $x-2$ has content 1, if $d$ is constant, then $d | 1$. If $d$ has positive degree, then $d = \\pm(x-2)$, but then $(x-2) | (x+2)$, which is false (dividing gives remainder 4).\n\nTherefore $\\gcd(x-2, x+2) = 1$.\n\n### Step 4: Main Argument\n\nLet $f(x) \\in \\sqrt{I}$. Then $f(x)^n \\in I$ for some positive integer $n$, meaning:\n$$(x-2)(x+2) \\mid f(x)^n$$\n\nThis implies $(x-2) \\mid f(x)^n$ and $(x+2) \\mid f(x)^n$.\n\n**Lemma:** If $p$ is prime in a UFD and $p \\mid a^n$, then $p \\mid a$.\n\n*Proof by induction on $n$:* Base case $n=1$ is trivial. For $n > 1$: $p \\mid a \\cdot a^{n-1}$, and since $p$ is prime, either $p \\mid a$ (done) or $p \\mid a^{n-1}$ (apply induction). $\\square$\n\nApplying this lemma:\n- Since $x-2$ is prime and $(x-2) \\mid f(x)^n$, we get $(x-2) \\mid f(x)$\n- Since $x+2$ is prime and $(x+2) \\mid f(x)^n$, we get $(x+2) \\mid f(x)$\n\n### Step 5: Combining the Divisibility Conditions\n\nSince $(x-2) \\mid f(x)$, write $f(x) = (x-2)q(x)$ for some $q(x) \\in \\mathbb{Z}[x]$.\n\nSince $(x+2) \\mid f(x) = (x-2)q(x)$ and $x+2$ is prime with $\\gcd(x+2, x-2) = 1$, we must have $(x+2) \\mid q(x)$.\n\nTherefore $q(x) = (x+2)r(x)$ for some $r(x) \\in \\mathbb{Z}[x]$, giving:\n$$f(x) = (x-2)(x+2)r(x) = (x^2-4)r(x)$$\n\nThus $f(x) \\in \\langle x^2 - 4 \\rangle = I$.\n\n### Conclusion\n\nWe have shown $\\sqrt{I} \\subseteq I$. Combined with $I \\subseteq \\sqrt{I}$, we conclude:\n\n$$\\boxed{\\sqrt{I} = \\langle x^2 - 4 \\rangle}$$\n\n**Remark:** This means $I = \\langle x^2 - 4 \\rangle$ is a **radical ideal** in $\\mathbb{Z}[x]$. Equivalently, the quotient ring $\\mathbb{Z}[x]/\\langle x^2-4 \\rangle$ has no nonzero nilpotent elements (is reduced).",
+        "raw_answer": "# Finding the Radical of $I = \\langle x^2 - 4 \\rangle$ in $\\mathbb{Z}[x]$\n\n## Setup and Key Factorization\n\nWe have $R = \\mathbb{Z}[x]$ and $I = \\langle x^2 - 4 \\rangle$. Note that:\n$$x^2 - 4 = (x-2)(x+2)$$\n\nThe radical is defined as:\n$$\\sqrt{I} = \\{f \\in \\mathbb{Z}[x] : f^n \\in I \\text{ for some positive integer } n\\}$$\n\n## Main Result\n\n**Theorem:** $\\sqrt{I} = I = \\langle x^2 - 4 \\rangle$\n\n## Proof\n\nSince $I \\subseteq \\sqrt{I}$ always holds (taking $n=1$), it suffices to prove $\\sqrt{I} \\subseteq I$.\n\n### Step 1: $\\mathbb{Z}[x]$ is a UFD\n\nSince $\\mathbb{Z}$ is a UFD, and if $R$ is a UFD then $R[x]$ is a UFD, it follows that $\\mathbb{Z}[x]$ is a UFD.\n\n### Step 2: $x-2$ and $x+2$ are prime elements in $\\mathbb{Z}[x]$\n\nBoth $x-2$ and $x+2$ are degree-1 polynomials with content 1 (the gcd of their coefficients is 1). Any factorization $x - 2 = g \\cdot h$ forces one factor to be a constant. Since the content is 1, that constant must divide 1, hence be $\\pm 1$ (a unit). Thus $x-2$ is irreducible.\n\nIn a UFD, irreducible elements are prime, so both $x-2$ and $x+2$ are prime in $\\mathbb{Z}[x]$.\n\n### Step 3: $\\gcd(x-2, x+2) = 1$\n\nComputing: $(x+2) - (x-2) = 4$, so $\\gcd(x-2, x+2)$ divides 4.\n\nAny common divisor $d$ of $x-2$ and $x+2$ must also divide the primitive polynomial $x-2$. Since $x-2$ has content 1, if $d$ is constant, then $d | 1$. If $d$ has positive degree, then $d = \\pm(x-2)$, but then $(x-2) | (x+2)$, which is false (dividing gives remainder 4).\n\nTherefore $\\gcd(x-2, x+2) = 1$.\n\n### Step 4: Main Argument\n\nLet $f(x) \\in \\sqrt{I}$. Then $f(x)^n \\in I$ for some positive integer $n$, meaning:\n$$(x-2)(x+2) \\mid f(x)^n$$\n\nThis implies $(x-2) \\mid f(x)^n$ and $(x+2) \\mid f(x)^n$.\n\n**Lemma:** If $p$ is prime in a UFD and $p \\mid a^n$, then $p \\mid a$.\n\n*Proof by induction on $n$:* Base case $n=1$ is trivial. For $n > 1$: $p \\mid a \\cdot a^{n-1}$, and since $p$ is prime, either $p \\mid a$ (done) or $p \\mid a^{n-1}$ (apply induction). $\\square$\n\nApplying this lemma:\n- Since $x-2$ is prime and $(x-2) \\mid f(x)^n$, we get $(x-2) \\mid f(x)$\n- Since $x+2$ is prime and $(x+2) \\mid f(x)^n$, we get $(x+2) \\mid f(x)$\n\n### Step 5: Combining the Divisibility Conditions\n\nSince $(x-2) \\mid f(x)$, write $f(x) = (x-2)q(x)$ for some $q(x) \\in \\mathbb{Z}[x]$.\n\nSince $(x+2) \\mid f(x) = (x-2)q(x)$ and $x+2$ is prime with $\\gcd(x+2, x-2) = 1$, we must have $(x+2) \\mid q(x)$.\n\nTherefore $q(x) = (x+2)r(x)$ for some $r(x) \\in \\mathbb{Z}[x]$, giving:\n$$f(x) = (x-2)(x+2)r(x) = (x^2-4)r(x)$$\n\nThus $f(x) \\in \\langle x^2 - 4 \\rangle = I$.\n\n### Conclusion\n\nWe have shown $\\sqrt{I} \\subseteq I$. Combined with $I \\subseteq \\sqrt{I}$, we conclude:\n\n$$\\boxed{\\sqrt{I} = \\langle x^2 - 4 \\rangle}$$\n\n**Remark:** This means $I = \\langle x^2 - 4 \\rangle$ is a **radical ideal** in $\\mathbb{Z}[x]$. Equivalently, the quotient ring $\\mathbb{Z}[x]/\\langle x^2-4 \\rangle$ has no nonzero nilpotent elements (is reduced).",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "openai-gpt-3.5-turbo-0125",
+    "answer_model": "anthropic-claude-opus-4.5",
+    "question": "Let $X$ be a continuous random variable with probability density function (pdf) given by:\n$$ f_X(x) = \\begin{cases} \n      2x & 0 \\leq x \\leq 1 \\\\\n      0 & \\text{otherwise}\n   \\end{cases} $$\nDefine a new random variable $Y$ as $Y = X^2$. Determine the probability density function of $Y$, i.e., find $f_Y(y)$ for all possible values of $y$.",
+    "run_id": "42",
+    "outer_attempt": 4,
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "# Finding the PDF of Y = X\u00b2\n\n## Setup and Verification\n\nGiven the pdf of $X$:\n$$f_X(x) = \\begin{cases} \n      2x & 0 \\leq x \\leq 1 \\\\\n      0 & \\text{otherwise}\n   \\end{cases}$$\n\nFirst, I verify this is a valid pdf:\n$$\\int_{-\\infty}^{\\infty} f_X(x)\\,dx = \\int_0^1 2x\\,dx = x^2\\Big|_0^1 = 1 \\checkmark$$\n\n## Step 1: Determine the Support of Y\n\nSince $X \\in [0, 1]$ almost surely, and $Y = X^2$:\n- When $X = 0$: $Y = 0$\n- When $X = 1$: $Y = 1$\n\nSince $g(x) = x^2$ is strictly increasing on $[0, 1]$, we have $Y \\in [0, 1]$.\n\n## Step 2: Find the CDF of Y\n\nFor $y < 0$: $F_Y(y) = P(Y \\leq y) = 0$\n\nFor $y > 1$: $F_Y(y) = P(Y \\leq y) = 1$\n\nFor $0 \\leq y \\leq 1$:\n$$F_Y(y) = P(Y \\leq y) = P(X^2 \\leq y)$$\n\nSince $X \\geq 0$ almost surely, $X^2 \\leq y$ if and only if $X \\leq \\sqrt{y}$. Therefore:\n$$F_Y(y) = P(X \\leq \\sqrt{y}) = F_X(\\sqrt{y})$$\n\nComputing $F_X(x)$ for $0 \\leq x \\leq 1$:\n$$F_X(x) = \\int_0^x 2t\\,dt = t^2\\Big|_0^x = x^2$$\n\nSubstituting:\n$$F_Y(y) = F_X(\\sqrt{y}) = (\\sqrt{y})^2 = y$$\n\n## Step 3: Differentiate to Obtain the PDF\n\nFor $0 < y < 1$:\n$$f_Y(y) = \\frac{d}{dy}F_Y(y) = \\frac{d}{dy}(y) = 1$$\n\n## Step 4: Verification Using Change of Variables\n\nFor the strictly increasing transformation $Y = X^2$ on $[0,1]$, the inverse is $X = \\sqrt{Y}$, and:\n\n$$f_Y(y) = f_X\\left(\\sqrt{y}\\right) \\cdot \\left|\\frac{dx}{dy}\\right| = 2\\sqrt{y} \\cdot \\frac{1}{2\\sqrt{y}} = 1$$\n\nThis confirms our result for $0 < y < 1$.\n\n## Final Answer\n\n$$\\boxed{f_Y(y) = \\begin{cases} \n      1 & 0 \\leq y \\leq 1 \\\\\n      0 & \\text{otherwise}\n   \\end{cases}}$$\n\n**Conclusion:** The transformation $Y = X^2$ converts the random variable $X$ with pdf $f_X(x) = 2x$ on $[0,1]$ into a **Uniform(0,1)** random variable.\n\n**Final verification:** $\\displaystyle\\int_0^1 1\\,dy = 1$ \u2713",
+        "raw_answer": "# Finding the PDF of Y = X\u00b2\n\n## Setup and Verification\n\nGiven the pdf of $X$:\n$$f_X(x) = \\begin{cases} \n      2x & 0 \\leq x \\leq 1 \\\\\n      0 & \\text{otherwise}\n   \\end{cases}$$\n\nFirst, I verify this is a valid pdf:\n$$\\int_{-\\infty}^{\\infty} f_X(x)\\,dx = \\int_0^1 2x\\,dx = x^2\\Big|_0^1 = 1 \\checkmark$$\n\n## Step 1: Determine the Support of Y\n\nSince $X \\in [0, 1]$ almost surely, and $Y = X^2$:\n- When $X = 0$: $Y = 0$\n- When $X = 1$: $Y = 1$\n\nSince $g(x) = x^2$ is strictly increasing on $[0, 1]$, we have $Y \\in [0, 1]$.\n\n## Step 2: Find the CDF of Y\n\nFor $y < 0$: $F_Y(y) = P(Y \\leq y) = 0$\n\nFor $y > 1$: $F_Y(y) = P(Y \\leq y) = 1$\n\nFor $0 \\leq y \\leq 1$:\n$$F_Y(y) = P(Y \\leq y) = P(X^2 \\leq y)$$\n\nSince $X \\geq 0$ almost surely, $X^2 \\leq y$ if and only if $X \\leq \\sqrt{y}$. Therefore:\n$$F_Y(y) = P(X \\leq \\sqrt{y}) = F_X(\\sqrt{y})$$\n\nComputing $F_X(x)$ for $0 \\leq x \\leq 1$:\n$$F_X(x) = \\int_0^x 2t\\,dt = t^2\\Big|_0^x = x^2$$\n\nSubstituting:\n$$F_Y(y) = F_X(\\sqrt{y}) = (\\sqrt{y})^2 = y$$\n\n## Step 3: Differentiate to Obtain the PDF\n\nFor $0 < y < 1$:\n$$f_Y(y) = \\frac{d}{dy}F_Y(y) = \\frac{d}{dy}(y) = 1$$\n\n## Step 4: Verification Using Change of Variables\n\nFor the strictly increasing transformation $Y = X^2$ on $[0,1]$, the inverse is $X = \\sqrt{Y}$, and:\n\n$$f_Y(y) = f_X\\left(\\sqrt{y}\\right) \\cdot \\left|\\frac{dx}{dy}\\right| = 2\\sqrt{y} \\cdot \\frac{1}{2\\sqrt{y}} = 1$$\n\nThis confirms our result for $0 < y < 1$.\n\n## Final Answer\n\n$$\\boxed{f_Y(y) = \\begin{cases} \n      1 & 0 \\leq y \\leq 1 \\\\\n      0 & \\text{otherwise}\n   \\end{cases}}$$\n\n**Conclusion:** The transformation $Y = X^2$ converts the random variable $X$ with pdf $f_X(x) = 2x$ on $[0,1]$ into a **Uniform(0,1)** random variable.\n\n**Final verification:** $\\displaystyle\\int_0^1 1\\,dy = 1$ \u2713",
         "evaluation": {
           "verdict": "pass",
           "ill_posed": false,

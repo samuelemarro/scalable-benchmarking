@@ -4,6 +4,7 @@
     "answer_model": "openai-gpt-5.2-2025-12-11",
     "question": "Let $P(x)$ be the statement \"$x$ is a prime number\" and $Q(x)$ be the statement \"$x$ is an odd number.\" Consider the following logical statement:\n\n$\\forall x (P(x) \\rightarrow Q(x))$\n\nDetermine whether the statement is true or false. Provide a clear explanation for your answer.",
     "run_id": "1",
+    "outer_attempt": 1,
     "topic_slug": "mathematical_logic_and_foundations",
     "status": "succeeded",
     "attempts": [
@@ -18,8 +19,7 @@
           "improvements": ""
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question_model": "openai-gpt-3.5-turbo-0125",
@@ -481,6 +481,7 @@
     "answer_model": "openai-gpt-5.2-2025-12-11",
     "question": "Consider the following second-order linear homogeneous ordinary differential equation:\n$$y'' - 4y' + 4y = 0$$\nwhere $y = y(x)$ is a function of $x$. Find the general solution to this differential equation.",
     "run_id": "22",
+    "outer_attempt": 1,
     "topic_slug": "ordinary_differential_equations",
     "status": "succeeded",
     "attempts": [
@@ -495,8 +496,7 @@
           "improvements": ""
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question_model": "openai-gpt-3.5-turbo-0125",
@@ -875,6 +875,7 @@
     "answer_model": "openai-gpt-5.2-2025-12-11",
     "question": "Let $C$ be a smooth curve in $\\mathbb{R}^3$ parametrized by $\\mathbf{r}(t) = (x(t), y(t), z(t))$. Suppose that the curve $C$ lies on the surface of a sphere of radius $R$ centered at the origin. Prove that the tangent vector $\\mathbf{T}(t)$ to the curve $C$ is orthogonal to the position vector $\\mathbf{r}(t)$ at each point $t$ on the curve.",
     "run_id": "37",
+    "outer_attempt": 1,
     "topic_slug": "differential_geometry",
     "status": "succeeded",
     "attempts": [
@@ -889,8 +890,7 @@
           "improvements": ""
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question_model": "openai-gpt-3.5-turbo-0125",
@@ -1009,6 +1009,7 @@
     "answer_model": "openai-gpt-5.2-2025-12-11",
     "question": "Suppose you have a dataset of 100 observations on a single variable $X$, which is known to follow a normal distribution with an unknown mean $\\mu$ and a known standard deviation of 5. You want to test the null hypothesis $H_0: \\mu = 20$ against the alternative hypothesis $H_1: \\mu \\neq 20$ at a significance level of 0.05. \n\nDetermine the critical values for a two-tailed hypothesis test using the standard normal distribution table.",
     "run_id": "43",
+    "outer_attempt": 1,
     "topic_slug": "statistics",
     "status": "succeeded",
     "attempts": [
@@ -1023,8 +1024,7 @@
           "improvements": ""
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question_model": "openai-gpt-3.5-turbo-0125",
@@ -1039,6 +1039,94 @@
         "round": 1,
         "answer": "We compute\n$$\n\\int_{0}^{1}\\frac{x^3}{1+x^2}\\,dx.\n$$\nPerform algebraic division:\n$$\n\\frac{x^3}{1+x^2}=\\frac{x(x^2+1-1)}{1+x^2}=x-\\frac{x}{1+x^2}.\n$$\nHence\n$$\n\\int_{0}^{1}\\frac{x^3}{1+x^2}\\,dx=\\int_{0}^{1}x\\,dx-\\int_{0}^{1}\\frac{x}{1+x^2}\\,dx.\n$$\nCompute each term:\n$$\n\\int_{0}^{1}x\\,dx=\\left[\\frac{x^2}{2}\\right]_{0}^{1}=\\frac12,\n$$\nand with $u=1+x^2$, $du=2x\\,dx$,\n$$\n\\int_{0}^{1}\\frac{x}{1+x^2}\\,dx=\\frac12\\int_{u=1}^{2}\\frac{1}{u}\\,du=\\frac12\\left[\\ln u\\right]_{1}^{2}=\\frac12\\ln 2.\n$$\nTherefore,\n$$\n\\int_{0}^{1}\\frac{x^3}{1+x^2}\\,dx=\\frac12-\\frac12\\ln 2=\\frac{1-\\ln 2}{2}.\n$$",
         "raw_answer": "We compute\n\\[\n\\int_{0}^{1}\\frac{x^3}{1+x^2}\\,dx.\n\\]\nPerform algebraic division:\n\\[\n\\frac{x^3}{1+x^2}=\\frac{x(x^2+1-1)}{1+x^2}=x-\\frac{x}{1+x^2}.\n\\]\nHence\n\\[\n\\int_{0}^{1}\\frac{x^3}{1+x^2}\\,dx=\\int_{0}^{1}x\\,dx-\\int_{0}^{1}\\frac{x}{1+x^2}\\,dx.\n\\]\nCompute each term:\n\\[\n\\int_{0}^{1}x\\,dx=\\left[\\frac{x^2}{2}\\right]_{0}^{1}=\\frac12,\n\\]\nand with \\(u=1+x^2\\), \\(du=2x\\,dx\\),\n\\[\n\\int_{0}^{1}\\frac{x}{1+x^2}\\,dx=\\frac12\\int_{u=1}^{2}\\frac{1}{u}\\,du=\\frac12\\left[\\ln u\\right]_{1}^{2}=\\frac12\\ln 2.\n\\]\nTherefore,\n\\[\n\\int_{0}^{1}\\frac{x^3}{1+x^2}\\,dx=\\frac12-\\frac12\\ln 2=\\frac{1-\\ln 2}{2}.\n\\]",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "openai-gpt-3.5-turbo-0125",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $f(x) = e^x$. Consider the Maclaurin series expansion of $f(x)$:\n$$f(x) = \\sum_{n=0}^{\\infty} a_n x^n.$$\nDetermine the coefficient $a_{10}$ of the $x^{10}$ term in the Maclaurin series expansion of $f(x)$.",
+    "run_id": "27",
+    "outer_attempt": 2,
+    "topic_slug": "approximations_and_expansions",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "For $f(x)=e^{x}$, the Maclaurin series is\n$$\ne^{x}=\\sum_{n=0}^{\\infty}\\frac{x^{n}}{n!}.\n$$\nMatching this with\n$$\nf(x)=\\sum_{n=0}^{\\infty} a_n x^n,\n$$\nwe identify\n$$\na_n=\\frac{1}{n!}.\n$$\nTherefore,\n$$\na_{10}=\\frac{1}{10!}=\\frac{1}{3628800}.\n$$",
+        "raw_answer": "For \\(f(x)=e^{x}\\), the Maclaurin series is\n\\[\ne^{x}=\\sum_{n=0}^{\\infty}\\frac{x^{n}}{n!}.\n\\]\nMatching this with\n\\[\nf(x)=\\sum_{n=0}^{\\infty} a_n x^n,\n\\]\nwe identify\n\\[\na_n=\\frac{1}{n!}.\n\\]\nTherefore,\n\\[\na_{10}=\\frac{1}{10!}=\\frac{1}{3628800}.\n\\]",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "openai-gpt-3.5-turbo-0125",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $f(x) = x^3 - 3x^2 + 4x - 2$. Consider the following numerical analysis problem:\n\nUsing the bisection method, find an approximate root of the equation $f(x) = 0$ within the interval $[0, 2]$ with a tolerance of $0.01$.",
+    "run_id": "44",
+    "outer_attempt": 5,
+    "topic_slug": "numerical_analysis",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "We apply the bisection method to $f(x)=x^3-3x^2+4x-2$ on $[0,2]$.\n\n1. **Check sign change (existence of a root):**\n$$\nf(0)=0-0+0-2=-2<0,\\qquad \nf(2)=8-12+8-2=2>0.\n$$\nSince $f$ is continuous (a polynomial) and $f(0)f(2)<0$, there is at least one root in $[0,2]$.\n\n2. **First bisection step:**\nMidpoint\n$$\nm=\\frac{0+2}{2}=1.\n$$\nEvaluate:\n$$\nf(1)=1-3+4-2=0.\n$$\nSo $m=1$ is **exactly** a root.\n\n3. **Tolerance check:**\nBecause we have found an exact root, the error is $0$, which is certainly $\\le 0.01$.\n\n$$\n\\boxed{x \\approx 1.00}\n$$\n(Indeed $x=1$ is the exact root in $[0,2]$.)",
+        "raw_answer": "We apply the bisection method to \\(f(x)=x^3-3x^2+4x-2\\) on \\([0,2]\\).\n\n1. **Check sign change (existence of a root):**\n\\[\nf(0)=0-0+0-2=-2<0,\\qquad \nf(2)=8-12+8-2=2>0.\n\\]\nSince \\(f\\) is continuous (a polynomial) and \\(f(0)f(2)<0\\), there is at least one root in \\([0,2]\\).\n\n2. **First bisection step:**\nMidpoint\n\\[\nm=\\frac{0+2}{2}=1.\n\\]\nEvaluate:\n\\[\nf(1)=1-3+4-2=0.\n\\]\nSo \\(m=1\\) is **exactly** a root.\n\n3. **Tolerance check:**\nBecause we have found an exact root, the error is \\(0\\), which is certainly \\(\\le 0.01\\).\n\n\\[\n\\boxed{x \\approx 1.00}\n\\]\n(Indeed \\(x=1\\) is the exact root in \\([0,2]\\).)",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "openai-gpt-3.5-turbo-0125",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $R$ be a commutative ring with unity and let $I$ be an ideal in $R$. Define the radical of $I$, denoted $\\sqrt{I}$, as the set of all elements $r \\in R$ such that there exists a positive integer $n$ satisfying $r^n \\in I$. \n\nConsider the ring $R = \\mathbb{Z}[x]$ of polynomials with integer coefficients and the ideal $I = \\langle x^2 - 4 \\rangle$ generated by $x^2 - 4$. Determine the radical $\\sqrt{I}$ of the ideal $I$ in $R$.",
+    "run_id": "7",
+    "outer_attempt": 5,
+    "topic_slug": "commutative_algebra",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "In $R=\\mathbb{Z}[x]$ let\n$$\nI=\\langle x^{2}-4\\rangle=\\langle (x-2)(x+2)\\rangle .\n$$\nWe claim that $I$ is already radical, hence $\\sqrt I = I$.\n\n### Step 1: $(x-2)$ and $(x+2)$ are prime ideals\nConsider the evaluation maps\n$$\n\\mathbb{Z}[x]\\to \\mathbb{Z},\\quad f(x)\\mapsto f(2),\\qquad \\mathbb{Z}[x]\\to \\mathbb{Z},\\quad f(x)\\mapsto f(-2).\n$$\nTheir kernels are $\\langle x-2\\rangle$ and $\\langle x+2\\rangle$, respectively. Since $\\mathbb{Z}$ is an integral domain, each kernel is a prime ideal. Thus $\\langle x-2\\rangle$ and $\\langle x+2\\rangle$ are prime ideals of $\\mathbb{Z}[x]$.\n\nEquivalently (since $\\mathbb{Z}[x]$ is a domain), $x-2$ and $x+2$ are prime elements: if $(x-2)\\mid ab$ then $a(2)b(2)=0$ in $\\mathbb{Z}$, so $a(2)=0$ or $b(2)=0$, i.e. $(x-2)\\mid a$ or $(x-2)\\mid b$; similarly for $x+2$.\n\n### Step 2: If $f\\in \\sqrt I$, then $f\\in I$\nLet $f\\in \\sqrt I$. Then for some $n\\ge 1$,\n$$\nf^n \\in I = \\langle (x-2)(x+2)\\rangle,\n$$\nso $(x-2)(x+2)\\mid f^n$. In particular, $x-2\\mid f^n$ and $x+2\\mid f^n$.\n\nBecause $x-2$ is prime, from $x-2\\mid f^n$ we get $x-2\\mid f$ (prove by induction: $x-2\\mid f^{n-1}\\cdot f\\Rightarrow x-2\\mid f$ or $x-2\\mid f^{n-1}$, and iterate). Similarly $x+2\\mid f$.\n\nHence $f$ is divisible by both $x-2$ and $x+2$, so $f$ is divisible by their product $(x-2)(x+2)=x^2-4$. Therefore $f\\in \\langle x^2-4\\rangle = I$.\n\nSo $\\sqrt I \\subseteq I$. The reverse inclusion $I\\subseteq \\sqrt I$ holds for every ideal. Thus $\\sqrt I = I$.\n\n### Conclusion\n$$\n\\boxed{\\sqrt{\\langle x^2-4\\rangle} \\;=\\; \\langle x^2-4\\rangle \\subset \\mathbb{Z}[x].}\n$$",
+        "raw_answer": "In \\(R=\\mathbb{Z}[x]\\) let\n\\[\nI=\\langle x^{2}-4\\rangle=\\langle (x-2)(x+2)\\rangle .\n\\]\nWe claim that \\(I\\) is already radical, hence \\(\\sqrt I = I\\).\n\n### Step 1: \\((x-2)\\) and \\((x+2)\\) are prime ideals\nConsider the evaluation maps\n\\[\n\\mathbb{Z}[x]\\to \\mathbb{Z},\\quad f(x)\\mapsto f(2),\\qquad \\mathbb{Z}[x]\\to \\mathbb{Z},\\quad f(x)\\mapsto f(-2).\n\\]\nTheir kernels are \\(\\langle x-2\\rangle\\) and \\(\\langle x+2\\rangle\\), respectively. Since \\(\\mathbb{Z}\\) is an integral domain, each kernel is a prime ideal. Thus \\(\\langle x-2\\rangle\\) and \\(\\langle x+2\\rangle\\) are prime ideals of \\(\\mathbb{Z}[x]\\).\n\nEquivalently (since \\(\\mathbb{Z}[x]\\) is a domain), \\(x-2\\) and \\(x+2\\) are prime elements: if \\((x-2)\\mid ab\\) then \\(a(2)b(2)=0\\) in \\(\\mathbb{Z}\\), so \\(a(2)=0\\) or \\(b(2)=0\\), i.e. \\((x-2)\\mid a\\) or \\((x-2)\\mid b\\); similarly for \\(x+2\\).\n\n### Step 2: If \\(f\\in \\sqrt I\\), then \\(f\\in I\\)\nLet \\(f\\in \\sqrt I\\). Then for some \\(n\\ge 1\\),\n\\[\nf^n \\in I = \\langle (x-2)(x+2)\\rangle,\n\\]\nso \\((x-2)(x+2)\\mid f^n\\). In particular, \\(x-2\\mid f^n\\) and \\(x+2\\mid f^n\\).\n\nBecause \\(x-2\\) is prime, from \\(x-2\\mid f^n\\) we get \\(x-2\\mid f\\) (prove by induction: \\(x-2\\mid f^{n-1}\\cdot f\\Rightarrow x-2\\mid f\\) or \\(x-2\\mid f^{n-1}\\), and iterate). Similarly \\(x+2\\mid f\\).\n\nHence \\(f\\) is divisible by both \\(x-2\\) and \\(x+2\\), so \\(f\\) is divisible by their product \\((x-2)(x+2)=x^2-4\\). Therefore \\(f\\in \\langle x^2-4\\rangle = I\\).\n\nSo \\(\\sqrt I \\subseteq I\\). The reverse inclusion \\(I\\subseteq \\sqrt I\\) holds for every ideal. Thus \\(\\sqrt I = I\\).\n\n### Conclusion\n\\[\n\\boxed{\\sqrt{\\langle x^2-4\\rangle} \\;=\\; \\langle x^2-4\\rangle \\subset \\mathbb{Z}[x].}\n\\]",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "openai-gpt-3.5-turbo-0125",
+    "answer_model": "openai-gpt-5.2-2025-12-11",
+    "question": "Let $X$ be a continuous random variable with probability density function (pdf) given by:\n$$ f_X(x) = \\begin{cases} \n      2x & 0 \\leq x \\leq 1 \\\\\n      0 & \\text{otherwise}\n   \\end{cases} $$\nDefine a new random variable $Y$ as $Y = X^2$. Determine the probability density function of $Y$, i.e., find $f_Y(y)$ for all possible values of $y$.",
+    "run_id": "42",
+    "outer_attempt": 4,
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "Since $f_X(x)=2x$ on $[0,1]$ and $Y=X^2$, the transformation $g(x)=x^2$ is strictly increasing on $[0,1]$. Hence we can use the CDF method.\n\nFor $y<0$, clearly $F_Y(y)=\\mathbb P(Y\\le y)=0$.  \nFor $0\\le y\\le 1$,\n$$\nF_Y(y)=\\mathbb P(Y\\le y)=\\mathbb P(X^2\\le y)=\\mathbb P(X\\le \\sqrt y)\n=\\int_{0}^{\\sqrt y} 2x\\,dx\n=\\left[x^2\\right]_{0}^{\\sqrt y}\n=y.\n$$\nFor $y\\ge 1$, $F_Y(y)=1$.\n\nThus,\n$$\nF_Y(y)=\n\\begin{cases}\n0, & y<0,\\\\\ny, & 0\\le y\\le 1,\\\\\n1, & y\\ge 1.\n\\end{cases}\n$$\nDifferentiating on the interval where it is continuous gives the density:\n$$\nf_Y(y)=F_Y'(y)=\n\\begin{cases}\n1, & 0<y<1,\\\\\n0, & \\text{otherwise}.\n\\end{cases}\n$$\n(Any value assigned at the single points $y=0$ or $y=1$ does not affect the pdf.)",
+        "raw_answer": "Since \\(f_X(x)=2x\\) on \\([0,1]\\) and \\(Y=X^2\\), the transformation \\(g(x)=x^2\\) is strictly increasing on \\([0,1]\\). Hence we can use the CDF method.\n\nFor \\(y<0\\), clearly \\(F_Y(y)=\\mathbb P(Y\\le y)=0\\).  \nFor \\(0\\le y\\le 1\\),\n\\[\nF_Y(y)=\\mathbb P(Y\\le y)=\\mathbb P(X^2\\le y)=\\mathbb P(X\\le \\sqrt y)\n=\\int_{0}^{\\sqrt y} 2x\\,dx\n=\\left[x^2\\right]_{0}^{\\sqrt y}\n=y.\n\\]\nFor \\(y\\ge 1\\), \\(F_Y(y)=1\\).\n\nThus,\n\\[\nF_Y(y)=\n\\begin{cases}\n0, & y<0,\\\\\ny, & 0\\le y\\le 1,\\\\\n1, & y\\ge 1.\n\\end{cases}\n\\]\nDifferentiating on the interval where it is continuous gives the density:\n\\[\nf_Y(y)=F_Y'(y)=\n\\begin{cases}\n1, & 0<y<1,\\\\\n0, & \\text{otherwise}.\n\\end{cases}\n\\]\n(Any value assigned at the single points \\(y=0\\) or \\(y=1\\) does not affect the pdf.)",
         "evaluation": {
           "verdict": "pass",
           "ill_posed": false,
