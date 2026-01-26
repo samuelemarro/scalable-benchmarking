@@ -6,11 +6,11 @@ from pathlib import Path
 from typing import Any, Iterable, Dict, List, Optional, Sequence, Tuple
 
 
-from model_api import query_llm_single
 from constants import (
     CRITIQUE_VERDICT_INCORRECT,
     CRITIQUE_VERDICT_INSUFFICIENT,
     CRITIQUE_VERDICT_OBSCURE,
+    STATUS_ILL_POSED,
 )
 from data_models import (
     AnswerAttempt,
@@ -18,6 +18,7 @@ from data_models import (
     AutomatedEvaluation,
     BenchmarkEntry,
     HumanEvaluation,
+    load_answer_entries,
     load_critique_entries,
     load_evaluation_entries,
     load_human_evaluation_entries,
@@ -476,6 +477,27 @@ def adjudicated_self_answer_outcome(
     registry: Optional[ModelRegistry] = None,
     log_automated_disagreements: bool = True,
 ) -> Optional[VictorySide]:
+    return _adjudicated_question_outcome(
+        question_key_value,
+        claim_type="critique",
+        claims_by_question=claims_by_question,
+        auto_by_key=auto_by_key,
+        human_by_key=human_by_key,
+        registry=registry,
+        log_automated_disagreements=log_automated_disagreements,
+    )
+
+
+def _adjudicated_question_outcome(
+    question_key_value: Optional[QuestionKey],
+    *,
+    claim_type: str,
+    claims_by_question: Dict[QuestionKey, List[CritiqueKey]],
+    auto_by_key: Dict[CritiqueKey, List[AutomatedEvaluation]],
+    human_by_key: Dict[CritiqueKey, List[HumanEvaluation]],
+    registry: Optional[ModelRegistry] = None,
+    log_automated_disagreements: bool = True,
+) -> Optional[VictorySide]:
     if not question_key_value:
         return None
     claim_keys = claims_by_question.get(question_key_value, [])
@@ -485,7 +507,7 @@ def adjudicated_self_answer_outcome(
     for claim_key in claim_keys:
         outcome = adjudicated_claim_outcome(
             claim_key,
-            claim_type="critique",
+            claim_type=claim_type,
             auto_by_key=auto_by_key,
             human_by_key=human_by_key,
             registry=registry,
@@ -536,8 +558,66 @@ def collect_self_answer_adjudications(
     return adjudications
 
 
-def collect_invalid_self_answer_questions(
+def collect_illposed_claims_by_question(
+    answers_dir: Path,
+) -> Dict[QuestionKey, List[CritiqueKey]]:
+    claims_by_question: Dict[QuestionKey, List[CritiqueKey]] = defaultdict(list)
+    if not answers_dir.exists():
+        return claims_by_question
+    for q_dir in answers_dir.glob("*"):
+        for ans_file in q_dir.glob("*.json"):
+            entries = load_answer_entries(ans_file)
+            for entry in entries:
+                if not entry or entry.status != STATUS_ILL_POSED:
+                    continue
+                question_model = entry.question_model or q_dir.name
+                answer_model = entry.answer_model or ans_file.stem
+                q_key = question_key(question_model, entry.run_id, entry.outer_attempt)
+                claim_key = critique_key(
+                    question_model,
+                    answer_model,
+                    None,
+                    None,
+                    entry.run_id,
+                    entry.outer_attempt,
+                )
+                if q_key and claim_key:
+                    claims_by_question[q_key].append(claim_key)
+    return claims_by_question
+
+
+def collect_illposed_adjudications(
+    answers_dir: Path,
+    auto_eval_dir: Path,
+    human_eval_dir: Path,
+    registry: Optional[ModelRegistry],
+    *,
+    log_automated_disagreements: bool = True,
+) -> Dict[QuestionKey, VictorySide]:
+    claims_by_question = collect_illposed_claims_by_question(answers_dir)
+    if not claims_by_question:
+        return {}
+    auto_by_key = load_automated_decisions(auto_eval_dir, claim_type="illposed")
+    human_by_key = load_human_decisions(human_eval_dir, claim_type="illposed")
+    adjudications: Dict[QuestionKey, VictorySide] = {}
+    for q_key in claims_by_question:
+        outcome = _adjudicated_question_outcome(
+            q_key,
+            claim_type="illposed",
+            claims_by_question=claims_by_question,
+            auto_by_key=auto_by_key,
+            human_by_key=human_by_key,
+            registry=registry,
+            log_automated_disagreements=log_automated_disagreements,
+        )
+        if outcome is not None:
+            adjudications[q_key] = outcome
+    return adjudications
+
+
+def collect_invalid_questions(
     critiques_dir: Path,
+    answers_dir: Path,
     auto_eval_dir: Path,
     human_eval_dir: Path,
     registry: Optional[ModelRegistry],
@@ -546,7 +626,8 @@ def collect_invalid_self_answer_questions(
     noncorrect_verdicts: Optional[Iterable[str]] = None,
     log_automated_disagreements: bool = True,
 ) -> set[QuestionKey]:
-    adjudications = collect_self_answer_adjudications(
+    invalid_questions: set[QuestionKey] = set()
+    self_answer_adjudications = collect_self_answer_adjudications(
         critiques_dir,
         auto_eval_dir,
         human_eval_dir,
@@ -555,10 +636,24 @@ def collect_invalid_self_answer_questions(
         noncorrect_verdicts=noncorrect_verdicts,
         log_automated_disagreements=log_automated_disagreements,
     )
-    return {
-        q_key for q_key, outcome in adjudications.items()
+    invalid_questions.update(
+        q_key
+        for q_key, outcome in self_answer_adjudications.items()
         if outcome == VictorySide.ALICE
-    }
+    )
+    illposed_adjudications = collect_illposed_adjudications(
+        answers_dir,
+        auto_eval_dir,
+        human_eval_dir,
+        registry,
+        log_automated_disagreements=log_automated_disagreements,
+    )
+    invalid_questions.update(
+        q_key
+        for q_key, outcome in illposed_adjudications.items()
+        if outcome == VictorySide.ALICE
+    )
+    return invalid_questions
 
 
 def format_key(parts: Sequence[Optional[str]]) -> str:
@@ -712,6 +807,8 @@ def clean_json_text(text: str) -> str:
 
 
 def _repair_with_model(text: str, schema: Optional[Dict[str, Any]]) -> Optional[Dict]:
+    from model_api import query_llm_single
+
     cfg = _load_parsing_config()
 
     if not cfg:
