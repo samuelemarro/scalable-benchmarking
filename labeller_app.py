@@ -22,7 +22,7 @@ from utils import (
     answer_key,
     answer_key_from_entry,
     benchmark_answers_from_entries,
-    collect_invalid_self_answer_questions,
+    collect_invalid_questions,
     format_key,
     human_evaluation_key_from_entry,
     is_latest_outer_attempt,
@@ -338,8 +338,9 @@ def main():
         q_slug = bench_path.stem
         entries = load_benchmark_entries(bench_path)
         latest_by_question[q_slug] = latest_outer_attempt_by_run(entries)
-    invalid_questions = collect_invalid_self_answer_questions(
+    invalid_questions = collect_invalid_questions(
         args.critiques_dir,
+        args.answers_dir,
         args.automated_evals_dir,
         args.evaluations_dir,
         registry,

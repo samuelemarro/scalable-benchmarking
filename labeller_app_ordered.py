@@ -36,7 +36,7 @@ from data_models import (
 )
 from utils import (
     benchmark_answers_from_entries,
-    collect_invalid_self_answer_questions,
+    collect_invalid_questions,
     critique_key,
     format_key,
     human_evaluation_key_from_entry,
@@ -206,6 +206,42 @@ def deterministic_order_keys(entries: List[Dict[str, Any]], seed: int) -> List[D
     ordered = sorted(entries, key=lambda e: json.dumps(e.get("key")) if e.get("key") is not None else "")
     rng = random.Random(seed)
     rng.shuffle(ordered)
+    return ordered
+
+
+def _ordering_group_rank(entry: Dict[str, Any]) -> int:
+    if entry.get("type") == "illposed":
+        return 0
+    if entry.get("type") == "critique":
+        mode = entry.get("mode")
+        if mode == "contradictor":
+            return 0
+        if mode == "evaluator":
+            return 1
+    return 2
+
+
+def _bucket_seed(seed: int, group_rank: int, outer_attempt: int) -> int:
+    payload = f"{seed}:{group_rank}:{outer_attempt}".encode("utf-8")
+    return int(hashlib.sha256(payload).hexdigest(), 16) % (2**32)
+
+
+def deterministic_order_keys_grouped(entries: List[Dict[str, Any]], seed: int) -> List[Dict[str, Any]]:
+    buckets: Dict[Tuple[int, int], List[Dict[str, Any]]] = {}
+    for entry in entries:
+        outer_attempt = normalize_outer_attempt(entry.get("outer_attempt"))
+        group_rank = _ordering_group_rank(entry)
+        buckets.setdefault((group_rank, outer_attempt), []).append(entry)
+    ordered: List[Dict[str, Any]] = []
+    group_ranks = sorted({group for group, _ in buckets})
+    for group_rank in group_ranks:
+        attempts = sorted({attempt for group, attempt in buckets if group == group_rank})
+        for outer_attempt in attempts:
+            bucket = buckets.get((group_rank, outer_attempt), [])
+            if not bucket:
+                continue
+            bucket_seed = _bucket_seed(seed, group_rank, outer_attempt)
+            ordered.extend(deterministic_order_keys(bucket, bucket_seed))
     return ordered
 
 
@@ -510,14 +546,27 @@ def build_task_from_key(
             or (answer_entry.topic_slug if answer_entry else None)
             or (fallback_entry.topic_slug if fallback_entry else None)
         )
+        resolved_run_id = (
+            run_id
+            or (debate.run_id if debate else None)
+            or (answer_entry.run_id if answer_entry else None)
+            or (fallback_entry.run_id if fallback_entry else None)
+        )
+        resolved_outer_attempt = normalize_outer_attempt(outer_attempt)
+        if resolved_outer_attempt is None:
+            resolved_outer_attempt = normalize_outer_attempt(
+                (debate.outer_attempt if debate else None)
+                or (answer_entry.outer_attempt if answer_entry else None)
+                or (fallback_entry.outer_attempt if fallback_entry else None)
+            )
         return (
             JudgingTask(
                 type="illposed",
                 question_model=q_slug,
                 answer_model=a_slug,
                 critic_model=None,
-                run_id=run_id,
-                outer_attempt=int(outer_attempt) if outer_attempt is not None else None,
+                run_id=str(resolved_run_id) if resolved_run_id is not None else None,
+                outer_attempt=resolved_outer_attempt,
                 topic_slug=topic_slug,
                 question=question_text,
                 answer=answer_text,
@@ -568,6 +617,21 @@ def build_task_from_key(
             or (critique_entry.topic_slug if critique_entry else None)
             or (fallback_entry.topic_slug if fallback_entry else None)
         )
+        resolved_run_id = (
+            run_id
+            or (debate.run_id if debate else None)
+            or (critique_entry.run_id if critique_entry else None)
+            or (answer_entry.run_id if answer_entry else None)
+            or (fallback_entry.run_id if fallback_entry else None)
+        )
+        resolved_outer_attempt = normalize_outer_attempt(outer_attempt)
+        if resolved_outer_attempt is None:
+            resolved_outer_attempt = normalize_outer_attempt(
+                (debate.outer_attempt if debate else None)
+                or (critique_entry.outer_attempt if critique_entry else None)
+                or (answer_entry.outer_attempt if answer_entry else None)
+                or (fallback_entry.outer_attempt if fallback_entry else None)
+            )
         return (
             JudgingTask(
                 type="critique",
@@ -575,8 +639,8 @@ def build_task_from_key(
                 question_model=q_slug,
                 answer_model=answer_slug,
                 critic_model=display_critic_slug,
-                run_id=run_id,
-                outer_attempt=int(outer_attempt) if outer_attempt is not None else None,
+                run_id=str(resolved_run_id) if resolved_run_id is not None else None,
+                outer_attempt=resolved_outer_attempt,
                 topic_slug=topic_slug,
                 question=question_text,
                 answer=answer_text,
@@ -738,8 +802,9 @@ def main():
     consensus = collect_consensus(args.automated_evals_dir)
     auto_eval_by_task = collect_auto_evals(args.automated_evals_dir)
     latest_by_question = latest_outer_attempts_by_question(args.benchmark_dir)
-    invalid_questions = collect_invalid_self_answer_questions(
+    invalid_questions = collect_invalid_questions(
         args.critiques_dir,
+        args.answers_dir,
         args.automated_evals_dir,
         args.evaluations_dir,
         registry,
@@ -753,7 +818,7 @@ def main():
     critique_cache = build_critique_cache(args.critiques_dir)
 
     seed = hash_seed(args.username)
-    ordered_keys = deterministic_order_keys(key_entries, seed)
+    ordered_keys = deterministic_order_keys_grouped(key_entries, seed)
 
     tasks: List[Tuple[JudgingTask, List[AutomatedEvaluation], Tuple]] = []
     dropped_no_data = 0
@@ -857,7 +922,7 @@ def main():
     if dropped_non_latest:
         st.info(f"Dropped {dropped_non_latest} keys from older outer_attempts.")
     if dropped_invalid:
-        st.info(f"Dropped {dropped_invalid} keys with adjudicated invalid self-answers.")
+        st.info(f"Dropped {dropped_invalid} keys with adjudicated invalid questions.")
 
     if "task_idx" not in st.session_state:
         st.session_state["task_idx"] = 0
