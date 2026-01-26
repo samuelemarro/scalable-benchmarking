@@ -2,6 +2,7 @@
   {
     "question": "Let $\\omega$ denote the first infinite ordinal. Consider the ordinals\n$$\\alpha = \\omega^2 \\cdot 2 + \\omega \\cdot 5 + 3 \\quad \\text{and} \\quad \\beta = \\omega^2 + \\omega \\cdot 3 + 7.$$\nCompute the ordinal product $\\alpha \\cdot \\beta$ using ordinal arithmetic, and express your answer in Cantor normal form.\n\n(Recall that the Cantor normal form of an ordinal $\\gamma > 0$ is the unique representation $\\gamma = \\omega^{\\delta_1} \\cdot c_1 + \\omega^{\\delta_2} \\cdot c_2 + \\cdots + \\omega^{\\delta_k} \\cdot c_k$ where $\\delta_1 > \\delta_2 > \\cdots > \\delta_k \\geq 0$ and each $c_i$ is a positive integer.)",
     "run_id": "1",
+    "outer_attempt": 1,
     "topic_slug": "mathematical_logic_and_foundations",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -20,12 +21,12 @@
           "improvements": "The critique is accurate: it correctly justifies $\\alpha\\cdot\\omega=\\omega^3$ via the supremum definition and then deduces $\\alpha\\cdot\\omega^2=\\omega^4$, handles $\\alpha\\cdot(\\omega\\cdot 3)=\\omega^3\\cdot 3$, and correctly explains why $\\alpha\\cdot 7=\\omega^2\\cdot 14+\\omega\\cdot 5+3$ (only the leading coefficient accumulates, lower terms come from the last copy). It also correctly notes there is no absorption when summing because exponents decrease. Format-wise, the critique is valid JSON with the required fields (\"verdict\" and \"notes\")."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "A sequence $(a_1, a_2, \\ldots, a_n)$ of positive integers is called **almost increasing** if $a_{i+1} \\geq a_i - 1$ for all $1 \\leq i \\leq n-1$.\n\nFind the number of almost increasing sequences of length 6 where each $a_i \\in \\{1, 2, 3\\}$.",
     "run_id": "2",
+    "outer_attempt": 1,
     "topic_slug": "combinatorics",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -44,12 +45,12 @@
           "improvements": "No changes needed; the critique correctly validates the transition rule (only forbidden adjacent pair is $3\\to 1$), the resulting recurrences, and the computed total $T(6)=377$. Optionally, it could also note that the claimed Fibonacci identification is not required for correctness (and could be independently checked), but this is not a flaw."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "For a positive integer $n$, let $\\tau(n)$ denote the number of positive divisors of $n$. Find all positive integers $n$ such that $\\tau(n^2) = n$.",
     "run_id": "3",
+    "outer_attempt": 1,
     "topic_slug": "number_theory",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -68,12 +69,12 @@
           "improvements": "No substantive changes needed. If you want to strengthen the critique further, you could explicitly note that comparing factors termwise is legitimate here because for each $i$ one has the numerical inequality $p_i^{a_i}\\ge 2a_i+1$, which implies $\\prod_i p_i^{a_i}\\ge\\prod_i(2a_i+1)$, and strictness follows from at least one strict factor (e.g., the $p_2\\ge 5$ term)."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $D_6$ denote the set of positive divisors of $6$, equipped with the partial order given by divisibility (i.e., $a \\leq b$ if and only if $a \\mid b$). Under this ordering, $D_6$ forms a lattice where the meet operation is $a \\wedge b = \\gcd(a,b)$ and the join operation is $a \\vee b = \\text{lcm}(a,b)$.\n\nA **sublattice** of $D_6$ is a nonempty subset $S \\subseteq D_6$ such that for all $a, b \\in S$, both $\\gcd(a,b) \\in S$ and $\\text{lcm}(a,b) \\in S$.\n\nDetermine the total number of sublattices of $D_6$.",
     "run_id": "4",
+    "outer_attempt": 1,
     "topic_slug": "order_lattices_and_ordered_algebraic_structures",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -92,12 +93,12 @@
           "improvements": "No substantive improvements needed. If you wanted to strengthen the critique slightly, you could add one explicit confirmation that the closure checks for the two valid 3-element sublattices hold (e.g., $\\gcd(2,6)=2$, $\\mathrm{lcm}(1,6)=6$), but the current explanation is already accurate and sufficient. The critique JSON format (keys `verdict` and `notes`, with an allowed verdict value) is valid."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $K = \\mathbb{Q}[x]/(x^3 - 2)$ be the quotient ring. Express the tensor product $K \\otimes_{\\mathbb{Q}} K$ as a direct product of fields and identify each factor explicitly, including its degree over $\\mathbb{Q}$.",
     "run_id": "5",
+    "outer_attempt": 1,
     "topic_slug": "general_algebraic_systems",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -116,12 +117,12 @@
           "improvements": "No substantive changes needed. At most, the critique could add one sentence justifying that in a subfield of $\\mathbb R$ every square is $\\ge 0$, so a negative discriminant cannot be a square, making the irreducibility argument fully explicit."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $f(x) = x^5 - 4x + 2 \\in \\mathbb{Q}[x]$, and let $\\alpha \\in \\mathbb{C}$ be a root of $f(x)$.\n\n**(a)** Prove that $f(x)$ is irreducible over $\\mathbb{Q}$.\n\n**(b)** Since $f$ is irreducible and monic of degree 5, the set $\\{1, \\alpha, \\alpha^2, \\alpha^3, \\alpha^4\\}$ forms a basis for the field extension $\\mathbb{Q}(\\alpha)$ over $\\mathbb{Q}$. Express $\\alpha^{-1}$ as a $\\mathbb{Q}$-linear combination of this basis.",
     "run_id": "6",
+    "outer_attempt": 1,
     "topic_slug": "field_theory_and_polynomials",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -140,12 +141,12 @@
           "improvements": "The critique is accurate: (a) Eisenstein with $p=2$ applies since $2$ divides all non-leading coefficients and $4\\nmid 2$, so $f$ is irreducible over $\\mathbb{Q}$; (b) the algebra leading to $\\alpha^{-1}=2-\\tfrac12\\alpha^4$ is correct and the critique appropriately notes $\\alpha\\neq 0$ (since $f(0)=2$). The critique also matches the required critique-JSON shape (has `verdict` in the allowed set and `notes` as a string). A minor optional improvement would be to explicitly mention Gauss\u2019s lemma/Eisenstein is typically stated over $\\mathbb{Z}[x]$ and hence implies irreducibility over $\\mathbb{Q}[x]$."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $k$ be a field and let $R = k[x, y, z]/(xz, yz)$. Compute the Krull dimension and the depth of $R$ (with respect to the maximal ideal $\\mathfrak{m} = (x, y, z)R$). Determine whether $R$ is a Cohen-Macaulay ring.",
     "run_id": "7",
+    "outer_attempt": 1,
     "topic_slug": "commutative_algebra",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -165,12 +166,12 @@
           "improvements": "The critique is accurate and evidence-based: it correctly flags the non-rigorous \u201ccoefficient comparison\u201d in the proof that $x+z$ is a non-zerodivisor, and it supplies a correct replacement argument using $I=(z)\\cap(x,y)$ and primeness. It also correctly confirms the final invariants ($\\dim R=2$, $\\operatorname{depth}_{\\mathfrak m}R=1$, not Cohen\u2013Macaulay). The critique is valid JSON and uses an allowed verdict value. Optionally, you could also note (as a minor rigor point) that the depth computation for $S=k[x,y]/(x^2,xy)$ should be interpreted after localizing at the relevant maximal ideal, but this doesn\u2019t affect the main assessment."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $C$ be the projective closure in $\\mathbb{P}^2_{\\mathbb{C}}$ of the affine plane curve defined by $y^3 = x^5 - x^4$.\n\n(a) Find all singular points of $C$.\n\n(b) Compute the geometric genus of $C$.",
     "run_id": "8",
+    "outer_attempt": 1,
     "topic_slug": "algebraic_geometry",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -189,12 +190,12 @@
           "improvements": "The critique is mathematically accurate and its conclusion that the answer is correct is well-supported. For even stronger evidence-based verification, it could briefly justify why the higher-order terms ($-x^5$ at $(0\\!:\\!0\\!:\\!1)$ and $x^4z$ at $(0\\!:\\!1\\!:\\!0)$) do not change the computed $\\delta$ invariants (e.g., by citing semiquasihomogeneous/nondegenerate Newton polygon theory or giving a quick Puiseux parametrization). The critique also satisfies the required critique-JSON format (valid JSON with `verdict` in {correct, incorrect, insufficient, obscure} and a string `notes`)."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Looking at this problem, I need to create a challenging matrix theory problem that requires substantive reasoning about eigenvalues and their constraints.\n\n\nLet $A$ be a $4 \\times 4$ matrix with real entries such that $A^4 = I$ (the identity matrix) and $\\operatorname{tr}(A) = 0$. Find all possible values of $\\det(A - I)$.",
     "run_id": "9",
+    "outer_attempt": 1,
     "topic_slug": "linear_and_multilinear_algebra",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -213,12 +214,12 @@
           "improvements": "No changes needed. The critique accurately verifies the key mathematical steps (eigenvalue constraints from $A^4=I$, conjugate-pair multiplicities for real matrices, trace constraint, exhaustive multiplicity patterns, correct determinant computations, and explicit realizations). It also conforms to the required critique JSON format (valid JSON with `verdict` and `notes`)."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $p$ be a prime number, and consider the quotient ring $R = \\mathbb{F}_p[x]/(x^p - x)$, where $\\mathbb{F}_p = \\mathbb{Z}/p\\mathbb{Z}$ is the finite field with $p$ elements.\n\n(a) Prove that $R \\cong \\mathbb{F}_p^p$ as rings, where $\\mathbb{F}_p^p$ denotes the direct product of $p$ copies of $\\mathbb{F}_p$.\n\n(b) Determine the total number of idempotent elements in $R$ (i.e., elements $e \\in R$ satisfying $e^2 = e$).\n\n(c) Determine the number of unital ring homomorphisms from $R$ to $\\mathbb{F}_p$ (homomorphisms $\\phi: R \\to \\mathbb{F}_p$ satisfying $\\phi(1_R) = 1_{\\mathbb{F}_p}$).",
     "run_id": "10",
+    "outer_attempt": 1,
     "topic_slug": "associative_rings_and_algebras",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -237,12 +238,12 @@
           "improvements": "Optionally, the critique could mention two minor rigor points to further strengthen the verification: (1) explicitly justify the CRT hypothesis by noting $(x-a)$ and $(x-b)$ are comaximal for $a\\neq b$ (e.g., $(x-a)-(x-b)=b-a\\in\\mathbb F_p^\\times$), and (2) in part (c) note that after factoring through a projection, any unital ring endomorphism $\\mathbb F_p\\to\\mathbb F_p$ is necessarily the identity, so no additional maps arise. The existing critique is still accurate and correctly formatted JSON with the expected keys."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $\\mathfrak{g}$ be the 4-dimensional Lie algebra over $\\mathbb{R}$ with basis $\\{H, X, Y, Z\\}$ and Lie bracket defined by:\n$$[H, X] = X, \\quad [H, Y] = -Y, \\quad [H, Z] = 0, \\quad [X, Y] = Z,$$\nwith all other brackets of basis elements being zero or determined by antisymmetry (i.e., $[X, Z] = [Y, Z] = 0$).\n\n**(a)** Verify that the Jacobi identity $[a, [b, c]] + [b, [c, a]] + [c, [a, b]] = 0$ holds for this bracket by checking it on the triple $(H, X, Y)$.\n\n**(b)** Compute the derived series $\\mathfrak{g}^{(0)} \\supseteq \\mathfrak{g}^{(1)} \\supseteq \\mathfrak{g}^{(2)} \\supseteq \\cdots$, where $\\mathfrak{g}^{(0)} = \\mathfrak{g}$ and $\\mathfrak{g}^{(k+1)} = [\\mathfrak{g}^{(k)}, \\mathfrak{g}^{(k)}]$.\n\n**(c)** Compute the lower central series $\\mathfrak{g}^1 \\supseteq \\mathfrak{g}^2 \\supseteq \\mathfrak{g}^3 \\supseteq \\cdots$, where $\\mathfrak{g}^1 = \\mathfrak{g}$ and $\\mathfrak{g}^{k+1} = [\\mathfrak{g}, \\mathfrak{g}^k]$.\n\n**(d)** Determine whether $\\mathfrak{g}$ is solvable, nilpotent, both, or neither. Justify your answer using the results from parts (b) and (c).",
     "run_id": "11",
+    "outer_attempt": 1,
     "topic_slug": "nonassociative_rings_and_algebras",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -261,12 +262,12 @@
           "improvements": "No substantive changes needed. As a minor enhancement, you could note explicitly that part (a) only asks to check Jacobi on the triple $(H,X,Y)$ (so the extra remark about checking all triples is optional), but this does not affect correctness."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $R = \\mathbb{Z}[x]/(x^2)$ be the ring of dual numbers over the integers. Consider $\\mathbb{Z}$ as an $R$-module via the augmentation homomorphism $\\varepsilon: R \\to \\mathbb{Z}$ defined by $\\varepsilon(a + bx) = a$ for $a, b \\in \\mathbb{Z}$ (equivalently, $x$ acts on $\\mathbb{Z}$ as zero). \n\nCompute the abelian groups $\\mathrm{Ext}^n_R(\\mathbb{Z}, \\mathbb{Z})$ for all integers $n \\geq 0$.",
     "run_id": "12",
+    "outer_attempt": 1,
     "topic_slug": "category_theory_and_homological_algebra",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -285,12 +286,12 @@
           "improvements": "No substantive changes needed. The critique accurately verifies exactness of the periodic free resolution, correctly explains why the induced differentials in $\\operatorname{Hom}_R(-,\\mathbb{Z})$ vanish (since $x$ acts as $0$ on $\\mathbb{Z}$), and it is valid JSON with the required keys."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $\\mathbb{CP}^2$ be the complex projective plane and let $H$ denote the tautological line bundle over $\\mathbb{CP}^2$. Define $\\xi = [H] - 1 \\in K^0(\\mathbb{CP}^2)$, where $K^0$ denotes complex topological K-theory.\n\nIt is a standard result that $K^0(\\mathbb{CP}^2) \\cong \\mathbb{Z}[\\xi]/(\\xi^3)$ as rings, and that every complex vector bundle over $\\mathbb{CP}^2$ splits as a direct sum of line bundles (Grothendieck's splitting theorem). Line bundles over $\\mathbb{CP}^2$ are precisely the tensor powers $H^m$ for $m \\in \\mathbb{Z}$.\n\n**(a)** Prove that for all $n \\in \\mathbb{Z}$:\n$$(1+\\xi)^n = 1 + n\\xi + \\binom{n}{2}\\xi^2$$\nwhere $\\binom{n}{2} = \\frac{n(n-1)}{2}$ is the generalized binomial coefficient.\n\n**(b)** A class $\\alpha \\in K^0(\\mathbb{CP}^2)$ is called *effective of rank $r$* if $\\alpha = [E]$ for some complex vector bundle $E$ over $\\mathbb{CP}^2$ of rank $r$.\n\nProve that the class $2 - \\xi \\in K^0(\\mathbb{CP}^2)$ is **not** effective of rank $2$.",
     "run_id": "13",
+    "outer_attempt": 1,
     "topic_slug": "k_theory",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -310,12 +311,12 @@
           "improvements": "The critique is accurate: (i) it correctly flags the misapplication of Grothendieck splitting (true for $\\mathbb{CP}^1$, false for $\\mathbb{CP}^2$), and (ii) it correctly shows $2-\\xi$ is in fact effective of rank $2$ via the tautological exact sequence $0\\to H\\to \\underline{\\mathbb C}^3\\to Q\\to 0$, giving $[Q]=3-[H]=2-\\xi$. The critique is also valid JSON with an allowed verdict value.\n\nIf you want to strengthen it, you could explicitly note that the *problem statement itself* contains the incorrect splitting claim, making part (b) ill-posed as written, and add one sentence justifying the binomial expansion for negative $n$ (e.g. $(1+\\xi)^{-1}=1-\\xi+\\xi^2$ since $\\xi^3=0$)."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $G$ be a group of order $16$ in which every non-identity element has order $2$. Determine the total number of subgroups of $G$ (including the trivial subgroup $\\{e\\}$ and $G$ itself).",
     "run_id": "14",
+    "outer_attempt": 1,
     "topic_slug": "group_theory_and_generalizations",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -334,12 +335,12 @@
           "improvements": "The critique is accurate and the stated subgroup count $67$ is correct. As a minor improvement, you could explicitly reference the key identity used in Step 1 (namely $(ab)^2=e \\Rightarrow abab=e$ and then multiply by $a$ on the left and $b$ on the right to get $ba=ab$) to make the verification even more directly tied to the presented solution."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $SL_2(\\mathbb{R})$ denote the group of $2 \\times 2$ real matrices with determinant $1$, and let $\\mathfrak{sl}_2(\\mathbb{R})$ denote its Lie algebra, consisting of all $2 \\times 2$ real matrices with trace $0$. Consider the matrix exponential map $\\exp: \\mathfrak{sl}_2(\\mathbb{R}) \\to SL_2(\\mathbb{R})$ defined by\n$$\\exp(A) = \\sum_{n=0}^{\\infty} \\frac{A^n}{n!}.$$\n\nProve that the matrix \n$$g = \\begin{pmatrix} -1 & 1 \\\\ 0 & -1 \\end{pmatrix}$$\nis not in the image of $\\exp$.",
     "run_id": "15",
+    "outer_attempt": 1,
     "topic_slug": "topological_groups_and_lie_groups",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -358,12 +359,12 @@
           "improvements": "No substantive changes needed. If you wanted to be extra careful, you could explicitly justify the step \u201c$A$ diagonalizable over $\\mathbb C$ $\\Rightarrow \\exp(A)$ diagonalizable\u201d by noting that if $A=PDP^{-1}$ then $\\exp(A)=P\\exp(D)P^{-1}$, and you could mention that $\\mu=0$ is impossible because it would give eigenvalues $e^0=1$ rather than $-1$."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Find all continuous functions $f: (0, \\infty) \\to \\mathbb{R}$ such that \n$$f(xy) = xf(y) + yf(x)$$\nfor all $x, y > 0$.",
     "run_id": "16",
+    "outer_attempt": 1,
     "topic_slug": "real_functions",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -382,12 +383,12 @@
           "improvements": "Your critique is accurate: the solution correctly derives $f(1)=0$, performs the substitutions $x=e^s$, $y=e^t$, and the normalization $h(t)=e^{-t}g(t)$ to obtain Cauchy\u2019s equation, and continuity justifies $h(t)=ct$, yielding $f(x)=cx\\ln x$. The critique also satisfies the required critique-JSON format (a valid JSON object with `verdict` in {correct, incorrect, insufficient, obscure} and `notes` as a string). If you wanted to strengthen it slightly, you could explicitly note that continuity is used only to rule out pathological additive solutions to $h(s+t)=h(s)+h(t)$."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $f: (0,1]^2 \\to \\mathbb{R}$ be defined by \n$$f(x,y) = \\frac{x-y}{(x+y)^3}.$$\n\n(a) Evaluate the iterated integral $\\displaystyle I_1 = \\int_0^1 \\left(\\int_0^1 f(x,y) \\, dx\\right) dy$.\n\n(b) Evaluate the iterated integral $\\displaystyle I_2 = \\int_0^1 \\left(\\int_0^1 f(x,y) \\, dy\\right) dx$.\n\n(c) Prove that $f$ is not Lebesgue integrable on $(0,1]^2$, i.e., show that $\\int_{(0,1]^2} |f| \\, d\\lambda^2 = +\\infty$, where $\\lambda^2$ denotes two-dimensional Lebesgue measure.",
     "run_id": "17",
+    "outer_attempt": 1,
     "topic_slug": "measure_and_integration",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -406,12 +407,12 @@
           "improvements": "Optionally note explicitly that the iterated integrals are improper at the endpoints (since $f$ is only defined on $(0,1]^2$), but for fixed $y>0$ (resp. $x>0$) the inner integrals converge and the resulting functions extend continuously to $0$, so the computations remain valid."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $f: \\mathbb{C} \\setminus \\{0\\} \\to \\mathbb{C}$ be defined by $f(z) = \\dfrac{e^{1/z}}{z - 1}$. Evaluate the contour integral\n$$\\oint_{|z| = 2} f(z) \\, dz$$\nwhere the contour is traversed counterclockwise. Express your answer in exact form.",
     "run_id": "18",
+    "outer_attempt": 1,
     "topic_slug": "functions_of_a_complex_variable",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -430,12 +431,12 @@
           "improvements": "No changes needed. The critique correctly verifies the singularities inside $|z|=2$, correctly computes $\\operatorname{Res}_{z=1} f=e$, and correctly justifies that the Laurent expansions about $z=0$ (valid for $0<|z|<1$) suffice to determine $\\operatorname{Res}_{z=0} f=1-e$, yielding the integral $2\\pi i$. The critique is also valid JSON with the required fields (`verdict`, `notes`)."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $\\Omega$ be the open upper half of the unit disk in $\\mathbb{R}^2$:\n$$\\Omega = \\{(x, y) \\in \\mathbb{R}^2 : x^2 + y^2 < 1, \\, y > 0\\}.$$\n\nLet $u : \\Omega \\to \\mathbb{R}$ be the unique bounded harmonic function (i.e., $\\Delta u = 0$ in $\\Omega$) that extends continuously to $\\partial\\Omega \\setminus \\{(\\pm 1, 0)\\}$ with boundary values:\n- $u(x, y) = 1$ on the semicircular arc $\\{(x, y) : x^2 + y^2 = 1, \\, y > 0\\}$\n- $u(x, 0) = 0$ on the open segment $\\{(x, 0) : -1 < x < 1\\}$\n\nDetermine the exact value of $u\\left(0, \\dfrac{1}{\\sqrt{3}}\\right)$.",
     "run_id": "19",
+    "outer_attempt": 1,
     "topic_slug": "potential_theory",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -454,12 +455,12 @@
           "improvements": "Optionally, the critique could add one sentence noting why the transformed solution is the (unique) bounded harmonic solution\u2014e.g., by the maximum principle/Perron method for the quadrant with the given boundary data (discontinuous only at the corner corresponding to $z=\\pm1$). But as written, the critique\u2019s mathematical checks (mapping, boundary correspondence, harmonicity, and point evaluation) are accurate, and the critique JSON format with keys `verdict` and `notes` is valid."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Consider the analytic variety $V \\subset \\mathbb{C}^3$ defined by\n$$V = \\{(z_1, z_2, z_3) \\in \\mathbb{C}^3 : z_1^2 + z_2^2 + z_3^2 = 0 \\text{ and } z_1 z_2 z_3 = 0\\}.$$\n\n(a) Determine all irreducible components of $V$ and describe each geometrically.\n\n(b) Find the singular locus $\\mathrm{Sing}(V)$ of $V$.",
     "run_id": "20",
+    "outer_attempt": 1,
     "topic_slug": "several_complex_variables_and_analytic_spaces",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -478,12 +479,12 @@
           "improvements": "The critique is accurate and evidence-based: it correctly validates that $V$ is the union of the six distinct complex lines obtained by intersecting the quadric with each coordinate plane, and it correctly confirms that the Jacobian has rank $2$ at every nonzero point of $V$ (since exactly one coordinate vanishes off the origin), so $\\mathrm{Sing}(V)=\\{0\\}$. The critique also follows the required critique-JSON format (valid JSON with `verdict` in {correct, incorrect, insufficient, obscure} and a string `notes`). If you wanted to tighten it further, you could explicitly note that away from the origin exactly one coordinate is $0$, which rules out any additional intersection/singularity points."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Looking at this problem, I need to create a challenging special functions problem that requires multiple steps of reasoning and has a verifiable closed-form answer.\n\n\nLet $\\zeta(s)$ denote the Riemann zeta function defined for real $s > 1$ by \n$$\\zeta(s) = \\sum_{k=1}^{\\infty} \\frac{1}{k^s}.$$\n\nEvaluate the infinite series:\n$$\\sum_{n=2}^{\\infty} \\frac{\\zeta(n) - 1}{n}$$\n\nExpress your answer in terms of the Euler-Mascheroni constant $\\gamma = \\lim_{N \\to \\infty}\\left(\\sum_{k=1}^{N} \\frac{1}{k} - \\ln N\\right)$.",
     "run_id": "21",
+    "outer_attempt": 1,
     "topic_slug": "special_functions",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -502,12 +503,12 @@
           "improvements": "The critique is accurate: the provided solution correctly evaluates the series to $1-\\gamma$, and the justification for interchanging sums is valid (nonnegative terms so Tonelli applies; the given majorant $\\sum_{k\\ge2}\\frac{1}{k(k-1)}$ also works). The critique also correctly verifies the inner-sum evaluation and telescoping. Format-wise, the critique is valid JSON and uses an allowed `verdict` value with `notes` as a string."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Consider the autonomous system of ordinary differential equations defined for $(x(t), y(t)) \\in \\mathbb{R}^2$:\n$$\\frac{dx}{dt} = y, \\quad \\frac{dy}{dt} = x - x^3.$$\n\n(a) Find all equilibrium points of this system.\n\n(b) For each equilibrium point, compute the eigenvalues of the Jacobian matrix and determine the type indicated by linearization (saddle, node, spiral, or center).\n\n(c) Find a function $H: \\mathbb{R}^2 \\to \\mathbb{R}$ that is constant along all solution trajectories (a first integral).\n\n(d) Using the first integral from part (c), prove that any equilibrium point whose linearization indicates a center is indeed a center for the full nonlinear system (i.e., it is surrounded by closed periodic orbits rather than spirals).",
     "run_id": "22",
+    "outer_attempt": 1,
     "topic_slug": "ordinary_differential_equations",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -526,12 +527,12 @@
           "improvements": "Your critique is accurate: parts (a)\u2013(c) are correct, and the reasoning in (d) (local minimum of $H$ implying nearby closed level sets invariant under the flow, hence periodic orbits) is standard and valid for this Hamiltonian planar system. If you wanted to strengthen the critique, you could note two minor rigor points: (i) deriving $H$ via $\\frac{dy}{dx}=(x-x^3)/y$ implicitly divides by $y$ (though the subsequent direct check $\\dot H=0$ fully validates $H$ anyway), and (ii) to justify \u201cclosed invariant curve $\\Rightarrow$ periodic orbit,\u201d one can explicitly add that for $c$ near the minimum, the level set $\\{H=c\\}$ is a smooth compact 1D manifold (by the implicit function theorem since $\\nabla H\\neq 0$ on it) and the vector field is nonvanishing on it, so the flow traverses it periodically."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Solve the initial-boundary value problem for the heat equation:\n$$u_t = u_{xx}, \\quad 0 < x < \\pi, \\quad t > 0$$\nwith boundary conditions:\n$$u(0,t) = 0, \\quad \\frac{\\partial u}{\\partial x}(\\pi,t) = 0 \\quad \\text{for all } t > 0$$\nand initial condition:\n$$u(x,0) = x \\quad \\text{for } 0 \\leq x \\leq \\pi.$$\n\nExpress your answer as an infinite series in closed form, showing all eigenvalues, eigenfunctions, and Fourier coefficients.",
     "run_id": "23",
+    "outer_attempt": 1,
     "topic_slug": "partial_differential_equations",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -550,12 +551,12 @@
           "improvements": "Optionally note a minor regularity/compatibility point: the initial datum $u(x,0)=x$ does not satisfy the Neumann boundary condition at $x=\\pi$ (since $\\partial_x x=1\\neq 0$), so the series solution should be interpreted as satisfying the boundary conditions for $t>0$ and matching the initial condition in an $L^2$ (or pointwise interior) sense rather than as a fully classical solution up to $t=0$. This does not change the correctness of the eigen-expansion or coefficients."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $T: [0,1] \\to [0,1]$ be the tent map defined by:\n$$T(x) = \\begin{cases} 2x & \\text{if } 0 \\leq x \\leq \\frac{1}{2} \\\\ 2 - 2x & \\text{if } \\frac{1}{2} < x \\leq 1 \\end{cases}$$\n\n(a) Prove that Lebesgue measure $\\lambda$ on $[0,1]$ is $T$-invariant, i.e., $\\lambda(T^{-1}(A)) = \\lambda(A)$ for every Lebesgue measurable set $A \\subseteq [0,1]$.\n\n(b) Determine the number of fixed points of $T$ and the number of points of minimal period 2 (i.e., points $x$ satisfying $T^2(x) = x$ but $T(x) \\neq x$).\n\n(c) Compute the topological entropy $h_{\\text{top}}(T)$.",
     "run_id": "24",
+    "outer_attempt": 1,
     "topic_slug": "dynamical_systems_and_ergodic_theory",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -575,12 +576,12 @@
           "improvements": "Your critique is accurate and evidence-based.\n\n- You correctly confirm that (b) and (c) in the answer are correct: the fixed points are $0$ and $2/3$; the only additional solutions to $T^2(x)=x$ are $2/5$ and $4/5$, which indeed form a 2-cycle; and $h_{\\text{top}}(T)=\\log 2$ for the full tent map.\n\n- You correctly identify the real gap in (a): the answer proves invariance on a $\\pi$-system generating the Borel $\\sigma$-algebra, so the $\\pi$-$\\lambda$ theorem yields invariance for Borel sets, but the statement \u201cBy the $\\pi$-$\\lambda$ theorem, invariance extends to all Lebesgue measurable sets\u201d does not follow from $\\pi$-$\\lambda$ alone. An additional completion/null-set argument is needed.\n\n- Your suggested fix (showing preimages of null sets are null, then extending from Borel to Lebesgue sets) is mathematically correct. A slightly shorter alternative you could mention is: if $N$ is Lebesgue null, pick a Borel null set $B\\supseteq N$; then $T^{-1}(N)\\subseteq T^{-1}(B)$ and $\\lambda(T^{-1}(B))=\\lambda(B)=0$, so $\\lambda(T^{-1}(N))=0$.\n\n- Format check: your critique is valid JSON with a permitted verdict and string fields, so it follows the required critique JSON format."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Find all functions $f: \\mathbb{R} \\to \\mathbb{R}$ satisfying the functional equation\n$$f(x + y) + f(xy) = f(x)f(y) + 1$$\nfor all $x, y \\in \\mathbb{R}$.",
     "run_id": "25",
+    "outer_attempt": 1,
     "topic_slug": "difference_and_functional_equations",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -599,12 +600,12 @@
           "improvements": "If you want to strengthen the critique further, you could explicitly spell out the derivation of $g(x+r)=g(x)+r$ for $r\\in\\mathbb Q$: from $g(x+r)+g(xr)=(r+1)g(x)+r$ (plug $y=r$) and $g(xr)=rg(x)$ (rational homogeneity), conclude $g(x+r)=g(x)+r$, hence $g(r-x)=r-g(x)$. This makes the final squeeze step completely transparent."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $H_n = \\sum_{k=1}^{n} \\frac{1}{k}$ denote the $n$-th harmonic number for $n \\geq 1$. Evaluate the infinite series\n$$\\sum_{n=1}^{\\infty} \\frac{H_n}{n \\cdot 2^n}.$$\nExpress your answer as a single closed-form expression involving standard mathematical constants.",
     "run_id": "26",
+    "outer_attempt": 1,
     "topic_slug": "sequences_series_and_summability",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -623,12 +624,12 @@
           "improvements": "The critique is accurate and evidence-based: it correctly verifies the generating function, the termwise integration/partial-fraction split, the identification of $\\operatorname{Li}_2(y)$, the computation of $\\tfrac12\\ln^2(1-y)$, and the standard identity $\\operatorname{Li}_2(\\tfrac12)=\\frac{\\pi^2}{12}-\\frac12(\\ln2)^2$, yielding $\\frac{\\pi^2}{12}$. It also conforms to the required critique JSON format (valid JSON; `verdict` in {correct, incorrect, insufficient, obscure}; `notes` is a string). Optionally, the critique could add one sentence explicitly justifying termwise integration/interchanging sum and integral via absolute/uniform convergence for $|x|<1$, but this is not a substantive omission here."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Consider the integral\n$$I(x) = \\int_0^{\\infty} \\frac{e^{-xt^2}}{1+t^4} \\, dt$$\nfor $x > 0$. Determine the first two nonzero terms in the asymptotic expansion of $I(x)$ as $x \\to +\\infty$. Express your answer in terms of elementary functions and $\\pi$.",
     "run_id": "27",
+    "outer_attempt": 1,
     "topic_slug": "approximations_and_expansions",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -647,12 +648,12 @@
           "improvements": "No changes needed. Your critique correctly validates the leading-term method (small-$t$ dominance), matches coefficients via standard Gaussian-moment integrals, and confirms the same power sequence $x^{-1/2},x^{-5/2},\\dots$. It also uses a valid JSON object with the expected keys (\"verdict\", \"notes\")."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be defined by $f(x) = e^{-|x|}$.\n\n**(a)** Compute the Fourier transform $\\hat{f}(\\xi) = \\displaystyle\\int_{\\mathbb{R}} f(x) e^{-2\\pi i x \\xi} \\, dx$ for all $\\xi \\in \\mathbb{R}$.\n\n**(b)** Using part (a) and properties of the Fourier transform, determine an explicit closed-form expression for the convolution $(f * f)(x) = \\displaystyle\\int_{\\mathbb{R}} f(x-y) f(y) \\, dy$ valid for all $x \\in \\mathbb{R}$.",
     "run_id": "28",
+    "outer_attempt": 1,
     "topic_slug": "harmonic_analysis_on_euclidean_spaces",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -671,12 +672,12 @@
           "improvements": "Optionally note a minor rigor point: differentiating under the integral sign in part (b) (with respect to $\\alpha$) should be justified (e.g., by dominated convergence), and the convolution theorem applies since $f\\in L^1(\\mathbb R)$. These are standard here, and the computations/constants are correct."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $\\ell^1(\\mathbb{Z})$ denote the Banach algebra of all functions $f: \\mathbb{Z} \\to \\mathbb{C}$ satisfying $\\|f\\|_1 = \\sum_{n \\in \\mathbb{Z}} |f(n)| < \\infty$, equipped with convolution multiplication:\n$$(f * g)(n) = \\sum_{k \\in \\mathbb{Z}} f(k) \\, g(n-k).$$\n\nDefine the element $a \\in \\ell^1(\\mathbb{Z})$ by:\n$$a(n) = \\begin{cases} 2 & \\text{if } n = 0 \\\\ -1 & \\text{if } n = 1 \\\\ 0 & \\text{otherwise} \\end{cases}$$\n\n(a) The Gelfand spectrum $\\Delta(\\ell^1(\\mathbb{Z}))$ of this commutative Banach algebra can be identified with the Pontryagin dual $\\widehat{\\mathbb{Z}}$. Describe this dual group explicitly and state the formula for the Gelfand transform $\\hat{f}: \\widehat{\\mathbb{Z}} \\to \\mathbb{C}$ for a general $f \\in \\ell^1(\\mathbb{Z})$.\n\n(b) Compute the Gelfand transform $\\hat{a}$ of the element $a$.\n\n(c) Determine whether $a$ is invertible in $\\ell^1(\\mathbb{Z})$. If invertible, find the inverse $a^{-1}$ explicitly as an element of $\\ell^1(\\mathbb{Z})$.",
     "run_id": "29",
+    "outer_attempt": 1,
     "topic_slug": "abstract_harmonic_analysis",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -695,12 +696,12 @@
           "improvements": "No changes needed. The critique correctly validates (a) the identification $\\widehat{\\mathbb Z}\\cong\\mathbb T$ and the Fourier/Gelfand transform convention consistent with the given convolution, (b) the computation $\\hat a(z)=2-z$, and (c) the invertibility test (via Wiener/Gelfand) plus the explicit $\\ell^1$ inverse derived from the recurrence. The critique also satisfies the required critique-JSON format (valid JSON object with a permitted verdict and a string-valued notes field)."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Find all continuous functions $f: [0, \\infty) \\to \\mathbb{R}$ satisfying the Volterra integral equation:\n$$f(t) + 2\\int_0^t \\cos(t-u) f(u) \\, du = e^{-t}, \\quad t \\geq 0$$",
     "run_id": "30",
+    "outer_attempt": 1,
     "topic_slug": "integral_transforms_and_operational_calculus",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -733,12 +734,12 @@
           "improvements": "The critique is accurate: it correctly checks the convolution/Laplace transform step, the algebra leading to $F(s)=\\frac{s^2+1}{(s+1)^3}$, and the inverse transform giving $f(t)=e^{-t}(1-t)^2$. Its rigor comment about Laplace-transform applicability is also sound; if desired, it could be strengthened by explicitly stating the bound $|f(t)|\\le 1+2\\int_0^t |f(u)|\\,du$ (since $|\\cos|\\le 1$) and then citing Gr\\\"onwall to conclude $|f(t)|\\le e^{2t}$, ensuring exponential order. The critique JSON format is valid and uses an allowed verdict."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Solve the Fredholm integral equation of the second kind\n$$\\phi(x) = x + 2\\int_0^1 (1 + xt)\\,\\phi(t)\\,dt$$\nfor the unknown continuous function $\\phi: [0,1] \\to \\mathbb{R}$.",
     "run_id": "31",
+    "outer_attempt": 1,
     "topic_slug": "integral_equations",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -757,12 +758,12 @@
           "improvements": "No changes needed. The critique accurately verifies the key steps (degenerate-kernel reduction, derivation of the $2\\times2$ linear system, solving for $c_1,c_2$, and the resulting $\\phi(x)=\\tfrac{3(x-1)}{4}$), and it correctly states that the direct substitution check matches the integral equation. It also conforms to the required critique JSON format with fields `verdict` and `notes`."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $T: L^2[0,1] \\to L^2[0,1]$ be the integral operator defined by\n$$(Tf)(x) = \\int_0^1 \\min(x,y)\\, f(y) \\, dy$$\nfor $f \\in L^2[0,1]$ and $x \\in [0,1]$.\n\nDetermine all eigenvalues of $T$ and find the corresponding eigenfunctions.",
     "run_id": "32",
+    "outer_attempt": 1,
     "topic_slug": "functional_analysis",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -781,12 +782,12 @@
           "improvements": "If you want to strengthen the rigor slightly, you could briefly justify the regularity claim more explicitly: for $f\\in L^2[0,1]$ we have $f\\in L^1[0,1]$, hence $g(x):=(Tf)(x)=\\int_0^1\\min(x,y)f(y)\\,dy$ is absolutely continuous with $g'(x)=\\int_x^1 f(y)\\,dy$ (AC) and $g''(x)=-f(x)$ a.e.; thus when $Tf=\\lambda f$ with $\\lambda\\neq 0$, the eigenfunction has a $C^1$ representative and satisfies the ODE and boundary conditions in the classical/AC sense. Otherwise the critique is accurate and in the required JSON-with-verdict/notes format."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $T: L^2[0,1] \\to L^2[0,1]$ be the integral operator defined by\n$$(Tf)(x) = \\int_0^1 (x+y) f(y) \\, dy.$$\n\n(a) Determine the rank of $T$.\n\n(b) Find all eigenvalues of $T$ and determine the spectrum $\\sigma(T)$.\n\n(c) Compute the operator norm $\\|T\\|$.",
     "run_id": "33",
+    "outer_attempt": 1,
     "topic_slug": "operator_theory",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -805,12 +806,12 @@
           "improvements": "Your critique is accurate and evidence-based: it correctly confirms rank $2$, the two nonzero eigenvalues $\\frac{3\\pm 2\\sqrt3}{6}$, inclusion of $0$ in the spectrum for a non-invertible finite-rank operator on an infinite-dimensional space, and the norm computation via self-adjointness (indeed normality) giving $\\|T\\|=\\max_{\\lambda\\in\\sigma(T)}|\\lambda|=\\frac{3+2\\sqrt3}{6}$. The critique is also valid JSON with the required keys for that critique format (it contains a string `verdict` in the allowed set and a string `notes`)."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Consider the optimal control problem: minimize the cost functional\n$$J[u] = \\int_0^1 u(t)^2 \\, dt$$\nsubject to the dynamical constraint $\\frac{dx}{dt} = x(t) + u(t)$ for $t \\in [0, 1]$, with boundary conditions $x(0) = 1$ and $x(1) = 0$.\n\nHere $x: [0,1] \\to \\mathbb{R}$ is the state variable and $u: [0,1] \\to \\mathbb{R}$ is the control, both assumed to be piecewise continuous functions.\n\nDetermine the minimum value $J^*$ of this cost functional.",
     "run_id": "34",
+    "outer_attempt": 1,
     "topic_slug": "calculus_of_variations_and_optimization",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -829,12 +830,12 @@
           "improvements": "No substantive changes needed. The critique correctly validates the PMP setup ($H=u^2+p(x+u)$), the optimality condition ($2u+p=0$), the adjoint ODE ($\\dot p=-p$), the resulting state solution, the boundary-condition determination of $p_0$, and the final integral yielding $J^*=\\frac{2e^2}{e^2-1}$. The critique is also valid JSON in the required critique format (has a permitted `verdict` and a string `notes`)."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "In triangle $ABC$, let $H$ be the orthocenter. Given that $AH = 4$, $BH = 3$, and $\\angle AHB = 60\u00b0$, find the circumradius $R$ of triangle $ABC$.",
     "run_id": "35",
+    "outer_attempt": 1,
     "topic_slug": "geometry",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -853,12 +854,12 @@
           "improvements": "The critique is accurate: the solution\u2019s identities and computations lead to $R=\\sqrt{39}/3$, and the verification via $AB=2R\\sin C$ is correct. Minor optional strengthening: note explicitly that $AH=2R\\cos A$ and $BH=2R\\cos B$ are used in a context where $A,B$ are acute (so no sign/absolute-value ambiguity), and that after squaring the equation one should check $3u-\\tfrac12\\ge 0$ to exclude extraneous roots (which holds for $u=3/13$)."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $P$ be the convex polygon in $\\mathbb{R}^2$ with vertices at $(0, 0)$, $(4, 1)$, $(5, 5)$, $(2, 7)$, and $(-1, 3)$, listed in counterclockwise order.\n\n(a) Compute the area of $P$.\n\n(b) Compute the number of lattice points on the boundary of $P$.\n\n(c) Using Pick's theorem, determine the number of lattice points strictly inside $P$.\n\n(d) The centroid (center of mass assuming uniform density) of a polygon with vertices $(x_1, y_1), \\ldots, (x_n, y_n)$ listed counterclockwise is given by:\n$$\\bar{x} = \\frac{1}{6A} \\sum_{i=1}^{n} (x_i + x_{i+1})(x_i y_{i+1} - x_{i+1} y_i), \\quad \\bar{y} = \\frac{1}{6A} \\sum_{i=1}^{n} (y_i + y_{i+1})(x_i y_{i+1} - x_{i+1} y_i)$$\nwhere indices are taken modulo $n$ and $A$ is the area. Determine whether the centroid of $P$ is a lattice point.",
     "run_id": "36",
+    "outer_attempt": 1,
     "topic_slug": "convex_and_discrete_geometry",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -877,12 +878,12 @@
           "improvements": "No changes needed: the critique correctly verifies (a) the shoelace sum $53$ and area $A=53/2$, (b) that each edge has $\\gcd(|\\Delta x|,|\\Delta y|)=1$ so $b=5$, (c) Pick\u2019s theorem gives $i=25$, and (d) the centroid computation yields $(323/159,520/159)$, not a lattice point. The critique is also valid JSON in the required critique format (keys `verdict`, `notes`, and optional `suggestions`)."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $S \\subset \\mathbb{R}^3$ be the portion of the paraboloid $z = x^2 + y^2$ satisfying $0 \\leq z \\leq h$, where $h > 0$ is a given constant. Compute the total Gaussian curvature\n$$\\iint_S K \\, dA,$$\nexpressing your answer in closed form as a function of $h$.",
     "run_id": "37",
+    "outer_attempt": 1,
     "topic_slug": "differential_geometry",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -901,12 +902,12 @@
           "improvements": "The critique is accurate: the computed $K$, the area element, the polar integral (including limits $r\\le\\sqrt h$), and the final value $2\\pi\\left(1-\\frac1{\\sqrt{1+4h}}\\right)$ all check out. The Gauss\u2013Bonnet cross-check is also consistent: for the boundary parallel $r=\\sqrt h$ on the paraboloid, $\\kappa_g=\\frac{1}{\\sqrt{h(1+4h)}}$ and $\\int_{\\partial S}\\kappa_g\\,ds=\\frac{2\\pi}{\\sqrt{1+4h}}$, yielding the same total curvature. Format-wise, the critique is valid JSON and uses the required keys for the stated critique format (verdict in the allowed set and notes as a string). A minor improvement would be to note that the solution\u2019s geodesic-curvature value is asserted rather than derived, though it is correct."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $X = [0,1]$ with the standard (Euclidean) topology. Define an equivalence relation $\\sim$ on $X$ by: $x \\sim y$ if and only if $x = y$ or both $x, y \\in \\mathbb{Q} \\cap [0,1]$. That is, all rational numbers in $[0,1]$ are identified to a single equivalence class, while each irrational number forms its own singleton equivalence class.\n\nLet $Y = X/{\\sim}$ be the quotient space equipped with the quotient topology, and let $\\pi: X \\to Y$ denote the quotient map.\n\nProve that $Y$ is compact and connected, but not Hausdorff.",
     "run_id": "38",
+    "outer_attempt": 1,
     "topic_slug": "general_topology",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -925,12 +926,12 @@
           "improvements": "Optionally add an explicit sentence noting that the critique itself is valid JSON and matches the required fields (it includes a permitted `verdict` value and a string `notes`)."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $X$ be the quotient space $(S^1 \\times S^2)/{\\sim}$, where the equivalence relation is defined by $(z, p) \\sim (-z, -p)$ for all $z \\in S^1$ and $p \\in S^2$. Here $S^1 = \\{z \\in \\mathbb{C} : |z| = 1\\}$ is the unit circle, $S^2 = \\{x \\in \\mathbb{R}^3 : \\|x\\| = 1\\}$ is the unit 2-sphere, and $-p$ denotes the antipodal point of $p$ on $S^2$.\n\nCompute the integral homology groups $H_n(X; \\mathbb{Z})$ for all $n \\geq 0$.",
     "run_id": "39",
+    "outer_attempt": 1,
     "topic_slug": "algebraic_topology",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -949,12 +950,12 @@
           "improvements": "Optionally note that $X$ is non-orientable (since the monodromy reverses orientation on $S^2$), which provides an additional consistency check for $H_3(X)=0$. You could also spell out the exactness argument in the low-degree Wang sequence segment to justify that $H_1(X)\\cong\\mathbb Z$ (i.e., use the preceding $H_1(S^2)=0$ term to rule out extra kernel)."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $X$ be a CW complex constructed as follows:\n- One 0-cell $v$\n- Two 1-cells $a$ and $b$, each attached at both endpoints to $v$ (forming two loops based at $v$)\n- Two 2-cells $e_1$ and $e_2$ with attaching maps $\\phi_1: \\partial e_1 \\to X^{(1)}$ and $\\phi_2: \\partial e_2 \\to X^{(1)}$ determined by the words $w_1 = a^3 b^{-2}$ and $w_2 = a b^4$ respectively\n\nHere, the word $a^k$ means traversing the loop $a$ exactly $|k|$ times in the positive direction if $k > 0$, or in the negative direction if $k < 0$, and similarly for $b$.\n\nCompute the cellular homology groups $H_n(X; \\mathbb{Z})$ for all integers $n \\geq 0$.",
     "run_id": "40",
+    "outer_attempt": 1,
     "topic_slug": "manifolds_and_cell_complexes",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -973,12 +974,12 @@
           "improvements": "No substantive changes needed. If you want to make the critique slightly more evidence-based, you could briefly justify the claim that $\\partial_2$ is given by exponent sums by noting that $\\partial_2$ is the induced map $H_1(S^1)\\to H_1(X^{(1)})$ under the attaching map, hence it is the abelianization of the attaching word. The critique\u2019s JSON format is valid and uses an allowed verdict value."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $\\omega$ be the smooth 2-form on $\\mathbb{R}^3 \\setminus \\{0\\}$ defined by\n$$\\omega = \\frac{x \\, dy \\wedge dz + y \\, dz \\wedge dx + z \\, dx \\wedge dy}{(x^2 + y^2 + z^2)^{3/2}}.$$\n\n(a) Prove that $\\omega$ is closed, i.e., $d\\omega = 0$ on $\\mathbb{R}^3 \\setminus \\{0\\}$.\n\n(b) For any $r > 0$, compute $\\displaystyle\\int_{S_r} \\omega$, where $S_r = \\{(x,y,z) \\in \\mathbb{R}^3 : x^2 + y^2 + z^2 = r^2\\}$ is the sphere of radius $r$ centered at the origin with the outward-pointing orientation.\n\n(c) Using the results of parts (a) and (b), prove that $\\omega$ is not exact on $\\mathbb{R}^3 \\setminus \\{0\\}$.",
     "run_id": "41",
+    "outer_attempt": 1,
     "topic_slug": "global_analysis_on_manifolds",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -1013,12 +1014,12 @@
           "improvements": "No substantive changes needed. If you wanted to tighten the critique further, you could note that the de Rham pairing argument in (c) is correct but somewhat stronger than necessary, since the simple restriction-to-$S_r$ + Stokes argument already suffices to show non-exactness from $\\int_{S_r}\\omega\\neq 0$."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $X_1, X_2, X_3, \\ldots$ be independent random variables, each uniformly distributed on the interval $[0, 1]$. Define the stopping time\n$$N = \\min\\{n \\geq 1 : X_1 + X_2 + \\cdots + X_n > 1\\}.$$\nCompute the exact value of $\\mathbb{E}[N]$.",
     "run_id": "42",
+    "outer_attempt": 1,
     "topic_slug": "probability_theory_and_stochastic_processes",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -1037,12 +1038,12 @@
           "improvements": "The critique is accurate: it correctly verifies both the functional-equation/ODE argument and the tail-sum check, and it correctly confirms the key fact $\\mathbb{P}(S_k\\le 1)=1/k!$. If you want to strengthen it further, you could briefly note a standard justification for differentiating $h(t)=1+\\int_0^t h(u)\\,du$ (e.g., by the Fundamental Theorem of Calculus, once $h$ is known to be integrable/continuous from the equation), but this is a minor rigor enhancement rather than a correction."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Let $X$ have the standard Laplace (double exponential) distribution with probability density function\n$$f(x) = \\frac{1}{2}e^{-|x|}, \\quad x \\in \\mathbb{R}.$$\n\n(a) Compute the characteristic function $\\phi_X(t) = E[e^{itX}]$ for all $t \\in \\mathbb{R}$.\n\n(b) Let $X_1, X_2, \\ldots, X_n$ be independent and identically distributed random variables, each with the same distribution as $X$. Derive the characteristic function of the sample mean $\\bar{X}_n = \\frac{1}{n}\\sum_{i=1}^n X_i$.\n\n(c) Determine the limiting distribution of $\\sqrt{n}\\bar{X}_n$ as $n \\to \\infty$ by computing the pointwise limit of its characteristic function. Identify this limit explicitly as a named distribution with specified parameters.",
     "run_id": "43",
+    "outer_attempt": 1,
     "topic_slug": "statistics",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -1061,12 +1062,12 @@
           "improvements": "No changes needed. Your critique is accurate (the provided solution\u2019s computations and limits are correct) and it is in valid JSON with the required keys (`verdict`, `notes`)."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question": "Consider the two-point Gaussian quadrature rule for approximating integrals over $[-1, 1]$:\n$$\\int_{-1}^{1} f(x)\\,dx \\approx w_1 f(x_1) + w_2 f(x_2)$$\n\n**(a)** Determine the nodes $x_1, x_2 \\in [-1,1]$ and positive weights $w_1, w_2$ such that this quadrature rule is exact for all polynomials of degree at most 3.\n\n**(b)** For a function $f \\in C^4([-1,1])$, the quadrature error can be expressed as \n$$E(f) = \\int_{-1}^{1} f(x)\\,dx - w_1 f(x_1) - w_2 f(x_2) = c \\cdot f^{(4)}(\\xi)$$\nfor some $\\xi \\in (-1,1)$ and a constant $c$ independent of $f$. Find the exact value of $c$.\n\n**(c)** Use the quadrature rule from part (a) to approximate $\\displaystyle\\int_0^1 e^{-t^2}\\,dt$. Apply an appropriate linear transformation to convert the integral to the standard interval $[-1,1]$, then apply the rule. Express your answer in exact closed form.",
     "run_id": "44",
+    "outer_attempt": 1,
     "topic_slug": "numerical_analysis",
     "question_author": "anthropic-claude-opus-4.5",
     "critic": "openai-gpt-5.2-2025-12-11",
@@ -1085,7 +1086,127 @@
           "improvements": "The critique is accurate and evidence-based: (a) the nodes $\\pm 1/\\sqrt{3}$ with weights 1 are the standard 2-point Gauss\u2013Legendre rule and are exact up to degree 3; (b) computing $E(x^4)=\\frac{2}{5}-\\frac{2}{9}=\\frac{8}{45}$ and dividing by $24$ correctly gives $c=\\frac{1}{135}$; (c) the affine change of variables and algebra leading to $e^{-1/3}\\cosh(\\sqrt{3}/6)$ are consistent.\n\nFormat check: the critique is valid JSON and uses the required keys for the critique format (`verdict`, `notes`, no extraneous fields).\n\nIf refining, you could briefly note that assuming symmetry in (a) is justified by symmetry of the interval/weight and the uniqueness of the Gauss\u2013Legendre rule with positive weights, but this is a minor rigor enhancement rather than a correction."
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
+  },
+  {
+    "question": "Let $T: [0,1) \\to [0,1)$ be the **doubling map** defined by $T(x) = 2x \\mod 1$ (equivalently, $T(x) = 2x - \\lfloor 2x \\rfloor$).\n\n(a) Determine all points $x \\in [0,1)$ satisfying $T^3(x) = x$, where $T^3 = T \\circ T \\circ T$ denotes the third iterate of $T$.\n\n(b) Among the points found in part (a), identify all points that have **minimal period exactly 3**, meaning $T^3(x) = x$ but $T(x) \\neq x$ and $T^2(x) \\neq x$.\n\n(c) Determine the number of distinct periodic orbits of minimal period exactly 3 under $T$, and explicitly list the elements of each such orbit.",
+    "run_id": "24",
+    "outer_attempt": 2,
+    "topic_slug": "dynamical_systems_and_ergodic_theory",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"All parts are correct.\\n\\n(a) Using $T^n(x)=2^n x\\\\bmod 1$, the condition $T^3(x)=x$ becomes $8x\\\\equiv x\\\\pmod 1$, i.e. $7x\\\\in\\\\mathbb Z$, hence $x=k/7$ with $k\\\\in\\\\{0,1,2,3,4,5,6\\\\}$ in $[0,1)$.\\n\\n(b) Minimal period 3 requires excluding periods 1 and 2. The only fixed point is $x=0$ (since $2x\\\\equiv x\\\\pmod 1\\\\Rightarrow x\\\\in\\\\mathbb Z$). Period-2 points satisfy $4x\\\\equiv x\\\\pmod 1\\\\Rightarrow 3x\\\\in\\\\mathbb Z$; intersecting with $x=k/7$ gives only $k=0$ since $\\\\gcd(3,7)=1$. Thus the six nonzero $k/7$ points have minimal period exactly 3.\\n\\n(c) The six period-3 points split into two 3-cycles, correctly listed as $\\\\{1/7,2/7,4/7\\\\}$ and $\\\\{3/7,6/7,5/7\\\\}$, giving exactly 2 distinct period-3 orbits.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"All parts are correct.\\n\\n(a) Using $T^n(x)=2^n x\\\\bmod 1$, the condition $T^3(x)=x$ becomes $8x\\\\equiv x\\\\pmod 1$, i.e. $7x\\\\in\\\\mathbb Z$, hence $x=k/7$ with $k\\\\in\\\\{0,1,2,3,4,5,6\\\\}$ in $[0,1)$.\\n\\n(b) Minimal period 3 requires excluding periods 1 and 2. The only fixed point is $x=0$ (since $2x\\\\equiv x\\\\pmod 1\\\\Rightarrow x\\\\in\\\\mathbb Z$). Period-2 points satisfy $4x\\\\equiv x\\\\pmod 1\\\\Rightarrow 3x\\\\in\\\\mathbb Z$; intersecting with $x=k/7$ gives only $k=0$ since $\\\\gcd(3,7)=1$. Thus the six nonzero $k/7$ points have minimal period exactly 3.\\n\\n(c) The six period-3 points split into two 3-cycles, correctly listed as $\\\\{1/7,2/7,4/7\\\\}$ and $\\\\{3/7,6/7,5/7\\\\}$, giving exactly 2 distinct period-3 orbits.\"\n}",
+        "verdict": "correct",
+        "notes": "All parts are correct.\n\n(a) Using $T^n(x)=2^n x\\bmod 1$, the condition $T^3(x)=x$ becomes $8x\\equiv x\\pmod 1$, i.e. $7x\\in\\mathbb Z$, hence $x=k/7$ with $k\\in\\{0,1,2,3,4,5,6\\}$ in $[0,1)$.\n\n(b) Minimal period 3 requires excluding periods 1 and 2. The only fixed point is $x=0$ (since $2x\\equiv x\\pmod 1\\Rightarrow x\\in\\mathbb Z$). Period-2 points satisfy $4x\\equiv x\\pmod 1\\Rightarrow 3x\\in\\mathbb Z$; intersecting with $x=k/7$ gives only $k=0$ since $\\gcd(3,7)=1$. Thus the six nonzero $k/7$ points have minimal period exactly 3.\n\n(c) The six period-3 points split into two 3-cycles, correctly listed as $\\{1/7,2/7,4/7\\}$ and $\\{3/7,6/7,5/7\\}$, giving exactly 2 distinct period-3 orbits.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "No changes needed: the critique correctly verifies the mathematics in (a)\u2013(c) and is valid JSON with the required keys (`verdict`, `notes`) and an allowed verdict value."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\ell^2(\\mathbb{N})$ denote the Hilbert space of square-summable complex sequences $(x_n)_{n=1}^{\\infty}$ with the standard inner product $\\langle x, y \\rangle = \\sum_{n=1}^{\\infty} x_n \\overline{y_n}$.\n\nDefine the linear operator $T: \\ell^2(\\mathbb{N}) \\to \\ell^2(\\mathbb{N})$ by\n$$T(x_1, x_2, x_3, \\ldots) = \\left(x_1, \\frac{x_2}{2}, \\frac{x_3}{4}, \\frac{x_4}{8}, \\ldots\\right),$$\nthat is, $(Tx)_n = \\dfrac{x_n}{2^{n-1}}$ for each $n \\geq 1$.\n\n(a) Compute the operator norm $\\|T\\|$.\n\n(b) Find the point spectrum $\\sigma_p(T)$ (the set of all eigenvalues of $T$).\n\n(c) Determine the spectrum $\\sigma(T)$.\n\n(d) Determine whether $T$ is a compact operator. Justify your answer.",
+    "run_id": "33",
+    "outer_attempt": 2,
+    "topic_slug": "operator_theory",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"All parts are handled correctly for this bounded diagonal operator on $\\\\ell^2$.\\n\\n(a) The estimate $\\\\|Tx\\\\|\\\\le \\\\|x\\\\|$ gives $\\\\|T\\\\|\\\\le 1$, and testing on $e_1$ gives equality, so $\\\\|T\\\\|=1$.\\n\\n(b) Solving $Tx=\\\\lambda x$ coordinatewise yields $(2^{-(n-1)}-\\\\lambda)x_n=0$ for each $n$, so any eigenvector must be supported on indices where $\\\\lambda=2^{-(n-1)}$. Since the diagonal entries are distinct, eigenvectors are scalar multiples of a single $e_k$, and the point spectrum is exactly $\\\\{2^{-(n-1)}:n\\\\in\\\\mathbb N\\\\}$.\\n\\n(c) For a diagonal operator with diagonal $(d_n)$, $\\\\sigma(T)=\\\\overline{\\\\{d_n\\\\}}$. Here $d_n=2^{-(n-1)}\\\\to 0$, so $0\\\\in\\\\sigma(T)$ but $0\\\\notin\\\\sigma_p(T)$. For $\\\\lambda$ outside $\\\\{0\\\\}\\\\cup\\\\{2^{-(n-1)}\\\\}$, one has $\\\\inf_n|d_n-\\\\lambda|>0$, hence $(T-\\\\lambda I)^{-1}$ is bounded. Thus $\\\\sigma(T)=\\\\{0\\\\}\\\\cup\\\\{2^{-(n-1)}:n\\\\in\\\\mathbb N\\\\}$.\\n\\n(d) The finite-rank truncations $T_N$ satisfy $\\\\|T-T_N\\\\|=\\\\sup_{n>N}|2^{-(n-1)}|=2^{-N}\\\\to 0$, so $T$ is the norm-limit of finite-rank operators and hence compact. The stated criterion \u201cdiagonal entries $\\\\to 0$\u201d is also correct.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"All parts are handled correctly for this bounded diagonal operator on $\\\\ell^2$.\\n\\n(a) The estimate $\\\\|Tx\\\\|\\\\le \\\\|x\\\\|$ gives $\\\\|T\\\\|\\\\le 1$, and testing on $e_1$ gives equality, so $\\\\|T\\\\|=1$.\\n\\n(b) Solving $Tx=\\\\lambda x$ coordinatewise yields $(2^{-(n-1)}-\\\\lambda)x_n=0$ for each $n$, so any eigenvector must be supported on indices where $\\\\lambda=2^{-(n-1)}$. Since the diagonal entries are distinct, eigenvectors are scalar multiples of a single $e_k$, and the point spectrum is exactly $\\\\{2^{-(n-1)}:n\\\\in\\\\mathbb N\\\\}$.\\n\\n(c) For a diagonal operator with diagonal $(d_n)$, $\\\\sigma(T)=\\\\overline{\\\\{d_n\\\\}}$. Here $d_n=2^{-(n-1)}\\\\to 0$, so $0\\\\in\\\\sigma(T)$ but $0\\\\notin\\\\sigma_p(T)$. For $\\\\lambda$ outside $\\\\{0\\\\}\\\\cup\\\\{2^{-(n-1)}\\\\}$, one has $\\\\inf_n|d_n-\\\\lambda|>0$, hence $(T-\\\\lambda I)^{-1}$ is bounded. Thus $\\\\sigma(T)=\\\\{0\\\\}\\\\cup\\\\{2^{-(n-1)}:n\\\\in\\\\mathbb N\\\\}$.\\n\\n(d) The finite-rank truncations $T_N$ satisfy $\\\\|T-T_N\\\\|=\\\\sup_{n>N}|2^{-(n-1)}|=2^{-N}\\\\to 0$, so $T$ is the norm-limit of finite-rank operators and hence compact. The stated criterion \u201cdiagonal entries $\\\\to 0$\u201d is also correct.\"\n}",
+        "verdict": "correct",
+        "notes": "All parts are handled correctly for this bounded diagonal operator on $\\ell^2$.\n\n(a) The estimate $\\|Tx\\|\\le \\|x\\|$ gives $\\|T\\|\\le 1$, and testing on $e_1$ gives equality, so $\\|T\\|=1$.\n\n(b) Solving $Tx=\\lambda x$ coordinatewise yields $(2^{-(n-1)}-\\lambda)x_n=0$ for each $n$, so any eigenvector must be supported on indices where $\\lambda=2^{-(n-1)}$. Since the diagonal entries are distinct, eigenvectors are scalar multiples of a single $e_k$, and the point spectrum is exactly $\\{2^{-(n-1)}:n\\in\\mathbb N\\}$.\n\n(c) For a diagonal operator with diagonal $(d_n)$, $\\sigma(T)=\\overline{\\{d_n\\}}$. Here $d_n=2^{-(n-1)}\\to 0$, so $0\\in\\sigma(T)$ but $0\\notin\\sigma_p(T)$. For $\\lambda$ outside $\\{0\\}\\cup\\{2^{-(n-1)}\\}$, one has $\\inf_n|d_n-\\lambda|>0$, hence $(T-\\lambda I)^{-1}$ is bounded. Thus $\\sigma(T)=\\{0\\}\\cup\\{2^{-(n-1)}:n\\in\\mathbb N\\}$.\n\n(d) The finite-rank truncations $T_N$ satisfy $\\|T-T_N\\|=\\sup_{n>N}|2^{-(n-1)}|=2^{-N}\\to 0$, so $T$ is the norm-limit of finite-rank operators and hence compact. The stated criterion \u201cdiagonal entries $\\to 0$\u201d is also correct.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "No changes needed. The critique accurately validates each part (norm, point spectrum, spectrum via closure of diagonal entries, and compactness via truncations/diagonal entries $\\to 0$) and it is valid JSON with the required fields for the critique format."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $\\mathbb{CP}^n$ denote complex projective $n$-space for $n \\geq 1$, and let $H$ denote the hyperplane line bundle (dual of the tautological bundle) over $\\mathbb{CP}^n$. Define $\\xi = [H] - 1 \\in K^0(\\mathbb{CP}^n)$, where $K^0$ denotes complex topological K-theory.\n\nIt is a standard result that $K^0(\\mathbb{CP}^n) \\cong \\mathbb{Z}[\\xi]/(\\xi^{n+1})$ as rings, and that every complex line bundle over $\\mathbb{CP}^n$ is isomorphic to $H^m$ for a unique $m \\in \\mathbb{Z}$, where $H^m$ denotes the $m$-th tensor power (with $H^{-1}$ being the dual bundle).\n\n**(a)** Prove that for all $m \\in \\mathbb{Z}$:\n$$[H^m] = \\sum_{k=0}^{n} \\binom{m}{k} \\xi^k$$\nwhere $\\binom{m}{k} = \\frac{m(m-1)\\cdots(m-k+1)}{k!}$ is the generalized binomial coefficient.\n\n**(b)** For $n = 2$, prove that the K-theory class $1 - \\xi \\in K^0(\\mathbb{CP}^2)$ cannot be expressed as $[E]$ for any complex vector bundle $E$ over $\\mathbb{CP}^2$.",
+    "run_id": "13",
+    "outer_attempt": 2,
+    "topic_slug": "k_theory",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"Part (a) correctly uses $[H]=1+\\\\xi$ and the ring structure to write $[H^m]=[H]^m=(1+\\\\xi)^m$. The binomial expansion $\\\\sum_{k\\\\ge 0}\\\\binom{m}{k}\\\\xi^k$ is valid in $K^0(\\\\mathbb{CP}^n)\\\\cong\\\\mathbb Z[\\\\xi]/(\\\\xi^{n+1})$ because $\\\\xi^{n+1}=0$ kills all terms with $k>n$. The argument that $1+\\\\xi$ is invertible (via $(1+\\\\xi)\\\\sum_{j=0}^n(-1)^j\\\\xi^j=1+(-1)^n\\\\xi^{n+1}=1$) correctly handles negative powers, and thus justifies the formula for all $m\\\\in\\\\mathbb Z$.\\n\\nPart (b) is correct: the rank map satisfies $\\\\mathrm{rk}(1-\\\\xi)=1$, so any bundle $E$ with $[E]=1-\\\\xi$ must have rank $1$, hence be a line bundle. All line bundles over $\\\\mathbb{CP}^2$ are $H^m$, and by (a) (with $n=2$) $[H^m]=1+m\\\\xi+\\\\binom{m}{2}\\\\xi^2$. Matching $1-\\\\xi$ forces $m=-1$ and simultaneously $\\\\binom{-1}{2}=0$, but $\\\\binom{-1}{2}=1$, a contradiction. Therefore $1-\\\\xi$ is not $[E]$ for any vector bundle $E$ over $\\\\mathbb{CP}^2$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"Part (a) correctly uses $[H]=1+\\\\xi$ and the ring structure to write $[H^m]=[H]^m=(1+\\\\xi)^m$. The binomial expansion $\\\\sum_{k\\\\ge 0}\\\\binom{m}{k}\\\\xi^k$ is valid in $K^0(\\\\mathbb{CP}^n)\\\\cong\\\\mathbb Z[\\\\xi]/(\\\\xi^{n+1})$ because $\\\\xi^{n+1}=0$ kills all terms with $k>n$. The argument that $1+\\\\xi$ is invertible (via $(1+\\\\xi)\\\\sum_{j=0}^n(-1)^j\\\\xi^j=1+(-1)^n\\\\xi^{n+1}=1$) correctly handles negative powers, and thus justifies the formula for all $m\\\\in\\\\mathbb Z$.\\n\\nPart (b) is correct: the rank map satisfies $\\\\mathrm{rk}(1-\\\\xi)=1$, so any bundle $E$ with $[E]=1-\\\\xi$ must have rank $1$, hence be a line bundle. All line bundles over $\\\\mathbb{CP}^2$ are $H^m$, and by (a) (with $n=2$) $[H^m]=1+m\\\\xi+\\\\binom{m}{2}\\\\xi^2$. Matching $1-\\\\xi$ forces $m=-1$ and simultaneously $\\\\binom{-1}{2}=0$, but $\\\\binom{-1}{2}=1$, a contradiction. Therefore $1-\\\\xi$ is not $[E]$ for any vector bundle $E$ over $\\\\mathbb{CP}^2$.\"\n}",
+        "verdict": "correct",
+        "notes": "Part (a) correctly uses $[H]=1+\\xi$ and the ring structure to write $[H^m]=[H]^m=(1+\\xi)^m$. The binomial expansion $\\sum_{k\\ge 0}\\binom{m}{k}\\xi^k$ is valid in $K^0(\\mathbb{CP}^n)\\cong\\mathbb Z[\\xi]/(\\xi^{n+1})$ because $\\xi^{n+1}=0$ kills all terms with $k>n$. The argument that $1+\\xi$ is invertible (via $(1+\\xi)\\sum_{j=0}^n(-1)^j\\xi^j=1+(-1)^n\\xi^{n+1}=1$) correctly handles negative powers, and thus justifies the formula for all $m\\in\\mathbb Z$.\n\nPart (b) is correct: the rank map satisfies $\\mathrm{rk}(1-\\xi)=1$, so any bundle $E$ with $[E]=1-\\xi$ must have rank $1$, hence be a line bundle. All line bundles over $\\mathbb{CP}^2$ are $H^m$, and by (a) (with $n=2$) $[H^m]=1+m\\xi+\\binom{m}{2}\\xi^2$. Matching $1-\\xi$ forces $m=-1$ and simultaneously $\\binom{-1}{2}=0$, but $\\binom{-1}{2}=1$, a contradiction. Therefore $1-\\xi$ is not $[E]$ for any vector bundle $E$ over $\\mathbb{CP}^2$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and evidence-based: it correctly confirms the key steps in (a) (using $[H]=1+\\xi$, binomial expansion truncated by $\\xi^{n+1}=0$, and invertibility of $1+\\xi$ for negative powers) and in (b) (rank argument forcing $\\operatorname{rk}(E)=1$, hence $E$ a line bundle, and coefficient comparison giving the contradiction $\\binom{-1}{2}=1\\neq 0$). It also conforms to the stated critique JSON format (valid JSON with a permitted `verdict` value and a string `notes`). A minor possible enhancement would be to note explicitly that $[H^m]=[H]^m$ holds in the ring for all $m\\in\\mathbb Z$ once invertibility is established, so the generalized binomial coefficients match automatically in the quotient."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $k$ be a field and let $R = k[x,y]/(x^2, xy)$. Denote by $\\bar{x}$ and $\\bar{y}$ the images of $x$ and $y$ in $R$, respectively.\n\n(a) Compute the nilradical $\\sqrt{(0)}$ of $R$.\n\n(b) Determine the Krull dimension of $R$.",
+    "run_id": "7",
+    "outer_attempt": 2,
+    "topic_slug": "commutative_algebra",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The final conclusions $\\\\sqrt{(0)}=(\\\\bar x)$ and $\\\\dim R=1$ are correct, and most of the supporting work is sound. However, part (a) contains a logical gap: after proving every prime $P$ contains $\\\\bar x$, the answer states, \u201cSince the nilradical equals the intersection of all prime ideals, and every prime contains $(\\\\bar{x})$, we have $\\\\sqrt{(0)} \\\\subseteq (\\\\bar{x})$.\u201d From \u201cevery prime contains $(\\\\bar x)$\u201d one can only conclude $(\\\\bar x)\\\\subseteq \\\\bigcap_P P=\\\\sqrt{(0)}$, not the reverse inclusion. The needed inclusion $\\\\sqrt{(0)}\\\\subseteq (\\\\bar x)$ would follow instead from the fact (proved earlier) that $(\\\\bar x)$ itself is prime, hence the intersection of all primes is contained in $(\\\\bar x)$. Because this key inclusion is not correctly justified as written, the proof of (a) is incomplete (though easily fixable).\",\n  \"suggestions\": \"In (a), after showing $(\\\\bar x)$ is prime, add: since $\\\\sqrt{(0)}=\\\\bigcap_{P\\\\in\\\\operatorname{Spec}R} P$, we have $\\\\sqrt{(0)}\\\\subseteq (\\\\bar x)$ (intersection is contained in each prime, in particular in $(\\\\bar x)$). Together with $\\\\bar x$ nilpotent, this gives equality. Alternatively, directly compute nilpotents: if $f(\\\\bar y)+a\\\\bar x$ is nilpotent then $f=0$, so the nilradical is $(\\\\bar x)$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"insufficient\",\n  \"notes\": \"The final conclusions $\\\\sqrt{(0)}=(\\\\bar x)$ and $\\\\dim R=1$ are correct, and most of the supporting work is sound. However, part (a) contains a logical gap: after proving every prime $P$ contains $\\\\bar x$, the answer states, \u201cSince the nilradical equals the intersection of all prime ideals, and every prime contains $(\\\\bar{x})$, we have $\\\\sqrt{(0)} \\\\subseteq (\\\\bar{x})$.\u201d From \u201cevery prime contains $(\\\\bar x)$\u201d one can only conclude $(\\\\bar x)\\\\subseteq \\\\bigcap_P P=\\\\sqrt{(0)}$, not the reverse inclusion. The needed inclusion $\\\\sqrt{(0)}\\\\subseteq (\\\\bar x)$ would follow instead from the fact (proved earlier) that $(\\\\bar x)$ itself is prime, hence the intersection of all primes is contained in $(\\\\bar x)$. Because this key inclusion is not correctly justified as written, the proof of (a) is incomplete (though easily fixable).\",\n  \"suggestions\": \"In (a), after showing $(\\\\bar x)$ is prime, add: since $\\\\sqrt{(0)}=\\\\bigcap_{P\\\\in\\\\operatorname{Spec}R} P$, we have $\\\\sqrt{(0)}\\\\subseteq (\\\\bar x)$ (intersection is contained in each prime, in particular in $(\\\\bar x)$). Together with $\\\\bar x$ nilpotent, this gives equality. Alternatively, directly compute nilpotents: if $f(\\\\bar y)+a\\\\bar x$ is nilpotent then $f=0$, so the nilradical is $(\\\\bar x)$.\"\n}",
+        "verdict": "insufficient",
+        "notes": "The final conclusions $\\sqrt{(0)}=(\\bar x)$ and $\\dim R=1$ are correct, and most of the supporting work is sound. However, part (a) contains a logical gap: after proving every prime $P$ contains $\\bar x$, the answer states, \u201cSince the nilradical equals the intersection of all prime ideals, and every prime contains $(\\bar{x})$, we have $\\sqrt{(0)} \\subseteq (\\bar{x})$.\u201d From \u201cevery prime contains $(\\bar x)$\u201d one can only conclude $(\\bar x)\\subseteq \\bigcap_P P=\\sqrt{(0)}$, not the reverse inclusion. The needed inclusion $\\sqrt{(0)}\\subseteq (\\bar x)$ would follow instead from the fact (proved earlier) that $(\\bar x)$ itself is prime, hence the intersection of all primes is contained in $(\\bar x)$. Because this key inclusion is not correctly justified as written, the proof of (a) is incomplete (though easily fixable).",
+        "suggestions": "In (a), after showing $(\\bar x)$ is prime, add: since $\\sqrt{(0)}=\\bigcap_{P\\in\\operatorname{Spec}R} P$, we have $\\sqrt{(0)}\\subseteq (\\bar x)$ (intersection is contained in each prime, in particular in $(\\bar x)$). Together with $\\bar x$ nilpotent, this gives equality. Alternatively, directly compute nilpotents: if $f(\\bar y)+a\\bar x$ is nilpotent then $f=0$, so the nilradical is $(\\bar x)$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "Your critique is accurate: the solution\u2019s Step 3 in (a) only implies $(\\bar x)\\subseteq\\bigcap_P P=\\sqrt{(0)}$, not $\\sqrt{(0)}\\subseteq(\\bar x)$. So as written the reverse inclusion is not proved, making (a) incomplete despite the correct conclusion. Your suggested fix (use that $(\\bar x)$ is itself prime, hence the intersection of all primes is contained in $(\\bar x)$) is correct. The critique is also valid JSON and uses an allowed verdict value."
+        }
+      }
+    ]
+  },
+  {
+    "question": "Let $k$ be a field and let $R = k[x,y]/(xy)$. Let $\\bar{x}$ and $\\bar{y}$ denote the images of $x$ and $y$ in $R$, respectively.\n\n(a) Find all minimal prime ideals of $R$.\n\n(b) Compute the Krull dimension of $R$.\n\n(c) Determine whether $R$ is reduced (i.e., whether the only nilpotent element of $R$ is zero).",
+    "run_id": "7",
+    "outer_attempt": 3,
+    "topic_slug": "commutative_algebra",
+    "question_author": "anthropic-claude-opus-4.5",
+    "critic": "openai-gpt-5.2-2025-12-11",
+    "answer_author": "anthropic-claude-opus-4.5",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"(a) Correctly uses the correspondence between primes of $R$ and primes of $k[x,y]$ containing $(xy)$, and correctly identifies the minimal primes as $(x)$ and $(y)$, hence $(\\\\bar x)$ and $(\\\\bar y)$ in $R$.\\n\\n(b) Correctly concludes $\\\\dim R=1$. The exhibited chain $(\\\\bar x)\\\\subsetneq (\\\\bar x,\\\\bar y)$ has length 1, and there cannot be longer chains since $R/(\\\\bar x)\\\\cong k[y]$ (and similarly for $\\\\bar y$), each of dimension 1.\\n\\n(c) Correctly computes the nilradical as the intersection of minimal primes and shows $(\\\\bar x)\\\\cap(\\\\bar y)=0$ in $R$ by proving $(x)\\\\cap(y)=(xy)$ in $k[x,y]$. Hence $\\\\sqrt{(0)}=(0)$ and $R$ is reduced.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"correct\",\n  \"notes\": \"(a) Correctly uses the correspondence between primes of $R$ and primes of $k[x,y]$ containing $(xy)$, and correctly identifies the minimal primes as $(x)$ and $(y)$, hence $(\\\\bar x)$ and $(\\\\bar y)$ in $R$.\\n\\n(b) Correctly concludes $\\\\dim R=1$. The exhibited chain $(\\\\bar x)\\\\subsetneq (\\\\bar x,\\\\bar y)$ has length 1, and there cannot be longer chains since $R/(\\\\bar x)\\\\cong k[y]$ (and similarly for $\\\\bar y$), each of dimension 1.\\n\\n(c) Correctly computes the nilradical as the intersection of minimal primes and shows $(\\\\bar x)\\\\cap(\\\\bar y)=0$ in $R$ by proving $(x)\\\\cap(y)=(xy)$ in $k[x,y]$. Hence $\\\\sqrt{(0)}=(0)$ and $R$ is reduced.\"\n}",
+        "verdict": "correct",
+        "notes": "(a) Correctly uses the correspondence between primes of $R$ and primes of $k[x,y]$ containing $(xy)$, and correctly identifies the minimal primes as $(x)$ and $(y)$, hence $(\\bar x)$ and $(\\bar y)$ in $R$.\n\n(b) Correctly concludes $\\dim R=1$. The exhibited chain $(\\bar x)\\subsetneq (\\bar x,\\bar y)$ has length 1, and there cannot be longer chains since $R/(\\bar x)\\cong k[y]$ (and similarly for $\\bar y$), each of dimension 1.\n\n(c) Correctly computes the nilradical as the intersection of minimal primes and shows $(\\bar x)\\cap(\\bar y)=0$ in $R$ by proving $(x)\\cap(y)=(xy)$ in $k[x,y]$. Hence $\\sqrt{(0)}=(0)$ and $R$ is reduced.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate: (a) minimal primes are $(\\bar x)$ and $(\\bar y)$; (b) $\\dim R=1$; (c) $R$ is reduced since $(\\bar x)\\cap(\\bar y)=0$ (equivalently $(x)\\cap(y)=(xy)$ in $k[x,y]$). The critique also uses valid JSON in the expected critique format (keys `verdict` and `notes`, with an allowed verdict value). If you want to strengthen the justification in (b), you could mention a standard bound such as Krull's principal ideal theorem: $\\dim(k[x,y]/(xy))=\\dim k[x,y]-\\operatorname{ht}(xy)=2-1=1$ (since $(xy)$ is principal and not zero), which rules out longer chains globally."
+        }
+      }
+    ]
   }
 ]

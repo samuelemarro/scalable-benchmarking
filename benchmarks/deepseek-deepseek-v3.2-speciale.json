@@ -1216,5 +1216,31 @@
         "status": "succeeded"
       }
     ]
+  },
+  {
+    "run_id": "30",
+    "outer_attempt": 2,
+    "topic_slug": "integral_transforms_and_operational_calculus",
+    "topic_name": "Integral transforms, operational calculus",
+    "status": "succeeded",
+    "generation_rounds": [
+      {
+        "refinement_rounds": [
+          {
+            "round": 1,
+            "question": "Solve the following integral equation for $f(t)$:\n\n$$\nf(t) = \\sin t + \\int_0^t e^{-(t-\\tau)} f(\\tau) \\, d\\tau, \\qquad t \\ge 0.\n$$",
+            "answer": "We solve using the Laplace transform. Let $\\mathcal{L}\\{f(t)\\}(s) = F(s)$. Recall that the Laplace transform of a convolution is the product of transforms: $\\mathcal{L}\\{(f*g)(t)\\}(s) = F(s) G(s)$, where $(f*g)(t) = \\int_0^t f(t-\\tau)g(\\tau)\\,d\\tau$. Taking Laplace transforms of both sides yields\n\n$$\nF(s) = \\frac{1}{s^2+1} + \\frac{1}{s+1} F(s),\n$$\n\nsince $\\mathcal{L}\\{\\sin t\\}(s) = \\frac{1}{s^2+1}$ and $\\mathcal{L}\\{e^{-t}\\}(s) = \\frac{1}{s+1}$. Solving for $F(s)$:\n\n$$\nF(s) \\left(1 - \\frac{1}{s+1}\\right) = \\frac{1}{s^2+1},\n$$\n$$\nF(s) \\cdot \\frac{s}{s+1} = \\frac{1}{s^2+1},\n$$\n$$\nF(s) = \\frac{s+1}{s(s^2+1)}.\n$$\n\nWe decompose into partial fractions:\n\n$$\n\\frac{s+1}{s(s^2+1)} = \\frac{A}{s} + \\frac{Bs+C}{s^2+1}.\n$$\n\nMultiplying by $s(s^2+1)$ gives\n\n$$\ns+1 = A(s^2+1) + (Bs+C)s = (A+B)s^2 + Cs + A.\n$$\n\nEquating coefficients:\n\n$$\n\\begin{cases}\nA+B = 0,\\\\\nC = 1,\\\\\nA = 1.\n\\end{cases}\n$$\n\nThus $A=1$, $B=-1$, $C=1$. Hence\n\n$$\nF(s) = \\frac{1}{s} + \\frac{-s+1}{s^2+1} = \\frac{1}{s} - \\frac{s}{s^2+1} + \\frac{1}{s^2+1}.\n$$\n\nNow invert each term using standard Laplace transforms:\n\n$$\n\\mathcal{L}^{-1}\\left\\{\\frac{1}{s}\\right\\} = 1,\\quad\n\\mathcal{L}^{-1}\\left\\{-\\frac{s}{s^2+1}\\right\\} = -\\cos t,\\quad\n\\mathcal{L}^{-1}\\left\\{\\frac{1}{s^2+1}\\right\\} = \\sin t.\n$$\n\nTherefore, the solution is\n\n$$\nf(t) = 1 - \\cos t + \\sin t, \\qquad t \\ge 0.\n$$\n\nWe can verify by direct substitution into the original equation. The integral term becomes\n\n$$\n\\int_0^t e^{-(t-\\tau)} (1 - \\cos \\tau + \\sin \\tau) \\, d\\tau = 1 - \\cos t,\n$$\n\nand adding $\\sin t$ yields $1 - \\cos t + \\sin t = f(t)$, confirming the result.",
+            "raw_answer": "[QUESTION]\nSolve the following integral equation for \\(f(t)\\):\n\n\\[\nf(t) = \\sin t + \\int_0^t e^{-(t-\\tau)} f(\\tau) \\, d\\tau, \\qquad t \\ge 0.\n\\]\n\n[ANSWER]\nWe solve using the Laplace transform. Let \\(\\mathcal{L}\\{f(t)\\}(s) = F(s)\\). Recall that the Laplace transform of a convolution is the product of transforms: \\(\\mathcal{L}\\{(f*g)(t)\\}(s) = F(s) G(s)\\), where \\((f*g)(t) = \\int_0^t f(t-\\tau)g(\\tau)\\,d\\tau\\). Taking Laplace transforms of both sides yields\n\n\\[\nF(s) = \\frac{1}{s^2+1} + \\frac{1}{s+1} F(s),\n\\]\n\nsince \\(\\mathcal{L}\\{\\sin t\\}(s) = \\frac{1}{s^2+1}\\) and \\(\\mathcal{L}\\{e^{-t}\\}(s) = \\frac{1}{s+1}\\). Solving for \\(F(s)\\):\n\n\\[\nF(s) \\left(1 - \\frac{1}{s+1}\\right) = \\frac{1}{s^2+1},\n\\]\n\\[\nF(s) \\cdot \\frac{s}{s+1} = \\frac{1}{s^2+1},\n\\]\n\\[\nF(s) = \\frac{s+1}{s(s^2+1)}.\n\\]\n\nWe decompose into partial fractions:\n\n\\[\n\\frac{s+1}{s(s^2+1)} = \\frac{A}{s} + \\frac{Bs+C}{s^2+1}.\n\\]\n\nMultiplying by \\(s(s^2+1)\\) gives\n\n\\[\ns+1 = A(s^2+1) + (Bs+C)s = (A+B)s^2 + Cs + A.\n\\]\n\nEquating coefficients:\n\n\\[\n\\begin{cases}\nA+B = 0,\\\\\nC = 1,\\\\\nA = 1.\n\\end{cases}\n\\]\n\nThus \\(A=1\\), \\(B=-1\\), \\(C=1\\). Hence\n\n\\[\nF(s) = \\frac{1}{s} + \\frac{-s+1}{s^2+1} = \\frac{1}{s} - \\frac{s}{s^2+1} + \\frac{1}{s^2+1}.\n\\]\n\nNow invert each term using standard Laplace transforms:\n\n\\[\n\\mathcal{L}^{-1}\\left\\{\\frac{1}{s}\\right\\} = 1,\\quad\n\\mathcal{L}^{-1}\\left\\{-\\frac{s}{s^2+1}\\right\\} = -\\cos t,\\quad\n\\mathcal{L}^{-1}\\left\\{\\frac{1}{s^2+1}\\right\\} = \\sin t.\n\\]\n\nTherefore, the solution is\n\n\\[\nf(t) = 1 - \\cos t + \\sin t, \\qquad t \\ge 0.\n\\]\n\nWe can verify by direct substitution into the original equation. The integral term becomes\n\n\\[\n\\int_0^t e^{-(t-\\tau)} (1 - \\cos \\tau + \\sin \\tau) \\, d\\tau = 1 - \\cos t,\n\\]\n\nand adding \\(\\sin t\\) yields \\(1 - \\cos t + \\sin t = f(t)\\), confirming the result.",
+            "evaluation": {
+              "verdict": "pass",
+              "ill_posed": false,
+              "issues": [],
+              "improvements": ""
+            }
+          }
+        ],
+        "status": "succeeded"
+      }
+    ]
   }
 ]
