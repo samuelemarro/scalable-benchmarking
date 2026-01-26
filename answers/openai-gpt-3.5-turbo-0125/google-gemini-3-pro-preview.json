@@ -4,6 +4,7 @@
     "answer_model": "google-gemini-3-pro-preview",
     "question": "Let $P(x)$ be the statement \"$x$ is a prime number\" and $Q(x)$ be the statement \"$x$ is an odd number.\" Consider the following logical statement:\n\n$\\forall x (P(x) \\rightarrow Q(x))$\n\nDetermine whether the statement is true or false. Provide a clear explanation for your answer.",
     "run_id": "1",
+    "outer_attempt": 1,
     "topic_slug": "mathematical_logic_and_foundations",
     "status": "succeeded",
     "attempts": [
@@ -18,8 +19,7 @@
           "improvements": ""
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question_model": "openai-gpt-3.5-turbo-0125",
@@ -466,6 +466,7 @@
     "answer_model": "google-gemini-3-pro-preview",
     "question": "Consider the following second-order linear homogeneous ordinary differential equation:\n$$y'' - 4y' + 4y = 0$$\nwhere $y = y(x)$ is a function of $x$. Find the general solution to this differential equation.",
     "run_id": "22",
+    "outer_attempt": 1,
     "topic_slug": "ordinary_differential_equations",
     "status": "succeeded",
     "attempts": [
@@ -480,8 +481,7 @@
           "improvements": ""
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question_model": "openai-gpt-3.5-turbo-0125",
@@ -796,6 +796,7 @@
     "answer_model": "google-gemini-3-pro-preview",
     "question": "Let $C$ be a smooth curve in $\\mathbb{R}^3$ parametrized by $\\mathbf{r}(t) = (x(t), y(t), z(t))$. Suppose that the curve $C$ lies on the surface of a sphere of radius $R$ centered at the origin. Prove that the tangent vector $\\mathbf{T}(t)$ to the curve $C$ is orthogonal to the position vector $\\mathbf{r}(t)$ at each point $t$ on the curve.",
     "run_id": "37",
+    "outer_attempt": 1,
     "topic_slug": "differential_geometry",
     "status": "succeeded",
     "attempts": [
@@ -810,8 +811,7 @@
           "improvements": ""
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question_model": "openai-gpt-3.5-turbo-0125",
@@ -928,6 +928,7 @@
     "answer_model": "google-gemini-3-pro-preview",
     "question": "Suppose you have a dataset of 100 observations on a single variable $X$, which is known to follow a normal distribution with an unknown mean $\\mu$ and a known standard deviation of 5. You want to test the null hypothesis $H_0: \\mu = 20$ against the alternative hypothesis $H_1: \\mu \\neq 20$ at a significance level of 0.05. \n\nDetermine the critical values for a two-tailed hypothesis test using the standard normal distribution table.",
     "run_id": "43",
+    "outer_attempt": 1,
     "topic_slug": "statistics",
     "status": "succeeded",
     "attempts": [
@@ -942,8 +943,7 @@
           "improvements": ""
         }
       }
-    ],
-    "outer_attempt": 1
+    ]
   },
   {
     "question_model": "openai-gpt-3.5-turbo-0125",
@@ -958,6 +958,94 @@
         "round": 1,
         "answer": "To find the exact value of the integral $\\int_{0}^{1} \\frac{x^3}{1 + x^2} \\, dx$, we will simplify the integrand using algebraic manipulation and then evaluate the resulting terms using standard integration techniques.\n\n### Step 1: Simplify the Integrand\n\nThe integrand is a rational function where the degree of the numerator (3) is greater than the degree of the denominator (2). We can simplify this by separating the numerator to express it in terms of the denominator.\n\nNotice that $x^3 = x(x^2)$. We can rewrite $x^2$ as $(1 + x^2) - 1$.\n$$\n\\begin{aligned}\n\\frac{x^3}{1 + x^2} &= \\frac{x(1 + x^2 - 1)}{1 + x^2} \\\\\n&= \\frac{x(1 + x^2) - x}{1 + x^2} \\\\\n&= \\frac{x(1 + x^2)}{1 + x^2} - \\frac{x}{1 + x^2} \\\\\n&= x - \\frac{x}{1 + x^2}\n\\end{aligned}\n$$\n\n### Step 2: Rewrite the Integral\n\nNow, we substitute the simplified expression back into the integral:\n$$\n\\int_{0}^{1} \\frac{x^3}{1 + x^2} \\, dx = \\int_{0}^{1} \\left( x - \\frac{x}{1 + x^2} \\right) \\, dx\n$$\nBy the linearity of integration, we can split this into two separate integrals:\n$$\nI = \\int_{0}^{1} x \\, dx - \\int_{0}^{1} \\frac{x}{1 + x^2} \\, dx\n$$\n\n### Step 3: Evaluate the First Integral\n\nThe first integral is straightforward using the power rule $\\int x^n \\, dx = \\frac{x^{n+1}}{n+1}$:\n$$\n\\int_{0}^{1} x \\, dx = \\left[ \\frac{x^2}{2} \\right]_{0}^{1} = \\frac{1^2}{2} - \\frac{0^2}{2} = \\frac{1}{2}\n$$\n\n### Step 4: Evaluate the Second Integral\n\nFor the second integral $\\int_{0}^{1} \\frac{x}{1 + x^2} \\, dx$, we use the method of $u$-substitution.\n\nLet $u = 1 + x^2$.\nThen, the differential is $du = 2x \\, dx$, which implies $x \\, dx = \\frac{1}{2} \\, du$.\n\nWe must also change the limits of integration:\n- When $x = 0$, $u = 1 + 0^2 = 1$.\n- When $x = 1$, $u = 1 + 1^2 = 2$.\n\nSubstituting these into the integral:\n$$\n\\begin{aligned}\n\\int_{0}^{1} \\frac{x}{1 + x^2} \\, dx &= \\int_{1}^{2} \\frac{1}{u} \\cdot \\frac{1}{2} \\, du \\\\\n&= \\frac{1}{2} \\int_{1}^{2} \\frac{1}{u} \\, du\n\\end{aligned}\n$$\nRecall that $\\int \\frac{1}{u} \\, du = \\ln|u|$. Since the interval $[1, 2]$ is positive, we can drop the absolute value bars.\n$$\n\\begin{aligned}\n\\frac{1}{2} \\left[ \\ln u \\right]_{1}^{2} &= \\frac{1}{2} (\\ln 2 - \\ln 1)\n\\end{aligned}\n$$\nSince $\\ln 1 = 0$:\n$$\n\\int_{0}^{1} \\frac{x}{1 + x^2} \\, dx = \\frac{1}{2} \\ln 2\n$$\n\n### Step 5: Combine Results\n\nSubtract the result of the second integral from the first:\n$$\n\\begin{aligned}\nI &= \\frac{1}{2} - \\frac{1}{2} \\ln 2 \\\\\n&= \\frac{1 - \\ln 2}{2}\n\\end{aligned}\n$$\n\n### Final Answer\n\nThe exact value of the integral is:\n$$ \\frac{1 - \\ln 2}{2} $$",
         "raw_answer": "To find the exact value of the integral $\\int_{0}^{1} \\frac{x^3}{1 + x^2} \\, dx$, we will simplify the integrand using algebraic manipulation and then evaluate the resulting terms using standard integration techniques.\n\n### Step 1: Simplify the Integrand\n\nThe integrand is a rational function where the degree of the numerator (3) is greater than the degree of the denominator (2). We can simplify this by separating the numerator to express it in terms of the denominator.\n\nNotice that $x^3 = x(x^2)$. We can rewrite $x^2$ as $(1 + x^2) - 1$.\n$$\n\\begin{aligned}\n\\frac{x^3}{1 + x^2} &= \\frac{x(1 + x^2 - 1)}{1 + x^2} \\\\\n&= \\frac{x(1 + x^2) - x}{1 + x^2} \\\\\n&= \\frac{x(1 + x^2)}{1 + x^2} - \\frac{x}{1 + x^2} \\\\\n&= x - \\frac{x}{1 + x^2}\n\\end{aligned}\n$$\n\n### Step 2: Rewrite the Integral\n\nNow, we substitute the simplified expression back into the integral:\n$$\n\\int_{0}^{1} \\frac{x^3}{1 + x^2} \\, dx = \\int_{0}^{1} \\left( x - \\frac{x}{1 + x^2} \\right) \\, dx\n$$\nBy the linearity of integration, we can split this into two separate integrals:\n$$\nI = \\int_{0}^{1} x \\, dx - \\int_{0}^{1} \\frac{x}{1 + x^2} \\, dx\n$$\n\n### Step 3: Evaluate the First Integral\n\nThe first integral is straightforward using the power rule $\\int x^n \\, dx = \\frac{x^{n+1}}{n+1}$:\n$$\n\\int_{0}^{1} x \\, dx = \\left[ \\frac{x^2}{2} \\right]_{0}^{1} = \\frac{1^2}{2} - \\frac{0^2}{2} = \\frac{1}{2}\n$$\n\n### Step 4: Evaluate the Second Integral\n\nFor the second integral $\\int_{0}^{1} \\frac{x}{1 + x^2} \\, dx$, we use the method of $u$-substitution.\n\nLet $u = 1 + x^2$.\nThen, the differential is $du = 2x \\, dx$, which implies $x \\, dx = \\frac{1}{2} \\, du$.\n\nWe must also change the limits of integration:\n- When $x = 0$, $u = 1 + 0^2 = 1$.\n- When $x = 1$, $u = 1 + 1^2 = 2$.\n\nSubstituting these into the integral:\n$$\n\\begin{aligned}\n\\int_{0}^{1} \\frac{x}{1 + x^2} \\, dx &= \\int_{1}^{2} \\frac{1}{u} \\cdot \\frac{1}{2} \\, du \\\\\n&= \\frac{1}{2} \\int_{1}^{2} \\frac{1}{u} \\, du\n\\end{aligned}\n$$\nRecall that $\\int \\frac{1}{u} \\, du = \\ln|u|$. Since the interval $[1, 2]$ is positive, we can drop the absolute value bars.\n$$\n\\begin{aligned}\n\\frac{1}{2} \\left[ \\ln u \\right]_{1}^{2} &= \\frac{1}{2} (\\ln 2 - \\ln 1)\n\\end{aligned}\n$$\nSince $\\ln 1 = 0$:\n$$\n\\int_{0}^{1} \\frac{x}{1 + x^2} \\, dx = \\frac{1}{2} \\ln 2\n$$\n\n### Step 5: Combine Results\n\nSubtract the result of the second integral from the first:\n$$\n\\begin{aligned}\nI &= \\frac{1}{2} - \\frac{1}{2} \\ln 2 \\\\\n&= \\frac{1 - \\ln 2}{2}\n\\end{aligned}\n$$\n\n### Final Answer\n\nThe exact value of the integral is:\n$$ \\frac{1 - \\ln 2}{2} $$",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "openai-gpt-3.5-turbo-0125",
+    "answer_model": "google-gemini-3-pro-preview",
+    "question": "Let $f(x) = e^x$. Consider the Maclaurin series expansion of $f(x)$:\n$$f(x) = \\sum_{n=0}^{\\infty} a_n x^n.$$\nDetermine the coefficient $a_{10}$ of the $x^{10}$ term in the Maclaurin series expansion of $f(x)$.",
+    "run_id": "27",
+    "outer_attempt": 2,
+    "topic_slug": "approximations_and_expansions",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To determine the coefficient $a_{10}$ of the $x^{10}$ term in the Maclaurin series expansion of $f(x) = e^x$, we proceed as follows:\n\n### 1. Definition of the Maclaurin Series\n\nThe Maclaurin series expansion of a smooth function $f(x)$ is defined as the Taylor series expansion about $x=0$:\n$$ f(x) = \\sum_{n=0}^{\\infty} \\frac{f^{(n)}(0)}{n!} x^n $$\nwhere $f^{(n)}(x)$ denotes the $n$-th derivative of $f(x)$, and $n!$ is the factorial of $n$.\n\nThe problem defines the series as:\n$$ f(x) = \\sum_{n=0}^{\\infty} a_n x^n $$\nBy comparing the coefficients of the powers of $x$, we find that the general coefficient $a_n$ is given by:\n$$ a_n = \\frac{f^{(n)}(0)}{n!} $$\n\n### 2. Computing the Derivatives of $f(x) = e^x$\n\nLet $f(x) = e^x$. We compute the derivatives with respect to $x$:\n$$ f'(x) = \\frac{d}{dx}(e^x) = e^x $$\n$$ f''(x) = \\frac{d}{dx}(e^x) = e^x $$\nBy induction, for any non-negative integer $n$, the $n$-th derivative is:\n$$ f^{(n)}(x) = e^x $$\n\n### 3. Evaluating the Derivatives at $x=0$\n\nWe evaluate the $n$-th derivative at $x=0$:\n$$ f^{(n)}(0) = e^0 = 1 $$\nThis holds for all $n \\geq 0$.\n\n### 4. Determining the Coefficient $a_{10}$\n\nWe substitute $f^{(n)}(0) = 1$ into the formula for $a_n$:\n$$ a_n = \\frac{1}{n!} $$\n\nTo find the coefficient of the $x^{10}$ term, we set $n=10$:\n$$ a_{10} = \\frac{1}{10!} $$\n\nCalculating the factorial value:\n$$ 10! = 10 \\times 9 \\times 8 \\times 7 \\times 6 \\times 5 \\times 4 \\times 3 \\times 2 \\times 1 = 3,628,800 $$\n\nThus,\n$$ a_{10} = \\frac{1}{3,628,800} $$\n\n### Conclusion\n\nThe coefficient $a_{10}$ of the $x^{10}$ term in the Maclaurin series expansion of $f(x) = e^x$ is:\n\n$$ a_{10} = \\frac{1}{10!} $$",
+        "raw_answer": "To determine the coefficient $a_{10}$ of the $x^{10}$ term in the Maclaurin series expansion of $f(x) = e^x$, we proceed as follows:\n\n### 1. Definition of the Maclaurin Series\n\nThe Maclaurin series expansion of a smooth function $f(x)$ is defined as the Taylor series expansion about $x=0$:\n$$ f(x) = \\sum_{n=0}^{\\infty} \\frac{f^{(n)}(0)}{n!} x^n $$\nwhere $f^{(n)}(x)$ denotes the $n$-th derivative of $f(x)$, and $n!$ is the factorial of $n$.\n\nThe problem defines the series as:\n$$ f(x) = \\sum_{n=0}^{\\infty} a_n x^n $$\nBy comparing the coefficients of the powers of $x$, we find that the general coefficient $a_n$ is given by:\n$$ a_n = \\frac{f^{(n)}(0)}{n!} $$\n\n### 2. Computing the Derivatives of $f(x) = e^x$\n\nLet $f(x) = e^x$. We compute the derivatives with respect to $x$:\n$$ f'(x) = \\frac{d}{dx}(e^x) = e^x $$\n$$ f''(x) = \\frac{d}{dx}(e^x) = e^x $$\nBy induction, for any non-negative integer $n$, the $n$-th derivative is:\n$$ f^{(n)}(x) = e^x $$\n\n### 3. Evaluating the Derivatives at $x=0$\n\nWe evaluate the $n$-th derivative at $x=0$:\n$$ f^{(n)}(0) = e^0 = 1 $$\nThis holds for all $n \\geq 0$.\n\n### 4. Determining the Coefficient $a_{10}$\n\nWe substitute $f^{(n)}(0) = 1$ into the formula for $a_n$:\n$$ a_n = \\frac{1}{n!} $$\n\nTo find the coefficient of the $x^{10}$ term, we set $n=10$:\n$$ a_{10} = \\frac{1}{10!} $$\n\nCalculating the factorial value:\n$$ 10! = 10 \\times 9 \\times 8 \\times 7 \\times 6 \\times 5 \\times 4 \\times 3 \\times 2 \\times 1 = 3,628,800 $$\n\nThus,\n$$ a_{10} = \\frac{1}{3,628,800} $$\n\n### Conclusion\n\nThe coefficient $a_{10}$ of the $x^{10}$ term in the Maclaurin series expansion of $f(x) = e^x$ is:\n\n$$ a_{10} = \\frac{1}{10!} $$",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "openai-gpt-3.5-turbo-0125",
+    "answer_model": "google-gemini-3-pro-preview",
+    "question": "Let $f(x) = x^3 - 3x^2 + 4x - 2$. Consider the following numerical analysis problem:\n\nUsing the bisection method, find an approximate root of the equation $f(x) = 0$ within the interval $[0, 2]$ with a tolerance of $0.01$.",
+    "run_id": "44",
+    "outer_attempt": 5,
+    "topic_slug": "numerical_analysis",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To find an approximate root of the equation $f(x) = x^3 - 3x^2 + 4x - 2 = 0$ within the interval $[0, 2]$ using the bisection method, we proceed as follows.\n\n### 1. Analysis of the Function and Interval\n\nFirst, we define the function and the initial interval:\n$$f(x) = x^3 - 3x^2 + 4x - 2$$\n$$[a_0, b_0] = [0, 2]$$\n\nWe verify the applicability of the bisection method by checking the Intermediate Value Theorem conditions. We evaluate the function at the endpoints of the interval:\n\n$$f(0) = (0)^3 - 3(0)^2 + 4(0) - 2 = -2$$\n$$f(2) = (2)^3 - 3(2)^2 + 4(2) - 2 = 8 - 12 + 8 - 2 = 2$$\n\nSince $f(x)$ is a polynomial, it is continuous on $[0, 2]$. Furthermore, $f(0) < 0$ and $f(2) > 0$. Because the signs of the function values at the endpoints are opposite ($f(a_0) \\cdot f(b_0) < 0$), there exists at least one root $r$ in the interval $(0, 2)$.\n\n### 2. Bisection Algorithm and Stopping Criteria\n\nThe bisection method generates a sequence of intervals $[a_n, b_n]$ and midpoints $c_n$.\nThe midpoint for iteration $n$ (where $n \\ge 1$) is defined as:\n$$c_n = \\frac{a_{n-1} + b_{n-1}}{2}$$\n\n**Stopping Criteria:**\nThe algorithm generally terminates when either of the following conditions is met:\n1. The estimated absolute error is within the specified tolerance $\\epsilon$. For the bisection method, the absolute error bound at step $n$ is half the interval width: $\\frac{b_{n-1} - a_{n-1}}{2} < \\epsilon$. With $\\epsilon = 0.01$, we require $\\frac{b_{n-1} - a_{n-1}}{2} < 0.01$.\n2. The midpoint is an exact root: $f(c_n) = 0$.\n\n### 3. Iteration Process\n\n**Iteration 1:**\n- Current interval: $[a_0, b_0] = [0, 2]$.\n- Calculate the midpoint $c_1$:\n  $$c_1 = \\frac{0 + 2}{2} = 1$$\n\n- Evaluate the function at the midpoint $f(c_1)$:\n  $$f(1) = (1)^3 - 3(1)^2 + 4(1) - 2$$\n  $$f(1) = 1 - 3 + 4 - 2$$\n  $$f(1) = 0$$\n\n### 4. Conclusion\n\nSince $f(c_1) = 0$, we have found an **exact root** of the equation in the first iteration. The value $x = 1$ satisfies the equation $x^3 - 3x^2 + 4x - 2 = 0$ exactly.\n\nBecause an exact root has an error of 0, it satisfies the requirement of being within the tolerance of $0.01$ (since $0 < 0.01$). No further iterations are necessary.\n\n**Final Answer:**\nThe approximate root (which is exact in this case) is **1**.",
+        "raw_answer": "To find an approximate root of the equation $f(x) = x^3 - 3x^2 + 4x - 2 = 0$ within the interval $[0, 2]$ using the bisection method, we proceed as follows.\n\n### 1. Analysis of the Function and Interval\n\nFirst, we define the function and the initial interval:\n$$f(x) = x^3 - 3x^2 + 4x - 2$$\n$$[a_0, b_0] = [0, 2]$$\n\nWe verify the applicability of the bisection method by checking the Intermediate Value Theorem conditions. We evaluate the function at the endpoints of the interval:\n\n$$f(0) = (0)^3 - 3(0)^2 + 4(0) - 2 = -2$$\n$$f(2) = (2)^3 - 3(2)^2 + 4(2) - 2 = 8 - 12 + 8 - 2 = 2$$\n\nSince $f(x)$ is a polynomial, it is continuous on $[0, 2]$. Furthermore, $f(0) < 0$ and $f(2) > 0$. Because the signs of the function values at the endpoints are opposite ($f(a_0) \\cdot f(b_0) < 0$), there exists at least one root $r$ in the interval $(0, 2)$.\n\n### 2. Bisection Algorithm and Stopping Criteria\n\nThe bisection method generates a sequence of intervals $[a_n, b_n]$ and midpoints $c_n$.\nThe midpoint for iteration $n$ (where $n \\ge 1$) is defined as:\n$$c_n = \\frac{a_{n-1} + b_{n-1}}{2}$$\n\n**Stopping Criteria:**\nThe algorithm generally terminates when either of the following conditions is met:\n1. The estimated absolute error is within the specified tolerance $\\epsilon$. For the bisection method, the absolute error bound at step $n$ is half the interval width: $\\frac{b_{n-1} - a_{n-1}}{2} < \\epsilon$. With $\\epsilon = 0.01$, we require $\\frac{b_{n-1} - a_{n-1}}{2} < 0.01$.\n2. The midpoint is an exact root: $f(c_n) = 0$.\n\n### 3. Iteration Process\n\n**Iteration 1:**\n- Current interval: $[a_0, b_0] = [0, 2]$.\n- Calculate the midpoint $c_1$:\n  $$c_1 = \\frac{0 + 2}{2} = 1$$\n\n- Evaluate the function at the midpoint $f(c_1)$:\n  $$f(1) = (1)^3 - 3(1)^2 + 4(1) - 2$$\n  $$f(1) = 1 - 3 + 4 - 2$$\n  $$f(1) = 0$$\n\n### 4. Conclusion\n\nSince $f(c_1) = 0$, we have found an **exact root** of the equation in the first iteration. The value $x = 1$ satisfies the equation $x^3 - 3x^2 + 4x - 2 = 0$ exactly.\n\nBecause an exact root has an error of 0, it satisfies the requirement of being within the tolerance of $0.01$ (since $0 < 0.01$). No further iterations are necessary.\n\n**Final Answer:**\nThe approximate root (which is exact in this case) is **1**.",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "openai-gpt-3.5-turbo-0125",
+    "answer_model": "google-gemini-3-pro-preview",
+    "question": "Let $R$ be a commutative ring with unity and let $I$ be an ideal in $R$. Define the radical of $I$, denoted $\\sqrt{I}$, as the set of all elements $r \\in R$ such that there exists a positive integer $n$ satisfying $r^n \\in I$. \n\nConsider the ring $R = \\mathbb{Z}[x]$ of polynomials with integer coefficients and the ideal $I = \\langle x^2 - 4 \\rangle$ generated by $x^2 - 4$. Determine the radical $\\sqrt{I}$ of the ideal $I$ in $R$.",
+    "run_id": "7",
+    "outer_attempt": 5,
+    "topic_slug": "commutative_algebra",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To determine the radical of the ideal $I = \\langle x^2 - 4 \\rangle$ in the ring $R = \\mathbb{Z}[x]$, we proceed through the following steps: analyzing the factorization of the generator, identifying the relevant prime ideals, and computing their intersection.\n\n### 1. Factorization of the Generator\n\nWe start by factoring the generator of the ideal $I$ in the polynomial ring $\\mathbb{Z}[x]$. The polynomial is:\n$$ f(x) = x^2 - 4 $$\nSince $\\mathbb{Z}[x]$ is a Unique Factorization Domain (UFD), we factor $f(x)$ into irreducible components:\n$$ x^2 - 4 = (x - 2)(x + 2) $$\nThe factors $p_1(x) = x - 2$ and $p_2(x) = x + 2$ are polynomials in $\\mathbb{Z}[x]$.\n\n### 2. Primality of the Factors\n\nWe determine if the factors generate prime ideals. An element $p \\in R$ generates a prime ideal $\\langle p \\rangle$ if and only if $p$ is a prime element. In a UFD like $\\mathbb{Z}[x]$, an element is prime if and only if it is irreducible.\n\n*   **For $x - 2$**: This polynomial is linear and primitive (the greatest common divisor of its coefficients is 1). Therefore, it is irreducible in $\\mathbb{Z}[x]$. Consequently, the ideal $P_1 = \\langle x - 2 \\rangle$ is a prime ideal.\n    *   *Verification*: $R/P_1 \\cong \\mathbb{Z}[x]/\\langle x-2 \\rangle \\cong \\mathbb{Z}$. Since $\\mathbb{Z}$ is an integral domain, $P_1$ is prime.\n\n*   **For $x + 2$**: Similarly, $x + 2$ is linear and primitive, making it irreducible. Thus, the ideal $P_2 = \\langle x + 2 \\rangle$ is a prime ideal.\n    *   *Verification*: $R/P_2 \\cong \\mathbb{Z}[x]/\\langle x+2 \\rangle \\cong \\mathbb{Z}$. Since $\\mathbb{Z}$ is an integral domain, $P_2$ is prime.\n\n### 3. Property of the Radical\n\nThe radical of an ideal $I$, denoted $\\sqrt{I}$, equals the intersection of all prime ideals in $R$ that contain $I$.\n$$ \\sqrt{I} = \\bigcap_{P \\supseteq I} P $$\nSince $I = \\langle (x-2)(x+2) \\rangle$, any prime ideal $P$ containing $I$ must contain the product $(x-2)(x+2)$. By the definition of a prime ideal, if $ab \\in P$, then $a \\in P$ or $b \\in P$. Therefore, any prime ideal containing $I$ must contain either $x-2$ (and thus $P_1$) or $x+2$ (and thus $P_2$).\n\nThe intersection of all such prime ideals is exactly the intersection of the minimal prime ideals containing $I$. The minimal primes over $I$ are $P_1$ and $P_2$. Thus:\n$$ \\sqrt{I} = P_1 \\cap P_2 = \\langle x - 2 \\rangle \\cap \\langle x + 2 \\rangle $$\n\n### 4. Intersection of the Prime Ideals\n\nWe must calculate the ideal $P_1 \\cap P_2$.\n$$ P_1 \\cap P_2 = \\{ f \\in \\mathbb{Z}[x] \\mid (x-2) \\text{ divides } f \\text{ and } (x+2) \\text{ divides } f \\} $$\nIn the UFD $\\mathbb{Z}[x]$, if a polynomial $f$ is divisible by two elements $a$ and $b$, it is divisible by their least common multiple (LCM).\n$$ \\text{lcm}(x-2, x+2) = \\frac{(x-2)(x+2)}{\\text{gcd}(x-2, x+2)} $$\nWe determine the greatest common divisor (GCD) of $x-2$ and $x+2$. Any common divisor $d(x)$ must divide their difference:\n$$ (x+2) - (x-2) = 4 $$\nThe divisors of 4 in $\\mathbb{Z}[x]$ are the integer units $\\pm 1, \\pm 2, \\pm 4$ (and their associates). However, $x-2$ is primitive (content is 1), so no integer other than $\\pm 1$ divides $x-2$. Thus, $\\text{gcd}(x-2, x+2) = 1$.\n\nSince the polynomials are coprime, their LCM is their product:\n$$ \\text{lcm}(x-2, x+2) = (x-2)(x+2) = x^2 - 4 $$\nTherefore, the intersection is:\n$$ P_1 \\cap P_2 = \\langle x^2 - 4 \\rangle = I $$\n\n### 5. Conclusion\n\nSince $\\sqrt{I} = P_1 \\cap P_2$ and $P_1 \\cap P_2 = I$, we conclude that $I$ is a radical ideal (it is its own radical).\n\nThe radical of the ideal $I = \\langle x^2 - 4 \\rangle$ in $R = \\mathbb{Z}[x]$ is:\n$$ \\sqrt{\\langle x^2 - 4 \\rangle} = \\langle x^2 - 4 \\rangle $$",
+        "raw_answer": "To determine the radical of the ideal $I = \\langle x^2 - 4 \\rangle$ in the ring $R = \\mathbb{Z}[x]$, we proceed through the following steps: analyzing the factorization of the generator, identifying the relevant prime ideals, and computing their intersection.\n\n### 1. Factorization of the Generator\n\nWe start by factoring the generator of the ideal $I$ in the polynomial ring $\\mathbb{Z}[x]$. The polynomial is:\n$$ f(x) = x^2 - 4 $$\nSince $\\mathbb{Z}[x]$ is a Unique Factorization Domain (UFD), we factor $f(x)$ into irreducible components:\n$$ x^2 - 4 = (x - 2)(x + 2) $$\nThe factors $p_1(x) = x - 2$ and $p_2(x) = x + 2$ are polynomials in $\\mathbb{Z}[x]$.\n\n### 2. Primality of the Factors\n\nWe determine if the factors generate prime ideals. An element $p \\in R$ generates a prime ideal $\\langle p \\rangle$ if and only if $p$ is a prime element. In a UFD like $\\mathbb{Z}[x]$, an element is prime if and only if it is irreducible.\n\n*   **For $x - 2$**: This polynomial is linear and primitive (the greatest common divisor of its coefficients is 1). Therefore, it is irreducible in $\\mathbb{Z}[x]$. Consequently, the ideal $P_1 = \\langle x - 2 \\rangle$ is a prime ideal.\n    *   *Verification*: $R/P_1 \\cong \\mathbb{Z}[x]/\\langle x-2 \\rangle \\cong \\mathbb{Z}$. Since $\\mathbb{Z}$ is an integral domain, $P_1$ is prime.\n\n*   **For $x + 2$**: Similarly, $x + 2$ is linear and primitive, making it irreducible. Thus, the ideal $P_2 = \\langle x + 2 \\rangle$ is a prime ideal.\n    *   *Verification*: $R/P_2 \\cong \\mathbb{Z}[x]/\\langle x+2 \\rangle \\cong \\mathbb{Z}$. Since $\\mathbb{Z}$ is an integral domain, $P_2$ is prime.\n\n### 3. Property of the Radical\n\nThe radical of an ideal $I$, denoted $\\sqrt{I}$, equals the intersection of all prime ideals in $R$ that contain $I$.\n$$ \\sqrt{I} = \\bigcap_{P \\supseteq I} P $$\nSince $I = \\langle (x-2)(x+2) \\rangle$, any prime ideal $P$ containing $I$ must contain the product $(x-2)(x+2)$. By the definition of a prime ideal, if $ab \\in P$, then $a \\in P$ or $b \\in P$. Therefore, any prime ideal containing $I$ must contain either $x-2$ (and thus $P_1$) or $x+2$ (and thus $P_2$).\n\nThe intersection of all such prime ideals is exactly the intersection of the minimal prime ideals containing $I$. The minimal primes over $I$ are $P_1$ and $P_2$. Thus:\n$$ \\sqrt{I} = P_1 \\cap P_2 = \\langle x - 2 \\rangle \\cap \\langle x + 2 \\rangle $$\n\n### 4. Intersection of the Prime Ideals\n\nWe must calculate the ideal $P_1 \\cap P_2$.\n$$ P_1 \\cap P_2 = \\{ f \\in \\mathbb{Z}[x] \\mid (x-2) \\text{ divides } f \\text{ and } (x+2) \\text{ divides } f \\} $$\nIn the UFD $\\mathbb{Z}[x]$, if a polynomial $f$ is divisible by two elements $a$ and $b$, it is divisible by their least common multiple (LCM).\n$$ \\text{lcm}(x-2, x+2) = \\frac{(x-2)(x+2)}{\\text{gcd}(x-2, x+2)} $$\nWe determine the greatest common divisor (GCD) of $x-2$ and $x+2$. Any common divisor $d(x)$ must divide their difference:\n$$ (x+2) - (x-2) = 4 $$\nThe divisors of 4 in $\\mathbb{Z}[x]$ are the integer units $\\pm 1, \\pm 2, \\pm 4$ (and their associates). However, $x-2$ is primitive (content is 1), so no integer other than $\\pm 1$ divides $x-2$. Thus, $\\text{gcd}(x-2, x+2) = 1$.\n\nSince the polynomials are coprime, their LCM is their product:\n$$ \\text{lcm}(x-2, x+2) = (x-2)(x+2) = x^2 - 4 $$\nTherefore, the intersection is:\n$$ P_1 \\cap P_2 = \\langle x^2 - 4 \\rangle = I $$\n\n### 5. Conclusion\n\nSince $\\sqrt{I} = P_1 \\cap P_2$ and $P_1 \\cap P_2 = I$, we conclude that $I$ is a radical ideal (it is its own radical).\n\nThe radical of the ideal $I = \\langle x^2 - 4 \\rangle$ in $R = \\mathbb{Z}[x]$ is:\n$$ \\sqrt{\\langle x^2 - 4 \\rangle} = \\langle x^2 - 4 \\rangle $$",
+        "evaluation": {
+          "verdict": "pass",
+          "ill_posed": false,
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question_model": "openai-gpt-3.5-turbo-0125",
+    "answer_model": "google-gemini-3-pro-preview",
+    "question": "Let $X$ be a continuous random variable with probability density function (pdf) given by:\n$$ f_X(x) = \\begin{cases} \n      2x & 0 \\leq x \\leq 1 \\\\\n      0 & \\text{otherwise}\n   \\end{cases} $$\nDefine a new random variable $Y$ as $Y = X^2$. Determine the probability density function of $Y$, i.e., find $f_Y(y)$ for all possible values of $y$.",
+    "run_id": "42",
+    "outer_attempt": 4,
+    "topic_slug": "probability_theory_and_stochastic_processes",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "answer": "To determine the probability density function (pdf) of the random variable $Y = X^2$, we will proceed by first finding the cumulative distribution function (CDF) of $Y$, denoted as $F_Y(y)$, and then differentiating it with respect to $y$.\n\n### 1. Determine the Support of $Y$\n\nThe random variable $X$ is defined on the interval $[0, 1]$.\nSince $Y = X^2$ and the function $g(x) = x^2$ is monotonically increasing for $x \\geq 0$, the range of possible values for $Y$ is:\n$$ [0^2, 1^2] = [0, 1] $$\nThus, $f_Y(y) = 0$ for $y < 0$ and for $y > 1$.\n\n### 2. Find the Cumulative Distribution Function (CDF)\n\nThe CDF of $Y$ is defined as $F_Y(y) = P(Y \\leq y)$.\n\n**Case 1: $y \\leq 0$**\nSince $Y$ takes values in $[0, 1]$, $P(Y \\leq y) = 0$.\n\n**Case 2: $y \\geq 1$**\nSince all probability mass is within $[0, 1]$, $P(Y \\leq y) = 1$.\n\n**Case 3: $0 < y < 1$**\nSubstitute the definition of $Y$:\n$$ F_Y(y) = P(X^2 \\leq y) $$\n\nSince $X$ is non-negative ($0 \\leq X \\leq 1$), the inequality $X^2 \\leq y$ is equivalent to $X \\leq \\sqrt{y}$. Therefore:\n$$ F_Y(y) = P(X \\leq \\sqrt{y}) $$\n\nThis is the CDF of $X$ evaluated at $\\sqrt{y}$. We calculate $F_X(x)$ by integrating the given pdf $f_X(t) = 2t$:\n$$ F_X(x) = \\int_{-\\infty}^{x} f_X(t) \\, dt = \\int_{0}^{x} 2t \\, dt $$\n$$ F_X(x) = \\left[ t^2 \\right]_{0}^{x} = x^2 \\quad \\text{for } 0 \\leq x \\leq 1 $$\n\nNow, substitute $x = \\sqrt{y}$ into $F_X(x)$:\n$$ F_Y(y) = F_X(\\sqrt{y}) = (\\sqrt{y})^2 = y $$\n\n### 3. Determine the Probability Density Function (pdf)\n\nThe pdf $f_Y(y)$ is the derivative of the CDF $F_Y(y)$ with respect to $y$.\n\nFor $0 < y < 1$:\n$$ f_Y(y) = \\frac{d}{dy} F_Y(y) = \\frac{d}{dy} (y) = 1 $$\n\nFor $y < 0$ or $y > 1$, $F_Y(y)$ is constant ($0$ or $1$), so the derivative is $0$.\n\n### 4. Final Result\n\nCombining these results, the probability density function for $Y$ is:\n\n$$ f_Y(y) = \\begin{cases} \n      1 & 0 \\leq y \\leq 1 \\\\\n      0 & \\text{otherwise}\n   \\end{cases} $$\n\nThis indicates that $Y$ follows a standard uniform distribution, $Y \\sim \\text{Uniform}(0, 1)$.",
+        "raw_answer": "To determine the probability density function (pdf) of the random variable $Y = X^2$, we will proceed by first finding the cumulative distribution function (CDF) of $Y$, denoted as $F_Y(y)$, and then differentiating it with respect to $y$.\n\n### 1. Determine the Support of $Y$\n\nThe random variable $X$ is defined on the interval $[0, 1]$.\nSince $Y = X^2$ and the function $g(x) = x^2$ is monotonically increasing for $x \\geq 0$, the range of possible values for $Y$ is:\n$$ [0^2, 1^2] = [0, 1] $$\nThus, $f_Y(y) = 0$ for $y < 0$ and for $y > 1$.\n\n### 2. Find the Cumulative Distribution Function (CDF)\n\nThe CDF of $Y$ is defined as $F_Y(y) = P(Y \\leq y)$.\n\n**Case 1: $y \\leq 0$**\nSince $Y$ takes values in $[0, 1]$, $P(Y \\leq y) = 0$.\n\n**Case 2: $y \\geq 1$**\nSince all probability mass is within $[0, 1]$, $P(Y \\leq y) = 1$.\n\n**Case 3: $0 < y < 1$**\nSubstitute the definition of $Y$:\n$$ F_Y(y) = P(X^2 \\leq y) $$\n\nSince $X$ is non-negative ($0 \\leq X \\leq 1$), the inequality $X^2 \\leq y$ is equivalent to $X \\leq \\sqrt{y}$. Therefore:\n$$ F_Y(y) = P(X \\leq \\sqrt{y}) $$\n\nThis is the CDF of $X$ evaluated at $\\sqrt{y}$. We calculate $F_X(x)$ by integrating the given pdf $f_X(t) = 2t$:\n$$ F_X(x) = \\int_{-\\infty}^{x} f_X(t) \\, dt = \\int_{0}^{x} 2t \\, dt $$\n$$ F_X(x) = \\left[ t^2 \\right]_{0}^{x} = x^2 \\quad \\text{for } 0 \\leq x \\leq 1 $$\n\nNow, substitute $x = \\sqrt{y}$ into $F_X(x)$:\n$$ F_Y(y) = F_X(\\sqrt{y}) = (\\sqrt{y})^2 = y $$\n\n### 3. Determine the Probability Density Function (pdf)\n\nThe pdf $f_Y(y)$ is the derivative of the CDF $F_Y(y)$ with respect to $y$.\n\nFor $0 < y < 1$:\n$$ f_Y(y) = \\frac{d}{dy} F_Y(y) = \\frac{d}{dy} (y) = 1 $$\n\nFor $y < 0$ or $y > 1$, $F_Y(y)$ is constant ($0$ or $1$), so the derivative is $0$.\n\n### 4. Final Result\n\nCombining these results, the probability density function for $Y$ is:\n\n$$ f_Y(y) = \\begin{cases} \n      1 & 0 \\leq y \\leq 1 \\\\\n      0 & \\text{otherwise}\n   \\end{cases} $$\n\nThis indicates that $Y$ follows a standard uniform distribution, $Y \\sim \\text{Uniform}(0, 1)$.",
         "evaluation": {
           "verdict": "pass",
           "ill_posed": false,
