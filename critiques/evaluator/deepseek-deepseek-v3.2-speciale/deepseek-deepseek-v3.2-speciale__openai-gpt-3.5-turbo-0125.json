@@ -1092,5 +1092,55 @@
         }
       }
     ]
+  },
+  {
+    "question": "Find all integer solutions $(x, y)$ to the equation $y^3 = x^2 + 2$.",
+    "run_id": "3",
+    "outer_attempt": 1,
+    "topic_slug": "number_theory",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer correctly deduces that $y \\\\equiv 3 \\\\pmod{4}$ and $x$ is odd, but then incorrectly concludes: \\\"Therefore, the integer solutions to the equation $y^3 = x^2 + 2$ are of the form $(x, y) = (4n+1, 4m+3)$ or $(x, y) = (4n+3, 4m+3)$ for integers $n$ and $m$.\\\" This statement asserts that all pairs of those forms are solutions, which is false (e.g., $m=1$, $y=7$ gives $x^2=341$, not a perfect square). The reasoning only provides necessary conditions, not sufficiency, and fails to find the actual solutions (which are known to be $(\\\\pm 5, 3)$).\",\n  \"suggestions\": \"The answer should state that any solution must satisfy those congruences, but not claim that all such pairs are solutions. To determine all integer solutions, further analysis (e.g., using unique factorization in $\\\\mathbb{Z}[\\\\sqrt{-2}]$ or descent) is required, leading to the only solutions $(x,y) = (\\\\pm 5, 3)$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer correctly deduces that $y \\\\equiv 3 \\\\pmod{4}$ and $x$ is odd, but then incorrectly concludes: \\\"Therefore, the integer solutions to the equation $y^3 = x^2 + 2$ are of the form $(x, y) = (4n+1, 4m+3)$ or $(x, y) = (4n+3, 4m+3)$ for integers $n$ and $m$.\\\" This statement asserts that all pairs of those forms are solutions, which is false (e.g., $m=1$, $y=7$ gives $x^2=341$, not a perfect square). The reasoning only provides necessary conditions, not sufficiency, and fails to find the actual solutions (which are known to be $(\\\\pm 5, 3)$).\",\n  \"suggestions\": \"The answer should state that any solution must satisfy those congruences, but not claim that all such pairs are solutions. To determine all integer solutions, further analysis (e.g., using unique factorization in $\\\\mathbb{Z}[\\\\sqrt{-2}]$ or descent) is required, leading to the only solutions $(x,y) = (\\\\pm 5, 3)$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer correctly deduces that $y \\equiv 3 \\pmod{4}$ and $x$ is odd, but then incorrectly concludes: \"Therefore, the integer solutions to the equation $y^3 = x^2 + 2$ are of the form $(x, y) = (4n+1, 4m+3)$ or $(x, y) = (4n+3, 4m+3)$ for integers $n$ and $m$.\" This statement asserts that all pairs of those forms are solutions, which is false (e.g., $m=1$, $y=7$ gives $x^2=341$, not a perfect square). The reasoning only provides necessary conditions, not sufficiency, and fails to find the actual solutions (which are known to be $(\\pm 5, 3)$).",
+        "suggestions": "The answer should state that any solution must satisfy those congruences, but not claim that all such pairs are solutions. To determine all integer solutions, further analysis (e.g., using unique factorization in $\\mathbb{Z}[\\sqrt{-2}]$ or descent) is required, leading to the only solutions $(x,y) = (\\pm 5, 3)$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": ""
+        }
+      }
+    ]
+  },
+  {
+    "question": "Evaluate the definite integral\n$$\n\\int_0^1 \\ln \\Gamma(x) \\, dx,\n$$\nwhere $\\Gamma$ denotes the Euler gamma function. Give the exact value.",
+    "run_id": "21",
+    "outer_attempt": 1,
+    "topic_slug": "special_functions",
+    "question_author": "deepseek-deepseek-v3.2-speciale",
+    "critic": "deepseek-deepseek-v3.2-speciale",
+    "answer_author": "openai-gpt-3.5-turbo-0125",
+    "status": "succeeded",
+    "attempts": [
+      {
+        "round": 1,
+        "cleaned_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors. The step claiming to use Fubini's theorem to interchange the logarithm and the integral is invalid because the integrand is not a double integral; it incorrectly treats $\\\\ln(\\\\int f(t) dt)$ as $\\\\int \\\\ln(f(t)) dt$. The inner integral evaluation is also incorrect: $\\\\int_0^1 ((x-1)\\\\ln t - t) dx = -(1/2)\\\\ln t - t$, not $-t\\\\ln t$. The resulting integral $\\\\int_0^\\\\infty (-t\\\\ln t) dt$ diverges, whereas the actual value of the original integral is known to be finite (specifically $\\\\frac12\\\\ln(2\\\\pi)$). Thus the reasoning is flawed and the answer is incorrect.\",\n  \"suggestions\": \"A correct evaluation can be done using known properties of the gamma function, such as the reflection formula $\\\\Gamma(x)\\\\Gamma(1-x)=\\\\pi/\\\\sin(\\\\pi x)$ and symmetry, leading to $\\\\int_0^1 \\\\ln\\\\Gamma(x) dx = \\\\frac12\\\\ln(2\\\\pi)$.\"\n}",
+        "raw_critique": "{\n  \"verdict\": \"incorrect\",\n  \"notes\": \"The answer contains multiple mathematical errors. The step claiming to use Fubini's theorem to interchange the logarithm and the integral is invalid because the integrand is not a double integral; it incorrectly treats $\\\\ln(\\\\int f(t) dt)$ as $\\\\int \\\\ln(f(t)) dt$. The inner integral evaluation is also incorrect: $\\\\int_0^1 ((x-1)\\\\ln t - t) dx = -(1/2)\\\\ln t - t$, not $-t\\\\ln t$. The resulting integral $\\\\int_0^\\\\infty (-t\\\\ln t) dt$ diverges, whereas the actual value of the original integral is known to be finite (specifically $\\\\frac12\\\\ln(2\\\\pi)$). Thus the reasoning is flawed and the answer is incorrect.\",\n  \"suggestions\": \"A correct evaluation can be done using known properties of the gamma function, such as the reflection formula $\\\\Gamma(x)\\\\Gamma(1-x)=\\\\pi/\\\\sin(\\\\pi x)$ and symmetry, leading to $\\\\int_0^1 \\\\ln\\\\Gamma(x) dx = \\\\frac12\\\\ln(2\\\\pi)$.\"\n}",
+        "verdict": "incorrect",
+        "notes": "The answer contains multiple mathematical errors. The step claiming to use Fubini's theorem to interchange the logarithm and the integral is invalid because the integrand is not a double integral; it incorrectly treats $\\ln(\\int f(t) dt)$ as $\\int \\ln(f(t)) dt$. The inner integral evaluation is also incorrect: $\\int_0^1 ((x-1)\\ln t - t) dx = -(1/2)\\ln t - t$, not $-t\\ln t$. The resulting integral $\\int_0^\\infty (-t\\ln t) dt$ diverges, whereas the actual value of the original integral is known to be finite (specifically $\\frac12\\ln(2\\pi)$). Thus the reasoning is flawed and the answer is incorrect.",
+        "suggestions": "A correct evaluation can be done using known properties of the gamma function, such as the reflection formula $\\Gamma(x)\\Gamma(1-x)=\\pi/\\sin(\\pi x)$ and symmetry, leading to $\\int_0^1 \\ln\\Gamma(x) dx = \\frac12\\ln(2\\pi)$.",
+        "evaluation": {
+          "verdict": "pass",
+          "issues": [],
+          "improvements": "The critique is accurate and well-justified; no improvements needed."
+        }
+      }
+    ]
   }
 ]
