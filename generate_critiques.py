@@ -22,7 +22,7 @@ from utils import (
     _ensure_non_empty_responses,
     benchmark_answers_from_entries,
     clean_math,
-    collect_invalid_self_answer_questions,
+    collect_invalid_questions,
     critique_key,
     is_latest_outer_attempt,
     latest_outer_attempt_by_run,
@@ -451,6 +451,11 @@ def main():
     parser.add_argument("--human-evals-dir", type=Path, default=Path("evaluations"))
     parser.add_argument("--max-rounds", type=int, default=5, help="Max self-improvement rounds. Ignored if self-improve disabled.")
     parser.add_argument("--no-self-improve", action="store_false", dest="self_improve", help="Disable critique self-improvement.",)
+    parser.add_argument(
+        "--rerun-failures",
+        action="store_true",
+        help="Regenerate critiques that already exist but failed or are unknown.",
+    )
     parser.add_argument("--disable-batch", action="store_true")
     parser.add_argument("--parallel", action="store_true", help="Process critiques in parallel per task (no batch APIs).")
     parser.add_argument("--limit", type=int, default=None, help="Limit number of critiques per pair.")
@@ -467,8 +472,9 @@ def main():
 
     critic_specs = registry.pick(args.models) if args.models else registry.by_role("critique")
     critic_names = {spec.name for spec in critic_specs}
-    invalid_questions = collect_invalid_self_answer_questions(
+    invalid_questions = collect_invalid_questions(
         args.output_dir,
+        args.answers_dir,
         args.auto_evals_dir,
         args.human_evals_dir,
         registry,
@@ -609,7 +615,7 @@ def main():
                 answer_entry.outer_attempt,
             )
             prior = existing_map.get(record_key)
-            if prior and prior.status == STATUS_SUCCEEDED:
+            if prior and (prior.status == STATUS_SUCCEEDED or not args.rerun_failures):
                 continue
 
             answer_text = final_answer(answer_entry) or ""

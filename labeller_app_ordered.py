@@ -254,6 +254,19 @@ def max_other_confidence(other_labels: List[HumanEvaluation]) -> int:
     return max(confidences) if confidences else 0
 
 
+def has_other_label(labels: List[HumanEvaluation]) -> bool:
+    return any(label and (label.verdict or "").strip().lower() == "other" for label in labels)
+
+
+def has_disagreement(labels: List[HumanEvaluation]) -> bool:
+    verdicts = [
+        (label.verdict or "").strip().lower()
+        for label in labels
+        if label and label.verdict is not None
+    ]
+    return len({verdict for verdict in verdicts if verdict}) >= 2
+
+
 def normalize_key(
     raw: Optional[List[Any]],
 ) -> Optional[Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]]:
@@ -786,6 +799,17 @@ def main():
     parser.add_argument("--evaluations-dir", type=Path, default=Path("evaluations"))
     parser.add_argument("--automated-evals-dir", type=Path, default=Path("automated_evaluations"))
     parser.add_argument("--config", type=Path, default=Path("configs/models.json"))
+    mode_group = parser.add_mutually_exclusive_group()
+    mode_group.add_argument(
+        "--other-mode",
+        action="store_true",
+        help="Show only valid tasks labelled as 'other' by at least one human.",
+    )
+    mode_group.add_argument(
+        "--tiebreaker-mode",
+        action="store_true",
+        help="Show only valid tasks with at least two disagreeing human labels.",
+    )
     args, _ = parser.parse_known_args()
 
     registry = load_registry(str(args.config))
@@ -884,8 +908,15 @@ def main():
     selected_a = st.multiselect("Answer model", answerers, default=answerers)
     selected_c = st.multiselect("Critic", critics, default=critics)
     only_unlabeled = st.checkbox("Only not yet labelled by me", value=True)
-    include_other_labels = st.checkbox("Include tasks labelled by others (confidence ≥ 3)", value=False)
+    force_include_other_labels = args.other_mode or args.tiebreaker_mode
+    include_other_labels = st.checkbox(
+        "Include tasks labelled by others (confidence ≥ 3)",
+        value=force_include_other_labels,
+        disabled=force_include_other_labels,
+    )
     skip_labeled_by_others = not include_other_labels
+    if force_include_other_labels:
+        skip_labeled_by_others = False
 
     filtered = []
     skipped_by_others = 0
@@ -902,6 +933,11 @@ def main():
         if only_unlabeled and already:
             continue
         other_labels = other_decisions.get(task_key, [])
+        all_labels = other_labels + ([already] if already else [])
+        if args.other_mode and not has_other_label(all_labels):
+            continue
+        if args.tiebreaker_mode and not has_disagreement(all_labels):
+            continue
         if skip_labeled_by_others and max_other_confidence(other_labels) >= 3:
             skipped_by_others += 1
             continue

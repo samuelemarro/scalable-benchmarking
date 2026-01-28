@@ -19,6 +19,7 @@ from constants import (
     JUDGE_VERDICT_MIXED,
     JUDGE_VERDICT_UNKNOWN,
     JUDGE_VERDICT_WRONG_PROBLEM,
+    STATUS_FAILED,
 )
 
 logger = logging.getLogger(__name__)
@@ -188,7 +189,11 @@ def resolve_automated_victory(
 ) -> Optional[VictorySide]:
     """Convenience wrapper for AutomatedEvaluation objects."""
 
-    verdicts = [decision.verdict for decision in decisions if decision and decision.verdict]
+    verdicts = [
+        decision.verdict
+        for decision in decisions
+        if decision and decision.verdict and decision.status != STATUS_FAILED
+    ]
     return resolve_victory_from_verdicts(
         claim_type,
         automated_verdicts=verdicts,

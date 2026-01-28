@@ -10,6 +10,7 @@ from constants import (
     CRITIQUE_VERDICT_INCORRECT,
     CRITIQUE_VERDICT_INSUFFICIENT,
     CRITIQUE_VERDICT_OBSCURE,
+    STATUS_FAILED,
     STATUS_ILL_POSED,
 )
 from data_models import (
@@ -383,7 +384,11 @@ def adjudicate_claim(
     if required_automated is not None and len(automated_decisions) < required_automated:
         return None
 
-    automated_verdicts = [d.verdict for d in automated_decisions if d and d.verdict]
+    automated_verdicts = [
+        d.verdict
+        for d in automated_decisions
+        if d and d.verdict and d.status != STATUS_FAILED
+    ]
     return resolve_victory_from_verdicts(
         claim_type,
         automated_verdicts=automated_verdicts,

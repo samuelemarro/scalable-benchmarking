@@ -32,7 +32,7 @@ from victory import (
 )
 from model_config import load_registry
 from utils import (
-    collect_invalid_self_answer_questions,
+    collect_invalid_questions,
     format_key,
     human_evaluation_key_from_entry,
     is_latest_outer_attempt,
@@ -44,6 +44,9 @@ from utils import (
 )
 
 logger = logging.getLogger(__name__)
+
+QuestionKey = Tuple[Optional[str], Optional[str], Optional[str]]
+CritiqueKey = Tuple[str, str, str, QuestionKey]
 
 
 def count_human_labels(
@@ -144,10 +147,6 @@ def self_answer_attempt_distribution(
     return per_model, totals, missing
 
 
-QuestionKey = Tuple[Optional[str], Optional[str], Optional[str]]
-CritiqueKey = Tuple[str, str, str, Union[int, QuestionKey]]
-
-
 def load_critique_verdicts(
     critiques_dir: Path,
     *,
@@ -191,9 +190,12 @@ def load_critique_verdicts(
                     q_key = question_key(entry.question_author, entry.run_id, outer_attempt)
                     if invalid_questions and q_key in invalid_questions:
                         continue
-                    if q_key:
-                        verdicts[(q_slug, critic_slug, answer_slug, q_key)][mode] = info
-                    verdicts[(q_slug, critic_slug, answer_slug, idx)][mode] = info
+                    if not q_key:
+                        raise ValueError(
+                            "Missing critique question key (run_id/outer_attempt/question_author) "
+                            f"for {crit_file} index {idx}"
+                        )
+                    verdicts[(q_slug, critic_slug, answer_slug, q_key)][mode] = info
     return verdicts
 
 
@@ -207,11 +209,12 @@ def find_critique_verdict(
     preferred_mode: Optional[str],
     fallback_any: bool,
 ) -> Tuple[Optional[str], Optional[Dict[str, Optional[str]]]]:
-    modes = {}
-    if q_key is not None:
-        modes = verdicts.get((q_slug, critic_slug, answer_slug, q_key), {})
-    if not modes:
-        modes = verdicts.get((q_slug, critic_slug, answer_slug, idx), {})
+    if q_key is None:
+        raise ValueError(
+            "Missing critique question key (run_id/outer_attempt/question_author) "
+            f"for {q_slug}/{critic_slug}__{answer_slug} index {idx}"
+        )
+    modes = verdicts.get((q_slug, critic_slug, answer_slug, q_key), {})
     if preferred_mode and preferred_mode in modes:
         return preferred_mode, modes[preferred_mode]
     if not fallback_any:
@@ -416,7 +419,11 @@ def _analyze_automated_victory(
     context: Optional[str] = None,
     log_automated_disagreements: bool = True,
 ) -> Tuple[Optional[VictorySide], str, Counter, Counter]:
-    verdicts = [decision.verdict for decision in decisions if decision and decision.verdict]
+    verdicts = [
+        decision.verdict
+        for decision in decisions
+        if decision and decision.verdict and decision.status != STATUS_FAILED
+    ]
     if not verdicts:
         return None, "no_decisions", Counter(), Counter()
 
@@ -492,6 +499,7 @@ def print_protocol_stats(
     log_automated_disagreements: bool = True,
     list_missing_critiques: bool = False,
     latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
+    invalid_questions: Optional[Set[QuestionKey]] = None,
 ) -> None:
     critique_verdicts = load_critique_verdicts(
         critiques_dir,
@@ -513,6 +521,13 @@ def print_protocol_stats(
     }
     missing_critique_reasons = Counter()
     missing_critique_cases: List[Dict[str, str]] = []
+
+    def _should_log_disagreements(q_key: Optional[QuestionKey]) -> bool:
+        if not log_automated_disagreements:
+            return False
+        if invalid_questions and q_key in invalid_questions:
+            return False
+        return True
 
     for bench_path in benchmarks_dir.glob("*.json"):
         q_slug = bench_path.stem
@@ -555,6 +570,13 @@ def print_protocol_stats(
                     continue
 
                 candidate_games += 1
+                answer_outer_attempt = normalize_outer_attempt(answer_entry.outer_attempt)
+                question_key_value = question_key(
+                    answer_entry.question_model or q_slug,
+                    answer_entry.run_id,
+                    answer_outer_attempt,
+                )
+                log_for_question = _should_log_disagreements(question_key_value)
 
                 # Step 3: Bob critiques Alice's self-answer (question validity check)
                 self_mode, self_info = find_critique_verdict(
@@ -598,7 +620,7 @@ def print_protocol_stats(
                         "critique",
                         decisions_by_claim.get(claim_key, []),
                         context=format_key(claim_key or ()),
-                        log_automated_disagreements=log_automated_disagreements,
+                        log_automated_disagreements=log_for_question,
                     )
                     if outcome == VictorySide.ALICE:
                         counts["drop_self_critique_upheld"] += 1
@@ -633,7 +655,7 @@ def print_protocol_stats(
                         "illposed",
                         decisions_by_claim.get(claim_key, []),
                         context=format_key(claim_key or ()),
-                        log_automated_disagreements=log_automated_disagreements,
+                        log_automated_disagreements=log_for_question,
                     )
                     if outcome == VictorySide.ALICE:
                         counts["drop_illposed_upheld"] += 1
@@ -716,7 +738,7 @@ def print_protocol_stats(
                     "critique",
                     decisions_by_claim.get(claim_key, []),
                     context=format_key(claim_key or ()),
-                    log_automated_disagreements=log_automated_disagreements,
+                    log_automated_disagreements=log_for_question,
                 )
                 if outcome == VictorySide.BOB:
                     counts["critique_incorrect_defender_wins"] += 1
@@ -811,7 +833,7 @@ def collect_automated_evaluations(auto_eval_dir: Path) -> List[AutomatedEvaluati
 def _critique_target_key(task_key: Tuple) -> Optional[Tuple[str, str, str]]:
     if not task_key or len(task_key) < 3:
         return None
-    run_id, question_model, answer_model, _, _ = task_key
+    run_id, question_model, answer_model = task_key[:3]
     if not run_id or not question_model or not answer_model:
         return None
     return (run_id, question_model, answer_model)
@@ -925,6 +947,7 @@ def compute_model_stats(
     critiques_dir: Path,
     log_automated_disagreements: bool = True,
     latest_by_question: Optional[Dict[str, Dict[str, int]]] = None,
+    invalid_questions: Optional[Set[QuestionKey]] = None,
 ):
     """Compute agreement statistics for various model roles."""
     decisions = collect_automated_evaluations(auto_eval_dir)
@@ -991,11 +1014,17 @@ def compute_model_stats(
         mode = first.mode
 
         if claim_type == "critique":
+            run_id, question_model_key, _answer_model, _critic_model, _mode, outer_attempt = claim_key
+            q_key = question_key(question_model_key, run_id, outer_attempt)
+            log_for_claim = (
+                log_automated_disagreements
+                and not (invalid_questions and q_key in invalid_questions)
+            )
             outcome = resolve_automated_victory(
                 claim_type,
                 claim_decisions,
                 context=format_key(claim_key),
-                log_automated_disagreements=log_automated_disagreements,
+                log_automated_disagreements=log_for_claim,
             )
             if outcome in {None, VictorySide.DROP}:
                 continue
@@ -1101,8 +1130,9 @@ def main():
     registry = load_registry(str(args.config))
 
     latest_by_question = latest_outer_attempts_by_question(benchmarks_dir)
-    invalid_questions = collect_invalid_self_answer_questions(
+    invalid_questions = collect_invalid_questions(
         critiques_dir,
+        answers_dir,
         auto_eval_dir,
         evaluations_dir,
         registry,
@@ -1182,6 +1212,7 @@ def main():
         log_automated_disagreements=log_automated_disagreements,
         list_missing_critiques=args.list_missing_critiques,
         latest_by_question=latest_by_question,
+        invalid_questions=invalid_questions,
     )
 
     # Compute and print automated evaluation statistics
@@ -1190,6 +1221,7 @@ def main():
         critiques_dir,
         log_automated_disagreements=log_automated_disagreements,
         latest_by_question=latest_by_question,
+        invalid_questions=invalid_questions,
     )
 
     print_agreement_stats(
