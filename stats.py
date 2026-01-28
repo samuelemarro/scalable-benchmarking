@@ -466,26 +466,31 @@ def _diagnose_missing_critique(
     q_slug: str,
     critic_slug: str,
     answer_slug: str,
-    idx: int,
+    q_key: Optional[QuestionKey],
 ) -> Tuple[str, str]:
     crit_path = critiques_dir / mode / q_slug / f"{critic_slug}__{answer_slug}.json"
     if not crit_path.exists():
         return "file_missing", str(crit_path)
     entries = load_critique_entries(crit_path)
-    if idx >= len(entries):
-        return "entry_missing", str(crit_path)
-    entry = entries[idx]
-    if not entry:
-        return "entry_none", str(crit_path)
-    if entry.status != STATUS_SUCCEEDED:
-        return f"status_{entry.status}", str(crit_path)
-    attempts = entry.attempts or []
-    if not attempts:
-        return "no_attempts", str(crit_path)
-    verdict = attempts[-1].verdict
-    if not verdict:
-        return "verdict_missing", str(crit_path)
-    return "unexpected_missing", str(crit_path)
+    if not q_key:
+        return "question_key_missing", str(crit_path)
+    for entry in entries:
+        if not entry:
+            continue
+        outer_attempt = normalize_outer_attempt(entry.outer_attempt)
+        entry_key = question_key(entry.question_author, entry.run_id, outer_attempt)
+        if entry_key != q_key:
+            continue
+        if entry.status != STATUS_SUCCEEDED:
+            return f"status_{entry.status}", str(crit_path)
+        attempts = entry.attempts or []
+        if not attempts:
+            return "no_attempts", str(crit_path)
+        verdict = attempts[-1].verdict
+        if not verdict:
+            return "verdict_missing", str(crit_path)
+        return "unexpected_missing", str(crit_path)
+    return "entry_missing", str(crit_path)
 
 
 def print_protocol_stats(
@@ -538,15 +543,32 @@ def print_protocol_stats(
         for answer_file in answers_root.glob("*.json"):
             a_slug = answer_file.stem
             answers = load_answer_entries(answer_file)
-            max_len = max(len(benchmarks), len(answers))
-            for idx in range(max_len):
-                bench_entry = benchmarks[idx] if idx < len(benchmarks) else None
+            latest_by_run = latest_by_question.get(q_slug, {}) if latest_by_question else latest_outer_attempt_by_run(benchmarks)
+            answers_by_key: Dict[QuestionKey, object] = {}
+            for answer_entry in answers:
+                if not answer_entry:
+                    continue
+                answer_outer_attempt = normalize_outer_attempt(answer_entry.outer_attempt)
+                if answer_entry.run_id is not None and latest_by_run:
+                    if not is_latest_outer_attempt(answer_entry.run_id, answer_outer_attempt, latest_by_run):
+                        continue
+                answer_key = question_key(
+                    answer_entry.question_model or q_slug,
+                    answer_entry.run_id,
+                    answer_outer_attempt,
+                )
+                if not answer_key:
+                    continue
+                prior = answers_by_key.get(answer_key)
+                if not prior or (
+                    prior.status != STATUS_SUCCEEDED
+                    and answer_entry.status == STATUS_SUCCEEDED
+                ):
+                    answers_by_key[answer_key] = answer_entry
+
+            for bench_entry in benchmarks:
                 if bench_entry:
                     outer_attempt = normalize_outer_attempt(bench_entry.outer_attempt)
-                    if latest_by_question is not None:
-                        latest_by_run = latest_by_question.get(q_slug, {})
-                    else:
-                        latest_by_run = latest_outer_attempt_by_run(benchmarks)
                     if bench_entry.run_id is not None and latest_by_run:
                         if not is_latest_outer_attempt(bench_entry.run_id, outer_attempt, latest_by_run):
                             continue
@@ -558,25 +580,17 @@ def print_protocol_stats(
                 if not question_text:
                     counts["drop_question_missing_or_failed"] += 1
                     continue
-                answer_entry = answers[idx] if idx < len(answers) else None
-                if answer_entry:
-                    latest_by_run = latest_by_question.get(q_slug, {}) if latest_by_question else {}
-                    outer_attempt = normalize_outer_attempt(answer_entry.outer_attempt)
-                    if answer_entry.run_id is not None and latest_by_run:
-                        if not is_latest_outer_attempt(answer_entry.run_id, outer_attempt, latest_by_run):
-                            answer_entry = None
+                bench_key = question_key(q_slug, bench_entry.run_id, outer_attempt)
+                if not bench_key:
+                    counts["drop_question_missing_or_failed"] += 1
+                    continue
+                answer_entry = answers_by_key.get(bench_key)
                 if not answer_entry:
                     counts["drop_answer_missing"] += 1
                     continue
 
                 candidate_games += 1
-                answer_outer_attempt = normalize_outer_attempt(answer_entry.outer_attempt)
-                question_key_value = question_key(
-                    answer_entry.question_model or q_slug,
-                    answer_entry.run_id,
-                    answer_outer_attempt,
-                )
-                log_for_question = _should_log_disagreements(question_key_value)
+                log_for_question = _should_log_disagreements(bench_key)
 
                 # Step 3: Bob critiques Alice's self-answer (question validity check)
                 self_mode, self_info = find_critique_verdict(
@@ -584,12 +598,8 @@ def print_protocol_stats(
                     q_slug,
                     a_slug,
                     q_slug,
-                    idx,
-                    question_key(
-                        answer_entry.question_model or q_slug,
-                        answer_entry.run_id,
-                        normalize_outer_attempt(answer_entry.outer_attempt),
-                    ),
+                    0,
+                    bench_key,
                     self_answer_critique_mode,
                     fallback_any_mode,
                 )
@@ -684,12 +694,8 @@ def print_protocol_stats(
                     q_slug,
                     q_slug,
                     a_slug,
-                    idx,
-                    question_key(
-                        answer_entry.question_model or q_slug,
-                        answer_entry.run_id,
-                        normalize_outer_attempt(answer_entry.outer_attempt),
-                    ),
+                    0,
+                    bench_key,
                     answer_critique_mode,
                     fallback_any_mode,
                 )
@@ -703,14 +709,14 @@ def print_protocol_stats(
                             q_slug,
                             q_slug,
                             a_slug,
-                            idx,
+                            bench_key,
                         )
                         missing_critique_reasons[reason] += 1
                         missing_critique_cases.append(
                             {
                                 "question": q_slug,
                                 "answerer": a_slug,
-                                "index": str(idx),
+                                "question_key": format_key(bench_key or ()),
                                 "reason": reason,
                                 "path": path,
                             }

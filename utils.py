@@ -25,7 +25,12 @@ from data_models import (
     load_human_evaluation_entries,
 )
 from model_config import ModelRegistry
-from victory import ConflictingHumanJudgmentError, VictorySide, resolve_victory_from_verdicts
+from victory import (
+    ConflictingHumanJudgmentError,
+    VictorySide,
+    resolve_victory_from_verdicts,
+    verdict_to_victory_side,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -385,16 +390,71 @@ def adjudicate_claim(
         return None
 
     automated_verdicts = [
-        d.verdict
+        str(d.verdict).strip().lower()
         for d in automated_decisions
         if d and d.verdict and d.status != STATUS_FAILED
     ]
-    return resolve_victory_from_verdicts(
-        claim_type,
-        automated_verdicts=automated_verdicts,
-        context=context,
-        log_automated_disagreements=log_automated_disagreements,
-    )
+    if not automated_verdicts:
+        return None
+    unique = set(automated_verdicts)
+    if len(unique) != 1:
+        if log_automated_disagreements:
+            logger.error(
+                "Automated judgments disagree for %s: %s",
+                context or "unknown task",
+                sorted(unique),
+            )
+        return None
+    verdict = next(iter(unique))
+    return verdict_to_victory_side(claim_type, verdict)
+
+
+def resolve_bt_adjudication(
+    claim_type: str,
+    *,
+    automated_decisions: Sequence[AutomatedEvaluation],
+    human_decisions: Sequence[HumanEvaluation],
+    context: Optional[str] = None,
+    log_automated_disagreements: bool = True,
+    finegrained_unanimity: bool = False,
+) -> VictorySide:
+    """
+    Resolve BT adjudication: use automated verdicts when unanimous; otherwise require exactly
+    one human label and use it. Raise if zero or multiple human labels are present.
+    """
+    automated_verdicts = [
+        str(decision.verdict).strip().lower()
+        for decision in automated_decisions
+        if decision and decision.verdict and decision.status != STATUS_FAILED
+    ]
+    if finegrained_unanimity:
+        auto_outcome = None
+        unique = set(automated_verdicts)
+        if len(unique) == 1:
+            verdict = next(iter(unique))
+            auto_outcome = verdict_to_victory_side(claim_type, verdict)
+    else:
+        auto_outcome = resolve_victory_from_verdicts(
+            claim_type,
+            automated_verdicts=automated_verdicts,
+            context=context,
+            log_automated_disagreements=log_automated_disagreements,
+        )
+    if auto_outcome is not None:
+        return auto_outcome
+
+    human_verdicts = [decision.verdict for decision in human_decisions if decision and decision.verdict]
+    valid_human = [
+        verdict for verdict in human_verdicts
+        if verdict_to_victory_side(claim_type, verdict) is not None
+    ]
+    if len(valid_human) != 1:
+        raise RuntimeError(
+            f"Non-unanimous automated judgments for {context or 'claim'}; "
+            f"expected exactly 1 valid human label, got {len(valid_human)}"
+        )
+    human_outcome = verdict_to_victory_side(claim_type, valid_human[0])
+    return human_outcome
 
 
 def adjudicated_claim_outcome(
